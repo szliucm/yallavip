@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="PublishConfigData" autoUpload="Always" serverName="开发环境" showNewOnTargetInSync="false">
+    <serverData>
+      <paths name="开发环境">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/yallavip" local="$PROJECT_DIR$" web="/" />
+          </mappings>
+          <excludedPaths>
+            <excludedPath path="/yallavip/extra_apps" />
+            <excludedPath path="/yallavip/static" />
+            <excludedPath path="/yallavip/collectedstatic" />
+          </excludedPaths>
+        </serverdata>
+      </paths>
+      <paths name="生产环境">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/data/wwwroot/yallavip" local="$PROJECT_DIR$" web="/" />
+          </mappings>
+          <excludedPaths>
+            <excludedPath path="/data/wwwroot/yallavip/collectedstatic" />
+            <excludedPath path="/data/wwwroot/yallavip/static" />
+            <excludedPath path="/data/wwwroot/yallavip/extra_apps" />
+          </excludedPaths>
+        </serverdata>
+      </paths>
+    </serverData>
+    <option name="myAutoUpload" value="ALWAYS" />
+  </component>
+</project>
