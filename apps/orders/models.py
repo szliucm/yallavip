@@ -135,12 +135,13 @@ class Order(models.Model):
 
     PACKAGE_STATUS = (
         ("DELIVERED", "妥投"),
-        ("RETURNED", "退仓"),
+        ("TEMPORARY", "暂存站点"),
+        ("RETURNED", "海外仓"),
         ("LOST", "丢失"),
         ("DELIVERING", "运输中"),
-        ("TEMPORARY", "暂存站点"),
-        ("RESELLOUT", "二次售罄"),
+        ("RETURNING", "退仓中"),
 
+        ("RESELLOUT", "二次售罄"),
     )
 
     package_status = models.CharField(choices=PACKAGE_STATUS, max_length=50, default='NONE', verbose_name="包裹状态", blank=True)
@@ -168,6 +169,21 @@ class Order(models.Model):
     )
     file_status = models.CharField(choices=FILE_STTUS, max_length=50, default='OPEN', verbose_name="归档状态",
                                        blank=True)
+
+    RESELL_STTUS = (
+        ("LISTING", "上架中"),
+        ("UNLISTING", "下架中"),
+        ("SELLOUT", "二次售罄"),
+        ("DESTROYED", "销毁"),
+
+
+    )
+    resell_status = models.CharField(choices=RESELL_STTUS, max_length=50, default='UNLISTING', verbose_name="二次销售状态",
+                                   blank=True)
+
+
+
+
 
     class Meta:
         verbose_name = "订单"
@@ -633,6 +649,7 @@ class LogisticAccount(models.Model):
     SETTLETYPE = (
         ("COD", "COD"),
         ("FEE", "运费"),
+        ("COMPENSATE", "赔偿"),
     )
 
     logistic_no = models.CharField(u'物流追踪号', default='', max_length=100, blank=True)
@@ -646,14 +663,27 @@ class LogisticAccount(models.Model):
 
     COD = models.CharField(verbose_name="代收货款", max_length=100, null=True, blank=True)
     exchange = models.CharField(verbose_name="汇率", max_length=100, null=True, blank=True)
-    RMB = models.CharField(verbose_name="本位币金额", max_length=100, null=True, blank=True)
+    currency = models.CharField(verbose_name="币种", max_length=100, null=True, blank=True)
+    standard_currency = models.CharField(verbose_name="本位币金额", max_length=100, null=True, blank=True)
     fee = models.CharField(verbose_name="运费", max_length=100, null=True, blank=True)
     other_fee = models.CharField(verbose_name="其他杂费", max_length=100, null=True, blank=True)
     total_fee = models.CharField(verbose_name="运杂费", max_length=100, null=True, blank=True)
     refund = models.CharField(verbose_name="应退金额", max_length=100, null=True, blank=True)
 
     settle_type = models.CharField(choices=SETTLETYPE,verbose_name="结算类型", max_length=100, null=True, blank=True)
+    PACKAGE_STATUS = (
+        ("DELIVERED", "妥投"),
+        ("TEMPORARY", "暂存站点"),
+        ("RETURNED", "海外仓"),
+        ("LOST", "丢失"),
+        ("DELIVERING", "运输中"),
+        ("RETURNING", "退仓中"),
 
+        ("RESELLOUT", "二次售罄"),
+    )
+
+    package_status = models.CharField(choices=PACKAGE_STATUS, max_length=50, default='NONE', verbose_name="包裹状态",
+                                      blank=True)
 
     class Meta:
         verbose_name = "物流对账"

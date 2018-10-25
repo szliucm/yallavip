@@ -2183,8 +2183,8 @@ class LogisticAdmin(object):
 class LogisticAccountResource(resources.ModelResource):
     #shipping_time = fields.Field(attribute='shipping_time', column_name='到货日期')
     logistic_no = fields.Field(attribute='logistic_no', column_name='客户单号')
-    tracking_no = fields.Field(attribute='tracking_no', column_name='渠道转单号')
-    refer_no = fields.Field(attribute='refer_no', column_name='参考号')
+    #tracking_no = fields.Field(attribute='tracking_no', column_name='渠道转单号')
+    #refer_no = fields.Field(attribute='refer_no', column_name='参考号')
 
     real_weight = fields.Field(attribute='real_weight', column_name='实重')
     size_weight = fields.Field(attribute='size_weight', column_name='体积重')
@@ -2192,21 +2192,25 @@ class LogisticAccountResource(resources.ModelResource):
 
     COD = fields.Field(attribute='COD', column_name='代收货款')
     exchange = fields.Field(attribute='exchange', column_name='汇率')
-    RMB = fields.Field(attribute='RMB', column_name='本位币金额')
+    currency = fields.Field(attribute='currency', column_name='币种')
+    standard_currency = fields.Field(attribute='standard_currency', column_name='本位币金额')
     fee = fields.Field(attribute='fee', column_name='运费')
     other_fee = fields.Field(attribute='other_fee', column_name='其他杂费')
     total_fee = fields.Field(attribute='total_fee', column_name='运杂费')
     refund = fields.Field(attribute='refund', column_name='应退金额')
     settle_type = fields.Field(attribute='settle_type', column_name='结算类型')
+    package_status = fields.Field(attribute='package_status', column_name='包裹状态')
 
     class Meta:
         model = LogisticAccount
         skip_unchanged = True
         report_skipped = True
         import_id_fields = ('logistic_no',)
-        fields = ('logistic_no', 'tracking_no','refer_no',
+        fields = ('logistic_no',
                     'real_weight','size_weight','charge_weight',
-                   'COD','exchange','RMB','fee','other_fee','total_fee','refund','settle_type' )
+                   'COD','exchange','currency','standard_currency',
+                  'fee','other_fee','total_fee','refund','settle_type',
+                  'package_status',)
 
 class LogisticAccountAdmin(object):
 
@@ -2214,16 +2218,22 @@ class LogisticAccountAdmin(object):
         return Logistic.objects.filter(logistic_no=obj.logistic_no).first().logistic_update_status
     logistic_status.short_description = "物流状态"
 
+    def logistic_type(self, obj):
+        return Logistic.objects.filter(logistic_no=obj.logistic_no).first().logistic_type
+
+    logistic_type.short_description = "物流公司"
+
     import_export_args = {"import_resource_class": LogisticAccountResource,
                           "export_resource_class": LogisticAccountResource}
 
-    list_display = ( 'logistic_no', 'logistic_status', 'tracking_no','refer_no',
+    list_display = ( 'logistic_no', 'logistic_type', 'logistic_status',
                     'real_weight', 'size_weight', 'charge_weight',
-                    'COD', 'exchange', 'RMB', 'fee','other_fee','total_fee', 'refund','settle_type'
+                    'COD', 'exchange', 'currency','standard_currency', 'fee','other_fee','total_fee', 'refund',
+                     'settle_type','package_status'
                    )
     list_editable = []
     search_fields = ['logistic_no', ]
-    list_filter = ("settle_type", )
+    list_filter = ("settle_type", "package_status",)
     ordering = ['-logistic_no']
     actions = ["COD_settle","Fee_settle"
                 ]
@@ -2257,10 +2267,28 @@ class LogisticAccountAdmin(object):
 
         return queryset
 
+class OrderTrackAdminResource(resources.ModelResource):
+
+    logistic_no = fields.Field(attribute='logistic_no', column_name='客户单号')
+
+    package_status = fields.Field(attribute='package_status', column_name='包裹状态')
+
+
+    class Meta:
+        model = LogisticAccount
+        skip_unchanged = True
+        report_skipped = True
+        import_id_fields = ('logistic_no',)
+        fields = ('logistic_no', 'package_status')
+
+
 class OrderTrackAdmin(object):
+    import_export_args = {"import_resource_class": OrderTrackAdminResource,
+                          "export_resource_class": OrderTrackAdminResource}
 
-
-    list_display = ('order_no','logistic_no','logistic_update_date','file_status', 'logistic_update_status','package_status', 'customer_status','postsale_status','settle_status',)
+    list_display = ('order_no','logistic_no','logistic_update_date','file_status',
+                    'logistic_update_status','package_status', 'customer_status',
+                    'postsale_status','settle_status','resell_status',)
     list_editable = []
     search_fields = ['order_no','logistic_no' ]
     list_filter = ('file_status', 'logistic_update_status','package_status', 'customer_status','postsale_status','settle_status',)
@@ -2297,7 +2325,7 @@ xadmin.site.register(ClientService,ClientServiceAdmin)
 xadmin.site.register(OrderConversation, OrderConverstaionAdmin)
 xadmin.site.register(Verification,VerificationAdmin)
 xadmin.site.register(Logistic_winlink,Logistic_winlinkAdmin)
-xadmin.site.register(Logistic_jiacheng,Logistic_jiachengAdmin)
+#xadmin.site.register(Logistic_jiacheng,Logistic_jiachengAdmin)
 xadmin.site.register(Logistic_status,Logistic_statusAdmin)
 xadmin.site.register(Logistic_trail,Logistic_trailAdmin)
 xadmin.site.register(Sms,SmsAdmin)
