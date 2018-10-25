@@ -16,6 +16,7 @@ from .models import Order, OrderDetail,Verify, OrderConversation,ClientService,V
         LogisticAccount
 
 from conversations.models import Conversation
+from logistic.models import Package
 from product.models import Product
 from django.db import models
 from yunpian_python_sdk.model import constant as YC
@@ -163,7 +164,7 @@ class OrderAdmin(object):
     list_display = ["order_no", "order_status","show_settle_status","logistic_update_status", "order_time","send_time","verify_time", "logistic_no","order_comment"]
     # list_display_links = ["show_conversation"]
     search_fields = ["order_no",'logistic_no', ]
-    list_filter = ( "order_status", "verify_time","order_time","send_time")
+    list_filter = ( "order_status","package_status", "verify_time","order_time","send_time")
     ordering = ['-order_no']
     #data_charts = {
     #    "order_count": {'title': u"订单统计","x-field": "order_time", "y-field": ("order_no", ), "order": ('order_time',)},
@@ -176,7 +177,7 @@ class OrderAdmin(object):
 
 
 
-    actions = ['start_verify','batch_copy','batch_updatelogistic_trail']
+    actions = ['start_verify','batch_copy','batch_updatelogistic_trail','start_package_track',]
 
     def start_verify(self, request, queryset):
         # 定义actions函数
@@ -225,6 +226,19 @@ class OrderAdmin(object):
         self.message_user(request, "%s successfully marked as verified." % message_bit)
 
     start_verify.short_description = "批量开始审核"
+
+    def start_package_track(self, request, queryset):
+        # 定义actions函数
+        for row in queryset:
+            obj, created = Package.objects.update_or_create(
+                logistic_no=row.logistic_no,
+                defaults={
+
+                },
+            )
+        queryset.update(package_status="START")
+    start_package_track.short_description = "批量启动包裹追踪"
+
     def batch_updatelogistic_trail(self, request, queryset):
         # 定义actions函数
         requrl = "http://api.jcex.com/JcexJson/api/notify/sendmsg"
@@ -307,6 +321,18 @@ class OrderAdmin(object):
 
         return queryset
     '''
+
+    def get_list_queryset(self):
+        """批量查询订单号"""
+        queryset = super().get_list_queryset()
+
+        query = self.request.GET.get(SEARCH_VAR, '')
+
+        if (len(query) > 0):
+            queryset |= self.model.objects.filter(order_no__in=query.split(","))
+        if (len(query) > 0):
+            queryset |= self.model.objects.filter(logistic_no__in=query.split(","))
+        return queryset
 
 class OrderDetailResource(resources.ModelResource):
     order = fields.Field(
@@ -986,12 +1012,7 @@ class Logistic_winlinkResource(resources.ModelResource):
     his_comments = fields.Field(attribute='his_comments', column_name='所有异常')
     logistic_update = fields.Field(attribute='logistic_update', column_name='更新时间')
 
-    '''
-    response = fields.Field(attribute='response', column_name='责任')
 
-    feedback = fields.Field(attribute='feedback', column_name='反馈原因')
-    deal = fields.Field(attribute='deal', column_name='处理对策')
-    '''
 
 
     class Meta:
@@ -1883,13 +1904,19 @@ class SmsAdmin(object):
 
 
 class LogisticResource(resources.ModelResource):
+    logistic_no = fields.Field(attribute='logistic_no', column_name='单号')
+    #order_no = fields.Field(attribute='order_no', column_name='原单号')
+    logistic_status = fields.Field(attribute='logistic_status', column_name='订单状态1')
+    comments = fields.Field(attribute='comments', column_name='异常说明')
+    his_comments = fields.Field(attribute='his_comments', column_name='所有异常')
+    logistic_update = fields.Field(attribute='logistic_update', column_name='更新时间')
 
     class Meta:
         model = Logistic
         skip_unchanged = True
         report_skipped = True
         import_id_fields = ('logistic_no',)
-        fields = ('logistic_no', 'feedback','problem_type','response','deal')
+        fields = ('logistic_no', 'logistic_status','comments','his_comments', 'logistic_update',)
 
 class LogisticAdmin(object):
     import_export_args = {"import_resource_class": LogisticResource,
@@ -2326,8 +2353,8 @@ xadmin.site.register(OrderConversation, OrderConverstaionAdmin)
 xadmin.site.register(Verification,VerificationAdmin)
 xadmin.site.register(Logistic_winlink,Logistic_winlinkAdmin)
 #xadmin.site.register(Logistic_jiacheng,Logistic_jiachengAdmin)
-xadmin.site.register(Logistic_status,Logistic_statusAdmin)
-xadmin.site.register(Logistic_trail,Logistic_trailAdmin)
+#xadmin.site.register(Logistic_status,Logistic_statusAdmin)
+#xadmin.site.register(Logistic_trail,Logistic_trailAdmin)
 xadmin.site.register(Sms,SmsAdmin)
 xadmin.site.register(Logistic,LogisticAdmin)
 xadmin.site.register(OrderTrack,OrderTrackAdmin)

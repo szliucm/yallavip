@@ -27,6 +27,7 @@ class Order(models.Model):
         ("Delivered", "已签收"),
         ("receiver refused to accept the shipment", "拒签"),
     )
+    '''
     DELIVER_STATUS = (
         ("WAITING", "待处理"),
         ("DELIVERING", "派送中"),
@@ -37,6 +38,7 @@ class Order(models.Model):
         ("RETURNED", "已退仓"),
 
     )
+    '''
     RESPONSE = (
         ("NONE", "待定"),
         ("DELIVER", "派送员"),
@@ -134,6 +136,8 @@ class Order(models.Model):
     settle_status  = models.CharField(choices=SETTLE_STATUS, max_length=50, default='NONE', verbose_name="财务结算", blank=True)
 
     PACKAGE_STATUS = (
+        ("NONE", "待处理"),
+        ("START", "交运"),
         ("DELIVERED", "妥投"),
         ("TEMPORARY", "暂存站点"),
         ("RETURNED", "海外仓"),
@@ -180,7 +184,6 @@ class Order(models.Model):
     )
     resell_status = models.CharField(choices=RESELL_STTUS, max_length=50, default='UNLISTING', verbose_name="二次销售状态",
                                    blank=True)
-
 
 
 

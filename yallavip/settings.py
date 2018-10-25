@@ -47,10 +47,12 @@ INSTALLED_APPS = [
 
     'conversations',
     'orders',
+    'logistic',
     'purchase',
     'product',
     'sysadmin',
-    'shop',
+    #'shop',
+
 
     'import_export',
     #'DjangoUeditor',
