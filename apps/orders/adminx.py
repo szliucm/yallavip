@@ -161,7 +161,7 @@ class OrderAdmin(object):
 
     import_export_args = {"import_resource_class": OrderResource, "export_resource_class": OrderResource}
 
-    list_display = ["order_no", "order_status","show_settle_status","logistic_update_status", "order_time","send_time","verify_time", "logistic_no","order_comment"]
+    list_display = ["order_no", "order_status","package_status", "order_time","send_time","verify_time", "logistic_no","order_comment"]
     # list_display_links = ["show_conversation"]
     search_fields = ["order_no",'logistic_no', ]
     list_filter = ( "order_status","package_status", "verify_time","order_time","send_time")
@@ -177,7 +177,7 @@ class OrderAdmin(object):
 
 
 
-    actions = ['start_verify','batch_copy','batch_updatelogistic_trail','start_package_track',]
+    actions = ['start_verify','batch_copy','start_package_track',]
 
     def start_verify(self, request, queryset):
         # 定义actions函数
@@ -233,7 +233,7 @@ class OrderAdmin(object):
             obj, created = Package.objects.update_or_create(
                 logistic_no=row.logistic_no,
                 defaults={
-
+                    'send_time': row.send_time,
                 },
             )
         queryset.update(package_status="START")
@@ -2351,13 +2351,13 @@ xadmin.site.register(ClientService,ClientServiceAdmin)
 
 xadmin.site.register(OrderConversation, OrderConverstaionAdmin)
 xadmin.site.register(Verification,VerificationAdmin)
-xadmin.site.register(Logistic_winlink,Logistic_winlinkAdmin)
+#xadmin.site.register(Logistic_winlink,Logistic_winlinkAdmin)
 #xadmin.site.register(Logistic_jiacheng,Logistic_jiachengAdmin)
 #xadmin.site.register(Logistic_status,Logistic_statusAdmin)
 #xadmin.site.register(Logistic_trail,Logistic_trailAdmin)
 xadmin.site.register(Sms,SmsAdmin)
-xadmin.site.register(Logistic,LogisticAdmin)
-xadmin.site.register(OrderTrack,OrderTrackAdmin)
-xadmin.site.register(LogisticAccount,LogisticAccountAdmin)
+#xadmin.site.register(Logistic,LogisticAdmin)
+#xadmin.site.register(OrderTrack,OrderTrackAdmin)
+#xadmin.site.register(LogisticAccount,LogisticAccountAdmin)
 
 

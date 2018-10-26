@@ -3,7 +3,10 @@ from django.db import models
 # Create your models here.
 class Package(models.Model):
     logistic_no = models.CharField(u'物流追踪号', default='', max_length=100, blank=True)
+    refer_no = models.CharField(u'包裹号', max_length=50, null=True, blank=True)
+    send_time = models.DateTimeField(u'发货时间', auto_now=False, blank=True, null=True)
 
+    charge_weight = models.CharField(u'计费重量', max_length=100, null=True, blank=True)
     logistic_start_date = models.DateField(u'物流收货时间', auto_now=False, null=True, blank=True)
     logistic_update_date = models.DateField(u'物流更新时间', auto_now=False, null=True, blank=True)
     logistic_update_status = models.CharField(verbose_name='物流状态', max_length=100, null=True,
@@ -34,8 +37,8 @@ class Package(models.Model):
         ("RE_DELIVERING", "重新派送中"),
 
         ("REFUSED", "拒签"),
-        ("RETURNING", "退仓中"),
-        ("RETURNED", "已退到仓库"),
+        #("RETURNING", "退仓中"),
+        #("RETURNED", "已退到仓库"),
     )
     deal = models.CharField(choices=DEAL, max_length=50, default='NONE', verbose_name="处理办法", blank=True)
 
@@ -51,12 +54,14 @@ class Package(models.Model):
         ("NONE", "待处理"),
         ("START", "交运"),
         ("DELIVERED", "妥投"),
+        ("LOST", "丢失"),
+        ("PROBLEM", "问题件"),
+
         ("TEMPORARY", "暂存站点"),
         ("RETURNED", "海外仓"),
-        ("LOST", "丢失"),
-        ("DELIVERING", "运输中"),
         ("RETURNING", "退仓中"),
 
+        ("REDELIVERING", "二次销售派送中"),
         ("RESELLOUT", "二次售罄"),
     )
 
@@ -89,16 +94,19 @@ class Package(models.Model):
     file_status = models.CharField(choices=FILE_STTUS, max_length=50, default='OPEN', verbose_name="归档状态",
                                        blank=True)
 
-    RESELL_STTUS = (
+    RESELL_STATUS = (
         ("LISTING", "上架中"),
         ("UNLISTING", "下架中"),
+
         ("SELLOUT", "二次售罄"),
         ("DESTROYED", "销毁"),
 
 
     )
-    resell_status = models.CharField(choices=RESELL_STTUS, max_length=50, default='UNLISTING', verbose_name="二次销售状态",
+    resell_status = models.CharField(choices=RESELL_STATUS, max_length=50, default='UNLISTING', verbose_name="二次销售状态",
                                    blank=True)
+
+    sec_logistic_no = models.CharField(u'二次物流追踪号', default='', max_length=100, blank=True)
 
     class Meta:
         verbose_name = "包裹追踪"
@@ -124,6 +132,29 @@ class LogisticCustomerService(Package):
         proxy = True
 
         verbose_name = "客服物流跟踪"
+        verbose_name_plural = verbose_name
+
+
+    def __str__(self):
+        return self.logistic_no
+
+class OverseaPackage(Package):
+    class Meta:
+        proxy = True
+
+        verbose_name = "海外包裹跟踪"
+        verbose_name_plural = verbose_name
+
+
+    def __str__(self):
+        return self.logistic_no
+
+
+class Resell(Package):
+    class Meta:
+        proxy = True
+
+        verbose_name = "海外仓销售"
         verbose_name_plural = verbose_name
 
 

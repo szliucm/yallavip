@@ -11,7 +11,7 @@ import xadmin
 from django.shortcuts import get_object_or_404, get_list_or_404, render
 from import_export import resources, fields
 from import_export.widgets import ForeignKeyWidget
-from .models import Package, LogisticSupplier,LogisticCustomerService
+from .models import Package, LogisticSupplier,LogisticCustomerService,OverseaPackage,Resell
 from orders.models import Order,OrderConversation
 from django.db import models
 
@@ -31,6 +31,7 @@ from django.utils.html import format_html
 
 class PackageResource(resources.ModelResource):
     logistic_no = fields.Field(attribute='logistic_no', column_name='单号')
+    refer_no = fields.Field(attribute='refer_no', column_name='参考号')
     logistic_update_status = fields.Field(attribute='logistic_update_status', column_name='订单状态1')
     logistic_update_date = fields.Field(attribute='logistic_update_date', column_name='更新时间')
     problem_type = fields.Field(attribute='problem_type', column_name='异常说明')
@@ -44,7 +45,7 @@ class PackageResource(resources.ModelResource):
         skip_unchanged = True
         report_skipped = True
         import_id_fields = ('logistic_no',)
-        fields = ('logistic_no', 'logistic_update_status','logistic_update_date','problem_type',
+        fields = ('logistic_no', 'refer_no','logistic_update_status','logistic_update_date','problem_type',
                   'package_status',)
 
 
@@ -155,6 +156,7 @@ class LogisticSupplierResource(resources.ModelResource):
     logistic_update_date = fields.Field(attribute='logistic_update_date', column_name='更新时间')
     problem_type = fields.Field(attribute='problem_type', column_name='异常说明')
 
+    charge_weight = fields.Field(attribute='charge_weight', column_name='计费重量')
     package_status = fields.Field(attribute='package_status', column_name='包裹状态')
 
 
@@ -165,35 +167,39 @@ class LogisticSupplierResource(resources.ModelResource):
         report_skipped = True
         import_id_fields = ('logistic_no',)
         fields = ('logistic_no', 'logistic_update_status','logistic_update_date','problem_type',
-                  'package_status',)
+                  'charge_weight','package_status',)
+
+
 
 
 class LogisticSupplierAdmin(object):
     import_export_args = {"import_resource_class": LogisticSupplierResource,
                           "export_resource_class": LogisticSupplierResource}
 
-    actions = [
-               'batch_response',
-               'batch_deliver_response', 'batch_customer_response', 'batch_yallavip_response',
-
-                'batch_type',
-               'batch_contact', 'batch_refuse', 'batch_info_error','batch_lost',
-
-               'batch_deal',
-               'batch_delivered','batch_wait','batch_redeliver', 'batch_redelivering',
-               'batch_refused', 'batch_returning', 'batch_returned',
-               "batch_updatelogistic_trail",]
+    actions = ['yallavip_package_start',]
 
 
-    list_display = ( 'logistic_no','logistic_start_date','package_status','yallavip_package_status',
+    def weight(self, obj):
+        orders = Order.objects.filter(logistic_no=obj.logistic_no)
+        order_nos = ''
+        for order in orders:
+            if (order == None):
+                continue
+            order_nos = str(order_nos) +str(order.weight)+  str(',')
+        return order_nos
+
+    weight.short_description = "称重重量"
+
+
+    list_display = ( 'logistic_no','send_time','logistic_start_date','weight','charge_weight','package_status','yallavip_package_status',
                     'logistic_update_date', 'logistic_update_status', 'logistic_update_locate',
                     'problem_type')
     list_editable = [ ]
     search_fields = ['logistic_no', ]
-    list_filter = ("package_status","logistic_update_status",)
+    list_filter = ("package_status","yallavip_package_status","logistic_update_status",'send_time','logistic_start_date',)
     ordering = []
 
-
+    '''
     def batch_updatelogistic_trail(self, request, queryset):
         # 定义actions函数
         requrl = "http://api.jcex.com/JcexJson/api/notify/sendmsg"
@@ -201,7 +207,7 @@ class LogisticSupplierAdmin(object):
         param_data= dict()
         param_data["customerid"] = -1
         #param_data["waybillnumber"] = "989384782"
-        param_data["isdisplaydetail"] = "false"
+        param_data["isdisplaydetail"] = "true"
 
 
         #data_body =base64.b64encode(json.dumps(param_data).encode('utf-8'))
@@ -223,18 +229,21 @@ class LogisticSupplierAdmin(object):
             res = requests.post(requrl, params=param)
 
             data = json.loads(res.text)
-            #print("data is ", data)
+
             waybillnumber = data["waybillnumber"]
             #recipientcountry = data["recipientcountry"]
 
             statusdetail = data["displaydetail"][0]["statusdetail"]
             if(len(statusdetail) == 0):
                 continue
+
+
             #最新状态
             if (len(statusdetail) > 0):
                 status_d = statusdetail[len(statusdetail)-1]
                 update_date = datetime.strptime(status_d["time"].split(" ")[0], '%Y-%m-%d').date()
                 logistic_start_date = datetime.strptime(statusdetail[0]["time"].split(" ")[0], '%Y-%m-%d').date()
+                #print("logistic_start_date", logistic_start_date)
 
                 Package.objects.filter(logistic_no=waybillnumber).update(
 
@@ -251,9 +260,15 @@ class LogisticSupplierAdmin(object):
         return
 
     batch_updatelogistic_trail.short_description = "更新物流轨迹"
+    '''
+    def yallavip_package_start(self, request, queryset):
+        # 定义actions函数
+        rows_updated = queryset.update(yallavip_package_status="START")
 
+    yallavip_package_start.short_description = "中仪包裹状态-发运"
 
-
+    #def has_delete_permission(self):
+    #    return False
 
     def get_list_queryset(self):
         """批量查询订单号"""
@@ -267,7 +282,159 @@ class LogisticSupplierAdmin(object):
         return queryset
 
 
+class OverseaPackageAdmin(object):
+    def logistic_type(self, obj):
+        order = Order.objects.filter(logistic_no=obj.logistic_no).first()
+
+        return order.logistic_type
+
+    logistic_type.short_description = "物流公司"
+
+    actions = ['batch_updatelogistic_trail','batch_start', 'batch_delivered', 'batch_problem','batch_lost', 'batch_temporary', 'batch_returned',
+               'batch_returning', 'batch_destroyed',
+               ]
+
+    list_display = (
+    'logistic_no', 'logistic_type', 'refer_no', 'send_time', 'package_status', 'yallavip_package_status',
+    'resell_status',
+    'logistic_update_date', 'logistic_update_status', 'logistic_update_locate',
+    'sec_logistic_no',
+    )
+    list_editable = ['sec_logistic_no']
+    search_fields = ['logistic_no']
+    list_filter = ('logistic_update_date', 'logistic_update_status', 'deal', 'package_status',
+                   'yallavip_package_status',)
+    ordering = ['-send_time']
+
+    def batch_start(self, request, queryset):
+        queryset.update(yallavip_package_status="START")
+        return
+
+    batch_start.short_description = "交运中"
+
+    def batch_delivered(self, request, queryset):
+        queryset.update(yallavip_package_status="DELIVERED")
+        return
+
+    batch_delivered.short_description = "妥投"
+
+    def batch_problem(self, request, queryset):
+        queryset.update(yallavip_package_status="PROBLEM")
+        return
+
+    batch_problem.short_description = "问题件"
+
+    def batch_temporary(self, request, queryset):
+        queryset.update(yallavip_package_status="TEMPORARY")
+        return
+
+    batch_temporary.short_description = "暂存站点"
+
+    def batch_lost(self, request, queryset):
+        queryset.update(yallavip_package_status="LOST")
+        return
+
+    batch_lost.short_description = "丢件"
+
+    def batch_returned(self, request, queryset):
+        queryset.update(yallavip_package_status="RETURNED")
+        return
+
+    batch_returned.short_description = "海外仓"
+
+    def batch_returning(self, request, queryset):
+        queryset.update(yallavip_package_status="TRANSIT")
+        return
+
+    batch_returning.short_description = "退仓中"
+
+    def batch_destroyed(self, request, queryset):
+        queryset.update(resell_status="DESTROYED", yallavip_package_status="DESTROYED")
+        return
+
+    batch_destroyed.short_description = "批量销毁"
+
+    def batch_updatelogistic_trail(self, request, queryset):
+        # 定义actions函数
+        requrl = "http://api.jcex.com/JcexJson/api/notify/sendmsg"
+
+        param_data = dict()
+        param_data["customerid"] = -1
+        # param_data["waybillnumber"] = "989384782"
+        param_data["isdisplaydetail"] = "true"
+
+        # data_body =base64.b64encode(json.dumps(param_data).encode('utf-8'))
+        #  base64.b64encode()
+
+        param = dict()
+        param["service"] = 'track'
+        # param["data_body"] = data_body
+
+        res = requests.post(requrl, params=param)
+
+        for row in queryset:
+
+            param_data["waybillnumber"] = row.logistic_no
+            data_body = base64.b64encode(json.dumps(param_data).encode('utf-8'))
+            param["data_body"] = data_body
+            res = requests.post(requrl, params=param)
+
+            data = json.loads(res.text)
+
+            waybillnumber = data["waybillnumber"]
+            # recipientcountry = data["recipientcountry"]
+
+            statusdetail = data["displaydetail"][0]["statusdetail"]
+            if (len(statusdetail) == 0):
+                continue
+
+            # 最新状态
+            if (len(statusdetail) > 0):
+                status_d = statusdetail[len(statusdetail) - 1]
+                update_date = datetime.strptime(status_d["time"].split(" ")[0], '%Y-%m-%d').date()
+                logistic_start_date = datetime.strptime(statusdetail[0]["time"].split(" ")[0], '%Y-%m-%d').date()
+                # print("logistic_start_date", logistic_start_date)
+
+                Package.objects.filter(logistic_no=waybillnumber).update(
+
+                    logistic_update_status=status_d["status"],
+
+                    logistic_update_date=update_date,
+
+                    logistic_update_locate=status_d["locate"],
+                    logistic_start_date=logistic_start_date,
+                )
+                # else:
+                #   print("order 无可更新")
+
+        return
+
+    batch_updatelogistic_trail.short_description = "更新物流轨迹"
+
+    def get_list_queryset(self):
+        """批量查询订单号"""
+        queryset = super().get_list_queryset()
+
+        query = self.request.GET.get(SEARCH_VAR, '')
+
+        if (len(query) > 0):
+            queryset |= self.model.objects.filter(logistic_no__in=query.split(","))
+        return queryset
+
+class LogisticCustomerServiceResource(resources.ModelResource):
+
+
+    class Meta:
+        model = LogisticCustomerService
+        skip_unchanged = True
+        report_skipped = True
+        import_id_fields = ('logistic_no',)
+        fields = ('logistic_no','comments','deal', 'feedback','response')
+
 class LogisticCustomerServiceAdmin(object):
+    import_export_args = {"import_resource_class": LogisticCustomerServiceResource,
+                          "export_resource_class": LogisticCustomerServiceResource}
+
     def order_no(self, obj):
         orders = Order.objects.filter(logistic_no=obj.logistic_no)
         order_nos = ''
@@ -279,12 +446,12 @@ class LogisticCustomerServiceAdmin(object):
 
     order_no.short_description = "订单号"
 
-    def order_send_time(self, obj):
+    def logistic_type(self, obj):
         order = Order.objects.filter(logistic_no=obj.logistic_no).first()
 
-        return order.send_time
+        return order.logistic_type
 
-    order_send_time.short_description = "发货时间"
+    logistic_type.short_description = "物流公司"
 
     def show_conversation(self, obj):
         # print('orderconversation')
@@ -343,9 +510,9 @@ class LogisticCustomerServiceAdmin(object):
         'batch_deal',
         'batch_delivered', 'batch_wait', 'batch_redeliver', 'batch_redelivering',
         'batch_refused', 'batch_returning', 'batch_returned',
-        "batch_updatelogistic_trail", ]
+       ]
 
-    list_display = ('logistic_no','logistic_start_date','package_status','yallavip_package_status',
+    list_display = ('logistic_no','logistic_type','send_time','logistic_start_date','package_status','yallavip_package_status',
 
                     'logistic_update_date', 'logistic_update_status', 'logistic_update_locate',
 
@@ -355,9 +522,66 @@ class LogisticCustomerServiceAdmin(object):
     list_editable = ['feedback', ]
     search_fields = [ 'logistic_no' ]
     list_filter = ('logistic_start_date','logistic_update_date', 'logistic_update_status', 'deal','package_status','yallavip_package_status',)
-    ordering = ['-logistic_no']
+    ordering = ['-send_time']
 
-    # 交付状态
+    def batch_updatelogistic_trail(self, request, queryset):
+        # 定义actions函数
+        requrl = "http://api.jcex.com/JcexJson/api/notify/sendmsg"
+
+        param_data = dict()
+        param_data["customerid"] = -1
+        # param_data["waybillnumber"] = "989384782"
+        param_data["isdisplaydetail"] = "true"
+
+        # data_body =base64.b64encode(json.dumps(param_data).encode('utf-8'))
+        #  base64.b64encode()
+
+        param = dict()
+        param["service"] = 'track'
+        # param["data_body"] = data_body
+
+        res = requests.post(requrl, params=param)
+
+        for row in queryset:
+
+            param_data["waybillnumber"] = row.logistic_no
+            data_body = base64.b64encode(json.dumps(param_data).encode('utf-8'))
+            param["data_body"] = data_body
+            res = requests.post(requrl, params=param)
+
+            data = json.loads(res.text)
+
+            waybillnumber = data["waybillnumber"]
+            # recipientcountry = data["recipientcountry"]
+
+            statusdetail = data["displaydetail"][0]["statusdetail"]
+            if (len(statusdetail) == 0):
+                continue
+
+            # 最新状态
+            if (len(statusdetail) > 0):
+                status_d = statusdetail[len(statusdetail) - 1]
+                update_date = datetime.strptime(status_d["time"].split(" ")[0], '%Y-%m-%d').date()
+                logistic_start_date = datetime.strptime(statusdetail[0]["time"].split(" ")[0], '%Y-%m-%d').date()
+                # print("logistic_start_date", logistic_start_date)
+
+                Package.objects.filter(logistic_no=waybillnumber).update(
+
+                    logistic_update_status=status_d["status"],
+
+                    logistic_update_date=update_date,
+
+                    logistic_update_locate=status_d["locate"],
+                    logistic_start_date=logistic_start_date,
+                )
+                # else:
+                #   print("order 无可更新")
+
+        return
+
+    batch_updatelogistic_trail.short_description = "更新物流轨迹"
+
+
 
     # 问题件处理
     # 责任
@@ -450,7 +674,7 @@ class LogisticCustomerServiceAdmin(object):
 
     def batch_delivered(self, request, queryset):
         # 定义actions函数
-        return queryset.update(deal="DELIVERED", feedback_time=datetime.now())
+        return queryset.update(deal="DELIVERED", yallavip_package_status="DELIVERED",feedback_time=datetime.now())
 
     batch_delivered.short_description = "已签收"
 
@@ -501,6 +725,76 @@ class LogisticCustomerServiceAdmin(object):
             queryset |= self.model.objects.filter(logistic_no__in=query.split(","))
         return queryset
 
+
+
+class ResellAdmin(object):
+    def order_no(self, obj):
+        orders = Order.objects.filter(logistic_no=obj.logistic_no)
+        order_nos = ''
+        for order in orders:
+            if (order == None):
+                continue
+            order_nos = str(order_nos) + str(order.order_no) + str(',')
+        return order_nos
+
+    order_no.short_description = "订单号"
+
+    actions = ['batch_listing','batch_unlisting','batch_sellout','batch_destroyed','batch_redelivering',
+         ]
+
+    list_display = ('logistic_no',  'refer_no','yallavip_package_status',
+                    'resell_status',
+                    'logistic_update_date', 'logistic_update_status',
+                    'sec_logistic_no',
+                    'order_no',
+
+                    )
+    list_editable = [ 'sec_logistic_no']
+    search_fields = ['logistic_no']
+    list_filter = ( 'yallavip_package_status','resell_status')
+    ordering = ['-logistic_no']
+
+
+    def batch_listing(self, request, queryset):
+        queryset.update(resell_status="LISTING")
+        return
+
+    batch_listing.short_description = "批量上架"
+
+    def batch_unlisting(self, request, queryset):
+        queryset.update(resell_status="UNLISTING")
+        return
+
+    batch_unlisting.short_description = "批量下架"
+
+    def batch_redelivering(self, request, queryset):
+        queryset.update(package_status="REDELIVERING")
+        return
+
+    batch_redelivering.short_description = "批量派送中"
+
+    def batch_sellout(self, request, queryset):
+        queryset.update(resell_status="SELLOUT",yallavip_package_status="SELLOUT")
+        return
+
+    batch_sellout.short_description = "批量售罄"
+
+
+
+    def get_list_queryset(self):
+        """批量查询订单号"""
+        queryset = super().get_list_queryset()
+
+        query = self.request.GET.get(SEARCH_VAR, '')
+
+
+        if (len(query) > 0):
+            queryset |= self.model.objects.filter(logistic_no__in=query.split(","))
+        return queryset
+
+
 xadmin.site.register(Package,PackageAdmin)
 xadmin.site.register(LogisticSupplier,LogisticSupplierAdmin)
+xadmin.site.register(OverseaPackage,OverseaPackageAdmin)
 xadmin.site.register(LogisticCustomerService,LogisticCustomerServiceAdmin)
+xadmin.site.register(Resell,ResellAdmin)
