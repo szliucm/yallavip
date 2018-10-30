@@ -302,7 +302,7 @@ class OverseaPackageAdmin(object):
     )
     list_editable = ['sec_logistic_no']
     search_fields = ['logistic_no']
-    list_filter = ('logistic_update_date', 'logistic_update_status', 'deal', 'package_status',
+    list_filter = ('send_time','logistic_update_date', 'logistic_update_status', 'deal', 'package_status',
                    'yallavip_package_status',)
     ordering = ['-send_time']
 

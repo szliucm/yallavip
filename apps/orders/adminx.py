@@ -380,14 +380,25 @@ class OrderDetailAdmin(object):
 
     show_supply_status.short_description = u"供应状态"
 
+    def order_status(self, obj):
+        return obj.order.order_status
+
+    order_status.short_description = u"订单状态"
+
+    def alternative(self, obj):
+        return Product.objects.get(sku=obj.sku).alternative
+
+    alternative.short_description = u"替代产品"
+
 
     import_export_args = {"import_resource_class": OrderDetailResource, "export_resource_class": OrderDetailResource}
 
-    list_display = ['order', 'sku', 'show_supply_status', 'product_quantity',  'price', ]
+    list_display = ['order', 'sku', 'order_status','show_supply_status','alternative', 'product_quantity',  'price', ]
 
-    search_fields = ["order__order_no", ]
+    search_fields = ["order__order_no",'sku', ]
 
     ordering = ['-order__order_no']
+    list_filter = ("order__order_status", )
 
     actions = []
 

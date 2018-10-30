@@ -23,6 +23,8 @@ from xadmin.filters import manager as filter_manager, FILTER_PREFIX, SEARCH_VAR,
     RelatedFieldSearchFilter
 from django.utils.html import format_html
 
+from orders.models import OrderDetail
+
 
 class ProductResource(resources.ModelResource):
 
@@ -33,6 +35,7 @@ class ProductResource(resources.ModelResource):
     img = fields.Field(attribute='img', column_name='图片URL')
     weight = fields.Field(attribute='weight', column_name='实际重量（g）')
     source_url = fields.Field(attribute='source_url', column_name='来源url（超始值为：http://）')
+    alternative = fields.Field(attribute='alternative', column_name='替代产品')
 
 
     class Meta:
@@ -40,7 +43,7 @@ class ProductResource(resources.ModelResource):
         skip_unchanged = True
         report_skipped = True
         import_id_fields = ('sku',)
-        fields = ('product', 'sku', 'sku_name', 'ref_price', 'img','weight','source_url' )
+        fields = ('product', 'sku', 'sku_name', 'ref_price', 'img','weight','source_url','alternative', )
         # exclude = ()
 
 
@@ -50,19 +53,64 @@ class ProductAdmin(object):
 
     import_export_args = {"import_resource_class": ProductResource, "export_resource_class": ProductResource}
 
-    list_display = [ 'product','sku','supply_status', 'update_time','ref_price', 'weight','source_url']
+    list_display = [ 'product','sku','supply_status','ref_orders', 'alternative','developer','update_time', 'weight','source_url']
      #'sku_name','img',
 
     search_fields = ["sku",'product']
-    list_filter = ['supply_status','update_time' ]
-    #list_editable = ["supply_status"]
+    list_filter = ['supply_status','update_time' ,'developer']
+    list_editable = ["alternative"]
     actions = ['batch_stop','batch_pause','batch_normal',]
+
+    def ref_orders(self, obj):
+
+        query_set = OrderDetail.objects.filter(Q(sku=obj.sku) & Q(order__order_status = "待打单（缺货）"))
+
+        orders = []
+        for row in query_set:
+            order = row.order
+            if order not in orders:
+                orders.append(order)
+        return len(orders)
+
+    ref_orders.short_description = "关联订单"
+
+    def batch_ref_orders(self, request, queryset):
+        # 定义actions函数
+
+
+        for row in queryset:
+            #OrderDetail.objects.filter(Q(sku=row.sku) & Q(row.order__order_status="待打单（缺货）"))
+            order_set = OrderDetail.objects.filter(Q(sku=row.sku) & Q(order__order_status="待打单（缺货）"))
+            orders = []
+            for row in order_set:
+                order = row.order
+                if order not in orders:
+                    orders.append(order)
+            Product.objects.filter(sku=row.sku).update(ref_orders = len(orders))
+
+        return
+
+    batch_ref_orders.short_description = "批量关联订单"
+
+
+    def ref_orders(self, obj):
+
+        query_set = OrderDetail.objects.filter(Q(sku=obj.sku) & Q(order__order_status = "待打单（缺货）"))
+
+        orders = []
+        for row in query_set:
+            order = row.order
+            if order not in orders:
+                orders.append(order)
+
+        return len(orders)
+
+    ref_orders.short_description = "关联订单"
+
 
     def batch_stop(self, request, queryset):
         # 定义actions函数
         rows_updated = queryset.update(supply_status='STOP',update_time=datetime.now() )
-
-
 
         if rows_updated == 1:
             message_bit = '1 story was'

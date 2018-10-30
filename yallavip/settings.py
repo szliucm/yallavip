@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     #'goods',
     #'trade',
     #'user_operation',
-
+    'fb',
     'conversations',
     'orders',
     'logistic',
@@ -109,7 +109,7 @@ DATABASES = {
         'USER': 'niger',
         'PASSWORD': 'Niger@2018',
 	'HOST':'localhost',
-
+    'OPTIONS': {'charset':'utf8mb4'},
     }
 }
 
