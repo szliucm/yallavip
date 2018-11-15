@@ -5,8 +5,9 @@ from django.db import models
 class Product(models.Model):
     SUPPLY_STATUS = (
         ("NORMAL", "正常"),
+        ("DELAY", "供货延迟"),
         ("STOP", "断货"),
-        ("PAUSE", "缺货"),
+        #("PAUSE", "缺货"),
     )
     product = models.CharField(u'商品',default='',  max_length=50,  blank=True)
     sku = models.CharField(u'SKU',default='',  max_length=50,  blank=True)
@@ -16,6 +17,7 @@ class Product(models.Model):
     weight = models.CharField(u'实际重量', default='', max_length=200, blank=True)
     source_url = models.CharField(u'来源url', default='', max_length=500, blank=True)
     supply_status = models.CharField(u'供应状态',choices= SUPPLY_STATUS,max_length=50, default='NORMAL', blank=True)
+    supply_comments = models.CharField(u'供应备注', max_length=500, default='', blank=True)
     update_time = models.DateTimeField(u'更新时间', auto_now=False, null=True, blank=True)
 
     alternative = models.CharField(u'替代产品',max_length=50, default='', blank=True)

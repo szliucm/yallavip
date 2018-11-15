@@ -53,25 +53,26 @@ class ProductAdmin(object):
 
     import_export_args = {"import_resource_class": ProductResource, "export_resource_class": ProductResource}
 
-    list_display = [ 'product','sku','supply_status','ref_orders', 'alternative','developer','update_time', 'weight','source_url']
+    list_display = [ 'product','sku','supply_status','supply_comments','ref_orders', 'alternative','developer','update_time', 'weight','source_url']
      #'sku_name','img',
 
     search_fields = ["sku",'product']
     list_filter = ['supply_status','update_time' ,'developer']
-    list_editable = ["alternative"]
-    actions = ['batch_stop','batch_pause','batch_normal',]
+    list_editable = ["alternative","supply_comments",]
+    actions = ['batch_delay','batch_stop','batch_normal',]
 
     def ref_orders(self, obj):
 
         query_set = OrderDetail.objects.filter(Q(sku=obj.sku) & Q(order__order_status = "待打单（缺货）"))
-
+        return  query_set.distinct("order").count()
+        '''
         orders = []
         for row in query_set:
             order = row.order
             if order not in orders:
                 orders.append(order)
         return len(orders)
-
+        '''
     ref_orders.short_description = "关联订单"
 
     def batch_ref_orders(self, request, queryset):
@@ -120,6 +121,19 @@ class ProductAdmin(object):
 
     batch_stop.short_description = "批量断货"
 
+    def batch_delay(self, request, queryset):
+        # 定义actions函数
+        rows_updated = queryset.update(supply_status='DELAY',update_time=datetime.now() )
+
+        if rows_updated == 1:
+            message_bit = '1 story was'
+        else:
+            message_bit = "%s stories were" % rows_updated
+        self.message_user(request, "%s successfully marked as error." % message_bit)
+
+    batch_delay.short_description = "批量延迟"
+
+    '''
     def batch_pause(self, request, queryset):
         # 定义actions函数
         rows_updated = queryset.update(supply_status='PAUSE',update_time=datetime.now() )
@@ -132,6 +146,7 @@ class ProductAdmin(object):
         self.message_user(request, "%s successfully marked as error." % message_bit)
 
     batch_pause.short_description = "批量缺货"
+    '''
 
     def batch_normal(self, request, queryset):
         # 定义actions函数

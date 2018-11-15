@@ -14,18 +14,6 @@
           </excludedPaths>
         </serverdata>
       </paths>
-      <paths name="生产环境">
-        <serverdata>
-          <mappings>
-            <mapping deploy="/data/wwwroot/yallavip" local="$PROJECT_DIR$" web="/" />
-          </mappings>
-          <excludedPaths>
-            <excludedPath path="/data/wwwroot/yallavip/collectedstatic" />
-            <excludedPath path="/data/wwwroot/yallavip/static" />
-            <excludedPath path="/data/wwwroot/yallavip/extra_apps" />
-          </excludedPaths>
-        </serverdata>
-      </paths>
     </serverData>
     <option name="myAutoUpload" value="ALWAYS" />
   </component>

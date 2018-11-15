@@ -9,7 +9,7 @@ from xadmin.layout import Main, Side, Fieldset, Row, AppendedText
 from django.shortcuts import get_object_or_404, get_list_or_404, render
 from import_export import resources, fields
 from import_export.widgets import ForeignKeyWidget
-from .models import Shop,ShopifyProduct,ShopifyVariant,ShopifyImage, ShopifyCustomer,ShopifyAddress
+from .models import Shop,ShopifyProduct,ShopifyVariant,ShopifyImage,ShopifyOptions, ShopifyCustomer,ShopifyAddress
 import  shopify
 import requests
 import json
@@ -29,8 +29,8 @@ from django.template import RequestContext
 from xadmin.filters import manager as filter_manager, FILTER_PREFIX, SEARCH_VAR, DateFieldListFilter, \
     RelatedFieldSearchFilter
 from django.utils.html import format_html
-
-
+import random
+DEBUG = True
 
 @xadmin.sites.register(Shop)
 class ShopAdmin(object):
@@ -41,85 +41,40 @@ class ShopAdmin(object):
     search_fields = ["shop_name",]
     #list_filter = ['supply_status','update_time' ]
     #list_editable = ["supply_status"]
-    actions = ['download_product','download_customer','create_product',]
-
-    def create_product(self, request, queryset):
-        for shop in queryset:
-            shop_obj = Shop.objects.get(shop_name=shop.shop_name)
-            shop_url = "https://%s:%s@%s.myshopify.com" % (shop_obj.apikey, shop_obj.password, shop_obj.shop_name)
-
-            shopify.ShopifyResource.set_site(shop_url)
-
-            # Get the current shop
-            shop = shopify.Shop.current()
-
-            print("shop is ", shop)
-
-            # Get a specific product
-            # product = shopify.Product.find(179761209)
-
-            # Create a new product
-
-            url = shop_url + "/admin/products.json"
-            params = {
-                "product": {
-                    "title": "Burton Custom Freestyle 151",
-                    "body_html": "<strong>Good snowboard!</strong>",
-                    "vendor": "Burton",
-                    "product_type": "Snowboard",
-                    "images": [
-                        {
-                            "src": "https://nodei.co/npm/shopify-node-api.png?downloads=true&downloadRank=true&stars=true"
-                        }
-                    ]
-                  }
-            }
-            headers = {
-                "Content-Type": "application/json",
-                "charset": "utf-8",
-
-            }
-            r = requests.post(url, headers=headers, data = json.dumps(params))
-            data = json.loads(r.text)
-
-            print("product  is ", data["product"]["id"])
-
-            '''
-            new_product = shopify.Product()
-            new_product.title = "Burton Custom Freestyle 151"
-            new_product.id
-            success = new_product.save()  # returns false if the record is invalid
-            # or
-            if new_product.errors:
-                # something went wrong, see new_product.errors.full_messages() for example
-                print(new_product.errors.full_messages())
-            '''
-            shopify.ShopifyResource.clear_session()
+    actions = ['download_product','download_customer',]
 
 
-    create_product.short_description = "发布产品"
 
     def download_product(self, request, queryset):
         # 定义actions函数
         for shop in queryset:
 
             shop_obj = Shop.objects.get(shop_name=shop.shop_name)
-            now = datetime.datetime.now()+datetime.timedelta(hours=-4)
+            if DEBUG:
+                max_product_no = "1683976454210"
+            else:
+               max_product_no = shop_obj.objects.order_by('product_no').last()
+
+            if max_product_no is None:
+                max_product_no = "0"
+
 
             shop_url = "https://%s:%s@%s.myshopify.com" % (shop_obj.apikey, shop_obj.password,shop_obj.shop_name)
             #shop_url = "https://12222a833afcad263c5cc593eca7af10:47aea3fe8f4b9430b1bac56c886c9bae@yallasale-com.myshopify.com/admin"
             #shopify.ShopifyResource.set_site(shop_url)
 
 
+
             url = shop_url + "/admin/products/count.json"
             params = {
-                #"updated_at_min": shop.product_updated_time
+                "since_id":  max_product_no
             }
 
             r = requests.get(url, params)
             data = json.loads(r.text)
 
-            print("product count is ",data["count"])
+            if DEBUG:
+                print("product count is ",data["count"])
 
             total_count = data["count"]
 
@@ -128,6 +83,7 @@ class ShopAdmin(object):
             product_list = []
             variant_list = []
             image_list = []
+            option_list = []
             while True:
                 try:
 
@@ -135,16 +91,28 @@ class ShopAdmin(object):
                         break
 
                     i = i + 1
-                    print("page is ", i)
+                    if DEBUG:
+                        print("page is ", i)
+                    '''
+                    if DEBUG and i == 1 :
+                        print("max_product_no", max_product_no)
+                        if DEBUG and max_product_no == "1686641672258":
+                            print("We are here to win"  )
+
+                        break
+                    '''
+
                     #products = shopify.Product.find(page=i,limit=limit,updated_at_min=shop.updated_time)
                     url = shop_url + "/admin/products.json"
                     params = {
                         "page":i,
                         "limit":limit,
-                        #"updated_at_min": shop.product_updated_time,
-                        "field" : "product_id,handle,created_at,published_at,updated_attags,vendor",
+                        "since_id":  max_product_no,
+                        "fields" : "id,handle,body_html,title,product_type,created_at,published_at,"
+                                   "updated_at,tags,vendor,variants,images,options",
+                        #"fields": "product_id",
                     }
-
+                    print(("params is ", params))
 
                     r = requests.get(url, params)
                     products = json.loads(r.text)["products"]
@@ -152,17 +120,23 @@ class ShopAdmin(object):
 
                     for j in range(len(products)):
                         row =  products[j]
-                        print("row is ",row)
+
+                        if j==1:
+                            print("row is ",row)
+
 
                         product = ShopifyProduct(
                             shop_name = shop.shop_name,
                             product_no=row["id"],
                             handle=row["handle"],
+                            body_html=row["body_html"],
+                            title=row["title"],
                             created_at=row["created_at"].split('+')[0],
-                            #published_at=row["published_at"].split('+')[0],
+
                             updated_at=row["updated_at"].split('+')[0],
                             tags=row["tags"],
                             vendor=row["vendor"],
+                            product_type=row["product_type"],
 
 
                         )
@@ -171,8 +145,8 @@ class ShopAdmin(object):
 
                         try:
 
-                            for j in range(len(row["variants"])):
-                                variant_row = row["variants"][j]
+                            for k in range(len(row["variants"])):
+                                variant_row = row["variants"][k]
 
                                 variant = ShopifyVariant(
                                     variant_no=variant_row["id"],
@@ -189,15 +163,15 @@ class ShopAdmin(object):
 
                                 )
                                 variant_list.append(variant)
-                                #print(" variant_list  is ", variant_list)
+
                         except KeyError:
                             print("no variant ".format(row.shop_name))
                             break
 
                         try:
 
-                            for k in range(len(row["images"])):
-                                image_row = row["images"][k]
+                            for m in range(len(row["images"])):
+                                image_row = row["images"][m]
 
                                 image = ShopifyImage(
                                     image_no=image_row["id"],
@@ -208,13 +182,34 @@ class ShopAdmin(object):
                                     width=image_row["width"],
                                     height=image_row["height"],
                                     src=image_row["src"],
-
+                                    #variant_ids
 
                                 )
                                 image_list.append(image)
                                 #print(" variant_list  is ", variant_list)
                         except KeyError:
                             print("no image ".format(row.shop_name))
+                            break
+
+                        try:
+
+                            for n in range(len(row["options"])):
+                                option_row = row["options"][n]
+                                values = ','.join(option_row["values"])
+
+                                print(" %s length of values %s "%(option_row["product_id"], len(values)))
+
+                                option = ShopifyOptions(
+                                    product_no = option_row["product_id"],
+                                    name=option_row["name"],
+
+                                    values = values
+                                )
+
+                                option_list.append(option)
+                                #print(" variant_list  is ", variant_list)
+                        except KeyError:
+                            print("no option ".format(row.shop_name))
                             break
 
 
@@ -225,11 +220,14 @@ class ShopAdmin(object):
             ShopifyProduct.objects.bulk_create(product_list)
             ShopifyVariant.objects.bulk_create(variant_list)
             ShopifyImage.objects.bulk_create(image_list)
-            Shop.objects.filter(shop_name=shop.shop_name).update(product_updated_time=now)
+            ShopifyOptions.objects.bulk_create(option_list)
+            #Shop.objects.filter(shop_name=shop.shop_name).update(product_updated_time=now)
 
         #shopify.ShopifyResource.clear_session()
 
     download_product.short_description = "下载产品"
+
+
 
     def download_customer(self, request, queryset):
         # 定义actions函数
@@ -402,13 +400,248 @@ class ShopifyProductAdmin(object):
     list_display = ['shop_name',  'product_no','handle','created_at', "updated_at"]
      #'sku_name','img',
 
-    search_fields = ["handle",]
-    #list_filter = ['supply_status','update_time' ]
+    search_fields = ["handle","product_no"]
+    list_filter = ['listed',"created_at", ]
     #list_editable = ["supply_status"]
     actions = ["create_product",]
     #inlines = [VariantInline, ]
     ordering = ['-created_at']
 
+
+    def create_product(self, request, queryset):
+        handle_init = 9000
+        handle_i = 0
+
+        print("now let's start create_product")
+
+        for product in queryset:
+            handle_i = handle_i+1
+
+            shop_obj = Shop.objects.get(shop_name=product.shop_name)
+            #初始化SDK
+            shop_url = "https://%s:%s@%s.myshopify.com" % (shop_obj.apikey, shop_obj.password, shop_obj.shop_name)
+            #shopify.ShopifyResource.set_site(shop_url)
+
+            # Get the current shop
+            #shop = shopify.Shop.current()
+            # Get a specific product
+            # product = shopify.Product.find(179761209)
+
+            # Create a new product
+
+            url = shop_url + "/admin/products.json"
+
+            imgs_list = []
+
+            imgs = ShopifyImage.objects.filter(product_no=product.product_no).values('image_no','src').order_by('position')
+
+
+            for img in imgs:
+
+                image = {
+                    "src": img["src"],
+                    "image_no": img["image_no"]
+                         }
+                imgs_list.append(image)
+            '''
+            option_list = []
+
+            options = ShopifyOptions.objects.filter(product_no=product.product_no).values('name', 'values')
+            for row in options:
+                option = {
+                    "name": row["name"],
+                    "values": re.split('[.]', row["values"])
+                }
+                option_list.append(option)
+
+            #变体
+            variants_list = []
+
+            variants = ShopifyVariant.objects.filter(product_no=product.product_no).values()
+
+            for variant in variants:
+                #old_image_no = variant.get("image_no")
+                #new_image_no = image_dict[old_image_no]
+                #print("image dict  %s %s " % (old_image_no, new_image_no))
+
+                sku = "A" + str(handle_i)
+                option1 = variant.get("option1")
+                option2 = variant.get("option2")
+                option3 = variant.get("option3")
+
+                if option1:
+                    sku = sku + "-" + option1.replace("&", '').replace('-', '').replace('.', '').replace(' ', '')
+                    if option2:
+                        sku = sku + "_" + option2.replace("&", '').replace('-', '').replace('.', '').replace(' ', '')
+                        if option3:
+                            sku = sku + "_" + option3.replace("&", '').replace('-', '').replace('.', '').replace(' ',
+                                                                                                                 '')
+
+                variant_item = {
+                    "option1": option1,
+                    "option2": option2,
+                    "option3": option3,
+                    "price": int(float(variant.get("price")) * 3),
+                    "compare_at_price": int(float(variant.get("price")) * 3 * random.uniform(2, 3)),
+                    "sku": sku,
+                    "position": variant.get("position"),
+                    #"image_id": new_image_no,
+                    "grams": variant.get("grams"),
+                    "title": variant.get("title"),
+                    "taxable": "true",
+                    "inventory_management": "shopify",
+                    "fulfillment_service": "manual",
+                    "inventory_policy": "continue",
+
+                    "inventory_quantity": 10000,
+                    "requires_shipping": "true",
+                    "weight": 0.5,
+                    "weight_unit": "kg",
+
+                }
+                # print("variant_item", variant_item)
+                variants_list.append(variant_item)
+
+            print("variants_list is ", len(variants_list))
+            '''
+            params = {
+                "product": {
+                    "handle":"T"+str(handle_init + handle_i),
+                    "title": product.title,
+                    "body_html": product.body_html,
+                    "vendor": product.vendor,
+                    "product_type":product.product_type,
+                    "tags": product.tags,
+                    "images": imgs_list,
+                    #"variants": variants_list,
+                    #"options": option_list
+                  }
+            }
+            headers = {
+                "Content-Type": "application/json",
+                "charset": "utf-8",
+
+            }
+
+            r = requests.post(url, headers=headers, data = json.dumps(params))
+            data = json.loads(r.text)
+            new_product = data.get("product")
+            if new_product is None:
+                print("data is ", data)
+                continue
+
+            new_product_no = new_product.get("id")
+
+
+
+            #增加变体
+
+            #image
+            image_dict = {}
+            for k_img in range(len(new_product["images"])):
+                image_row = new_product["images"][k_img]
+                new_image_no = image_row["id"]
+                #new_image_list.append(image_no)
+                old_image_no = imgs_list[k_img]["image_no"]
+
+                image_dict[old_image_no] = new_image_no
+                #print("old image %s new image %s"%(old_image_no, new_image_no ))
+
+            #option
+            option_list = []
+
+            options = ShopifyOptions.objects.filter(product_no=product.product_no).values('name', 'values')
+            for row in options:
+                option = {
+                    "name": row["name"],
+                    "values": re.split('[.]', row["values"])
+                }
+                option_list.append(option)
+
+            #variant
+            variants_list = []
+
+            variants = ShopifyVariant.objects.filter(product_no=product.product_no).values()
+
+            for variant in variants:
+                old_image_no = variant.get("image_no")
+                new_image_no = image_dict.get(old_image_no)
+                print("image dict  %s %s "%(old_image_no, new_image_no)  )
+
+
+
+                sku = "A" + str(handle_i)
+                option1 = variant.get("option1")
+                option2 = variant.get("option2")
+                option3 = variant.get("option3")
+
+                if option1 :
+                    sku = sku + "-" + option1.replace("&",'').replace('-','').replace('.','').replace(' ','')
+                    if option2:
+                        sku = sku + "_" + option2.replace("&",'').replace('-','').replace('.','').replace(' ','')
+                        if option3:
+                            sku = sku + "_" + option3.replace("&",'').replace('-','').replace('.','').replace(' ','')
+
+
+
+                variant_item = {
+                    "option1": option1,
+                    "option2": option2,
+                    "option3": option3,
+                    "price": int (float(variant.get("price"))*3),
+                    "compare_at_price": int (float(variant.get("price"))*3 *random.uniform(2,3)),
+                    "sku": sku,
+                    "position": variant.get("position"),
+                    "image_id": new_image_no,
+                    "grams": variant.get("grams"),
+                    "title": variant.get("title"),
+                    "taxable": "true",
+                    "inventory_management": "shopify",
+                    "fulfillment_service": "manual",
+                    "inventory_policy": "continue",
+
+                    "inventory_quantity": 10000,
+                    "requires_shipping": "true",
+                    "weight": 0.5,
+                    "weight_unit": "kg",
+
+                }
+                #print("variant_item", variant_item)
+                variants_list.append(variant_item)
+
+            params = {
+                "product": {
+                    "variants": variants_list,
+                    "options": option_list,
+
+                }
+            }
+            headers = {
+                "Content-Type": "application/json",
+                "charset": "utf-8",
+
+            }
+
+            #print("upload data is ",json.dumps(params))
+
+            url = shop_url + "/admin/products/%s.json"%(new_product_no)
+            r = requests.put(url, headers=headers, data=json.dumps(params))
+            data = json.loads(r.text)
+            
+            new_product = data.get("product")
+            if new_product is None:
+                print("data is ", data)
+                continue
+
+            print("new_product_no is", new_product.get("id"))
+
+
+
+            #shopify.ShopifyResource.clear_session()
+
+        queryset.update(listed=True, )
+
+    create_product.short_description = "发布产品"
 
 class AddressInline(object):
     model = ShopifyAddress

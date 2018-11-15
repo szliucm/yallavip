@@ -12,7 +12,7 @@ import xadmin
 from django.shortcuts import get_object_or_404,get_list_or_404,render
 from import_export import resources,fields
 from import_export.widgets import ForeignKeyWidget
-from .models import Message, Conversation,PageUpdate
+from .models import Message, Conversation  ,PageUpdate
 
 class ConversationResource(resources.ModelResource):
 

@@ -198,7 +198,7 @@ class Order(models.Model):
 
 
 class OrderDetail(models.Model):
-    order = models.ForeignKey(Order, related_name='orderdetail', null=False, on_delete=models.CASCADE,
+    order = models.ForeignKey(Order, related_name='order_orderdetail', null=False, on_delete=models.CASCADE,
                               verbose_name="订单")
 
 
@@ -218,7 +218,7 @@ class OrderDetail(models.Model):
 
 
     def __str__(self):
-        return self.order.order_no
+        return self.sku
 
 
 class OrderConversation(models.Model):
@@ -297,7 +297,7 @@ class Verify(models.Model):
     SUPPLY_STATUS = (
         ("NORMAL", "正常"),
         ("STOP", "断货"),
-        ("PAUSE", "缺货"),
+        ("DELAY", "缺货"),
     )
 
 

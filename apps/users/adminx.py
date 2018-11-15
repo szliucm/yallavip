@@ -12,9 +12,9 @@ class BaseSetting(object):
 
 
 class GlobalSettings(object):
-    site_title = "后台管理"      #设置头标题
-    site_footer = "shopping center"      #设置脚标题
-    # menu_style = "accordion"
+    site_title = "YallaVip后台管理"      #设置头标题
+    site_footer = "创造奇迹"      #设置脚标题
+    menu_style = "accordion"
 
 
 class VerifyCodeAdmin(object):

@@ -5,6 +5,19 @@ import requests
 import json
 import time
 import base64
+import operator
+
+from io import BytesIO
+
+# 图片的基本参数获取
+try:
+    from PIL import Image, ImageDraw, ImageFont, ImageEnhance
+    import csv
+    import math
+except ImportError:
+    import Image, ImageDraw, ImageFont, ImageEnhance
+
+from . import watermark
 
 import numpy as np, re
 import xadmin
@@ -12,7 +25,8 @@ from django.shortcuts import get_object_or_404, get_list_or_404, render
 from import_export import resources, fields
 from import_export.widgets import ForeignKeyWidget
 from .models import Package, LogisticSupplier,LogisticCustomerService,OverseaPackage,Resell
-from orders.models import Order,OrderConversation
+from orders.models import Order,OrderConversation,OrderDetail
+from product.models import Product
 from django.db import models
 
 from datetime import datetime
@@ -28,10 +42,163 @@ from xadmin.filters import manager as filter_manager, FILTER_PREFIX, SEARCH_VAR,
     RelatedFieldSearchFilter
 from django.utils.html import format_html
 
+# 裁剪压缩图片
+def clipResizeImg_new(im, dst_w, dst_h, qua=95):
+    '''''
+        先按照一个比例对图片剪裁，然后在压缩到指定尺寸
+        一个图片 16:5 ，压缩为 2:1 并且宽为200，就要先把图片裁剪成 10:5,然后在等比压缩
+    '''
+    ori_w, ori_h = im.size
+
+    dst_scale = float(dst_w) / dst_h  # 目标高宽比
+    ori_scale = float(ori_w) / ori_h  # 原高宽比
+
+    if ori_scale <= dst_scale:
+        # 过高
+        width = ori_w
+        height = int(width / dst_scale)
+
+        x = 0
+        y = (ori_h - height) / 2
+
+    else:
+        # 过宽
+        height = ori_h
+        width = int(height * dst_scale)
+
+        x = (ori_w - width) / 2
+        y = 0
+
+        # 裁剪
+    box = (x, y, width + x, height + y)
+    # 这里的参数可以这么认为：从某图的(x,y)坐标开始截，截到(width+x,height+y)坐标
+    # 所包围的图像，crop方法与php中的imagecopy方法大为不一样
+    newIm = im.crop(box)
+    im = None
+
+    # 压缩
+    ratio = float(dst_w) / width
+    newWidth = int(width * ratio)
+    newHeight = int(height * ratio)
+    #newIm.resize((newWidth, newHeight), Image.ANTIALIAS).save("test6.jpg", "JPEG", quality=95)
+    return newIm.resize((newWidth, newHeight), Image.ANTIALIAS)
+
+    print
+    "old size  %s  %s" % (ori_w, ori_h)
+    print
+    "new size %s %s" % (newWidth, newHeight)
+    print
+    u"剪裁后等比压缩完成"
+
+
+def batch_updatelogistic_trail(self, request, queryset):
+    # 定义actions函数
+    requrl = "http://api.jcex.com/JcexJson/api/notify/sendmsg"
+    '''
+    #登录
+    param_login = dict()
+    param_login["service"] = 'login'
+
+    param_login_data = dict()
+    param_login_data["username"] = "2b6365bbe56bac825491703334bf71fe"
+    param_login_data["password"] = "db713ce28c137b3b29af05f8d678d742db713ce28c137b3b29af05f8d678d742"
+
+
+    login_data_body = base64.b64encode(json.dumps(param_login_data).encode('utf-8'))
+    param_login["data_body"] = login_data_body
+    res_login = requests.post(requrl, params=param_login)
+
+    data_login = json.loads(res_login.text)
+    print("url", requrl)
+    print("param befor b64encode for login", json.dumps(param_login_data).encode('utf-8'))
+    print("param for login", param_login)
+    print("data_login",data_login)
+    '''
+
+    # 货物跟踪信息
+    param = dict()
+    param["service"] = 'track'
+
+    param_data = dict()
+    param_data["customerid"] = -1
+    param_data["isdisplaydetail"] = "true"
+
+    # data_body =base64.b64encode(json.dumps(param_data).encode('utf-8'))
+    #  base64.b64encode()
+
+    # 转单号查询
+    param_2 = dict()
+    param_2["service"] = 'turns'
+
+    param_data_2 = dict()
+    param_data_2["customerid"] = -1
+
+    print("I'm here")
+
+    for row in queryset:
+
+        param_data["waybillnumber"] = row.logistic_no
+        data_body = base64.b64encode(json.dumps(param_data).encode('utf-8'))
+        param["data_body"] = data_body
+
+        print("start fetch logistic info ", param)
+        res = requests.post(requrl, params=param)
+
+        data = json.loads(res.text)
+
+        print("data is ", data)
+
+        waybillnumber = data["waybillnumber"]
+        # recipientcountry = data["recipientcountry"]
+
+        statusdetail = data["displaydetail"][0]["statusdetail"]
+        if (len(statusdetail) == 0):
+            continue
+
+        # 最新状态
+        if (len(statusdetail) > 0):
+            status_d = statusdetail[len(statusdetail) - 1]
+            update_date = datetime.strptime(status_d["time"].split(" ")[0], '%Y-%m-%d').date()
+            logistic_start_date = datetime.strptime(statusdetail[0]["time"].split(" ")[0], '%Y-%m-%d').date()
+            Package.objects.filter(logistic_no=waybillnumber).update(
+
+                logistic_update_status=status_d["status"],
+
+                logistic_update_date=update_date,
+
+                logistic_update_locate=status_d["locate"],
+                logistic_start_date=logistic_start_date,
+            )
+        '''
+        #获取转单号
+        if(row.tracking_no is None):
+
+            param_data_2["waybillnumber"] = row.logistic_no
+            data_body_2 = base64.b64encode(json.dumps(param_data).encode('utf-8'))
+
+            print(json.dumps(param_data).encode('utf-8'))
+            param_2["data_body"] = data_body_2
+            res = requests.post(requrl, params=param_2)
+
+            data_2 = json.loads(res.text)
+            print("data_2 is ", data_2)
+
+            #tracking_no = data_2["transfernumber"]
+            #Package.objects.filter(logistic_no=waybillnumber).update(
+             #   tracking_no=tracking_no,
+
+            #)
+        '''
+    return
+
+
+batch_updatelogistic_trail.short_description = "更新物流轨迹"
+
 
 class PackageResource(resources.ModelResource):
     logistic_no = fields.Field(attribute='logistic_no', column_name='单号')
     refer_no = fields.Field(attribute='refer_no', column_name='参考号')
+    tracking_no = fields.Field(attribute='tracking_no', column_name='转单号')
     logistic_update_status = fields.Field(attribute='logistic_update_status', column_name='订单状态1')
     logistic_update_date = fields.Field(attribute='logistic_update_date', column_name='更新时间')
     problem_type = fields.Field(attribute='problem_type', column_name='异常说明')
@@ -45,7 +212,7 @@ class PackageResource(resources.ModelResource):
         skip_unchanged = True
         report_skipped = True
         import_id_fields = ('logistic_no',)
-        fields = ('logistic_no', 'refer_no','logistic_update_status','logistic_update_date','problem_type',
+        fields = ('logistic_no', 'refer_no','tracking_no','logistic_update_status','logistic_update_date','problem_type',
                   'package_status',)
 
 
@@ -70,7 +237,7 @@ class PackageAdmin(object):
 
     list_display = ( 'logistic_no','package_status','yallavip_package_status',
                     'logistic_update_date', 'logistic_update_status', 'logistic_update_locate',
-                    'problem_type')
+                    'problem_type','tracking_no')
     list_editable = [ ]
     search_fields = ['logistic_no', ]
     list_filter = ("package_status","logistic_update_status",)
@@ -152,6 +319,7 @@ class PackageAdmin(object):
 
 class LogisticSupplierResource(resources.ModelResource):
     logistic_no = fields.Field(attribute='logistic_no', column_name='单号')
+    tracking_no = fields.Field(attribute='tracking_no', column_name='转单号')
     logistic_update_status = fields.Field(attribute='logistic_update_status', column_name='订单状态')
     logistic_update_date = fields.Field(attribute='logistic_update_date', column_name='更新时间')
     problem_type = fields.Field(attribute='problem_type', column_name='异常说明')
@@ -166,7 +334,7 @@ class LogisticSupplierResource(resources.ModelResource):
         skip_unchanged = True
         report_skipped = True
         import_id_fields = ('logistic_no',)
-        fields = ('logistic_no', 'logistic_update_status','logistic_update_date','problem_type',
+        fields = ('logistic_no', 'tracking_no','logistic_update_status','logistic_update_date','problem_type',
                   'charge_weight','package_status',)
 
 
@@ -191,7 +359,7 @@ class LogisticSupplierAdmin(object):
     weight.short_description = "称重重量"
 
 
-    list_display = ( 'logistic_no','send_time','logistic_start_date','weight','charge_weight','package_status','yallavip_package_status',
+    list_display = ( 'logistic_no','tracking_no','send_time','logistic_start_date','weight','charge_weight','package_status','yallavip_package_status',
                     'logistic_update_date', 'logistic_update_status', 'logistic_update_locate',
                     'problem_type')
     list_editable = [ ]
@@ -358,30 +526,68 @@ class OverseaPackageAdmin(object):
         # 定义actions函数
         requrl = "http://api.jcex.com/JcexJson/api/notify/sendmsg"
 
+        '''
+        #登录
+        param_login = dict()
+        param_login["service"] = 'login'
+
+        param_login_data = dict()
+        param_login_data["username"] = "SZFY6214"
+        param_login_data["password"] = "3c917d0c-6290-11e8-a277-6c92bf623ff2"
+
+
+        login_data_body = base64.b64encode(json.dumps(param_login_data).encode('utf-8'))
+        param_login["data_body"] = login_data_body
+        res_login = requests.post(requrl, params=param_login)
+
+        data_login = json.loads(res_login.text)
+        print("url", requrl)
+        print("param befor b64encode for login", json.dumps(param_login_data).encode('utf-8'))
+        print("param for login", param_login)
+        print("data_login",data_login)
+        '''
+
+        #货物跟踪信息
+        param = dict()
+        param["service"] = 'track'
+
         param_data = dict()
-        param_data["customerid"] = -1
-        # param_data["waybillnumber"] = "989384782"
+        param_data["customerid"] = "3c917d0c-6290-11e8-a277-6c92bf623ff2"
         param_data["isdisplaydetail"] = "true"
 
         # data_body =base64.b64encode(json.dumps(param_data).encode('utf-8'))
         #  base64.b64encode()
 
-        param = dict()
-        param["service"] = 'track'
-        # param["data_body"] = data_body
 
-        res = requests.post(requrl, params=param)
+        #转单号查询
+        param_2 = dict()
+        param_2["service"] = 'turns'
+
+        param_data_2 = dict()
+        param_data_2["customerid"] = "3c917d0c-6290-11e8-a277-6c92bf623ff2"
+
+
 
         for row in queryset:
 
             param_data["waybillnumber"] = row.logistic_no
             data_body = base64.b64encode(json.dumps(param_data).encode('utf-8'))
             param["data_body"] = data_body
+
+            print("start update track requrl is %s param is %s "%(requrl,param))
+
             res = requests.post(requrl, params=param)
 
-            data = json.loads(res.text)
+            print("response is ", res)
 
-            waybillnumber = data["waybillnumber"]
+            data = json.loads(res.text)
+            print("data",data)
+
+            waybillnumber = data.get('waybillnumber','none')
+
+            if(waybillnumber == 'none'):
+                continue
+
             # recipientcountry = data["recipientcountry"]
 
             statusdetail = data["displaydetail"][0]["statusdetail"]
@@ -393,8 +599,6 @@ class OverseaPackageAdmin(object):
                 status_d = statusdetail[len(statusdetail) - 1]
                 update_date = datetime.strptime(status_d["time"].split(" ")[0], '%Y-%m-%d').date()
                 logistic_start_date = datetime.strptime(statusdetail[0]["time"].split(" ")[0], '%Y-%m-%d').date()
-                # print("logistic_start_date", logistic_start_date)
-
                 Package.objects.filter(logistic_no=waybillnumber).update(
 
                     logistic_update_status=status_d["status"],
@@ -404,8 +608,25 @@ class OverseaPackageAdmin(object):
                     logistic_update_locate=status_d["locate"],
                     logistic_start_date=logistic_start_date,
                 )
-                # else:
-                #   print("order 无可更新")
+
+            #获取转单号
+            if(row.tracking_no is None):
+
+                param_data_2["waybillnumber"] = row.logistic_no
+                data_body_2 = base64.b64encode(json.dumps(param_data).encode('utf-8'))
+
+                print(json.dumps(param_data).encode('utf-8'))
+                param_2["data_body"] = data_body_2
+                res = requests.post(requrl, params=param_2)
+
+                data_2 = json.loads(res.text)
+                print("data_2 is ", data_2)
+
+                #tracking_no = data_2["transfernumber"]
+                #Package.objects.filter(logistic_no=waybillnumber).update(
+                 #   tracking_no=tracking_no,
+
+                #)
 
         return
 
@@ -501,6 +722,7 @@ class LogisticCustomerServiceAdmin(object):
     show_conversation.short_description = "会话"
 
     actions = [
+        'batch_updatelogistic_trail',
         'batch_response',
         'batch_deliver_response', 'batch_customer_response', 'batch_yallavip_response',
 
@@ -512,14 +734,14 @@ class LogisticCustomerServiceAdmin(object):
         'batch_refused', 'batch_returning', 'batch_returned',
        ]
 
-    list_display = ('logistic_no','logistic_type','send_time','logistic_start_date','package_status','yallavip_package_status',
+    list_display = ('logistic_no','tracking_no','logistic_type','send_time','logistic_start_date','package_status','yallavip_package_status',
 
                     'logistic_update_date', 'logistic_update_status', 'logistic_update_locate',
 
                     'problem_type', 'response', 'feedback', 'deal', 'feedback_time',
                      'order_no','order_comment', 'receiver_phone',
                     'show_conversation')
-    list_editable = ['feedback', ]
+    list_editable = ['feedback', 'deal', ]
     search_fields = [ 'logistic_no' ]
     list_filter = ('logistic_start_date','logistic_update_date', 'logistic_update_status', 'deal','package_status','yallavip_package_status',)
     ordering = ['-send_time']
@@ -739,7 +961,8 @@ class ResellAdmin(object):
 
     order_no.short_description = "订单号"
 
-    actions = ['batch_listing','batch_unlisting','batch_sellout','batch_destroyed','batch_redelivering',
+    actions = ['batch_listing','batch_unlisting','batch_sellout','batch_destroyed',
+               'batch_redelivering','batch_sellout',
          ]
 
     list_display = ('logistic_no',  'refer_no','yallavip_package_status',
@@ -754,8 +977,64 @@ class ResellAdmin(object):
     list_filter = ( 'yallavip_package_status','resell_status')
     ordering = ['-logistic_no']
 
+    def puzzle_skus(self, skus):
+        try:
+            img_src = "https://cdn.shopify.com/s/files/1/2729/0740/product/8738586671_437606724_415.jpg?v=1539846787"
+            response = requests.get(img_src)
+            print(response)
+            im = Image.open(BytesIO(response.content))
+            print("im")
+
+
+
+        except:
+            return None
+
+        if len(skus) < 3:
+
+            out_img = clipResizeImg_new(im, 900, 900)
+        else:
+            out_img = clipResizeImg_new(im, 900, 900)
+
+        return out_img
+
 
     def batch_listing(self, request, queryset):
+
+        for row in queryset:
+            orders = Order.objects.filter(logistic_no = row.logistic_no)
+
+
+            for order in orders:
+                order_amount = order.order_amount       #订单金额
+                skus = []
+                orderdetails= order.order_orderdetail.all()
+
+                for orderdetail in orderdetails:
+                    try:
+                        sku = Product.objects.get(sku = orderdetail.sku)
+                    except:
+                        continue
+
+                    sku_info = {
+                        'sku' : orderdetail.sku,
+                        'sku_product_quantity' : orderdetail.product_quantity,
+                        'sku_price': orderdetail.price,
+                        'sku_value': float(orderdetail.product_quantity) *  float(orderdetail.price),
+                        'sku_ref_price': sku.ref_price,
+                        'sku_img': sku.img,
+                    }
+                    skus.append(sku_info)
+                skus = sorted(skus, key=operator.itemgetter('sku_value'),reverse=True)
+                print("sorted skus", skus)
+
+                img = self.puzzle_skus(skus)
+                print("img", img)
+
+
+
+
+
         queryset.update(resell_status="LISTING")
         return
 
@@ -772,6 +1051,12 @@ class ResellAdmin(object):
         return
 
     batch_redelivering.short_description = "批量派送中"
+
+    def batch_redelivering(self, request, queryset):
+        queryset.update(resell_status="REDELIVERING",yallavip_package_status="REDELIVERING")
+        return
+
+    batch_redelivering.short_description = "批量二次销售派送中"
 
     def batch_sellout(self, request, queryset):
         queryset.update(resell_status="SELLOUT",yallavip_package_status="SELLOUT")

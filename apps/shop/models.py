@@ -6,6 +6,7 @@ class Shop(models.Model):
     shop_name = models.CharField(u'店铺名', default='', max_length=100, blank=True)
     apikey  =  models.CharField(u'API_KEY', default='', max_length=100, blank=True)
     password =  models.CharField(u'PASSWORD', default='', max_length=100, blank=True)
+    #max_product_no = models.CharField(u'max_product_no', default='', max_length=100, blank=True)
     product_updated_time = models.DateTimeField(u'product最后更新时间', auto_now=False, null=True, blank=True)
     customer_updated_time = models.DateTimeField(u'customer最后更新时间', auto_now=False, null=True, blank=True)
     class Meta:
@@ -25,7 +26,7 @@ class ShopifyProduct(models.Model):
     handle  =  models.CharField(u'handle', default='', max_length=256, blank=True)
 
     body_html = models.TextField(u'body_html', default='', max_length=1024, blank=True)
-    title = models.CharField(u'产品名', default='', max_length=100, blank=True)
+    title = models.CharField(u'产品名', default='', max_length=500, blank=True)
     created_at =  models.DateTimeField(u'创建时间', auto_now=False, null=True, blank=True)
 
     published_at = models.DateTimeField(u'发布时间', auto_now=False, null=True, blank=True)
@@ -38,6 +39,7 @@ class ShopifyProduct(models.Model):
     metafields_global_description_tag = models.CharField(u'SEO_desc', default='', max_length=500, blank=True)
     vendor = models.CharField(u'供应商', default='', max_length=100, blank=True)
 
+    listed = models.BooleanField(u'已发布', default=False)
     class Meta:
         verbose_name = "shopify商品"
         verbose_name_plural = verbose_name
@@ -78,7 +80,7 @@ class ShopifyVariant(models.Model):
     taxable = models.BooleanField(u'taxable', default=True)
 
     tax_code = models.CharField(u'tax_code', default='', max_length=200, blank=True)
-    title = models.CharField(u'title', default='', max_length=200,  null=True,blank=True)
+    title = models.CharField(u'title', default='', max_length=500,  null=True,blank=True)
     sku = models.CharField(u'title', default='', max_length=100,  null=True,blank=True)
     class Meta:
         verbose_name = "变体"
@@ -120,8 +122,8 @@ class ShopifyOptions(models.Model):
                                        on_delete=models.CASCADE, verbose_name="商品")
     product_no = models.CharField(u'product_no', default='', max_length=100, blank=True)
 
-    option_no = models.CharField(u'option_no', default='', max_length=100, blank=True)
-    position  =  models.IntegerField(u'position', default=0, blank=True, null=True)
+    name = models.CharField(u'option_no', default='', max_length=100, blank=True)
+    values  =  models.CharField(u'values', default='', max_length=5000, blank=True)
 
     class Meta:
         verbose_name = "ShopifyOptions"
@@ -129,8 +131,9 @@ class ShopifyOptions(models.Model):
 
 
     def __str__(self):
-        return self.option_no
+        return self.name
 
+'''
 class ShopifyOptionValues(models.Model):
     ShopifyOptions = models.ForeignKey(ShopifyOptions, related_name='option_values', null=True,
                                        on_delete=models.CASCADE, verbose_name="options")
@@ -145,6 +148,7 @@ class ShopifyOptionValues(models.Model):
 
     def __str__(self):
         return self.option_value
+'''
 
 class ShopifyCustomer(models.Model):
     #shop = models.ForeignKey(Shop, related_name='shop_customer', null=True, on_delete=models.CASCADE,

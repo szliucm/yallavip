@@ -230,6 +230,8 @@ class OrderAdmin(object):
     def start_package_track(self, request, queryset):
         # 定义actions函数
         for row in queryset:
+            if(row.logistic_no is None ):
+                continue
             obj, created = Package.objects.update_or_create(
                 logistic_no=row.logistic_no,
                 defaults={
@@ -498,6 +500,11 @@ class VerificationAdmin(object):
 
 class VerifyAdmin(object):
     # import_export_args = {'import_resource_class': MessageResource, 'export_resource_class': MessageResource}
+    def order_sku_count(self, obj):
+        return  obj.order.order_orderdetail.all().count()
+
+    order_sku_count.short_description = "订单sku数"
+
     def show_conversation(self, obj):
 
         return  show_conversation_tmp(obj)
@@ -598,13 +605,13 @@ class VerifyAdmin(object):
     '''
 
     readonly_fields = ('order', 'order_time',)
-    list_display = ('order','order_time', 'order_status','colored_verify_status', \
+    list_display = ('order','order_sku_count','order_time', 'order_status','colored_verify_status', \
                     'colored_sms_status', 'receiver_phone','phone_1', 'phone_2','warhouse_comment', 'verify_comments','verify_time','wait_status','cs_reply',\
                    'facebook_user_name', 'sales','show_conversation',)
 
     #'cancel', 'error_money', 'error_contact', \    'error_address', 'error_cod', 'error_note',
 
-    ordering = ['-order__order_no']
+    ordering = ['-order__order_time']
     list_editable = ['phone_1', 'phone_2','verify_comments']
     search_fields = ['order__order_no','verify_comments','cs_reply' ]
     list_filter = ('order__order_status','verify_status', 'sms_status', 'error_contact')
@@ -925,7 +932,11 @@ class ClientServiceAdmin(object):
     order_status.short_description = "订单状态"
 
     def order_logistic_update_status(self, obj):
-        return obj.order.logistic_update_status
+
+        package = Package.objects.get(logistic_no=obj.order.logistic_no)
+
+        return package.logistic_update_status
+        #return obj.order.logistic_update_status
     order_logistic_update_status.short_description = "物流状态"
 
     def receiver_phone(self, obj):
@@ -982,7 +993,7 @@ class ClientServiceAdmin(object):
 
     batch_normal.short_description = "批量正常"
 
-    ordering = ['-order__order_no']
+    ordering = ['-order__order_time']
     list_display = ('order', 'order_time','order_status','order_logistic_update_status','supply_status', 'colored_verify_status', \
                     'colored_sms_status',
                     #'cancel', 'error_money', 'error_contact', \

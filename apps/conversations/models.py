@@ -38,6 +38,7 @@ class Message(models.Model):
     def __str__(self):
         return self.message_id
 
+
 class PageUpdate(models.Model):
     page_no = models.CharField(u'主页ID', default='', max_length=100, blank=True)
     page = models.CharField(u'主页', default='', max_length=100, blank=True)

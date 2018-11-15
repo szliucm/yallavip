@@ -44,14 +44,16 @@ INSTALLED_APPS = [
     #'goods',
     #'trade',
     #'user_operation',
+    'operation',
     'fb',
     'conversations',
     'orders',
     'logistic',
     'purchase',
     'product',
+
     'sysadmin',
-    #'shop',
+    'shop',
 
 
     'import_export',

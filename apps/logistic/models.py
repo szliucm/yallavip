@@ -4,6 +4,7 @@ from django.db import models
 class Package(models.Model):
     logistic_no = models.CharField(u'物流追踪号', default='', max_length=100, blank=True)
     refer_no = models.CharField(u'包裹号', max_length=50, null=True, blank=True)
+    tracking_no = models.CharField(u'转单号', max_length=50, null=True, blank=True)
     send_time = models.DateTimeField(u'发货时间', auto_now=False, blank=True, null=True)
 
     charge_weight = models.CharField(u'计费重量', max_length=100, null=True, blank=True)
@@ -97,7 +98,7 @@ class Package(models.Model):
     RESELL_STATUS = (
         ("LISTING", "上架中"),
         ("UNLISTING", "下架中"),
-
+        ("REDELIVERING", "二次销售派送中"),
         ("SELLOUT", "二次售罄"),
         ("DESTROYED", "销毁"),
 
