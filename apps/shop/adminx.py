@@ -1,6 +1,19 @@
 # -*- coding: utf-8 -*-
 __author__ = 'bobby'
 
+from facebook_business.api import FacebookAdsApi
+from facebook_business.exceptions import FacebookRequestError
+from facebook_business.adobjects.systemuser import SystemUser
+from facebook_business.adobjects.page import Page
+from facebook_business.adobjects.album import Album
+from facebook_business.adobjects.photo import Photo
+from facebook_business.adobjects.adaccount import AdAccount
+from facebook_business.adobjects.campaign import Campaign
+from facebook_business.adobjects.adset import AdSet
+from facebook_business.adobjects.ad import Ad
+from facebook_business.adobjects.adsinsights import AdsInsights
+
+
 import traceback
 
 import numpy as np, re
@@ -31,6 +44,20 @@ from xadmin.filters import manager as filter_manager, FILTER_PREFIX, SEARCH_VAR,
 from django.utils.html import format_html
 import random
 DEBUG = False
+
+my_access_token = "EAAHZCz2P7ZAuQBABHO6LywLswkIwvScVqBP2eF5CrUt4wErhesp8fJUQVqRli9MxspKRYYA4JVihu7s5TL3LfyA0ZACBaKZAfZCMoFDx7Tc57DLWj38uwTopJH4aeDpLdYoEF4JVXHf5Ei06p7soWmpih8BBzadiPUAEM8Fw4DuW5q8ZAkSc07PrAX4pGZA4zbSU70ZCqLZAMTQZDZD"
+def get_token(target_page):
+
+    url = "https://graph.facebook.com/v3.2/{}?fields=access_token".format(target_page)
+    param = dict()
+    param["access_token"] = my_access_token
+
+    r = requests.get(url, param)
+
+    data = json.loads(r.text)
+
+    #print("request response is ", data["access_token"])
+    return data["access_token"]
 
 
 def insert_product( shop_name, products):
@@ -520,7 +547,7 @@ class ShopifyProductAdmin(object):
     search_fields = ["handle","product_no"]
     list_filter = ['shop_name','listed',"created_at", ]
     #list_editable = ["supply_status"]
-    actions = ["create_product",]
+    actions = ["create_product","post_product",]
     #inlines = [VariantInline, ]
     ordering = ['-product_no']
 
@@ -771,7 +798,60 @@ class ShopifyProductAdmin(object):
 
         queryset.update(listed=True, )
 
-    create_product.short_description = "发布产品"
+    create_product.short_description = "发布到主店铺"
+
+    def post_product(self, request, queryset):
+
+        for product in queryset:
+            imgs = ShopifyImage.objects.filter(product_no=product.product_no).values( 'src').\
+                                    order_by( 'position').first()
+            if imgs is None:
+                print("no image")
+                continue
+            image = imgs.get("src")
+
+            print("type of %s is  %s %s" % (imgs, type(imgs), image))
+
+            # 发图片post
+            page_id = "358078964734730"
+            token = get_token(page_id)
+            FacebookAdsApi.init(access_token=token)
+            fields = [
+            ]
+            params = {
+                'url': image,
+                'published': 'true',
+            }
+            photo_to_be_post = Page(page_id).create_photo(
+                fields=fields,
+                params=params,
+            )
+            photo_to_be_post_id = photo_to_be_post.get_id()
+            fields = [
+                'object_id',
+            ]
+            params = {
+                'message': 'I have something good for you!',
+                'attached_media': [{'media_fbid': photo_to_be_post_id}],
+            }
+            feed_post_with_image = Page(page_id).create_feed(
+                fields=fields,
+                params=params,
+            )
+            feed_post_with_image_id = feed_post_with_image.get_id()
+            '''
+            fields = [
+            ]
+            params = {
+            }
+            PagePost(feed_post_with_image_id).api_delete(
+                fields=fields,
+                params=params,
+            )
+            '''
+
+    post_product.short_description = "发布到facebook"
+
 
 class AddressInline(object):
     model = ShopifyAddress
