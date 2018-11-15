@@ -522,7 +522,7 @@ class ShopifyProductAdmin(object):
     #list_editable = ["supply_status"]
     actions = ["create_product",]
     #inlines = [VariantInline, ]
-    ordering = ['-created_at']
+    ordering = ['-product_no']
 
 
     def create_product(self, request, queryset):
