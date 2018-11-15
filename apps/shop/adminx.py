@@ -58,6 +58,8 @@ class ShopAdmin(object):
             if max_product_no is None:
                 max_product_no = "0"
 
+            print("max_product_no",max_product_no)
+
 
             shop_url = "https://%s:%s@%s.myshopify.com" % (shop_obj.apikey, shop_obj.password,shop_obj.shop_name)
             #shop_url = "https://12222a833afcad263c5cc593eca7af10:47aea3fe8f4b9430b1bac56c886c9bae@yallasale-com.myshopify.com/admin"
@@ -69,7 +71,7 @@ class ShopAdmin(object):
             params = {
                 "since_id":  max_product_no
             }
-
+            print("url %s params %s"%(url, params))
             r = requests.get(url, params)
             data = json.loads(r.text)
 
