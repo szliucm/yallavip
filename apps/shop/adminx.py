@@ -53,10 +53,14 @@ class ShopAdmin(object):
             if DEBUG:
                 max_product_no = "1774563229738"
             else:
-               max_product_no = ShopifyProduct.objects.filter(shop_name = shop.shop_name ).order_by('product_no').last().product_no
 
-            if max_product_no is None:
-                max_product_no = "0"
+                product = ShopifyProduct.objects.filter(shop_name = shop_obj.shop_name ).order_by('product_no').last()
+                if product is None:
+                    max_product_no = "0"
+                else:
+                    max_product_no = product.product_no
+
+
 
             shop_url = "https://%s:%s@%s.myshopify.com" % (shop_obj.apikey, shop_obj.password,shop_obj.shop_name)
             #shop_url = "https://12222a833afcad263c5cc593eca7af10:47aea3fe8f4b9430b1bac56c886c9bae@yallasale-com.myshopify.com/admin"
@@ -196,7 +200,7 @@ class ShopAdmin(object):
                                 option_row = row["options"][n]
                                 values = ','.join(option_row["values"])
 
-                                print(" %s length of values %s "%(option_row["product_id"], len(values)))
+                                #print(" %s length of values %s "%(option_row["product_id"], len(values)))
 
                                 option = ShopifyOptions(
                                     product_no = option_row["product_id"],
