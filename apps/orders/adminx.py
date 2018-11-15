@@ -347,7 +347,7 @@ class OrderDetailResource(resources.ModelResource):
     #product = fields.Field(attribute='product', column_name='产品名称')
 
     product_quantity = fields.Field(attribute='product_quantity', column_name='产品数量')
-    money_type = fields.Field(attribute='money_type', column_name='币种缩写')
+    #money_type = fields.Field(attribute='money_type', column_name='币种缩写')
     price = fields.Field(attribute='price', column_name='产品售价')
     #pic_url = fields.Field(attribute='pic_url', column_name='图片网址')
 
@@ -359,7 +359,7 @@ class OrderDetailResource(resources.ModelResource):
         skip_unchanged = True
         report_skipped = True
         import_id_fields = ('order','sku')
-        fields = ('order', 'sku', 'product_quantity', 'money_type', 'price', )
+        fields = ('order', 'sku', 'product_quantity',  'price', )
         # exclude = ()
 
 
