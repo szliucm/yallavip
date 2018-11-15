@@ -51,9 +51,9 @@ class ShopAdmin(object):
 
             shop_obj = Shop.objects.get(shop_name=shop.shop_name)
             if DEBUG:
-                max_product_no = "1683976454210"
+                max_product_no = "1774563229738"
             else:
-               max_product_no = shop_obj.objects.order_by('product_no').last()
+               max_product_no = ShopifyProduct.objects.filter(shop_name = shop.shop_name ).order_by('product_no').last()
 
             if max_product_no is None:
                 max_product_no = "0"
@@ -80,10 +80,7 @@ class ShopAdmin(object):
 
             i=0
             limit = 100
-            product_list = []
-            variant_list = []
-            image_list = []
-            option_list = []
+
             while True:
                 try:
 
@@ -91,16 +88,14 @@ class ShopAdmin(object):
                         break
 
                     i = i + 1
-                    if DEBUG:
-                        print("page is ", i)
-                    '''
-                    if DEBUG and i == 1 :
-                        print("max_product_no", max_product_no)
-                        if DEBUG and max_product_no == "1686641672258":
-                            print("We are here to win"  )
+
+
+                    if DEBUG and i > 1 :
+                        print("i %s max_product_no"%(i, max_product_no))
+
 
                         break
-                    '''
+
 
                     #products = shopify.Product.find(page=i,limit=limit,updated_at_min=shop.updated_time)
                     url = shop_url + "/admin/products.json"
@@ -119,6 +114,11 @@ class ShopAdmin(object):
                     #print("range(len(products)", range(len(products)))
 
                     for j in range(len(products)):
+                        product_list = []
+                        variant_list = []
+                        image_list = []
+                        option_list = []
+
                         row =  products[j]
 
                         if j==1:
@@ -212,15 +212,17 @@ class ShopAdmin(object):
                             print("no option ".format(row.shop_name))
                             break
 
+                        print(product_list)
 
+                        ShopifyProduct.objects.bulk_create(product_list)
+                        ShopifyVariant.objects.bulk_create(variant_list)
+                        ShopifyImage.objects.bulk_create(image_list)
+                        ShopifyOptions.objects.bulk_create(option_list)
                 except KeyError:
                     print("products for the shop {} completed".format(row.shop_name))
                     break
 
-            ShopifyProduct.objects.bulk_create(product_list)
-            ShopifyVariant.objects.bulk_create(variant_list)
-            ShopifyImage.objects.bulk_create(image_list)
-            ShopifyOptions.objects.bulk_create(option_list)
+
             #Shop.objects.filter(shop_name=shop.shop_name).update(product_updated_time=now)
 
         #shopify.ShopifyResource.clear_session()
@@ -401,7 +403,7 @@ class ShopifyProductAdmin(object):
      #'sku_name','img',
 
     search_fields = ["handle","product_no"]
-    list_filter = ['listed',"created_at", ]
+    list_filter = ['shop_name','listed',"created_at", ]
     #list_editable = ["supply_status"]
     actions = ["create_product",]
     #inlines = [VariantInline, ]
@@ -409,15 +411,20 @@ class ShopifyProductAdmin(object):
 
 
     def create_product(self, request, queryset):
-        handle_init = 9000
-        handle_i = 0
+        dest_shop = "yallasale-com"
 
-        print("now let's start create_product")
+        handle_init = ShopifyProduct.objects.filter(shop_name = dest_shop ).order_by('handle').last()
+
+        handle_i = int(handle_init.handle[1:])
+
+        print(" now let's start create_product ", handle_i)
+
 
         for product in queryset:
             handle_i = handle_i+1
+            handle_new = "T" + str(handle_i)
 
-            shop_obj = Shop.objects.get(shop_name=product.shop_name)
+            shop_obj = Shop.objects.get(shop_name=dest_shop)
             #初始化SDK
             shop_url = "https://%s:%s@%s.myshopify.com" % (shop_obj.apikey, shop_obj.password, shop_obj.shop_name)
             #shopify.ShopifyResource.set_site(shop_url)
@@ -504,9 +511,10 @@ class ShopifyProductAdmin(object):
 
             print("variants_list is ", len(variants_list))
             '''
+
             params = {
                 "product": {
-                    "handle":"T"+str(handle_init + handle_i),
+                    "handle": handle_new,
                     "title": product.title,
                     "body_html": product.body_html,
                     "vendor": product.vendor,
@@ -570,7 +578,7 @@ class ShopifyProductAdmin(object):
 
 
 
-                sku = "A" + str(handle_i)
+                sku = handle_new
                 option1 = variant.get("option1")
                 option2 = variant.get("option2")
                 option3 = variant.get("option3")
