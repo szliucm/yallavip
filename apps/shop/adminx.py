@@ -30,7 +30,7 @@ from xadmin.filters import manager as filter_manager, FILTER_PREFIX, SEARCH_VAR,
     RelatedFieldSearchFilter
 from django.utils.html import format_html
 import random
-DEBUG = True
+DEBUG = False
 
 @xadmin.sites.register(Shop)
 class ShopAdmin(object):
