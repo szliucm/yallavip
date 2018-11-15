@@ -196,11 +196,9 @@ class Order(models.Model):
     def __str__(self):
         return self.order_no
 
-
 class OrderDetail(models.Model):
     order = models.ForeignKey(Order, related_name='order_orderdetail', null=False, on_delete=models.CASCADE,
                               verbose_name="订单")
-
 
     sku = models.CharField(u'SKU', default='', max_length=100, blank=True)
     # product = models.CharField(u'产品名称',default='',  max_length=500,  blank=True)
