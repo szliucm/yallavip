@@ -160,15 +160,30 @@ class ProductAdmin(object):
     batch_normal.short_description = "批量正常"
 
 
+    def get_list_queryset(self):
+        """xadmin 有效的批量查询订单号"""
+        queryset = super().get_list_queryset()
 
+        query = self.request.GET.get(SEARCH_VAR, '')
 
+        if (len(query) > 0):
+            queryset |= self.model.objects.filter(product__in=query.split(","))
+
+        if (len(query) > 0):
+            queryset |= self.model.objects.filter(sku__in=query.split(","))
+
+        return queryset
+    '''
     def get_search_results(self, request, queryset, search_term):
         """批量查询sku号"""
         queryset, use_distinct = super().get_search_results(request, queryset, search_term)
 
         if (len(search_term) > 0):
             queryset |= self.model.objects.filter(product__in=search_term.split(","))
-        return queryset, use_distinct
 
+        if (len(search_term) > 0):
+            queryset |= self.model.objects.filter(sku__in=search_term.split(","))
+        return queryset, use_distinct
+    '''
 xadmin.site.register(Product, ProductAdmin)
 
