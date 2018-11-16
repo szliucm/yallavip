@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 __author__ = 'bobby'
+from xadmin.views import BaseAdminPlugin, ListAdminView
 
 from facebook_business.api import FacebookAdsApi
 from facebook_business.exceptions import FacebookRequestError
@@ -170,6 +171,8 @@ def insert_product( shop_name, products):
         ShopifyOptions.objects.bulk_create(option_list)
 
 
+
+
 @xadmin.sites.register(Shop)
 class ShopAdmin(object):
 
@@ -183,8 +186,11 @@ class ShopAdmin(object):
 
 
 
+
     def download_product(self, request, queryset):
         # 定义actions函数
+
+
         for shop in queryset:
 
             shop_obj = Shop.objects.get(shop_name=shop.shop_name)
@@ -548,7 +554,7 @@ class ShopifyProductAdmin(object):
      #'sku_name','img',
 
     search_fields = ["handle","product_no"]
-    list_filter = ['shop_name','listed',"created_at","listed" ]
+    list_filter = ['shop_name','listed',"created_at", ]
     #list_editable = ["supply_status"]
     actions = ["create_product","post_product","post_photo"]
     #inlines = [VariantInline, ]
@@ -570,7 +576,7 @@ class ShopifyProductAdmin(object):
 
         for product in queryset:
             handle_i = handle_i+1
-            handle_new = "T" + str(handle_i)
+            handle_new = "A" + str(handle_i)
 
             shop_obj = Shop.objects.get(shop_name=dest_shop)
             #初始化SDK
@@ -744,8 +750,8 @@ class ShopifyProductAdmin(object):
                     "option1": option1,
                     "option2": option2,
                     "option3": option3,
-                    "price": int (float(variant.get("price"))*3),
-                    "compare_at_price": int (float(variant.get("price"))*3 *random.uniform(2,3)),
+                    "price": int (float(variant.get("price"))*2.8),
+                    "compare_at_price": int (float(variant.get("price"))*2.8 *random.uniform(2,3)),
                     "sku": sku,
                     "position": variant.get("position"),
                     "image_id": new_image_no,
@@ -962,3 +968,4 @@ class ShopifyAddressAdmin(object):
                      'phone',                     ),
         )
     )
+
