@@ -65,7 +65,7 @@ my_app_secret = "e6df363351fb5ce4b7f0080adad08a4d"
 my_access_token = "EAAHZCz2P7ZAuQBABHO6LywLswkIwvScVqBP2eF5CrUt4wErhesp8fJUQVqRli9MxspKRYYA4JVihu7s5TL3LfyA0ZACBaKZAfZCMoFDx7Tc57DLWj38uwTopJH4aeDpLdYoEF4JVXHf5Ei06p7soWmpih8BBzadiPUAEM8Fw4DuW5q8ZAkSc07PrAX4pGZA4zbSU70ZCqLZAMTQZDZD"
 
 
-from .page_post import post_to_album
+from .shop_action import Post_to_Album
 
 def get_token(target_page):
     url = "https://graph.facebook.com/v3.2/{}?fields=access_token".format(target_page)
@@ -1042,7 +1042,7 @@ class ShopifyProductAdmin(object):
     search_fields = ["handle", "product_no"]
     list_filter = ['shop_name', 'listed', "created_at", ]
     # list_editable = ["supply_status"]
-    actions = ["create_product", "post_product",  "post_ad",post_to_album ]
+    actions = ["create_product", "post_product",  "post_ad",Post_to_Album ]
     # inlines = [VariantInline, ]
     ordering = ['-product_no']
 
@@ -1338,8 +1338,11 @@ class ShopifyProductAdmin(object):
     post_product.short_description = "发布到facebook"
 
     def post_photo(self, request, queryset):
-        page_id = "358078964734730"
-        album_no = "364220710787222"
+        #page_id = "358078964734730"
+        #album_no = "364220710787222"
+
+
+
         token = get_token(page_id)
         # token = "EAAHZCz2P7ZAuQBAE9FEXmxUZCmISP6of8BCpvHYcgbicLOFAZAZB014FZARgDfxvx5AKRbPFSMqlzllrDHAFOtbty8x9eSzKJqbD5CAVRHJdH4kejAyv1B4MYDnwW9Qr5ZCwYG6q8Gk7Ok3ZBpfZC5OoovyjZCwaqebeVoXrXeGFkrk8ifZC9hyWX7cZCIqkopgZCIketETbWEqs4u4rGxbgsXttQJ0AF9iiQpoAZD"
 

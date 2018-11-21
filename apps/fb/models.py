@@ -2,6 +2,8 @@ from django.db import models
 
 
 
+
+
 # Create your models here.
 class MyPage(models.Model):
     page_no = models.CharField(u'主页ID', default='', max_length=100, blank=True)
@@ -20,7 +22,7 @@ class MyPage(models.Model):
         verbose_name_plural = verbose_name
 
     def __str__(self):
-        return self.page_no
+        return self.page
 
 class MyAdAccount(models.Model):
     adaccout_no = models.CharField(u'广告账户', default='', max_length=100, blank=True)
@@ -277,3 +279,4 @@ class ConversationUpdate(MyPage):
         verbose_name_plural = verbose_name
     def __str__(self):
         return self.page_no
+

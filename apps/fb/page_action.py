@@ -17,7 +17,7 @@ from django.utils.translation import ugettext as _
 from django.contrib.admin.utils import get_deleted_objects
 from xadmin.util import model_ngettext
 from xadmin.views.base import filter_hook
-from fb.models import MyAlbum,MyPage
+from product.models import ProductCategory,ProductCategoryMypage
 
 
 
@@ -70,104 +70,69 @@ action_checkbox.allow_export = False
 action_checkbox.is_column = False
 
 
-class select_album_form(forms.Form, ):
-
-
+class select_form(forms.Form, ):
     _selected_action = forms.CharField(widget=forms.MultipleHiddenInput)
     # album = forms.ModelChoiceField(queryset=myalbum, empty_label='请选择相册')
-    albums = forms.ModelMultipleChoiceField(widget=forms.CheckboxSelectMultiple, queryset=None)
+    datasrc = forms.ModelMultipleChoiceField(widget=forms.CheckboxSelectMultiple, queryset=None)
 
-    def __init__(self,album,  *args, **kwargs):
-        super(select_album_form, self).__init__(*args, **kwargs)
+    def __init__(self, queryset,  *args, **kwargs):
+        super(select_form, self).__init__(*args, **kwargs)
 
-        self.fields["albums"].queryset = album
+        self.fields["datasrc"].queryset = queryset
 
-class select_page_form(forms.Form, ):
-
-    mypages = MyPage.objects.all()
-    _selected_action = forms.CharField(widget=forms.MultipleHiddenInput)
-    pages = forms.ModelChoiceField(queryset=mypages, empty_label='请选择page')
-    #pages = forms.ModelMultipleChoiceField(widget=forms.CheckboxSelectMultiple, queryset=mypages)
-
-
-
-
-
-class post_to_album(BaseActionView):
+class ConnectPageCategory(BaseActionView):
 
     # 这个是执行函数名
-    action_name = "to_album"
+    action_name = "connect_page_category"
     # 这个是显示的名字
-    description = "发布到相册"
+    description = "关联page的品类"
 
     model_perm = 'change'
     icon = 'fa fa-times'
-    page_no = "358078964734730"
-
-    page_selected = False
-    album_selected = False
-
-
-
-
-
 
     @filter_hook
     # 对数据的操作
-    def do_album(self, queryset,albums):
-        page_no = None
+    def do_models(self, queryset,form_selected):
+
+        print("start do something to the model ")
+        print("queryset is ", queryset)
+        print("form_selected is ", form_selected)
+        #需要进行的操作
+
+        for page in queryset:
+            for category in form_selected:
+                obj, created = ProductCategoryMypage.objects.update_or_create(
+                                mypage=page, productcategory= category,
+                                defaults={
+                                   # 'productcategory': category
+                                },
+
+                            )
+
+                print("created is ",created)
+                print("obj is ", obj)
 
 
-        token = get_token(self.page_no)
-        # token = "EAAHZCz2P7ZAuQBAE9FEXmxUZCmISP6of8BCpvHYcgbicLOFAZAZB014FZARgDfxvx5AKRbPFSMqlzllrDHAFOtbty8x9eSzKJqbD5CAVRHJdH4kejAyv1B4MYDnwW9Qr5ZCwYG6q8Gk7Ok3ZBpfZC5OoovyjZCwaqebeVoXrXeGFkrk8ifZC9hyWX7cZCIqkopgZCIketETbWEqs4u4rGxbgsXttQJ0AF9iiQpoAZD"
 
-        adobjects = FacebookAdsApi.init(my_app_id, my_app_secret, access_token=token, debug=True)
-
-        for product in queryset:
-            print("product.product_no ", product.product_no)
-            imgs = ShopifyImage.objects.filter(product_no=product.product_no).values('src'). \
-                order_by('position').first()
-            if imgs is None:
-                print("no image")
-                continue
-            image = imgs.get("src")
-
-
-            fields = [
-            ]
-            params = {
-                "url": image,
-            }
-            print(albums)
-            for album in albums:
-
-
-                photos = Album(album.album_no).create_photo(
-                    fields=fields,
-                    params=params,
-                )
-
-                print("photos is ", photos)
-
+        ##############################
+        return
 
     @filter_hook
+    #捕捉操作
     def do_action(self, queryset):
+        ##############需要选择的对象
+        form_queryset = ProductCategory.objects.filter(category_type=2)
+        ############################
 
-        albums = MyAlbum.objects.filter(page_no=self.page_no)
-        print(("type albums", type(albums), albums))
-
-        form = select_page_form(self.request.POST, )
-        # form = self.data_src_form(self.request.POST)
-
+        form = select_form(form_queryset, self.request.POST )
         if form.is_valid():
-            print("form is ", form)
-
-            albums = form.cleaned_data["albums"]
+            #print("form is ", form)
+            form_selected = form.cleaned_data["datasrc"]
             # 执行动作
-            self.do_album(queryset, albums)
+            self.do_models(queryset,form_selected)
             return HttpResponseRedirect(self.request.get_full_path())
         else:
-            form = select_album_form(albums, self.request.POST)
+            form = select_form(form_queryset, self.request.POST)
 
         context = self.get_context()
         context.update({
@@ -175,8 +140,11 @@ class post_to_album(BaseActionView):
             'form': form,
             "opts": self.opts,
             "app_label": self.app_label,
+            "form_action": self.action_name ,
             'action_checkbox_name': ACTION_CHECKBOX_NAME,
         })
 
         return TemplateResponse(self.request,
-                                'select_album.html', context)
+                                'select_form.html', context)
+
+

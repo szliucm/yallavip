@@ -1,5 +1,5 @@
 from django.db import models
-
+from fb.models import MyPage
 
 # Create your models here.
 class Product(models.Model):
@@ -43,6 +43,7 @@ class ProductCategory(models.Model):
     code = models.CharField(default="", max_length=30, verbose_name="类别code", help_text="类别code")
     desc = models.TextField(default="", verbose_name="类别描述", help_text="类别描述")
     category_type = models.IntegerField(choices=CATEGORY_TYPE, verbose_name="类目级别", help_text="类目级别")
+    parent_category = models.CharField(default="",  null=True, blank=True,max_length=30, verbose_name="父类目级别", help_text="父类目级别")
     #parent_category = models.ForeignKey("self", null=True, blank=True, verbose_name="父类目级别", help_text="父目录",
      #                                   related_name="sub_cat",on_delete=models.CASCADE)
     is_tab = models.BooleanField(default=False, verbose_name="是否导航", help_text="是否导航")
@@ -54,3 +55,17 @@ class ProductCategory(models.Model):
 
     def __str__(self):
         return self.name
+
+class ProductCategoryMypage(models.Model):
+    mypage = models.ForeignKey(MyPage, null=True, blank=True, verbose_name="主页", help_text="主页",
+                                        related_name="category_page",on_delete=models.CASCADE)
+    productcategory = models.ForeignKey(ProductCategory, null=True, blank=True, verbose_name="产品类别", help_text="产品类别",
+                               related_name="page_category", on_delete=models.CASCADE)
+
+
+    class Meta:
+        verbose_name = "品类对应主页"
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.productcategory.name
