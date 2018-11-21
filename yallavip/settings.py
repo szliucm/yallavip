@@ -54,6 +54,7 @@ INSTALLED_APPS = [
 
     'sysadmin',
     'shop',
+    'mytest',
 
 
     'import_export',
@@ -80,6 +81,7 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'yallavip.urls'
 
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -95,6 +97,7 @@ TEMPLATES = [
         },
     },
 ]
+
 
 WSGI_APPLICATION = 'yallavip.wsgi.application'
 
@@ -155,11 +158,12 @@ USE_TZ = False
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, '/data/wwwroot/yallavip/collectedstatic')
+STATIC_ROOT = os.path.join(BASE_DIR, 'collectedstatic/')
 DATA_UPLOAD_MAX_NUMBER_FIELDS = None
 
-MEDIA_URL = '/static/media/'
+MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'static/media/')
+#MATERIAL_ROOT = os.path.join(BASE_DIR, 'static/media/material/')
 
 DATETIME_FORMAT = 'Y-m-d H:i:s'
 DATE_FORMAT = 'Y-m-d'

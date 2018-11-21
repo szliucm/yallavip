@@ -42,6 +42,183 @@ from xadmin.filters import manager as filter_manager, FILTER_PREFIX, SEARCH_VAR,
     RelatedFieldSearchFilter
 from django.utils.html import format_html
 
+
+def create_product(dest_shop, queryset ):
+    '''
+
+    handle_init = ShopifyProduct.objects.filter(shop_name=dest_shop).order_by('-product_no').first()
+
+    handle_i = handle_init.handle
+
+    handle_i = int(handle_i[1:])
+
+    print(" now let's start create_product ", handle_i)
+    '''
+
+    for order in queryset:
+
+        # 初始化SDK
+        shop_obj = Shop.objects.get(shop_name=dest_shop)
+
+        shop_url = "https://%s:%s@%s.myshopify.com" % (shop_obj.apikey, shop_obj.password, shop_obj.shop_name)
+
+        url = shop_url + "/admin/products.json"
+
+
+        #每100个订单创建一个海外仓商品，订单作为变体存放。，否则创建新的
+
+        order_no = order.order_no
+        handle_i = int(int(order_no.split('-')[1]) /100)
+        handle_new = "O"+ str(handle_i).zfill(5)
+
+        #所以先检测商品是否存在
+        url = shop_url + "/admin/products/%s.json"%(handle_new)
+        r = requests.post(url, headers=headers, data=json.dumps(params))
+
+        print("handl_new is ", handle_new)
+        print("r is ", r)
+        return
+
+        '''
+        params = {
+            "product": {
+                "handle": handle_new,
+                "title": product.title,
+                "body_html": product.body_html,
+                "vendor": product.vendor,
+                "product_type": product.product_type,
+                "tags": product.tags,
+
+                # "variants": variants_list,
+                # "options": option_list
+            }
+        }
+        headers = {
+            "Content-Type": "application/json",
+            "charset": "utf-8",
+
+        }
+
+        r = requests.post(url, headers=headers, data=json.dumps(params))
+        data = json.loads(r.text)
+        new_product = data.get("product")
+        if new_product is None:
+            print("data is ", data)
+            continue
+
+        new_product_no = new_product.get("id")
+
+        # 增加变体
+
+        # image
+        image_dict = {}
+        for k_img in range(len(new_product["images"])):
+            image_row = new_product["images"][k_img]
+            new_image_no = image_row["id"]
+            # new_image_list.append(image_no)
+            old_image_no = imgs_list[k_img]["image_no"]
+
+            image_dict[old_image_no] = new_image_no
+            # print("old image %s new image %s"%(old_image_no, new_image_no ))
+
+        # option
+        option_list = []
+
+        options = ShopifyOptions.objects.filter(product_no=product.product_no).values('name', 'values')
+        for row in options:
+            option = {
+                "name": row["name"],
+                "values": re.split('[.]', row["values"])
+            }
+            option_list.append(option)
+
+        # variant
+        variants_list = []
+
+        variants = ShopifyVariant.objects.filter(product_no=product.product_no).values()
+
+        for variant in variants:
+            old_image_no = variant.get("image_no")
+            new_image_no = image_dict.get(old_image_no)
+            print("image dict  %s %s " % (old_image_no, new_image_no))
+
+            sku = handle_new
+            option1 = variant.get("option1")
+            option2 = variant.get("option2")
+            option3 = variant.get("option3")
+
+            if option1:
+                sku = sku + "-" + option1.replace("&", '').replace('-', '').replace('.', '').replace(' ', '')
+                if option2:
+                    sku = sku + "_" + option2.replace("&", '').replace('-', '').replace('.', '').replace(' ', '')
+                    if option3:
+                        sku = sku + "_" + option3.replace("&", '').replace('-', '').replace('.', '').replace(' ', '')
+
+            variant_item = {
+                "option1": option1,
+                "option2": option2,
+                "option3": option3,
+                "price": int(float(variant.get("price")) * 2.8),
+                "compare_at_price": int(float(variant.get("price")) * 2.8 * random.uniform(2, 3)),
+                "sku": sku,
+                "position": variant.get("position"),
+                "image_id": new_image_no,
+                "grams": variant.get("grams"),
+                "title": variant.get("title"),
+                "taxable": "true",
+                "inventory_management": "shopify",
+                "fulfillment_service": "manual",
+                "inventory_policy": "continue",
+
+                "inventory_quantity": 10000,
+                "requires_shipping": "true",
+                "weight": 0.5,
+                "weight_unit": "kg",
+
+            }
+            # print("variant_item", variant_item)
+            variants_list.append(variant_item)
+
+        params = {
+            "product": {
+                "variants": variants_list,
+                "options": option_list,
+
+            }
+        }
+        headers = {
+            "Content-Type": "application/json",
+            "charset": "utf-8",
+
+        }
+
+        # print("upload data is ",json.dumps(params))
+
+        url = shop_url + "/admin/products/%s.json" % (new_product_no)
+        r = requests.put(url, headers=headers, data=json.dumps(params))
+        data = json.loads(r.text)
+
+        new_product = data.get("product")
+        if new_product is None:
+            print("data is ", data)
+            continue
+
+        product_list = []
+        product_list.append(new_product)
+        insert_product(dest_shop, product_list)
+
+        print("new_product_no is", new_product.get("id"))
+
+        # shopify.ShopifyResource.clear_session()
+
+    queryset.update(listed=True, )
+    '''
+
+
+
+
+
+
 # 裁剪压缩图片
 def clipResizeImg_new(im, dst_w, dst_h, qua=95):
     '''''
@@ -1001,11 +1178,16 @@ class ResellAdmin(object):
 
     def batch_listing(self, request, queryset):
 
+
         for row in queryset:
             orders = Order.objects.filter(logistic_no = row.logistic_no)
+            dest_shop = "yallavip-saudi"
+            create_product(dest_shop, orders )
 
 
             for order in orders:
+                    '''
+                #订单详情先不管
                 order_amount = order.order_amount       #订单金额
                 skus = []
                 orderdetails= order.order_orderdetail.all()
@@ -1030,6 +1212,7 @@ class ResellAdmin(object):
 
                 img = self.puzzle_skus(skus)
                 print("img", img)
+                '''
 
 
 

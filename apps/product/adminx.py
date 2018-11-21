@@ -6,7 +6,7 @@ import xadmin
 from django.shortcuts import get_object_or_404, get_list_or_404, render
 from import_export import resources, fields
 from import_export.widgets import ForeignKeyWidget
-from .models import Product
+from .models import Product,ProductCategory
 
 from django.db import models
 
@@ -187,3 +187,34 @@ class ProductAdmin(object):
     '''
 xadmin.site.register(Product, ProductAdmin)
 
+class ProductCategoryResource(resources.ModelResource):
+    name = fields.Field(attribute='name', column_name='类别名')
+    code = fields.Field(attribute='code', column_name='类别code')
+    desc = fields.Field(attribute='desc', column_name='类别描述')
+    category_type = fields.Field(attribute='category_type', column_name='类目级别')
+    is_tab = fields.Field(attribute='is_tab', column_name='是否导航')
+    add_time = fields.Field(attribute='add_time', column_name='添加时间')
+
+
+    class Meta:
+        model = Product
+        skip_unchanged = True
+        report_skipped = True
+        import_id_fields = ('code',)
+        fields = ('name', 'code', 'desc', 'category_type', 'is_tab','add_time',)
+        # exclude = ()
+
+@xadmin.sites.register(ProductCategory)
+class ProductCategoryAdmin(object):
+
+
+
+    import_export_args = {"import_resource_class": ProductCategoryResource, "export_resource_class": ProductCategoryResource}
+
+    list_display = [ 'name', 'code', 'desc', 'category_type', 'is_tab','add_time',]
+
+
+    search_fields = ["sku",'product']
+    list_filter = ['category_type',]
+    list_editable = []
+    actions = []

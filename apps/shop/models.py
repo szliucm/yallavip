@@ -1,4 +1,5 @@
 from django.db import models
+from logistic.models import Package
 
 # Create your models here.
 class Shop(models.Model):
@@ -234,3 +235,14 @@ class ShopifyCustomerAddress(models.Model):
     def __str__(self):
         return self.customer.customer_no
 '''
+
+class OverseaSell(Package):
+    class Meta:
+        proxy = True
+
+        verbose_name = "海外仓销售"
+        verbose_name_plural = verbose_name
+
+
+    def __str__(self):
+        return self.logistic_no

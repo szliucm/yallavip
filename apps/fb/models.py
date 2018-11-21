@@ -11,6 +11,10 @@ class MyPage(models.Model):
     #album_update_time = models.DateTimeField(u'album最后更新时间', auto_now=False, null=True, blank=True)
     conversation_update_time = models.DateTimeField(u'会话最后更新时间', auto_now=False, null=True, blank=True)
 
+    logo = models.ImageField(u'logo', upload_to='material/',default="",null=True, blank=True)
+    price = models.ImageField(u'价格标签', upload_to='material/',default="",null=True, blank=True)
+    promote = models.ImageField(u'促销标签', upload_to='material/',default="",null=True, blank=True)
+
     class Meta:
         verbose_name = "主页更新"
         verbose_name_plural = verbose_name
@@ -147,7 +151,7 @@ class MyAlbum(models.Model):
         verbose_name_plural = verbose_name
     def __str__(self):
         #return 'business.facebook.com'+ self.link
-        return  self.album_no
+        return  self.name
 
 class MyPhoto(models.Model):
     photo_no = models.CharField(max_length=30, null=True, blank=True, verbose_name="photo_no")

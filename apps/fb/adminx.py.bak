@@ -50,44 +50,10 @@ def get_token(target_page):
 
 @xadmin.sites.register(MyPage)
 class MyPageAdmin(object):
-    def show_logo(self, obj):
-
-        try:
-            img = mark_safe('<img src="%s" width="100px" />' % (obj.logo.url,))
-        except Exception as e:
-            img = ''
-        return img
-
-    show_logo.short_description = 'Logo'
-    show_logo.allow_tags = True
-
-    def show_price(self, obj):
-
-        try:
-            img = mark_safe('<img src="%s" width="100px" />' % (obj.price.url,))
-        except Exception as e:
-            img = ''
-        return img
-
-    show_price.short_description = '价格标签'
-    show_price.allow_tags = True
-
-    def show_promote(self, obj):
-
-        try:
-            img = mark_safe('<img src="%s" width="100px" />' % (obj.promote.url,))
-        except Exception as e:
-            img = ''
-        return img
-
-    show_promote.short_description = '促销标签'
-    show_promote.allow_tags = True
-
     #actions = ["batch_updatepage", ]
-    list_display = ('page', 'page_no', 'show_logo','show_price','show_promote','conversation_update_time',
+    list_display = ( 'page_no','page', 'conversation_update_time',
                    )
-
-    list_editable = ['token',]
+    list_editable = ['token']
     #search_fields = ['logistic_no', ]
     # list_filter = ("update_time", )
     actions = ["batch_update_pages","batch_update_albums","batch_update_ads",]
@@ -209,7 +175,7 @@ class MyFeedAdmin(object):
         ]
         params = {
             'message': 'I have something good for you!',
-            #'link': "https://facebook.com/%s"%(page_id),
+            #'link': 'http://www.yallavip.com',
             'name': 'YallaVip great',
             'description': 'forever love',
             'picture': 'https://cdn.shopify.com/s/files/1/2729/0740/products/IL201712291311123168_796_1400x.jpg',
@@ -217,7 +183,7 @@ class MyFeedAdmin(object):
             "call_to_action": {
                     "type": "MESSAGE_PAGE",
                     "value": {
-                      "link": "https://facebook.com/%s"%(page_id),
+                      "link": "http://www.yallavip.com",
                       "link_title": "Yallavip Kids",
                       "link_description": "E-commerce Website"
                     }
@@ -869,7 +835,6 @@ class MyAlbumAdmin(object):
 class MyPhotoAdmin(object):
 
     list_display = [ "photo_no","album","impression","like_count","comment_count","created_time",  "updated_time", "img", "name",]
-
     search_fields = ['photo_no',"album_no", "name"]
     list_filter = ("album_no","like_count")
     actions = [ "batch_get_insight",]

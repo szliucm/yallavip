@@ -1,0 +1,26 @@
+{% extends base_template %}
+{% load i18n l10n %}
+
+{% load xadmin_tags %}
+
+{% block content %}
+    <form action="" method="post">{% csrf_token %}
+    <div>
+
+    {{ form.as_p }}
+
+
+
+    {% for obj in queryset %}
+    <input type="hidden" name="{{ action_checkbox_name }}" value="{{ obj.pk }}" />
+    {% endfor %}
+    <input type="hidden" name="action" value="to_album" />
+    <input type="hidden" name="dream" value="reallove" />
+    {% view_block 'form_fields' %}
+    <div class="form-actions well well-sm">
+        <input class="btn btn-danger btn-lg" type="submit" value="{% trans "Yes, I'm sure" %}" />
+
+    </div>
+    </div>
+    </form>
+{% endblock %}
