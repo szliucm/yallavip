@@ -9,7 +9,7 @@ from facebook_business.adobjects.page import Page
 from facebook_business.adobjects.pagepost import PagePost
 from facebook_business.adobjects.album import Album
 from facebook_business.adobjects.photo import Photo
-from facebookads.adobjects.adimage import AdImage
+#from facebookads.adobjects.adimage import AdImage
 from facebook_business.adobjects.adaccount import AdAccount
 from facebook_business.adobjects.campaign import Campaign
 from facebook_business.adobjects.adset import AdSet
