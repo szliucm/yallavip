@@ -163,6 +163,7 @@ DATA_UPLOAD_MAX_NUMBER_FIELDS = None
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'static/media/')
+
 #MATERIAL_ROOT = os.path.join(BASE_DIR, 'static/media/material/')
 
 DATETIME_FORMAT = 'Y-m-d H:i:s'
