@@ -163,7 +163,7 @@ class Post_to_Album(BaseActionView):
                  #   post_photo_album(target_album)
 
                 continue
-
+            '''
             obj, created = ProductCategoryMypage.objects.update_or_create(
                             mypage=page, productcategory= category,
                             defaults={
@@ -175,7 +175,7 @@ class Post_to_Album(BaseActionView):
                 print("created is ",created)
                 print("obj is ", obj)
 
-
+            '''
 
         return
 
