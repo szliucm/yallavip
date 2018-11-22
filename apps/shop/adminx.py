@@ -868,7 +868,7 @@ class ShopifyProductAdmin(object):
     # 'sku_name','img',
 
     search_fields = ["handle", "product_no"]
-    list_filter = ['shop_name', 'listed', "created_at", ]
+    list_filter = ['shop_name', 'listed', "created_at", "tags"]
     # list_editable = ["supply_status"]
     actions = ["create_product", "post_product",  "post_ad",Post_to_Album ]
     # inlines = [VariantInline, ]
