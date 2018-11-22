@@ -37,6 +37,10 @@ from facebook_business.adobjects.ad import Ad
 from facebook_business.adobjects.adsinsights import AdsInsights
 
 import  random
+
+import time
+import datetime
+
 from .photo_mark import  photo_mark
 
 
@@ -128,11 +132,19 @@ def post_photo_to_album(targer_page,album_no,product ):
 
     print("after photo mark", iamge_url)
 
+    last_time = targer_page.latest_scheduled_publish_time_album
+    if last_time is None  :
+        dtime = datetime.datetime.now()
+        last_time = time.mktime(dtime.timetuple())
+
+    scheduled_publish_time = last_time + 60
+
 
     fields = ["id","name","created_time", "updated_time","picture","link",
                       "likes.summary(true)","comments.summary(true)"
     ]
     params = {
+        "scheduled_publish_time" : scheduled_publish_time,
         "url": iamge_url,
         "name": name,
         "qn":product.handle
