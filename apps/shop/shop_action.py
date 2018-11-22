@@ -18,7 +18,7 @@ from django.contrib.admin.utils import get_deleted_objects
 from xadmin.util import model_ngettext
 from xadmin.views.base import filter_hook
 from product.models import ProductCategory,ProductCategoryMypage
-from fb.models import  MyPage
+from fb.models import  MyPage,MyAlbum,MyPhoto
 
 
 
@@ -35,6 +35,10 @@ from facebook_business.adobjects.campaign import Campaign
 from facebook_business.adobjects.adset import AdSet
 from facebook_business.adobjects.ad import Ad
 from facebook_business.adobjects.adsinsights import AdsInsights
+
+import  random
+from .photo_mark import  photo_mark
+
 
 my_app_id = "562741177444068"
 my_app_secret = "e6df363351fb5ce4b7f0080adad08a4d"
@@ -56,21 +60,111 @@ def get_token(target_page):
     # print("request response is ", data["access_token"])
     return data["access_token"]
 
-def create_new_album(page_no , new_album ):
-    fields = [
-                          ]
-    params = {
-            'name': new_album,
-            'location': 'Riyadh Region, Saudi Arabia',
-            'privacy': 'everyone',
-            'place': '111953658894021',
-            'message':"Yallavip most fashion"+ new_album,
+def create_new_album(page_no , new_albums ):
+    adobjects = FacebookAdsApi.init(access_token=my_access_token, debug=True)
+    for new_album in new_albums:
+        fields = [
+                              ]
+        params = {
+                'name': new_album,
+                'location': 'Riyadh Region, Saudi Arabia',
+                #'privacy': 'everyone',
+                'place': '111953658894021',
+                'message':"Yallavip most fashion"+ new_album,
 
-                }
-    albums = Page(page_no).get_albums(
-                            fields=fields,
-                            params=params,
-                        )
+                    }
+        albums = Page(page_no).create_album(
+                                fields=fields,
+                                params=params,
+                            )
+        print("created albums ", albums)
+
+def post_photo_to_album(targer_page,album_no,product ):
+
+    # 检查产品是否已经在相册中了，如果不存在，就发布新图片
+    #myphotos = MyPhoto.objects.filter(name=product.handle , album_no=album_no )
+
+    page_no = targer_page.page_no
+    myphotos = MyPhoto.objects.filter(name__icontains=product.handle, album_no=album_no)
+    print("args is  %s %s %s"%(page_no,album_no , product.handle ))
+    if myphotos:
+        print("photo exist")
+        return
+    else:
+        print("now we need to create new photos")
+
+
+    adobjects = FacebookAdsApi.init(my_app_id, my_app_secret, access_token=get_token(page_no), debug=True)
+
+
+    print("product.product_no ", product.product_no)
+    ori_images = ShopifyImage.objects.filter(product_no=product.product_no).order_by('position')
+    if ori_images is None:
+        print("no image")
+        return
+
+    ori_image = random.choice(ori_images)
+
+    print("position is ", ori_image.position)
+
+    variants = ShopifyVariant.objects.filter(product_no=product.product_no).values()
+    name = product.title + "  "+product.handle + "\n\nSku:"
+    prices=[]
+    for variant in variants:
+        name = name + "\n   "+ variant.get("sku")
+        prices.append(variant.get("price",0))
+
+    name = name +"\n\nPrice:  " + str(int(max(prices))) +"SAR"
+
+    print("name is \n" ,name)
+
+
+
+    #打标
+    price1 = int(max(prices))
+    price2 = int(price1 *  random.uniform(2, 3))
+
+    image, iamge_url = photo_mark(ori_image ,product,str(price1), str(price2),  targer_page, type="album" )
+
+    print("after photo mark", iamge_url)
+
+
+    fields = ["id","name","created_time", "updated_time","picture","link",
+                      "likes.summary(true)","comments.summary(true)"
+    ]
+    params = {
+        "url": iamge_url,
+        "name": name,
+        "qn":product.handle
+
+    }
+    photo = Album(album_no).create_photo(
+        fields=fields,
+        params=params,
+    )
+
+
+
+    obj, created = MyPhoto.objects.update_or_create(photo_no=photo["id"],
+                                                    defaults={'album_no': album_no,
+                                                              'created_time':
+                                                                  photo["created_time"].split('+')[0],
+                                                              'updated_time':
+                                                                  photo["updated_time"].split('+')[0],
+
+                                                              'name': photo.get("name"),
+                                                              'picture': photo["picture"],
+                                                              'link': photo["link"],
+                                                              'like_count': photo["likes"]["summary"]["total_count"],
+                                                              'comment_count': photo["comments"]["summary"][
+                                                                  "total_count"]
+
+                                                              }
+                                                    )
+    print("new_photo saved ", obj, created)
+
+
+
 
 ACTION_CHECKBOX_NAME = '_selected_action'
 checkbox = forms.CheckboxInput({'class': 'action-select'}, lambda value: False)
@@ -126,56 +220,64 @@ class Post_to_Album(BaseActionView):
             categories_list = []
             categories = page.category_page.all()
             for category in categories:
+                print("category", category)
                 subcategories = ProductCategory.objects.filter(parent_category=category.productcategory.name)
+
                 for subcategorie in subcategories:
+                    print("subcategorie", subcategorie)
                     categories_list.append(subcategorie.name)
 
+            print("categories_list", categories_list)
             #主页已有的相册
+
             album_list = []
-            albums = page.MyAlbum.filter(page_no = page.page_no)
+            album_dict = {}
+            albums = MyAlbum.objects.filter(page_no = page.page_no)
             for album in albums:
                 album_list.append(album.name)
-
+                album_dict[album.name] = album.album_no
+            print("主页已有相册",album_list )
+            print("主页已有相册", album_dict)
 
             #产品的tags
             for product in queryset:
                 tmp_tags = product.tags.split(',')
                 tags = [i.strip() for i in tmp_tags]
+                print("tags is ", tags)
+                print("type of product ", type(product), product)
 
-                #print("categories_list", categories_list)
-                #print("tags is ", tags)
+
 
                 #目标相册
                 #产品tag 和page的品类 交集就是目标相册
                 target_albums = list((set(categories_list).union(set(tags)))^(set(categories_list)^set(tags)))
-                #print("target_album is ", target_album)
+                print("target_album is ", target_albums)
 
                 #目标相册是否已经存在
                 #目标相册和已有相册交集为空，就是不存在，需要新建相册
-                new_albums = list((set(album_list).union(set(target_albums))) ^ (set(album_list) ^ set(target_albums)))
-
-                for new_album in new_albums:
-                    create_new_album(page.page_no, new_album)
+                #new_albums = list((set(album_list).union(set(target_albums))) ^ (set(album_list) ^ set(target_albums)))
+                #new_albums = list(set(target_albums) - set(album_list))
+                #print("album ",new_albums )
+                # create_new_album(page.page_no, new_albums)
+                #没有权限建相册
 
                 #把产品图片发到目标相册中去
-                #检查产品是否已经在相册中了，如果不存在，就发布新图片
-                #for target_album in target_albums:
-                 #   post_photo_album(target_album)
 
-                continue
-            '''
-            obj, created = ProductCategoryMypage.objects.update_or_create(
-                            mypage=page, productcategory= category,
-                            defaults={
-                               # 'productcategory': category
-                            },
+                for target_album in target_albums:
+                    album_no = album_dict.get(target_album)
+                    if album_no:
+                        print("album_no", album_no)
 
-                        )
+                        post_photo_to_album(page, album_no, product)
 
-                print("created is ",created)
-                print("obj is ", obj)
 
-            '''
+                    else:
+                        print("album not exist")
+
+
+
+
+
 
         return
 

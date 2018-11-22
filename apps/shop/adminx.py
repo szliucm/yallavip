@@ -50,12 +50,7 @@ from xadmin.filters import manager as filter_manager, FILTER_PREFIX, SEARCH_VAR,
 from django.utils.html import format_html
 import random
 
-from io import BytesIO
-try:
-    from PIL import Image, ImageDraw, ImageFont, ImageEnhance
 
-except ImportError:
-    import Image, ImageDraw, ImageFont, ImageEnhance
 
 DEBUG = False
 API_VERSION = "v3.2"
@@ -79,175 +74,8 @@ def get_token(target_page):
     # print("request response is ", data["access_token"])
     return data["access_token"]
 
-# 获取远程图片
-def get_remote_image(img_url):
 
 
-    response = requests.get(img_url)
-
-    return Image.open(BytesIO(response.content))
-
-# 裁剪压缩图片
-def clipResizeImg_new(im, dst_w, dst_h, qua=95):
-    '''''
-        先按照一个比例对图片剪裁，然后在压缩到指定尺寸
-        一个图片 16:5 ，压缩为 2:1 并且宽为200，就要先把图片裁剪成 10:5,然后在等比压缩
-    '''
-    ori_w, ori_h = im.size
-
-
-
-    dst_scale = float(dst_w) / dst_h  # 目标高宽比
-    ori_scale = float(ori_w) / ori_h  # 原高宽比
-
-    if ori_scale <= dst_scale:
-        # 过高
-        width = ori_w
-        height = int(width / dst_scale)
-
-        x = 0
-        y = (ori_h - height) / 2
-
-    else:
-        # 过宽
-        height = ori_h
-        width = int(height * dst_scale)
-
-        x = (ori_w - width) / 2
-        y = 0
-
-        # 裁剪
-    box = (x, y, width + x, height + y)
-    # 这里的参数可以这么认为：从某图的(x,y)坐标开始截，截到(width+x,height+y)坐标
-    # 所包围的图像，crop方法与php中的imagecopy方法大为不一样
-    newIm = im.crop(box)
-    im = None
-
-    # 压缩
-    ratio = float(dst_w) / width
-    newWidth = int(width * ratio)
-    newHeight = int(height * ratio)
-    #newIm.resize((newWidth, newHeight), Image.ANTIALIAS).save("test6.jpg", "JPEG", quality=95)
-    return newIm.resize((newWidth, newHeight), Image.ANTIALIAS)
-
-    print
-    "old size  %s  %s" % (ori_w, ori_h)
-    print
-    "new size %s %s" % (newWidth, newHeight)
-    print
-    u"剪裁后等比压缩完成"
-
-
-def fill_image(image):
-    width, height = image.size
-    new_len = max(width, height)
-
-    # 将新图片是正方形，长度为原宽高中最长的
-    new_image = Image.new(image.mode, (new_len, new_len), color='white')
-
-    # 根据两种不同的情况，将原图片放入新建的空白图片中部
-    if width > height:
-        new_image.paste(image, (0, int((new_len - height) / 2)))
-    else:
-        new_image.paste(image, (int((new_len - width) / 2), 0))
-    return new_image
-
-#各种打标
-def deal_image(im,logo = None ,product_no = None, price = None,price1 = None, price2=None, promote = None,):
-    version = ''  # 调试用
-
-
-    # 准备画布
-    im = im.convert('RGB')
-    im = fill_image(im)
-
-    layer = Image.new('RGBA', im.size, (0, 0, 0, 0))
-
-    bw, bh = im.size
-    scale = bw / 900
-
-    # 打logo
-    if logo :
-        mark = Image.open(logo)
-        lw, lh = mark.size
-
-        # 缩放
-        # mark =  mark.resize( (int(lw*scale),int(lh*scale)), Image.ANTIALIAS)
-        layer.paste(mark, (0, 0))
-
-        out = Image.composite(layer, im, layer)
-
-    # 打货号
-    if product_no:
-        font = ImageFont.truetype(FONT, int(45 * scale))
-        draw1 = ImageDraw.Draw(im)
-        # 简单打货号
-        draw1.rectangle((int(bw / 2 - 65 * scale), int(bh - 60 * scale - 2), int(bw / 2 + 65 * scale),
-                         int(bh - 10 * scale)), fill='yellow')
-        draw1.text((int(bw / 2 - 60 * scale), int(bh - 60 * scale)), product_no, font=font,
-                   fill=(0, 0, 0))  # 设置文字位置/内容/颜色/字体
-        '''
-        #两种打货号的方式：组合商品和单品
-        if(version == 'combo'):
-            draw1.rectangle((int(bw / 2 - 65*scale - 150 ), int(bh - 60*scale-2), int(bw / 2 +65*scale - 145), int(bh-10*scale)), fill='yellow')
-            draw1.text((int(bw / 2 - 60*scale - 150), int(bh - 60*scale)), sku_no,  font=font, fill=(0 ,0 ,0))  # 设置文字位置/内容/颜色/字体
-        else:
-            draw1.rectangle((int(bw / 2 - 65 * scale ), int(bh - 60 * scale - 2), int(bw / 2 + 65 * scale ),
-                             int(bh - 10 * scale)), fill='yellow')
-            draw1.text((int(bw / 2 - 60 * scale ), int(bh - 60 * scale)), sku_no, font=font,
-                       fill=(0, 0, 0))  # 设置文字位置/内容/颜色/字体
-        '''
-        draw1 = ImageDraw.Draw(im)
-
-    # 打促销标
-    if promote:
-
-        mark = Image.open(promote)
-        lw, lh = mark.size
-        mark = mark.resize((int(lw * scale), int(lh * scale)), Image.ANTIALIAS)
-
-
-        # 根据不同促销形式，打标到不同位置'
-        if (version == 'combo'):
-            layer.paste(mark, (bw - 300 - int(lw * scale / 2), 0))
-        elif (version == 'surprise'):
-            layer.paste(mark, (bw - int(lw * scale), 0))
-        else:
-            layer.paste(mark, (bw - int(lw * scale ), 0))
-
-        out = Image.composite(layer, im, layer)
-
-    # 价格
-    if price:
-        if (version == 'surprise'):  # 猜价格
-            mark = Image.open('what.png')
-            lw, lh = mark.size
-
-            mark = mark.resize((int(lw * scale), int(lh * scale)), Image.ANTIALIAS)
-            layer.paste(mark, (0, bh - int(lh * scale)))
-        else:  # 原价 ，促销价
-            mark = Image.open(price)
-            # 画图
-            # 设置所使用的字体
-            font = ImageFont.truetype(FONT, int(90))
-            draw = ImageDraw.Draw(mark)
-            draw.text((40 + int(30 * (3 - len(price1))), 40), price1, (255, 255, 255), font=font)  # 设置文字位置/内容/颜色/字体
-            draw = ImageDraw.Draw(mark)  # Just draw it!
-
-            font = ImageFont.truetype(FONT, int(30))
-            draw.text((120 + int(10 * (3 - len(price2))), 140), price2, (255, 182, 193), font=font)  # 设置文字位置/内容/颜色/字体
-            draw = ImageDraw.Draw(mark)
-            lw, lh = mark.size
-
-            mark = mark.resize((int(lw), int(lh)), Image.ANTIALIAS)
-
-            layer.paste(mark, (0, bh - int(lh)))
-
-    out = Image.composite(layer, im, layer)
-
-    out = out.convert('RGB')
-
-    return out
 
 
 
@@ -1384,9 +1212,7 @@ class ShopifyProductAdmin(object):
         adobjects = FacebookAdsApi.init(access_token=my_access_token, debug=True)
 
         import requests
-        import os
 
-        from django.conf import settings
         import base64
 
         for product in queryset:

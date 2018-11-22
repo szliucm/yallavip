@@ -95,7 +95,7 @@ class MyPageAdmin(object):
     list_editable = ['token',]
     #search_fields = ['logistic_no', ]
     # list_filter = ("update_time", )
-    actions = ["batch_update_pages",ConnectPageCategory,"batch_create_albums","batch_update_albums","batch_update_ads",]
+    actions = ["batch_update_pages",ConnectPageCategory,"batch_update_albums","batch_update_ads",]
 
     def batch_update_pages(self, request, queryset):
         url = "https://graph.facebook.com/v3.2/me/accounts"

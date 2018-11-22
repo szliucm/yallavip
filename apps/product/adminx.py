@@ -216,7 +216,7 @@ class ProductCategoryAdmin(object):
     list_display = [ 'name', 'code', 'parent_category', 'desc', 'category_type', 'is_tab','add_time',]
 
 
-    search_fields = ["sku",'product']
+    search_fields = ["name",]
     list_filter = ['category_type',]
     list_editable = []
     actions = []
