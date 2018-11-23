@@ -89,10 +89,10 @@ class MyPageAdmin(object):
     show_promote.allow_tags = True
 
     #actions = ["batch_updatepage", ]
-    list_display = ('page', 'page_no', 'show_logo','show_price','show_promote','conversation_update_time',
+    list_display = ('page', 'page_no','active', 'show_logo','show_price','show_promote','conversation_update_time',
                    )
 
-    list_editable = ['token',]
+    list_editable = ['active',]
     #search_fields = ['logistic_no', ]
     # list_filter = ("update_time", )
     actions = ["batch_update_pages",ConnectPageCategory,"batch_update_albums","batch_update_ads",]
@@ -921,7 +921,8 @@ class MyAlbumAdmin(object):
 
 
                 obj, created = MyPhoto.objects.update_or_create(photo_no=photo["id"],
-                                                              defaults={'album_no': album_no,
+                                                              defaults={'page_no': row.page_no,
+                                                                        'album_no': album_no,
                                                                         'created_time':
                                                                             photo["created_time"].split('+')[0],
                                                                         'updated_time':
@@ -946,10 +947,10 @@ class MyAlbumAdmin(object):
 @xadmin.sites.register(MyPhoto)
 class MyPhotoAdmin(object):
 
-    list_display = [ "photo_no","album","impression","like_count","comment_count","created_time",  "updated_time", "img", "name",]
+    list_display = [ "photo_no","page_no","album","impression","like_count","comment_count","created_time",  "updated_time", "img", "name",]
 
     search_fields = ['photo_no',"album_no", "name"]
-    list_filter = ("album_no","like_count")
+    list_filter = ("page_no","album_no","like_count")
     actions = [ "batch_get_insight",]
 
     def album(self,obj):

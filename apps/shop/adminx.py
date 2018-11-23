@@ -877,7 +877,7 @@ class ShopifyProductAdmin(object):
     def create_product(self, request, queryset):
         dest_shop = "yallasale-com"
 
-        handle_init = ShopifyProduct.objects.filter(shop_name=dest_shop).order_by('-product_no').first()
+        handle_init = ShopifyProduct.objects.filter(shop_name=dest_shop, handle__contains='a' ).order_by('-product_no').first()
 
         handle_i = handle_init.handle
 

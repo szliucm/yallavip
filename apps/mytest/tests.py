@@ -126,8 +126,7 @@ class DeleteSelectedAction(BaseActionView):
     @filter_hook
     def do_action(self, queryset):
         # Check that the user has delete permission for the actual model
-        if not self.has_delete_permission():
-            raise PermissionDenied
+
 
         using = router.db_for_write(self.model)
 

@@ -49,13 +49,25 @@ my_app_secret = "e6df363351fb5ce4b7f0080adad08a4d"
 my_access_token = "EAAHZCz2P7ZAuQBABHO6LywLswkIwvScVqBP2eF5CrUt4wErhesp8fJUQVqRli9MxspKRYYA4JVihu7s5TL3LfyA0ZACBaKZAfZCMoFDx7Tc57DLWj38uwTopJH4aeDpLdYoEF4JVXHf5Ei06p7soWmpih8BBzadiPUAEM8Fw4DuW5q8ZAkSc07PrAX4pGZA4zbSU70ZCqLZAMTQZDZD"
 
 
+my_app_id_dev = "1976935359278305"
+my_app_secret_dev = "f4ee797596ed236c0bc74d33f52e6a54"
+my_access_token_dev = "EAAcGAyHVbOEBAAL2mne8lmKC55lbDMndPYEVR2TRmOWf9ePUN97SiZCqwCd3KOZBrEkC57rVt3ZClhXi6oxxf1i0hRCK50QALuAQOCs60U30FjNYimeP97xLjfl7wZAAjThdkXPJujsWcAXOwkTNKvKlmP6tZBPUtSYb3i4i1vUs40MZAUOzNIG9v7HNjnyyIZD"
+
+second_app_id = "437855903410360"
+second_token = "EAAGOOkWV6LgBAIGWTMe3IRKJQNp5ld7nxmiafOdWwlPn8BksJxFUsCiAqzMQ1ZC1LJipR2tcHXZBO949i0ZB5xOOfHbut2hk7sIP3YZB5MfuqjFtm9LGq3J7xrBtUFPLZBT9pe2UcUTXann8DXhwMPQOlIBANiNJE6RA11vNrZC0fGijUsDJds"
+
 import requests
 import json
 
-def get_token(target_page):
+def get_token(target_page,token=None):
+
+
     url = "https://graph.facebook.com/v3.2/{}?fields=access_token".format(target_page)
     param = dict()
-    param["access_token"] = my_access_token
+    if token is None:
+        param["access_token"] = my_access_token
+    else:
+        param["access_token"] = token
 
     r = requests.get(url, param)
 
@@ -65,23 +77,50 @@ def get_token(target_page):
     return data["access_token"]
 
 def create_new_album(page_no , new_albums ):
-    adobjects = FacebookAdsApi.init(access_token=my_access_token, debug=True)
+    # 建相册要用开发账号
+
+    adobjects = FacebookAdsApi.init(access_token=get_token(page_no, my_access_token_dev), debug=True)
+    new_album_list = []
     for new_album in new_albums:
-        fields = [
-                              ]
+        fields = ["created_time", "description", "id",
+                  "name", "count", "updated_time", "link",
+                  "likes.summary(true)", "comments.summary(true)"
+                  ]
         params = {
                 'name': new_album,
                 'location': 'Riyadh Region, Saudi Arabia',
                 #'privacy': 'everyone',
                 'place': '111953658894021',
-                'message':"Yallavip most fashion"+ new_album,
+                'message':"Yallavip's most fashion "+ new_album,
 
                     }
-        albums = Page(page_no).create_album(
+        album = Page(page_no).create_album(
                                 fields=fields,
                                 params=params,
                             )
-        print("created albums ", albums)
+        #插入到待返回的相册列表中
+        new_album_list.append(album.get("id"))
+        #保存到数据库中
+        obj, created = MyAlbum.objects.update_or_create(album_no=album["id"],
+                                                        defaults={'page_no': page_no,
+                                                                  'created_time': album["created_time"].split('+')[0],
+                                                                  'updated_time': album["updated_time"].split('+')[0],
+
+                                                                  'name': album["name"],
+                                                                  'count': album["count"],
+                                                                  'like_count': album["likes"]["summary"][
+                                                                      "total_count"],
+                                                                  'comment_count': album["comments"]["summary"][
+                                                                      "total_count"],
+                                                                  'link': album["link"],
+
+                                                                  }
+                                                        )
+
+
+
+        print("created albums ", album)
+    return  new_album_list
 
 def post_photo_to_album(targer_page,album_no,product ):
 
@@ -93,7 +132,7 @@ def post_photo_to_album(targer_page,album_no,product ):
     print("args is  %s %s %s"%(page_no,album_no , product.handle ))
     if myphotos:
         print("photo exist")
-        return
+        return 0
     else:
         print("now we need to create new photos")
 
@@ -105,7 +144,7 @@ def post_photo_to_album(targer_page,album_no,product ):
     ori_images = ShopifyImage.objects.filter(product_no=product.product_no).order_by('position')
     if ori_images is None:
         print("no image")
-        return
+        return 0
 
     ori_image = random.choice(ori_images)
 
@@ -132,19 +171,13 @@ def post_photo_to_album(targer_page,album_no,product ):
 
     print("after photo mark", iamge_url)
 
-    last_time = targer_page.latest_scheduled_publish_time_album
-    if last_time is None  :
-        dtime = datetime.datetime.now()
-        last_time = time.mktime(dtime.timetuple())
-
-    scheduled_publish_time = last_time + 60
-
 
     fields = ["id","name","created_time", "updated_time","picture","link",
                       "likes.summary(true)","comments.summary(true)"
     ]
     params = {
-        "scheduled_publish_time" : scheduled_publish_time,
+        "published": "true",
+
         "url": iamge_url,
         "name": name,
         "qn":product.handle
@@ -158,7 +191,10 @@ def post_photo_to_album(targer_page,album_no,product ):
 
 
     obj, created = MyPhoto.objects.update_or_create(photo_no=photo["id"],
-                                                    defaults={'album_no': album_no,
+                                                    defaults={
+                                                            'page_no': page_no,
+                                                                'album_no': album_no,
+                                                              "product_no": product.product_no,
                                                               'created_time':
                                                                   photo["created_time"].split('+')[0],
                                                               'updated_time':
@@ -174,6 +210,7 @@ def post_photo_to_album(targer_page,album_no,product ):
                                                               }
                                                     )
     print("new_photo saved ", obj, created)
+    return  1
 
 
 
@@ -268,19 +305,20 @@ class Post_to_Album(BaseActionView):
                 #目标相册是否已经存在
                 #目标相册和已有相册交集为空，就是不存在，需要新建相册
                 #new_albums = list((set(album_list).union(set(target_albums))) ^ (set(album_list) ^ set(target_albums)))
-                #new_albums = list(set(target_albums) - set(album_list))
-                #print("album ",new_albums )
-                # create_new_album(page.page_no, new_albums)
-                #没有权限建相册
+                new_albums = list(set(target_albums) - set(album_list))
+                print("album ",new_albums )
+
+                new_album_list =  create_new_album(page.page_no, new_albums)
+
+                for target_album in target_albums:
+                    new_album_list.append(album_dict.get(target_album))
 
                 #把产品图片发到目标相册中去
 
-                for target_album in target_albums:
-                    album_no = album_dict.get(target_album)
-                    if album_no:
-                        print("album_no", album_no)
-
-                        post_photo_to_album(page, album_no, product)
+                for new_album in new_album_list:
+                    print("new_album is ", new_album)
+                    if new_album:
+                        post_photo_to_album(page, new_album, product)
 
 
                     else:

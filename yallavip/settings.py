@@ -60,7 +60,9 @@ INSTALLED_APPS = [
     'import_export',
     #'DjangoUeditor',
     'crispy_forms',
-    'xadmin'   #注册xadmin
+    'xadmin',   #注册xadmin
+    'django_celery_results',
+    'django_celery_beat',
 
 
 ]
@@ -151,7 +153,7 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = False
+USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
@@ -168,3 +170,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'static/media/')
 
 DATETIME_FORMAT = 'Y-m-d H:i:s'
 DATE_FORMAT = 'Y-m-d'
+
+CELERY_RESULT_BACKEND = 'django-db'
+CELERY_RESULT_BACKEND = 'django-cache'
+
+

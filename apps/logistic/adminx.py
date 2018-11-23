@@ -612,8 +612,7 @@ class LogisticSupplierAdmin(object):
 
     yallavip_package_start.short_description = "中仪包裹状态-发运"
 
-    #def has_delete_permission(self):
-    #    return False
+
 
     def get_list_queryset(self):
         """批量查询订单号"""

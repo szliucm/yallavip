@@ -17,6 +17,8 @@ class MyPage(models.Model):
     price = models.ImageField(u'价格标签', upload_to='material/',default="",null=True, blank=True)
     promote = models.ImageField(u'促销标签', upload_to='material/',default="",null=True, blank=True)
 
+    active = models.BooleanField(u"page状态",default=False)
+
     class Meta:
         verbose_name = "主页更新"
         verbose_name_plural = verbose_name
@@ -156,6 +158,7 @@ class MyAlbum(models.Model):
         return  self.name
 
 class MyPhoto(models.Model):
+    page_no = models.CharField(max_length=30, null=True, blank=True, verbose_name="page_no")
     photo_no = models.CharField(max_length=30, null=True, blank=True, verbose_name="photo_no")
     album_no = models.CharField(default='', null=True, max_length=50, blank=True, verbose_name="album_no")
 
@@ -171,6 +174,7 @@ class MyPhoto(models.Model):
 
     comment_count = models.CharField(max_length=100,null=True, blank=True, verbose_name="comment_count")
 
+    product_no = models.CharField(max_length=30, null=True, blank=True, verbose_name="product_no")
 
 
     class Meta:

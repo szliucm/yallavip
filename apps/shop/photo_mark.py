@@ -11,7 +11,7 @@ except ImportError:
     import Image, ImageDraw, ImageFont, ImageEnhance
 
 
-DEV = False
+DEV = True
 
 if DEV:
     domain = "http://dev.yallavip.com:8000"
