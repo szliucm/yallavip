@@ -21,24 +21,24 @@ class Shop(models.Model):
 class ShopifyProduct(models.Model):
     shop = models.ForeignKey(Shop, related_name='shop_product', null=True, on_delete=models.CASCADE,
                                  verbose_name="店铺")
-    shop_name = models.CharField(u'店铺名', default='', max_length=100, blank=True)
+    shop_name = models.CharField(u'店铺名', default='', max_length=100,null=True, blank=True)
 
-    product_no = models.CharField(u'id', default='', max_length=100, blank=True)
-    handle  =  models.CharField(u'handle', default='', max_length=256, blank=True)
+    product_no = models.CharField(u'id', default='', max_length=100, null=True,blank=True)
+    handle  =  models.CharField(u'handle', default='', max_length=256, null=True,blank=True)
 
-    body_html = models.TextField(u'body_html', default='', max_length=1024, blank=True)
-    title = models.CharField(u'产品名', default='', max_length=500, blank=True)
+    body_html = models.TextField(u'body_html', default='', max_length=1024,null=True, blank=True)
+    title = models.CharField(u'产品名', default='', max_length=500, null=True,blank=True)
     created_at =  models.DateTimeField(u'创建时间', auto_now=False, null=True, blank=True)
 
     published_at = models.DateTimeField(u'发布时间', auto_now=False, null=True, blank=True)
     updated_at = models.DateTimeField(u'更新时间', auto_now=False, null=True, blank=True)
-    product_type = models.CharField(u'product_type', default='', max_length=100, blank=True)
+    product_type = models.CharField(u'product_type', default='', max_length=100,null=True, blank=True)
 
-    tags = models.CharField(u'tags', default='', max_length=256, blank=True)
+    tags = models.CharField(u'tags', default='', max_length=256,null=True, blank=True)
 
-    metafields_global_title_tag = models.CharField(u'SEO_name', default='', max_length=200, blank=True)
-    metafields_global_description_tag = models.CharField(u'SEO_desc', default='', max_length=500, blank=True)
-    vendor = models.CharField(u'供应商', default='', max_length=100, blank=True)
+    metafields_global_title_tag = models.CharField(u'SEO_name', default='', max_length=200,null=True, blank=True)
+    metafields_global_description_tag = models.CharField(u'SEO_desc', default='', max_length=500, null=True,blank=True)
+    vendor = models.CharField(u'供应商', default='', max_length=100, null=True,blank=True)
 
     listed = models.BooleanField(u'已发布', default=False)
     class Meta:
