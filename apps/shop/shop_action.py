@@ -188,8 +188,6 @@ def post_photo_to_album(targer_page,album_no,product ):
         params=params,
     )
 
-
-
     obj, created = MyPhoto.objects.update_or_create(photo_no=photo["id"],
                                                     defaults={
                                                             'page_no': page_no,

@@ -4,9 +4,9 @@ from celery import shared_task
 
 
 from .photo_mark import  photo_mark
-from product.models import ProductCategory,ProductCategoryMypage
+from shop.models import ProductCategory,ProductCategoryMypage
 from fb.models import  MyPage,MyAlbum,MyPhoto
-from .models import ShopifyProduct
+from .models import *
 from .shop_action import  *
 @shared_task
 def add(x, y):
@@ -35,27 +35,63 @@ def post_to_album():
     mypages = MyPage.objects.filter(active=True)
     for mypage in mypages:
         posted = 0
+
         # 主页的三级品类
         categories_list = []
-        print("type of ",type(mypage), mypage)
+
         categories = mypage.category_page.all()
         for category in categories:
-            print("category", category)
+            print("当前处理的类目 %s"%( category))
+
+            # 主页已有的相册
+            album_list = []
+            album_dict = {}
+            albums = MyAlbum.objects.filter(page_no=mypage.page_no)
+            for album in albums:
+                album_dict[album.name] = album.album_no
+
+            print("主页已有相册", album_dict)
+
+            #找出每个品类下未发布的产品
+            product = ShopifyProduct.objects.filter(category_code = category.productcategory.code,product_no__gt= category.last_no ).\
+                                                order_by("product_no").first()
+            if product is None:
+                print("当前类目没有产品了，跳出")
+                continue
+
+            #这个品类是否已经建了相册
+            category_album = category.productcategory.album_name
+            target_album = album_dict.get(category_album)
+
+            if target_album is None:
+                print("此类目还没有相册，新建一个")
+                album_list = []
+                album_list = album_list.append(category_album)
+                target_album = create_new_album(mypage.page_no, album_list)
+
+            posted = posted + post_photo_to_album(mypage, target_album, product)
+
+
+            obj, created = ProductCategoryMypage.objects.update_or_create(
+                mypage=mypage, productcategory=category.productcategory,
+                defaults={
+                     'last_no': product.product_no
+                },
+
+            )
+            print("更新page_类目记录 %s %s %s" % (mypage, category.productcategory, product.product_no))
+            print("created is ", created)
+            print("obj is ", obj)
+
+
+            '''
             subcategories = ProductCategory.objects.filter(parent_category=category.productcategory.name)
 
             for subcategorie in subcategories:
                 print("subcategorie", subcategorie)
                 categories_list.append(subcategorie.name)
 
-        # 主页已有的相册
-        album_list = []
-        album_dict = {}
-        albums = MyAlbum.objects.filter(page_no=mypage.page_no)
-        for album in albums:
-            album_list.append(album.name)
-            album_dict[album.name] = album.album_no
-        print("主页已有相册", album_list)
-        print("主页已有相册", album_dict)
+
 
 
         #找出还没发布的产品
@@ -67,7 +103,7 @@ def post_to_album():
         print("product_no", product_no)
 
 
-
+        
         products = ShopifyProduct.objects.filter(product_no__gt =product_no)
 
         for product in products:
@@ -113,6 +149,8 @@ def post_to_album():
 
             if posted > 1:
                 break
+                
+                '''
 
     return
 

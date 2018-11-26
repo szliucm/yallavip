@@ -176,7 +176,6 @@ class MyPhoto(models.Model):
 
     product_no = models.CharField(max_length=30, null=True, blank=True, verbose_name="product_no")
 
-
     class Meta:
         verbose_name = "Photo"
         verbose_name_plural = verbose_name

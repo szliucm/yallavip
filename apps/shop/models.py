@@ -280,7 +280,9 @@ class ProductCategoryMypage(models.Model):
     productcategory = models.ForeignKey(ProductCategory, null=True, blank=True, verbose_name="产品类别", help_text="产品类别",
                                related_name="page_category", on_delete=models.CASCADE)
 
-    last_no =models.IntegerField(u'最后更新产品ID',default=0,blank=True, null=True)
+    last_no = models.CharField(u'最后更新产品ID', default='', max_length=100, null=True,blank=True)
+
+
 
 
     class Meta:
