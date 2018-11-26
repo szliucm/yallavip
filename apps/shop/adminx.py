@@ -761,7 +761,7 @@ class ShopifyProductAdmin(object):
     search_fields = ["handle", "product_no"]
     list_filter = ['shop_name', 'listed', "created_at", "tags","category_code"]
     # list_editable = ["supply_status"]
-    actions = ["create_product", "post_product",  "post_ad","update_cate",Post_to_Album ]
+    actions = ["create_product", "delete_product", "post_product",  "post_ad","update_cate",Post_to_Album ]
     # inlines = [VariantInline, ]
     ordering = ['-product_no']
 
@@ -942,6 +942,35 @@ class ShopifyProductAdmin(object):
     create_product.short_description = "发布到主店铺"
 
 
+
+    def delete_product(self, request, queryset):
+        for product in queryset:
+
+            shop_obj = Shop.objects.get(shop_name=product.shop_name)
+            # 初始化SDK
+            shop_url = "https://%s:%s@%s.myshopify.com" % (shop_obj.apikey, shop_obj.password, shop_obj.shop_name)
+
+            # delete a product
+
+            product_id = product.product_no
+            if product_id is None:
+                continue;
+            else:
+                url = shop_url + "/admin/products/%s.json" % (product_id)
+
+                headers = {
+                    "Content-Type": "application/json",
+                    "charset": "utf-8",
+
+                }
+
+                r = requests.delete(url, headers=headers)
+                print("response is ",r)
+
+        #删除本地数据库记录
+        queryset.delete()
+
+    delete_product.short_description = "删除主店铺产品"
 
     def update_cate(self, request, queryset):
 
