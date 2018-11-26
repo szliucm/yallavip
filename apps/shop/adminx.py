@@ -876,7 +876,7 @@ class ShopifyProductAdmin(object):
     search_fields = ["handle", "product_no"]
     list_filter = ['shop_name', 'listed', "created_at", "tags","category_code"]
     # list_editable = ["supply_status"]
-    actions = ["create_product", "post_product",  "post_ad","update_cate_1","update_cate",Post_to_Album ]
+    actions = ["create_product", "post_product",  "post_ad","update_cate",Post_to_Album ]
     # inlines = [VariantInline, ]
     ordering = ['-product_no']
 
@@ -1121,32 +1121,7 @@ class ShopifyProductAdmin(object):
 
     create_product.short_description = "发布到主店铺"
 
-    def update_cate_1(self, request, queryset):
 
-        product_cates = ProductCategory.objects.values( 'cate_1').distinct()
-
-        for product in queryset:
-            cate_1 = ""
-
-
-            for product_cate in product_cates:
-                print("product.tags", product.tags)
-                print("cate_1",product_cate["cate_1"])
-
-                if product_cate["cate_1"].lower() in product.tags.lower():
-                    cate_1 = product_cate["cate_1"]
-                    ShopifyProduct.objects.filter(product_no = product.product_no).update(
-
-                                    cate_1 = cate_1,
-                            )
-                    break
-
-
-
-        return
-
-
-    update_cate_1.short_description = "更新类目_1"
 
     def update_cate(self, request, queryset):
 
@@ -1157,21 +1132,27 @@ class ShopifyProductAdmin(object):
             cate_2 = ""
             cate_3 = ""
             category_code = ""
+            tags = product.tags.lower()
+
 
             for product_cate in product_cates:
-                tags = product.tags.lower()
+
 
                 if product_cate["cate_1"].lower() in tags \
                         and product_cate["cate_2"].lower() in tags \
                         and product_cate["cate_3"].lower() in tags:
                     category_code = product_cate["code"]
 
-                ShopifyProduct.objects.filter(product_no=product.product_no).update(
-                    category_code=category_code,
-                    cate_1=cate_1,
-                    cate_2=cate_2,
-                    cate_3=cate_3,
-                )
+                    ShopifyProduct.objects.filter(product_no=product.product_no).update(
+                        category_code=category_code,
+                        cate_1=cate_1,
+                        cate_2=cate_2,
+                        cate_3=cate_3,
+
+                        )
+                    print("product %s 更新类目成功 "%(product.handle))
+                    continue
+
 
         return
 
