@@ -30,7 +30,7 @@ def post_to_mainshop():
     dest_shop = "yallasale-com"
     ori_shop = "yallavip-saudi"
 
-    product_init = ShopifyProduct.objects.filter(shop_name=dest_shop, handle__contains='a' ).order_by('-product_no').first()
+    product_init = ShopifyProduct.objects.filter(Q(handle__startswith='a'),shop_name=dest_shop,  ).order_by('-product_no').first()
     print("主店最新的产品是 %s handle 是%s  供应商是 %s" % (product_init, product_init.handle, product_init.vendor))
     handle_i = product_init.handle
 
