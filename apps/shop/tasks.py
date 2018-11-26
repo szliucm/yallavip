@@ -218,23 +218,19 @@ def post_to_album():
     for mypage in mypages:
         posted = 0
 
-        # 主页的三级品类
-        categories_list = []
+        # 主页已有的相册
+        album_dict = {}
+        albums = MyAlbum.objects.filter(page_no=mypage.page_no)
+        for album in albums:
+            album_dict[album.name] = album.album_no
+
+        print("主页已有相册", album_dict)
 
         categories = mypage.category_page.all()
         for category in categories:
             print("当前处理的类目 %s"%( category))
 
-            # 主页已有的相册
-            album_list = []
-            album_dict = {}
-            albums = MyAlbum.objects.filter(page_no=mypage.page_no)
-            for album in albums:
-                album_dict[album.name] = album.album_no
-
-            print("主页已有相册", album_dict)
-
-            #找出每个品类下未发布的产品
+            #找出每个品类下未发布的产品， 每次只发一张
             product = ShopifyProduct.objects.filter(category_code = category.productcategory.code,product_no__gt= category.last_no ).\
                                                 order_by("product_no").first()
             if product is None:
@@ -245,11 +241,16 @@ def post_to_album():
             category_album = category.productcategory.album_name
             target_album = album_dict.get(category_album)
 
+            print("品类需要的相册 %s, 已有相册 %s"%(category_album, target_album))
+
             if target_album is None:
                 print("此类目还没有相册，新建一个")
                 album_list = []
-                album_list = album_list.append(category_album)
-                target_album = create_new_album(mypage.page_no, album_list)
+                album_list.append(category_album)
+
+                target_album = create_new_album(mypage.page_no, album_list)[0]
+
+            print("target_album %s" % (target_album))
 
             posted = posted + post_photo_to_album(mypage, target_album, product)
 

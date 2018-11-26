@@ -81,6 +81,7 @@ def create_new_album(page_no , new_albums ):
 
     adobjects = FacebookAdsApi.init(access_token=get_token(page_no, my_access_token_dev), debug=True)
     new_album_list = []
+    print("new_albums",new_albums )
     for new_album in new_albums:
         fields = ["created_time", "description", "id",
                   "name", "count", "updated_time", "link",
