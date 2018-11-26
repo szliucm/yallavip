@@ -24,7 +24,7 @@ class ShopifyProduct(models.Model):
                                  verbose_name="店铺")
     shop_name = models.CharField(u'店铺名', default='', max_length=100,null=True, blank=True)
 
-    product_no = models.CharField(u'id', default='', max_length=100, null=True,blank=True)
+    product_no = models.BigIntegerField(u'id', default='', null=True,blank=True)
     handle  =  models.CharField(u'handle', default='', max_length=256, null=True,blank=True)
 
     cate_1 = models.CharField(u'cate_1', default='', max_length=256, null=True, blank=True)
@@ -280,7 +280,7 @@ class ProductCategoryMypage(models.Model):
     productcategory = models.ForeignKey(ProductCategory, null=True, blank=True, verbose_name="产品类别", help_text="产品类别",
                                related_name="page_category", on_delete=models.CASCADE)
 
-    last_no = models.CharField(u'最后更新产品ID', default='', max_length=100, null=True,blank=True)
+    last_no = models.BigIntegerField(u'最后更新产品ID', default='', null=True,blank=True)
 
 
 

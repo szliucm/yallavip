@@ -1,6 +1,8 @@
 # Create your tasks here
 from __future__ import absolute_import, unicode_literals
+import numpy as np, re
 from celery import shared_task
+
 
 
 from .photo_mark import  photo_mark
@@ -8,6 +10,7 @@ from shop.models import ProductCategory,ProductCategoryMypage
 from fb.models import  MyPage,MyAlbum,MyPhoto
 from .models import *
 from .shop_action import  *
+from .adminx import  insert_product
 @shared_task
 def add(x, y):
     return x + y
@@ -21,6 +24,185 @@ def mul(x, y):
 @shared_task
 def xsum(numbers):
     return sum(numbers)
+
+@shared_task
+def post_to_mainshop():
+    dest_shop = "yallasale-com"
+    ori_shop = "yallavip-saudi"
+
+    product_init = ShopifyProduct.objects.filter(shop_name=dest_shop, handle__contains='a' ).order_by('-product_no').first()
+    print("主店最新的产品是 %s handle 是%s  供应商是 %s" % (product_init, product_init.handle, product_init.vendor))
+    handle_i = product_init.handle
+
+    handle_i = int(handle_i[1:5])
+    print("handle_i %s"%(handle_i))
+
+
+    latest_ori_product =  ShopifyProduct.objects.filter(shop_name=ori_shop, vendor=product_init.vendor).order_by('-product_no').first()
+    print("沙特站最后更新的产品是 %s 供应商是 %s,product_no is %d "%(latest_ori_product, latest_ori_product.vendor , latest_ori_product.product_no))
+
+    ori_products = ShopifyProduct.objects.filter(shop_name=ori_shop, product_no__gt = latest_ori_product.product_no).order_by('product_no')
+    print("沙特站最新的产品是 %s " % (ori_products))
+
+    # 初始化SDK
+    shop_obj = Shop.objects.get(shop_name=dest_shop)
+    shop_url = "https://%s:%s@%s.myshopify.com" % (shop_obj.apikey, shop_obj.password, shop_obj.shop_name)
+
+
+    for product in ori_products:
+        handle_i = handle_i + 1
+        handle_new = "A" + str(handle_i).zfill(4)
+
+        # Create a new product
+
+        url = shop_url + "/admin/products.json"
+
+        imgs_list = []
+
+        imgs = ShopifyImage.objects.filter(product_no=product.product_no).values('image_no', 'src').order_by(
+            'position')
+
+        for img in imgs:
+            image = {
+                "src": img["src"],
+                "image_no": img["image_no"]
+            }
+            imgs_list.append(image)
+
+
+        params = {
+            "product": {
+                "handle": handle_new,
+                "title": product.title,
+                "body_html": product.body_html,
+                "vendor": product.vendor,
+                "product_type": product.product_type,
+                "tags": product.tags,
+                "images": imgs_list,
+                # "variants": variants_list,
+                # "options": option_list
+            }
+        }
+        headers = {
+            "Content-Type": "application/json",
+            "charset": "utf-8",
+
+        }
+
+        r = requests.post(url, headers=headers, data=json.dumps(params))
+        data = json.loads(r.text)
+        new_product = data.get("product")
+        if new_product is None:
+            print("data is ", data)
+            continue
+
+        new_product_no = new_product.get("id")
+
+        # 增加变体
+
+        # image
+        image_dict = {}
+        for k_img in range(len(new_product["images"])):
+            image_row = new_product["images"][k_img]
+            new_image_no = image_row["id"]
+            # new_image_list.append(image_no)
+            old_image_no = imgs_list[k_img]["image_no"]
+
+            image_dict[old_image_no] = new_image_no
+            # print("old image %s new image %s"%(old_image_no, new_image_no ))
+
+        # option
+        option_list = []
+
+        options = ShopifyOptions.objects.filter(product_no=product.product_no).values('name', 'values')
+        for row in options:
+            option = {
+                "name": row["name"],
+                "values": re.split('[.]', row["values"])
+            }
+            option_list.append(option)
+
+        # variant
+        variants_list = []
+
+        variants = ShopifyVariant.objects.filter(product_no=product.product_no).values()
+
+        for variant in variants:
+            old_image_no = variant.get("image_no")
+            new_image_no = image_dict.get(old_image_no)
+            print("image dict  %s %s " % (old_image_no, new_image_no))
+
+            sku = handle_new
+            option1 = variant.get("option1")
+            option2 = variant.get("option2")
+            option3 = variant.get("option3")
+
+            if option1:
+                sku = sku + "-" + option1.replace("&", '').replace('-', '').replace('.', '').replace(' ', '')
+                if option2:
+                    sku = sku + "_" + option2.replace("&", '').replace('-', '').replace('.', '').replace(' ', '')
+                    if option3:
+                        sku = sku + "_" + option3.replace("&", '').replace('-', '').replace('.', '').replace(' ',
+                                                                                                             '')
+
+            variant_item = {
+                "option1": option1,
+                "option2": option2,
+                "option3": option3,
+                "price": int(float(variant.get("price")) * 2.3),
+                "compare_at_price": int(float(variant.get("price")) * 2.3 * random.uniform(2, 3)),
+                "sku": sku,
+                "position": variant.get("position"),
+                "image_id": new_image_no,
+                "grams": variant.get("grams"),
+                "title": variant.get("title"),
+                "taxable": "true",
+                "inventory_management": "shopify",
+                "fulfillment_service": "manual",
+                "inventory_policy": "continue",
+
+                "inventory_quantity": 10000,
+                "requires_shipping": "true",
+                "weight": 0.5,
+                "weight_unit": "kg",
+
+            }
+            # print("variant_item", variant_item)
+            variants_list.append(variant_item)
+
+        params = {
+            "product": {
+                "variants": variants_list,
+                "options": option_list,
+
+            }
+        }
+        headers = {
+            "Content-Type": "application/json",
+            "charset": "utf-8",
+
+        }
+
+        # print("upload data is ",json.dumps(params))
+
+        url = shop_url + "/admin/products/%s.json" % (new_product_no)
+        r = requests.put(url, headers=headers, data=json.dumps(params))
+        data = json.loads(r.text)
+
+        new_product = data.get("product")
+        if new_product is None:
+            print("data is ", data)
+            continue
+
+        product_list = []
+        product_list.append(new_product)
+
+        #insert_product(dest_shop, product_list)
+
+        print("new_product_no is", new_product.get("id"))
+
+        # shopify.ShopifyResource.clear_session()
+
 
 @shared_task
 def post_to_album():
@@ -84,73 +266,7 @@ def post_to_album():
             print("obj is ", obj)
 
 
-            '''
-            subcategories = ProductCategory.objects.filter(parent_category=category.productcategory.name)
 
-            for subcategorie in subcategories:
-                print("subcategorie", subcategorie)
-                categories_list.append(subcategorie.name)
-
-
-
-
-        #找出还没发布的产品
-        product = MyPhoto.objects.filter(page_no = mypage).order_by("product_no").last()
-        if not product:
-            product_no = 0
-        else:
-            product_no = product.product_no
-        print("product_no", product_no)
-
-
-        
-        products = ShopifyProduct.objects.filter(product_no__gt =product_no)
-
-        for product in products:
-            # 产品的tags
-            tmp_tags = product.tags.split(',')
-            tags = [i.strip() for i in tmp_tags]
-            print("tags is ", tags)
-            print("type of product ", type(product), product)
-
-            # 目标相册
-            # 产品tag 和page的三级类目 交集就是目标相册
-            target_albums = list((set(categories_list).union(set(tags))) ^ (set(categories_list) ^ set(tags)))
-            print("target_album is ", target_albums)
-
-            # 目标相册是否已经存在
-            # 目标相册和已有相册交集为空，就是不存在，需要新建相册
-            new_albums = list(set(target_albums) - set(album_list))
-            print("album ", new_albums)
-
-
-            #非空则创建新相册
-            if new_albums:
-                new_album_list = create_new_album(mypage.page_no, new_albums)
-            else:
-                new_album_list = []
-
-            for target_album in target_albums:
-                new_album_list.append(album_dict.get(target_album))
-
-            #空则意味着品类不符合，跳过
-            if not new_album_list:
-                continue
-
-            # 把产品图片发到目标相册中去
-
-            for new_album in new_album_list:
-                print("new_album is ", new_album)
-                if new_album:
-                    posted = posted + post_photo_to_album(mypage, new_album, product)
-
-                else:
-                    print("album not exist")
-
-            if posted > 1:
-                break
-                
-                '''
 
     return
 
