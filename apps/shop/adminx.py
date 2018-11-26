@@ -890,7 +890,8 @@ class ShopifyProductAdmin(object):
 
         handle_i = handle_init.handle
 
-        handle_i = int(handle_i[1:])
+        handle_i = int(handle_i[1:5])
+        print("handle_i %s"%(handle_i))
 
         print(" now let's start create_product ", handle_i)
 
