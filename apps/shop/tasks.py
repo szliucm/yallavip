@@ -11,6 +11,8 @@ from fb.models import  MyPage,MyAlbum,MyPhoto
 from .models import *
 from .shop_action import  *
 from .adminx import  insert_product
+from django.db.models import Q
+
 @shared_task
 def add(x, y):
     return x + y
