@@ -1,5 +1,6 @@
 from django.db import models
 from logistic.models import Package
+from fb.models import MyPage
 
 # Create your models here.
 class Shop(models.Model):
@@ -26,6 +27,10 @@ class ShopifyProduct(models.Model):
     product_no = models.CharField(u'id', default='', max_length=100, null=True,blank=True)
     handle  =  models.CharField(u'handle', default='', max_length=256, null=True,blank=True)
 
+    cate_1 = models.CharField(u'cate_1', default='', max_length=256, null=True, blank=True)
+    cate_2 = models.CharField(u'cate_2', default='', max_length=256, null=True, blank=True)
+    cate_3    = models.CharField(u'cate_3', default='', max_length=256, null=True, blank=True)
+
     body_html = models.TextField(u'body_html', default='', max_length=1024,null=True, blank=True)
     title = models.CharField(u'产品名', default='', max_length=500, null=True,blank=True)
     created_at =  models.DateTimeField(u'创建时间', auto_now=False, null=True, blank=True)
@@ -40,7 +45,11 @@ class ShopifyProduct(models.Model):
     metafields_global_description_tag = models.CharField(u'SEO_desc', default='', max_length=500, null=True,blank=True)
     vendor = models.CharField(u'供应商', default='', max_length=100, null=True,blank=True)
 
+
     listed = models.BooleanField(u'已发布', default=False)
+
+    category_code = models.CharField(u'类目', default='', max_length=100, null=True,blank=True)
+
     class Meta:
         verbose_name = "shopify商品"
         verbose_name_plural = verbose_name
@@ -246,3 +255,37 @@ class OverseaSell(Package):
 
     def __str__(self):
         return self.logistic_no
+
+class ProductCategory(models.Model):
+    """
+    商品类别
+    """
+    code = models.CharField(u'code', default='', max_length=256, null=True, blank=True)
+    cate_1 = models.CharField(u'cate_1', default='', max_length=256, null=True, blank=True)
+    cate_2 = models.CharField(u'cate_2', default='', max_length=256, null=True, blank=True)
+    cate_3 = models.CharField(u'cate_3', default='', max_length=256, null=True, blank=True)
+    album_name = models.CharField(u'相册名', default='', max_length=256, null=True, blank=True)
+    class Meta:
+        verbose_name = "商品类别"
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.code
+
+
+
+class ProductCategoryMypage(models.Model):
+    mypage = models.ForeignKey(MyPage, null=True, blank=True, verbose_name="主页", help_text="主页",
+                                        related_name="category_page",on_delete=models.CASCADE)
+    productcategory = models.ForeignKey(ProductCategory, null=True, blank=True, verbose_name="产品类别", help_text="产品类别",
+                               related_name="page_category", on_delete=models.CASCADE)
+
+    last_no =models.IntegerField(u'最后更新产品ID',default=0,blank=True, null=True)
+
+
+    class Meta:
+        verbose_name = "品类对应主页"
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.productcategory.album_name

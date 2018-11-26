@@ -17,7 +17,7 @@ from django.utils.translation import ugettext as _
 from django.contrib.admin.utils import get_deleted_objects
 from xadmin.util import model_ngettext
 from xadmin.views.base import filter_hook
-from product.models import ProductCategory,ProductCategoryMypage
+from shop.models import ProductCategory,ProductCategoryMypage
 
 
 
@@ -80,6 +80,7 @@ class select_form(forms.Form, ):
 
         self.fields["datasrc"].queryset = queryset
 
+
 class ConnectPageCategory(BaseActionView):
 
     # 这个是执行函数名
@@ -121,7 +122,7 @@ class ConnectPageCategory(BaseActionView):
     #捕捉操作
     def do_action(self, queryset):
         ##############需要选择的对象
-        form_queryset = ProductCategory.objects.filter(category_type=2)
+        form_queryset = ProductCategory.objects.filter().order_by("code")
         ############################
 
         form = select_form(form_queryset, self.request.POST )
@@ -146,5 +147,6 @@ class ConnectPageCategory(BaseActionView):
 
         return TemplateResponse(self.request,
                                 'select_form.html', context)
+
 
 

@@ -6,7 +6,7 @@ import xadmin
 from django.shortcuts import get_object_or_404, get_list_or_404, render
 from import_export import resources, fields
 from import_export.widgets import ForeignKeyWidget
-from .models import Product,ProductCategory,ProductCategoryMypage
+from .models import Product
 
 from django.db import models
 
@@ -187,6 +187,7 @@ class ProductAdmin(object):
     '''
 xadmin.site.register(Product, ProductAdmin)
 
+'''
 class ProductCategoryResource(resources.ModelResource):
     name = fields.Field(attribute='name', column_name='类别名')
     code = fields.Field(attribute='code', column_name='类别code')
@@ -232,3 +233,4 @@ class ProductCategoryMypageAdmin(object):
     list_filter = ['mypage__page', 'productcategory__category_type',]
     list_editable = []
     actions = []
+'''

@@ -35,7 +35,7 @@ from .models import  MyPage, MyAdAccount,MyCampaign, MyAdset, MyAd, \
 
 
 from .page_action import ConnectPageCategory
-from  product.models import  ProductCategory
+from  shop.models import  ProductCategory
 
 
 

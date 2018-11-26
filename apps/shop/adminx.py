@@ -24,8 +24,7 @@ from xadmin.layout import Main, Side, Fieldset, Row, AppendedText
 from django.shortcuts import get_object_or_404, get_list_or_404, render
 from import_export import resources, fields
 from import_export.widgets import ForeignKeyWidget
-from .models import Shop, ShopifyProduct, ShopifyVariant, ShopifyImage, ShopifyOptions, ShopifyCustomer, ShopifyAddress, \
-    OverseaSell
+from .models import *
 from logistic.models import Package
 from fb.models import MyPage
 from orders.models import Order
@@ -864,15 +863,25 @@ class VariantInline(object):
 
 @xadmin.sites.register(ShopifyProduct)
 class ShopifyProductAdmin(object):
-    list_display = ['shop_name', 'product_no', 'handle', 'created_at', "updated_at", "listed", "title"]
+    def show_album(self, obj):
+        album_name = ProductCategory.objects.get(code=obj.category_code).album_name
+
+        return album_name
+
+    show_album.short_description = "相册名"
+
+    list_display = ['shop_name', 'product_no', 'handle','category_code','show_album', 'created_at', "updated_at", "listed", "title"]
     # 'sku_name','img',
 
     search_fields = ["handle", "product_no"]
-    list_filter = ['shop_name', 'listed', "created_at", "tags"]
+    list_filter = ['shop_name', 'listed', "created_at", "tags","category_code"]
     # list_editable = ["supply_status"]
-    actions = ["create_product", "post_product",  "post_ad",Post_to_Album ]
+    actions = ["create_product", "post_product",  "post_ad","update_cate_1","update_cate",Post_to_Album ]
     # inlines = [VariantInline, ]
     ordering = ['-product_no']
+
+
+
 
     def create_product(self, request, queryset):
         dest_shop = "yallasale-com"
@@ -1112,6 +1121,173 @@ class ShopifyProductAdmin(object):
 
     create_product.short_description = "发布到主店铺"
 
+    def update_cate_1(self, request, queryset):
+
+        product_cates = ProductCategory.objects.values( 'cate_1').distinct()
+
+        for product in queryset:
+            cate_1 = ""
+
+
+            for product_cate in product_cates:
+                print("product.tags", product.tags)
+                print("cate_1",product_cate["cate_1"])
+
+                if product_cate["cate_1"].lower() in product.tags.lower():
+                    cate_1 = product_cate["cate_1"]
+                    ShopifyProduct.objects.filter(product_no = product.product_no).update(
+
+                                    cate_1 = cate_1,
+                            )
+                    break
+
+
+
+        return
+
+
+    update_cate_1.short_description = "更新类目_1"
+
+    def update_cate(self, request, queryset):
+
+        product_cates = ProductCategory.objects.values()
+
+        for product in queryset:
+            cate_1 = ""
+            cate_2 = ""
+            cate_3 = ""
+            category_code = ""
+
+            for product_cate in product_cates:
+                tags = product.tags.lower()
+
+                if product_cate["cate_1"].lower() in tags \
+                        and product_cate["cate_2"].lower() in tags \
+                        and product_cate["cate_3"].lower() in tags:
+                    category_code = product_cate["code"]
+
+                ShopifyProduct.objects.filter(product_no=product.product_no).update(
+                    category_code=category_code,
+                    cate_1=cate_1,
+                    cate_2=cate_2,
+                    cate_3=cate_3,
+                )
+
+        return
+
+    update_cate.short_description = "更新类目"
+
+    '''
+    def update_cate(self, request, queryset):
+
+        product_cates = ProductCategory.objects.values()
+
+        for product in queryset:
+            cate_1 = ""
+            cate_2 = ""
+            cate_3 = ""
+            category_code = ""
+
+            for product_cate in product_cates:
+                if product_cate["cate_1"] in product.tags:
+                    cate_1 = product_cate["cate_1"]
+
+                if product_cate["cate_2"] in product.tags:
+                    cate_2 = product_cate["cate_2"]
+
+                if product_cate["cate_1"] in product.tags:
+                    cate_3 = product_cate["cate_3"]
+
+                if product_cate["cate_1"] in product.tags \
+                        and product_cate["cate_2"] in product.tags \
+                        and product_cate["cate_3"] in product.tags:
+                    category_code = product_cate["code"]
+
+                ShopifyProduct.objects.filter(product_no=product.product_no).update(
+                    category_code=category_code,
+                    cate_1=cate_1,
+                    cate_2=cate_2,
+                    cate_3=cate_3,
+                )
+
+        return
+
+    update_cate.short_description = "更新类目"
+
+    def update_cate(self, request, queryset):
+
+        product_cates = ProductCategory.objects.values()
+
+        for product in queryset:
+            cate_1 = ""
+            cate_2 = ""
+            cate_3 = ""
+            category_code = ""
+
+            for product_cate in product_cates:
+                if product_cate["cate_1"] in product.tags:
+                    cate_1 = product_cate["cate_1"]
+
+                if product_cate["cate_2"] in product.tags:
+                    cate_2 = product_cate["cate_2"]
+
+                if product_cate["cate_1"] in product.tags:
+                    cate_3 = product_cate["cate_3"]
+
+                if product_cate["cate_1"] in product.tags \
+                        and product_cate["cate_2"] in product.tags \
+                        and product_cate["cate_3"] in product.tags:
+                    category_code = product_cate["code"]
+
+                ShopifyProduct.objects.filter(product_no=product.product_no).update(
+                    category_code=category_code,
+                    cate_1=cate_1,
+                    cate_2=cate_2,
+                    cate_3=cate_3,
+                )
+
+        return
+
+    update_cate.short_description = "更新类目"
+
+    def update_cate(self, request, queryset):
+
+        product_cates = ProductCategory.objects.values()
+
+        for product in queryset:
+            cate_1 = ""
+            cate_2 = ""
+            cate_3 = ""
+            category_code = ""
+
+            for product_cate in product_cates:
+                if product_cate["cate_1"] in product.tags:
+                    cate_1 = product_cate["cate_1"]
+
+                if product_cate["cate_2"] in product.tags:
+                    cate_2 = product_cate["cate_2"]
+
+                if product_cate["cate_1"] in product.tags:
+                    cate_3 = product_cate["cate_3"]
+
+                if product_cate["cate_1"] in product.tags \
+                        and product_cate["cate_2"] in product.tags \
+                        and product_cate["cate_3"] in product.tags:
+                    category_code = product_cate["code"]
+
+                ShopifyProduct.objects.filter(product_no=product.product_no).update(
+                    category_code=category_code,
+                    cate_1=cate_1,
+                    cate_2=cate_2,
+                    cate_3=cate_3,
+                )
+
+        return
+
+    update_cate.short_description = "更新类目"
+
+'''
+
     def post_product(self, request, queryset):
 
         for product in queryset:
@@ -1200,6 +1376,8 @@ class ShopifyProductAdmin(object):
             print("photos is ", photos)
 
     post_photo.short_description = "发布到相册"
+
+
 
     def post_ad(self, request, queryset):
         page_no = "358078964734730"
@@ -1633,3 +1811,41 @@ class OverseaSellAdmin(object):
         if (len(query) > 0):
             queryset |= self.model.objects.filter(logistic_no__in=query.split(","))
         return queryset
+
+
+class ProductCategoryResource(resources.ModelResource):
+
+
+    class Meta:
+        model = ProductCategory
+        skip_unchanged = True
+        report_skipped = True
+        import_id_fields = ('code',)
+        fields = ('code','cate_1', 'cate_2', 'cate_3', 'album_name',)
+        # exclude = ()
+
+@xadmin.sites.register(ProductCategory)
+class ProductCategoryAdmin(object):
+
+
+
+    import_export_args = {"import_resource_class": ProductCategoryResource, "export_resource_class": ProductCategoryResource}
+
+    list_display = [ 'code','cate_1', 'cate_2', 'cate_3', 'album_name',]
+
+
+    search_fields = ["album_name",]
+    list_filter = ['cate_1', 'cate_2', 'cate_3',]
+    list_editable = []
+    actions = []
+
+@xadmin.sites.register(ProductCategoryMypage)
+class ProductCategoryMypageAdmin(object):
+
+    list_display = [ 'mypage','productcategory','last_no', ]
+
+
+    search_fields = ["mypage","productcategory"]
+    list_filter = ['mypage', 'productcategory',]
+    list_editable = []
+    actions = []

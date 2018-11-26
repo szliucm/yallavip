@@ -17,7 +17,7 @@ from django.utils.translation import ugettext as _
 from django.contrib.admin.utils import get_deleted_objects
 from xadmin.util import model_ngettext
 from xadmin.views.base import filter_hook
-from product.models import ProductCategory,ProductCategoryMypage
+from shop.models import ProductCategory,ProductCategoryMypage
 from fb.models import  MyPage,MyAlbum,MyPhoto
 
 

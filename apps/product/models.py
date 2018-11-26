@@ -29,10 +29,11 @@ class Product(models.Model):
     def __str__(self):
         return  self.sku
 
+'''
 class ProductCategory(models.Model):
-    """
-    商品类别
-    """
+    
+    #商品类别
+    
     CATEGORY_TYPE = (
         (1, "一级类目"),
         (2, "二级类目"),
@@ -69,3 +70,4 @@ class ProductCategoryMypage(models.Model):
 
     def __str__(self):
         return self.productcategory.name
+'''
