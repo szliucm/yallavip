@@ -1015,17 +1015,18 @@ class ShopifyProductAdmin(object):
 
             if len(cate_1)>0  and len(cate_2)>0 and len(cate_3)>0:
                 category_code = cate_1 + "_" + cate_2 + "_" + cate_3
-
-                ShopifyProduct.objects.filter(product_no=product.product_no).update(
-                    category_code=category_code,
-                    cate_1=cate_1,
-                    cate_2=cate_2,
-                    cate_3=cate_3,
-
-                    )
-                print("product %s 更新类目%s成功 "%(product.handle, category_code))
             else:
-                print("product %s 更新类目失败 " % (product.handle))
+                category_code = ""
+
+            ShopifyProduct.objects.filter(product_no=product.product_no).update(
+                category_code=category_code,
+                cate_1=cate_1,
+                cate_2=cate_2,
+                cate_3=cate_3,
+
+                )
+            print("product %s 更新类目%s成功 "%(product.handle, category_code))
+
         return
 
     update_cate.short_description = "更新类目"
