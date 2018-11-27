@@ -657,7 +657,7 @@ class MyAdAdmin(object):
 
         for ad in queryset:
 
-            url = "https://graph.facebook.com/v3.2/{}".ad.ad_no
+            url = "https://graph.facebook.com/v3.2/%s"%(ad.ad_no)
             param = dict()
             param["access_token"] = my_access_token
 
@@ -671,7 +671,7 @@ class MyAdAdmin(object):
         return
 
 
-    delete_ad.short_description = "创建广告"
+    delete_ad.short_description = "删除广告"
 @xadmin.sites.register(MyAlbum)
 class MyAlbumAdmin(object):
 
