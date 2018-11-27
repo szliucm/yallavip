@@ -208,7 +208,7 @@ def post_to_mainshop():
         product_list = []
         product_list.append(new_product)
 
-        insert_product(dest_shop, product_list)
+        #insert_product(dest_shop, product_list)
 
 
 
