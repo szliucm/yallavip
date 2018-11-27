@@ -165,74 +165,7 @@ class MyPageAdmin(object):
 
     batch_update_albums.short_description = "批量下载相册信息"
 
-    def batch_create_albums(self, request, queryset):
-        adobjects = FacebookAdsApi.init(access_token=my_access_token, debug=True)
-        for row in queryset:
-            page_no = row.page_no
-            #取得page对应已有的相册
-            page_albums = MyAlbum.objects.filter(page_no = row.page_no)
-            print("page_albums ", page_albums)
-            for page_album in page_albums:
 
-                pass
-
-
-            #######取得page对应的品类
-
-            categories = row.category_page.all()
-            #print("type categories", type(categories), categories)
-            for category in categories:
-                subcategories =  ProductCategory.objects.filter( parent_category = category.productcategory.name)
-                print("subcategories", subcategories)
-                for subcategorie in subcategories:
-                   pass
-
-            a_list = [1, 2, 3, 4]
-            b_list = [1, 4, 5]
-            ret_list = list(set(a_list) ^ set(b_list))
-            print("1", ret_list)
-            for item in a_list:
-                if item not in b_list:
-                    ret_list.append(item)
-            print("2", ret_list)
-            return
-
-
-
-            fields = ["created_time", "description", "id",
-                      "name", "count", "updated_time", "link",
-                      "likes.summary(true)", "comments.summary(true)"
-                      ]
-            params = {
-
-            }
-            albums = Page(page_no).get_albums(
-                fields=fields,
-                params=params,
-            )
-
-            for album in albums:
-                obj, created = MyAlbum.objects.update_or_create(album_no=album["id"],
-                                                                defaults={'page_no': page_no,
-                                                                          'created_time':
-                                                                              album["created_time"].split('+')[0],
-                                                                          'updated_time':
-                                                                              album["updated_time"].split('+')[0],
-
-                                                                          'name': album["name"],
-                                                                          'count': album["count"],
-                                                                          'like_count': album["likes"]["summary"][
-                                                                              "total_count"],
-                                                                          'comment_count': album["comments"]["summary"][
-                                                                              "total_count"],
-                                                                          'link': album["link"],
-
-                                                                          }
-                                                                )
-
-                print("album is ", album)
-
-    batch_create_albums.short_description = "批量创建相册"
 
     def batch_update_ads(self, request, queryset):
         url = "https://graph.facebook.com/v3.2/me/adaccounts"
@@ -518,7 +451,7 @@ class MyCampaignAdmin(object):
                                                                         'name':adset["name"],
 
 
-                                                                        'attribution_spec': adset["attribution_spec"],
+                                                                        'attribution_spec': adset.get("attribution_spec"),
                                                                         #'bid_amount': adset["bid_amount"],
                                                                         #'bid_info': adset["bid_info"],
                                                                         'billing_event': adset["billing_event"],
