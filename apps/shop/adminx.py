@@ -761,7 +761,7 @@ class ShopifyProductAdmin(object):
     search_fields = ["handle", "product_no"]
     list_filter = ['shop_name', 'listed', "created_at", "tags","category_code"]
     # list_editable = ["supply_status"]
-    actions = ["create_product", "delete_product", "post_product",  "post_ad","update_cate",Post_to_Album ]
+    actions = ["create_product", "delete_product", "post_product",  "post_ad","update_cate"]
     # inlines = [VariantInline, ]
     ordering = ['-product_no']
 
@@ -1031,116 +1031,7 @@ class ShopifyProductAdmin(object):
 
     update_cate.short_description = "更新类目"
 
-    '''
-    def update_cate(self, request, queryset):
 
-        product_cates = ProductCategory.objects.values()
-
-        for product in queryset:
-            cate_1 = ""
-            cate_2 = ""
-            cate_3 = ""
-            category_code = ""
-
-            for product_cate in product_cates:
-                if product_cate["cate_1"] in product.tags:
-                    cate_1 = product_cate["cate_1"]
-
-                if product_cate["cate_2"] in product.tags:
-                    cate_2 = product_cate["cate_2"]
-
-                if product_cate["cate_1"] in product.tags:
-                    cate_3 = product_cate["cate_3"]
-
-                if product_cate["cate_1"] in product.tags \
-                        and product_cate["cate_2"] in product.tags \
-                        and product_cate["cate_3"] in product.tags:
-                    category_code = product_cate["code"]
-
-                ShopifyProduct.objects.filter(product_no=product.product_no).update(
-                    category_code=category_code,
-                    cate_1=cate_1,
-                    cate_2=cate_2,
-                    cate_3=cate_3,
-                )
-
-        return
-
-    update_cate.short_description = "更新类目"
-
-    def update_cate(self, request, queryset):
-
-        product_cates = ProductCategory.objects.values()
-
-        for product in queryset:
-            cate_1 = ""
-            cate_2 = ""
-            cate_3 = ""
-            category_code = ""
-
-            for product_cate in product_cates:
-                if product_cate["cate_1"] in product.tags:
-                    cate_1 = product_cate["cate_1"]
-
-                if product_cate["cate_2"] in product.tags:
-                    cate_2 = product_cate["cate_2"]
-
-                if product_cate["cate_1"] in product.tags:
-                    cate_3 = product_cate["cate_3"]
-
-                if product_cate["cate_1"] in product.tags \
-                        and product_cate["cate_2"] in product.tags \
-                        and product_cate["cate_3"] in product.tags:
-                    category_code = product_cate["code"]
-
-                ShopifyProduct.objects.filter(product_no=product.product_no).update(
-                    category_code=category_code,
-                    cate_1=cate_1,
-                    cate_2=cate_2,
-                    cate_3=cate_3,
-                )
-
-        return
-
-    update_cate.short_description = "更新类目"
-
-    def update_cate(self, request, queryset):
-
-        product_cates = ProductCategory.objects.values()
-
-        for product in queryset:
-            cate_1 = ""
-            cate_2 = ""
-            cate_3 = ""
-            category_code = ""
-
-            for product_cate in product_cates:
-                if product_cate["cate_1"] in product.tags:
-                    cate_1 = product_cate["cate_1"]
-
-                if product_cate["cate_2"] in product.tags:
-                    cate_2 = product_cate["cate_2"]
-
-                if product_cate["cate_1"] in product.tags:
-                    cate_3 = product_cate["cate_3"]
-
-                if product_cate["cate_1"] in product.tags \
-                        and product_cate["cate_2"] in product.tags \
-                        and product_cate["cate_3"] in product.tags:
-                    category_code = product_cate["code"]
-
-                ShopifyProduct.objects.filter(product_no=product.product_no).update(
-                    category_code=category_code,
-                    cate_1=cate_1,
-                    cate_2=cate_2,
-                    cate_3=cate_3,
-                )
-
-        return
-
-    update_cate.short_description = "更新类目"
-
-'''
 
     def post_product(self, request, queryset):
 
@@ -1195,41 +1086,7 @@ class ShopifyProductAdmin(object):
 
     post_product.short_description = "发布到facebook"
 
-    def post_photo(self, request, queryset):
-        #page_id = "358078964734730"
-        #album_no = "364220710787222"
 
-
-
-        token = get_token(page_id)
-        # token = "EAAHZCz2P7ZAuQBAE9FEXmxUZCmISP6of8BCpvHYcgbicLOFAZAZB014FZARgDfxvx5AKRbPFSMqlzllrDHAFOtbty8x9eSzKJqbD5CAVRHJdH4kejAyv1B4MYDnwW9Qr5ZCwYG6q8Gk7Ok3ZBpfZC5OoovyjZCwaqebeVoXrXeGFkrk8ifZC9hyWX7cZCIqkopgZCIketETbWEqs4u4rGxbgsXttQJ0AF9iiQpoAZD"
-
-        adobjects = FacebookAdsApi.init(my_app_id, my_app_secret, access_token=token, debug=True)
-
-        for product in queryset:
-            print("product.product_no ", product.product_no)
-            imgs = ShopifyImage.objects.filter(product_no=product.product_no).values('src'). \
-                order_by('position').first()
-            if imgs is None:
-                print("no image")
-                continue
-            image = imgs.get("src")
-
-            print("type of %s is  %s %s" % (imgs, type(imgs), image))
-
-            fields = [
-            ]
-            params = {
-                "url": image,
-            }
-            photos = Album(album_no).create_photo(
-                fields=fields,
-                params=params,
-            )
-
-            print("photos is ", photos)
-
-    post_photo.short_description = "发布到相册"
 
 
 

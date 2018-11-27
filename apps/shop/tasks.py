@@ -97,7 +97,8 @@ def post_to_mainshop():
         data = json.loads(r.text)
         new_product = data.get("product")
         if new_product is None:
-            print("data is ", data)
+            print("post product error data is ", data)
+            print("parmas is ", params)
             continue
 
         new_product_no = new_product.get("id")
@@ -195,7 +196,8 @@ def post_to_mainshop():
 
         new_product = data.get("product")
         if new_product is None:
-            print("data is ", data)
+            print("post variant error data is ", data)
+            print("parmas is ",params )
             continue
 
         print("new_product_no is", new_product.get("id"))

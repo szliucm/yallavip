@@ -172,7 +172,6 @@ def post_photo_to_album(targer_page,album_no,product ):
 
     print("after photo mark", iamge_url)
 
-
     fields = ["id","name","created_time", "updated_time","picture","link",
                       "likes.summary(true)","comments.summary(true)"
     ]
