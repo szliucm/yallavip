@@ -248,11 +248,11 @@ def post_to_album():
 
         print("当前处理的类目 %s" % (category))
 
-        # 找出每个品类下未发布的产品， 每次只发一张
+        # 找出每个品类下未发布的产品
         products = ShopifyProduct.objects.filter(category_code=category.productcategory.code,
                                                 product_no__gt=category.last_no). \
             order_by("product_no")
-        if products is None:
+        if not products :
             print("当前类目没有产品了，跳出")
             continue
 
@@ -262,7 +262,7 @@ def post_to_album():
 
         print("品类需要的相册 %s, 已有相册 %s" % (category_album, target_album))
 
-        if target_album is None:
+        if not target_album :
             print("此类目还没有相册，新建一个")
             album_list = []
             album_list.append(category_album)
