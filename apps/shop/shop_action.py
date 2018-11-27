@@ -169,6 +169,9 @@ def post_photo_to_album(targer_page,album_no,product ):
     price2 = int(price1 *  random.uniform(2, 3))
 
     image, iamge_url = photo_mark(ori_image ,product,str(price1), str(price2),  targer_page, type="album" )
+    if not image:
+        print("打水印失败")
+        return False
 
     print("after photo mark", iamge_url)
 
