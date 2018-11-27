@@ -25,7 +25,12 @@ def get_remote_image(img_url):
 
     response = requests.get(img_url)
 
-    return Image.open(BytesIO(response.content))
+    try:
+        return  Image.open(BytesIO(response.content))
+    except:
+        print("open image error")
+        return  False
+
 
 # 裁剪压缩图片
 def clipResizeImg_new(im, dst_w, dst_h, qua=95):
