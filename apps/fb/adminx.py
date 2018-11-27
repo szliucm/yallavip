@@ -89,7 +89,7 @@ class MyPageAdmin(object):
     show_promote.allow_tags = True
 
     #actions = ["batch_updatepage", ]
-    list_display = ('page', 'page_no','active', 'show_logo','show_price','show_promote','conversation_update_time',
+    list_display = ('page', 'page_no','is_published','active', 'show_logo','show_price','show_promote','conversation_update_time',
                    )
 
     list_editable = ['active',]
@@ -108,13 +108,14 @@ class MyPageAdmin(object):
         r = requests.get(url, param)
 
         data = json.loads(r.text)
-        #print("data is ",data)
+        print("data is ",data)
 
         for page in data["data"]:
            
             obj, created = MyPage.objects.update_or_create(page_no=page["id"],
                                                           defaults={'page': page["name"],
                                                                     'access_token': page["access_token"],
+                                                                    'is_published':page.get("is_published"),
                                                                     }
                                                           )
                                                 

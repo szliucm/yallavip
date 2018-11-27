@@ -9,6 +9,9 @@ class MyPage(models.Model):
     page_no = models.CharField(u'主页ID', default='', max_length=100, blank=True)
     page = models.CharField(u'主页', default='', max_length=100, blank=True)
     access_token = models.CharField(u'access_token', max_length=500, null=True, blank=True)
+
+    is_published = models.BooleanField(u"page发布状态",default=False, null=True, blank=True)
+
     #feed_update_time = models.DateTimeField(u'feed最后更新时间', auto_now=False, null=True, blank=True)
     #album_update_time = models.DateTimeField(u'album最后更新时间', auto_now=False, null=True, blank=True)
     conversation_update_time = models.DateTimeField(u'会话最后更新时间', auto_now=False, null=True, blank=True)
