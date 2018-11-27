@@ -231,7 +231,7 @@ def post_to_album():
 
         # 主页已有的相册
         album_dict = {}
-        albums = MyAlbum.objects.filter(page_no=mypage.page_no)
+        albums = MyAlbum.objects.filter(page_no=mypage.page_no,active=True)
         for album in albums:
             album_dict[album.name] = album.album_no
 
@@ -263,6 +263,7 @@ def post_to_album():
 
             print("target_album %s" % (target_album))
 
+            #发到指定相册
             posted = posted + post_photo_to_album(mypage, target_album, product)
 
 

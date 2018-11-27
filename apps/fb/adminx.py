@@ -130,6 +130,9 @@ class MyPageAdmin(object):
         adobjects = FacebookAdsApi.init(access_token=my_access_token, debug=True)
         for row in queryset:
             page_no = row.page_no
+            #重置原有相册信息为不活跃
+            MyAlbum.objects.filter(page_no=page_no).update(active=False)
+
             fields = ["created_time","description","id",
                       "name", "count", "updated_time", "link",
                       "likes.summary(true)","comments.summary(true)"
@@ -154,7 +157,7 @@ class MyPageAdmin(object):
                                                                         'like_count': album["likes"]["summary"]["total_count"],
                                                                         'comment_count': album["comments"]["summary"]["total_count"],
                                                                         'link': album["link"],
-                                                                             
+                                                                         'active': True,
                                                                          }
                                                                )
 

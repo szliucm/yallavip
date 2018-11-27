@@ -148,7 +148,7 @@ class MyAlbum(models.Model):
     like_count = models.CharField(max_length=100, null=True, blank=True, verbose_name="like_count")
     comment_count = models.CharField(max_length=100,null=True, blank=True, verbose_name="comment_count")
     updated_time = models.DateTimeField(null=True, blank=True, verbose_name="更新时间")
-
+    active = active = models.BooleanField(u"相册状态",default=False)
 
     class Meta:
         verbose_name = "Album"

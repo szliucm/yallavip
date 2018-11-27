@@ -28,7 +28,7 @@ def get_remote_image(img_url):
     try:
         return  Image.open(BytesIO(response.content))
     except:
-        print("open image error")
+        print("open image error: image_url %s response %s "%(img_url,response))
         return  False
 
 
@@ -175,7 +175,7 @@ def deal_image(im,logo = None ,handle = None, price = None,price1 = None, price2
             draw = ImageDraw.Draw(mark)  # Just draw it!
 
             font = ImageFont.truetype(FONT, int(30))
-            draw.text((70 + int(10 * (3 - len(price2))), 160), price2, (255, 182, 193), font=font)  # 设置文字位置/内容/颜色/字体
+            draw.text((40 + int(10 * (3 - len(price2))), 160), price2, (255, 182, 193), font=font)  # 设置文字位置/内容/颜色/字体
             draw = ImageDraw.Draw(mark)
             lw, lh = mark.size
 
@@ -194,6 +194,9 @@ def photo_mark(ori_image,  product, price1, price2, targer_page,  type="album" )
     # 获取远程图片
 
     image = get_remote_image(ori_image.src)
+
+    if not image:
+        return  False
 
     # 对图片进行处理
     ################
