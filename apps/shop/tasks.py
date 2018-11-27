@@ -48,8 +48,6 @@ def post_to_mainshop():
     total_to_update = len(ori_products)
     print("沙特站最新的还有 %d 需要发布" % (total_to_update))
 
-    return
-
     # 初始化SDK
     shop_obj = Shop.objects.get(shop_name=dest_shop)
     shop_url = "https://%s:%s@%s.myshopify.com" % (shop_obj.apikey, shop_obj.password, shop_obj.shop_name)
