@@ -143,7 +143,7 @@ def post_photo_to_album(targer_page,album_no,product ):
 
     print("product.product_no ", product.product_no)
     ori_images = ShopifyImage.objects.filter(product_no=product.product_no).order_by('position')
-    if ori_images is None:
+    if not ori_images :
         print("no image")
         return 0
 
