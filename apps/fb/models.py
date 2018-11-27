@@ -103,6 +103,8 @@ class MyAd(models.Model):
     name = models.CharField(u'广告名字', max_length=200, null=True, blank=True)
     #objective = models.CharField(u'目标', max_length=200, null=True, blank=True)
 
+    local_status = models.CharField(u'本地状态', default="", max_length=50, null=True, blank=True)
+
 
     class Meta:
         verbose_name = "广告"

@@ -124,7 +124,7 @@ def create_new_album(page_no , new_albums ):
     return  new_album_list
 
 def post_photo_to_album(targer_page,album_no,product ):
-
+    from django.db.models import Max
     # 检查产品是否已经在相册中了，如果不存在，就发布新图片
     #myphotos = MyPhoto.objects.filter(name=product.handle , album_no=album_no )
 
@@ -151,21 +151,30 @@ def post_photo_to_album(targer_page,album_no,product ):
 
     print("position is ", ori_image.position)
 
+    '''
     variants = ShopifyVariant.objects.filter(product_no=product.product_no).values()
     name = product.title + "  "+product.handle + "\n\nSku:"
     prices=[]
     for variant in variants:
         name = name + "\n   "+ variant.get("sku")
+
         prices.append(variant.get("price",0))
 
     name = name +"\n\nPrice:  " + str(int(max(prices))) +"SAR"
 
     print("name is \n" ,name)
+    '''
 
+    name = product.title + "  " + product.handle
+    options = ShopifyOptions.objects.filter(product_no=product.product_no).values()
+    for option in options:
+        name = name + "\n   " + option.get("name") + " : " + option.get("values")
 
+    max_price = ShopifyVariant.objects.filter(product_no=product.product_no).aggregate(Max("price")).get("price__max")
+    name = name + "\n\nPrice:  " + str(int(max_price)) + "SAR"
 
     #打标
-    price1 = int(max(prices))
+    price1 = int(max_price)
     price2 = int(price1 *  random.uniform(2, 3))
 
     image, iamge_url = photo_mark(ori_image ,product,str(price1), str(price2),  targer_page, type="album" )

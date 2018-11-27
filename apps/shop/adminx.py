@@ -503,10 +503,11 @@ def insert_product(shop_name, products):
 
         # print(product_list)
 
-        ShopifyProduct.objects.bulk_create(product_list)
+
         ShopifyVariant.objects.bulk_create(variant_list)
         ShopifyImage.objects.bulk_create(image_list)
         ShopifyOptions.objects.bulk_create(option_list)
+        ShopifyProduct.objects.bulk_create(product_list)
 
 
 @xadmin.sites.register(Shop)

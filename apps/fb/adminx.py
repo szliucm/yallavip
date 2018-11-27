@@ -667,7 +667,7 @@ class MyAdAdmin(object):
             print("response of delete ad is ",r)
 
         #删掉本地数据库的记录
-        queryset.delete()
+        queryset.update(local_status="DELETED")
 
         return
 

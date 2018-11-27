@@ -104,7 +104,7 @@ def deal_image(im,logo = None ,handle = None, price = None,price1 = None, price2
     layer = Image.new('RGBA', im.size, (0, 0, 0, 0))
 
     bw, bh = im.size
-    scale = bw / 1080
+    scale = bw / 900
 
     # 打logo
     if logo :
@@ -122,9 +122,9 @@ def deal_image(im,logo = None ,handle = None, price = None,price1 = None, price2
         font = ImageFont.truetype(FONT, int(45 * scale))
         draw1 = ImageDraw.Draw(im)
         # 简单打货号
-        draw1.rectangle((int(bw / 2 - 65 * scale), int(bh - 60 * scale - 2), int(bw / 2 + 65 * scale),
-                         int(bh - 10 * scale)), fill='yellow')
-        draw1.text((int(bw / 2 - 60 * scale), int(bh - 60 * scale)), handle, font=font,
+        draw1.rectangle((int(bw / 2 - 70 * scale), int(bh - 70 * scale - 2), int(bw / 2 + 70 * scale),
+                         int(bh - 8 * scale)), fill='yellow')
+        draw1.text((int(bw / 2 - 70 * scale), int(bh - 70 * scale)), handle, font=font,
                    fill=(0, 0, 0))  # 设置文字位置/内容/颜色/字体
         '''
         #两种打货号的方式：组合商品和单品
@@ -175,7 +175,7 @@ def deal_image(im,logo = None ,handle = None, price = None,price1 = None, price2
             draw = ImageDraw.Draw(mark)  # Just draw it!
 
             font = ImageFont.truetype(FONT, int(30))
-            draw.text((40 + int(10 * (3 - len(price2))), 160), price2, (255, 182, 193), font=font)  # 设置文字位置/内容/颜色/字体
+            draw.text((50 + int(10 * (3 - len(price2))), 160), price2, (255, 182, 193), font=font)  # 设置文字位置/内容/颜色/字体
             draw = ImageDraw.Draw(mark)
             lw, lh = mark.size
 
@@ -224,7 +224,7 @@ def photo_mark(ori_image,  product, price1, price2, targer_page,  type="album" )
 
     print("destination", destination)
 
-    image.save(destination,quality = 95)
+    image.save(destination,'JPEG',quality = 95)
 
     destination_url = domain + os.path.join(settings.MEDIA_URL, "product/", image_filename)
 
