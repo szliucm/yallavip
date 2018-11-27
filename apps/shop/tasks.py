@@ -11,6 +11,8 @@ from fb.models import  MyPage,MyAlbum,MyPhoto
 from .models import *
 from .shop_action import  *
 from .adminx import  insert_product
+from django.db.models import Q
+
 @shared_task
 def add(x, y):
     return x + y
@@ -30,7 +32,7 @@ def post_to_mainshop():
     dest_shop = "yallasale-com"
     ori_shop = "yallavip-saudi"
 
-    product_init = ShopifyProduct.objects.filter(shop_name=dest_shop, handle__contains='a' ).order_by('-product_no').first()
+    product_init = ShopifyProduct.objects.filter(Q(handle__startswith='a'),shop_name=dest_shop).order_by('-product_no').first()
     print("主店最新的产品是 %s handle 是%s  供应商是 %s" % (product_init, product_init.handle, product_init.vendor))
     handle_i = product_init.handle
 
@@ -42,7 +44,11 @@ def post_to_mainshop():
     print("沙特站最后更新的产品是 %s 供应商是 %s,product_no is %d "%(latest_ori_product, latest_ori_product.vendor , latest_ori_product.product_no))
 
     ori_products = ShopifyProduct.objects.filter(shop_name=ori_shop, product_no__gt = latest_ori_product.product_no).order_by('product_no')
-    print("沙特站最新的产品是 %s " % (ori_products))
+
+    total_to_update = len(ori_products)
+    print("沙特站最新的还有 %d 需要发布" % (total_to_update))
+
+    return
 
     # 初始化SDK
     shop_obj = Shop.objects.get(shop_name=dest_shop)
@@ -194,12 +200,16 @@ def post_to_mainshop():
             print("data is ", data)
             continue
 
+        print("new_product_no is", new_product.get("id"))
+        total_to_update = total_to_update - 1
+        print("沙特站最新的还有 %d 需要发布" % (total_to_update))
+
         product_list = []
         product_list.append(new_product)
 
-        #insert_product(dest_shop, product_list)
+        insert_product(dest_shop, product_list)
 
-        print("new_product_no is", new_product.get("id"))
+
 
         # shopify.ShopifyResource.clear_session()
 

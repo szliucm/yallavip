@@ -976,33 +976,56 @@ class ShopifyProductAdmin(object):
 
         product_cates = ProductCategory.objects.values()
 
+        cate_dict = {}
+        cate_level_dict = {}
+        for product_cate in product_cates:
+            cate_dict[product_cate["cate_1"].lower()] = product_cate["cate_1"]
+            cate_dict[product_cate["cate_2"].lower()] = product_cate["cate_2"]
+            cate_dict[product_cate["cate_3"].lower()] = product_cate["cate_3"]
+
+            cate_level_dict[product_cate["cate_1"].lower()] = 1
+            cate_level_dict[product_cate["cate_2"].lower()] = 2
+            cate_level_dict[product_cate["cate_3"].lower()] = 3
+
         for product in queryset:
             cate_1 = ""
             cate_2 = ""
             cate_3 = ""
             category_code = ""
-            tags = product.tags.lower()
+            tags = product.tags.lower().split(",")
 
+            for tag_tmp in tags:
+                #print("cate_dict", cate_dict)
+                #print("cate_level_dict", cate_level_dict)
+                print("tag_tmp", tag_tmp)
+                tag_level = cate_level_dict.get(tag_tmp.strip())
 
-            for product_cate in product_cates:
+                print("tag_tmp %s ------- cate_level %s"%(tag_tmp,tag_level))
 
-
-                if product_cate["cate_1"].lower() in tags \
-                        and product_cate["cate_2"].lower() in tags \
-                        and product_cate["cate_3"].lower() in tags:
-                    category_code = product_cate["code"]
-
-                    ShopifyProduct.objects.filter(product_no=product.product_no).update(
-                        category_code=category_code,
-                        cate_1=cate_1,
-                        cate_2=cate_2,
-                        cate_3=cate_3,
-
-                        )
-                    print("product %s 更新类目成功 "%(product.handle))
+                if tag_level is None:
                     continue
+                elif tag_level == 1:
+                    cate_1 = cate_dict.get(tag_tmp.strip(),"")
+                elif tag_level == 2:
+                    cate_2 = cate_dict.get(tag_tmp.strip(),"")
+                elif tag_level == 3:
+                    cate_3 = cate_dict.get(tag_tmp.strip(),"")
 
 
+
+            if len(cate_1)>0  and len(cate_2)>0 and len(cate_3)>0:
+                category_code = cate_1 + "_" + cate_2 + "_" + cate_3
+
+                ShopifyProduct.objects.filter(product_no=product.product_no).update(
+                    category_code=category_code,
+                    cate_1=cate_1,
+                    cate_2=cate_2,
+                    cate_3=cate_3,
+
+                    )
+                print("product %s 更新类目%s成功 "%(product.handle, category_code))
+            else:
+                print("product %s 更新类目失败 " % (product.handle))
         return
 
     update_cate.short_description = "更新类目"
