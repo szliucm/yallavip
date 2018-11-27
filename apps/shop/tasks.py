@@ -197,6 +197,7 @@ def post_to_mainshop():
         new_product = data.get("product")
         if new_product is None:
             print("post variant error data is ", data)
+            print("product.product_no is ", product.product_no)
             print("parmas is ",params )
             continue
 
