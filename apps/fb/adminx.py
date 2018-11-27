@@ -582,8 +582,8 @@ class MyAdsetAdmin(object):
 class MyAdAdmin(object):
 
     list_display = [ "ad_no","adset_no",'name', ]
-    search_fields = ['ad_no', ]
-    actions = [ "create_ad",]
+    search_fields = ['ad_no', 'name',]
+    actions = [ ]
 
     def create_ad(self, request, queryset):
         adobjects = FacebookAdsApi.init(access_token=my_access_token, debug=True)
