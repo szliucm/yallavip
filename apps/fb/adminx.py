@@ -661,7 +661,7 @@ class MyAdAdmin(object):
             param = dict()
             param["access_token"] = my_access_token
 
-            r = requests.get(url, param)
+            r = requests.post(url, param)
 
             print("response of delete ad is ",r)
 
