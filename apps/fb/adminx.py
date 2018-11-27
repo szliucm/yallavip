@@ -583,7 +583,7 @@ class MyAdAdmin(object):
 
     list_display = [ "ad_no","adset_no",'name', ]
     search_fields = ['ad_no', 'name',]
-    actions = [ ]
+    actions = ["delete_ad", ]
 
     def create_ad(self, request, queryset):
         adobjects = FacebookAdsApi.init(access_token=my_access_token, debug=True)
@@ -645,6 +645,33 @@ class MyAdAdmin(object):
 
     create_ad.short_description = "创建广告"
 
+    def delete_ad(self, request, queryset):
+        '''
+        curl \
+        - F
+        "status=DELETED" \
+        - F
+        "access_token=<ACCESS_TOKEN>" \
+        "https://graph.facebook.com/<API_VERSION>/<AD_ID>"
+        '''
+
+        for ad in queryset:
+
+            url = "https://graph.facebook.com/v3.2/{}".ad.ad_no
+            param = dict()
+            param["access_token"] = my_access_token
+
+            r = requests.get(url, param)
+
+            print("response of delete ad is ",r)
+
+        #删掉本地数据库的记录
+        queryset.delete()
+
+        return
+
+
+    delete_ad.short_description = "创建广告"
 @xadmin.sites.register(MyAlbum)
 class MyAlbumAdmin(object):
 
