@@ -660,6 +660,7 @@ class MyAdAdmin(object):
             url = "https://graph.facebook.com/v3.2/%s"%(ad.ad_no)
             param = dict()
             param["access_token"] = my_access_token
+            param["status"] = "DELETED"
 
             r = requests.post(url, param)
 
