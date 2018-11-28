@@ -135,7 +135,7 @@ def post_photo_to_album(targer_page,album_no,product ):
         print("photo exist")
         return 0
     else:
-        #print("now we need to create new photos")
+        print("now we need to create new photos")
 
 
     adobjects = FacebookAdsApi.init(my_app_id, my_app_secret, access_token=get_token(page_no), debug=True)
