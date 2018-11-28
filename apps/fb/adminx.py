@@ -38,8 +38,9 @@ from .page_action import ConnectPageCategory
 from  shop.models import  ProductCategory
 
 
-
+APP_SCOPED_SYSTEM_USER_ID=100029952330435
 my_access_token = "EAAHZCz2P7ZAuQBABHO6LywLswkIwvScVqBP2eF5CrUt4wErhesp8fJUQVqRli9MxspKRYYA4JVihu7s5TL3LfyA0ZACBaKZAfZCMoFDx7Tc57DLWj38uwTopJH4aeDpLdYoEF4JVXHf5Ei06p7soWmpih8BBzadiPUAEM8Fw4DuW5q8ZAkSc07PrAX4pGZA4zbSU70ZCqLZAMTQZDZD"
+
 def get_token(target_page):
 
     url = "https://graph.facebook.com/v3.2/{}?fields=access_token".format(target_page)
@@ -89,15 +90,16 @@ class MyPageAdmin(object):
     show_promote.allow_tags = True
 
     #actions = ["batch_updatepage", ]
-    list_display = ('page', 'page_no','is_published','active', 'show_logo','show_price','show_promote','conversation_update_time',
+    list_display = ('page', 'page_no','is_published','active','link', 'show_logo','show_price','show_promote','conversation_update_time',
                    )
 
     list_editable = ['active',]
     #search_fields = ['logistic_no', ]
-    # list_filter = ("update_time", )
-    actions = ["batch_update_pages",ConnectPageCategory,"batch_update_albums","batch_update_ads",]
+    list_filter = ('is_published','active',)
+    actions = ["batch_update_accounts",ConnectPageCategory,"batch_update_albums","batch_update_ads",]
 
-    def batch_update_pages(self, request, queryset):
+    def batch_update_accounts(self, request, queryset):
+
         url = "https://graph.facebook.com/v3.2/me/accounts"
         param = dict()
         param["access_token"] = my_access_token
@@ -111,17 +113,38 @@ class MyPageAdmin(object):
         print("data is ",data)
 
         for page in data["data"]:
-           
+
+
+            # Switch access token to page access token
+            page_id = page["id"]
+
+            FacebookAdsApi.init(access_token=get_token(page_id))
+            # Page feed create
+            fields = ['about','is_published','link',
+            ]
+            params = {
+
+            }
+            page_info = Page(page_id).api_get(
+                fields=fields,
+                params=params,
+            )
+            print( 'page_info', page_info)
+
             obj, created = MyPage.objects.update_or_create(page_no=page["id"],
-                                                          defaults={'page': page["name"],
-                                                                    'access_token': page["access_token"],
-                                                                    'is_published':page.get("is_published"),
-                                                                    }
-                                                          )
-                                                
+                                                           defaults={'page': page["name"],
+                                                                     'access_token': page["access_token"],
+                                                                     'is_published':page_info.get("is_published"),
+                                                                     'link': page_info.get("link"),
+                                                                     }
+                                                           )
+
             print("page is ", page["access_token"], page["name"], page["id"])
 
-    batch_update_pages.short_description = "批量更新page"
+
+
+
+    batch_update_accounts.short_description = "批量更新accounts"
 
 
 

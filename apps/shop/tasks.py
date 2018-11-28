@@ -228,6 +228,7 @@ def post_to_album():
     mypages = MyPage.objects.filter(active=True)
     for mypage in mypages:
         posted = 0
+        print("当前处理主页", mypage)
 
         # 主页已有的相册
         album_dict = {}
@@ -235,7 +236,7 @@ def post_to_album():
         for album in albums:
             album_dict[album.name] = album.album_no
 
-        print("主页已有相册", album_dict)
+        #print("主页已有相册", album_dict)
 
         categories = mypage.category_page.all()
 
@@ -260,16 +261,16 @@ def post_to_album():
         category_album = category.productcategory.album_name
         target_album = album_dict.get(category_album)
 
-        print("品类需要的相册 %s, 已有相册 %s" % (category_album, target_album))
+        #print("品类需要的相册 %s, 已有相册 %s" % (category_album, target_album))
 
         if not target_album :
-            print("此类目还没有相册，新建一个")
+            #print("此类目还没有相册，新建一个")
             album_list = []
             album_list.append(category_album)
 
             target_album = create_new_album(mypage.page_no, album_list)[0]
 
-        print("target_album %s" % (target_album))
+        #print("target_album %s" % (target_album))
 
         # 发到指定相册
         n = 0
@@ -283,55 +284,14 @@ def post_to_album():
                 },
 
             )
-            print("更新page_类目记录 %s %s %s" % (mypage, category.productcategory, product.product_no))
-            print("created is ", created)
-            print("obj is ", obj)
+            #print("更新page_类目记录 %s %s %s" % (mypage, category.productcategory, product.product_no))
+            #print("created is ", created)
+            #print("obj is ", obj)
             n = n+1
             if n>5:
                 break
 
-        '''
-        for category in categories:
-            print("当前处理的类目 %s"%( category))
 
-            #找出每个品类下未发布的产品， 每次只发一张
-            product = ShopifyProduct.objects.filter(category_code = category.productcategory.code,product_no__gt= category.last_no ).\
-                                                order_by("product_no").first()
-            if product is None:
-                print("当前类目没有产品了，跳出")
-                continue
-
-            #这个品类是否已经建了相册
-            category_album = category.productcategory.album_name
-            target_album = album_dict.get(category_album)
-
-            print("品类需要的相册 %s, 已有相册 %s"%(category_album, target_album))
-
-            if target_album is None:
-                print("此类目还没有相册，新建一个")
-                album_list = []
-                album_list.append(category_album)
-
-                target_album = create_new_album(mypage.page_no, album_list)[0]
-
-            print("target_album %s" % (target_album))
-
-            #发到指定相册
-            posted = posted + post_photo_to_album(mypage, target_album, product)
-
-
-            obj, created = ProductCategoryMypage.objects.update_or_create(
-                mypage=mypage, productcategory=category.productcategory,
-                defaults={
-                     'last_no': product.product_no
-                },
-
-            )
-            print("更新page_类目记录 %s %s %s" % (mypage, category.productcategory, product.product_no))
-            print("created is ", created)
-            print("obj is ", obj)
-
-        '''
 
 
     return

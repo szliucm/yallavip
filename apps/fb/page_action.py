@@ -95,9 +95,9 @@ class ConnectPageCategory(BaseActionView):
     # 对数据的操作
     def do_models(self, queryset,form_selected):
 
-        print("start do something to the model ")
-        print("queryset is ", queryset)
-        print("form_selected is ", form_selected)
+        #print("start do something to the model ")
+        #print("queryset is ", queryset)
+        #print("form_selected is ", form_selected)
         #需要进行的操作
 
         for page in queryset:
@@ -110,8 +110,8 @@ class ConnectPageCategory(BaseActionView):
 
                             )
 
-                print("created is ",created)
-                print("obj is ", obj)
+                #print("created is ",created)
+                #print("obj is ", obj)
 
 
 

@@ -81,7 +81,7 @@ def create_new_album(page_no , new_albums ):
 
     adobjects = FacebookAdsApi.init(access_token=get_token(page_no, my_access_token_dev), debug=True)
     new_album_list = []
-    print("new_albums",new_albums )
+    #print("new_albums",new_albums )
     for new_album in new_albums:
         fields = ["created_time", "description", "id",
                   "name", "count", "updated_time", "link",
@@ -120,7 +120,7 @@ def create_new_album(page_no , new_albums ):
 
 
 
-        print("created albums ", album)
+        #print("created albums ", album)
     return  new_album_list
 
 def post_photo_to_album(targer_page,album_no,product ):
@@ -130,18 +130,18 @@ def post_photo_to_album(targer_page,album_no,product ):
 
     page_no = targer_page.page_no
     myphotos = MyPhoto.objects.filter(name__icontains=product.handle, album_no=album_no)
-    print("args is  %s %s %s"%(page_no,album_no , product.handle ))
+    #print("args is  %s %s %s"%(page_no,album_no , product.handle ))
     if myphotos:
         print("photo exist")
         return 0
     else:
-        print("now we need to create new photos")
+        #print("now we need to create new photos")
 
 
     adobjects = FacebookAdsApi.init(my_app_id, my_app_secret, access_token=get_token(page_no), debug=True)
 
 
-    print("product.product_no ", product.product_no)
+    #print("product.product_no ", product.product_no)
     ori_images = ShopifyImage.objects.filter(product_no=product.product_no).order_by('position')
     if not ori_images :
         print("no image")
@@ -149,23 +149,11 @@ def post_photo_to_album(targer_page,album_no,product ):
 
     ori_image = random.choice(ori_images)
 
-    print("position is ", ori_image.position)
+    #print("position is ", ori_image.position)
 
-    '''
-    variants = ShopifyVariant.objects.filter(product_no=product.product_no).values()
-    name = product.title + "  "+product.handle + "\n\nSku:"
-    prices=[]
-    for variant in variants:
-        name = name + "\n   "+ variant.get("sku")
 
-        prices.append(variant.get("price",0))
 
-    name = name +"\n\nPrice:  " + str(int(max(prices))) +"SAR"
-
-    print("name is \n" ,name)
-    '''
-
-    name = product.title + "  " + product.handle
+    name = product.title + "  [" + product.handle+"]"
     options = ShopifyOptions.objects.filter(product_no=product.product_no).values()
     for option in options:
         name = name + "\n   " + option.get("name") + " : " + option.get("values")
@@ -182,7 +170,7 @@ def post_photo_to_album(targer_page,album_no,product ):
         print("打水印失败")
         return False
 
-    print("after photo mark", iamge_url)
+    #print("after photo mark", iamge_url)
 
     fields = ["id","name","created_time", "updated_time","picture","link",
                       "likes.summary(true)","comments.summary(true)"
@@ -219,7 +207,7 @@ def post_photo_to_album(targer_page,album_no,product ):
 
                                                               }
                                                     )
-    print("new_photo saved ", obj, created)
+    #print("new_photo saved ", obj, created)
     return  1
 
 
@@ -227,7 +215,7 @@ def post_photo_to_album(targer_page,album_no,product ):
 
 ACTION_CHECKBOX_NAME = '_selected_action'
 checkbox = forms.CheckboxInput({'class': 'action-select'}, lambda value: False)
-print(checkbox)
+#print(checkbox)
 
 def action_checkbox(obj):
     return checkbox.render(ACTION_CHECKBOX_NAME, force_text(obj.pk))
@@ -268,7 +256,7 @@ class Post_to_Album(BaseActionView):
     # 对数据的操作
     def do_models(self, queryset, form_selected):
 
-        print("start do something to the model ")
+        #print("start do something to the model ")
         #print("queryset is ", queryset)
         #print("form_selected is ", form_selected)
         # 需要进行的操作
@@ -279,14 +267,14 @@ class Post_to_Album(BaseActionView):
             categories_list = []
             categories = page.category_page.all()
             for category in categories:
-                print("category", category)
+                #print("category", category)
                 subcategories = ProductCategory.objects.filter(parent_category=category.productcategory.name)
 
                 for subcategorie in subcategories:
-                    print("subcategorie", subcategorie)
+                    #print("subcategorie", subcategorie)
                     categories_list.append(subcategorie.name)
 
-            print("categories_list", categories_list)
+            #print("categories_list", categories_list)
             #主页已有的相册
 
             album_list = []
@@ -295,28 +283,28 @@ class Post_to_Album(BaseActionView):
             for album in albums:
                 album_list.append(album.name)
                 album_dict[album.name] = album.album_no
-            print("主页已有相册",album_list )
-            print("主页已有相册", album_dict)
+            #print("主页已有相册",album_list )
+            #print("主页已有相册", album_dict)
 
             #产品的tags
             for product in queryset:
                 tmp_tags = product.tags.split(',')
                 tags = [i.strip() for i in tmp_tags]
-                print("tags is ", tags)
-                print("type of product ", type(product), product)
+                #print("tags is ", tags)
+                #print("type of product ", type(product), product)
 
 
 
                 #目标相册
                 #产品tag 和page的品类 交集就是目标相册
                 target_albums = list((set(categories_list).union(set(tags)))^(set(categories_list)^set(tags)))
-                print("target_album is ", target_albums)
+                #print("target_album is ", target_albums)
 
                 #目标相册是否已经存在
                 #目标相册和已有相册交集为空，就是不存在，需要新建相册
                 #new_albums = list((set(album_list).union(set(target_albums))) ^ (set(album_list) ^ set(target_albums)))
                 new_albums = list(set(target_albums) - set(album_list))
-                print("album ",new_albums )
+                #print("album ",new_albums )
 
                 new_album_list =  create_new_album(page.page_no, new_albums)
 
@@ -326,7 +314,7 @@ class Post_to_Album(BaseActionView):
                 #把产品图片发到目标相册中去
 
                 for new_album in new_album_list:
-                    print("new_album is ", new_album)
+                    #print("new_album is ", new_album)
                     if new_album:
                         post_photo_to_album(page, new_album, product)
 

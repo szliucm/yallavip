@@ -11,6 +11,7 @@ class MyPage(models.Model):
     access_token = models.CharField(u'access_token', max_length=500, null=True, blank=True)
 
     is_published = models.BooleanField(u"page发布状态",default=False, null=True, blank=True)
+    link = models.CharField(u'链接', max_length=500, null=True, blank=True)
 
     #feed_update_time = models.DateTimeField(u'feed最后更新时间', auto_now=False, null=True, blank=True)
     #album_update_time = models.DateTimeField(u'album最后更新时间', auto_now=False, null=True, blank=True)
@@ -23,7 +24,7 @@ class MyPage(models.Model):
     active = models.BooleanField(u"page状态",default=False)
 
     class Meta:
-        verbose_name = "主页更新"
+        verbose_name = "主页"
         verbose_name_plural = verbose_name
 
     def __str__(self):
