@@ -10,6 +10,7 @@ from shop.models import ProductCategory,ProductCategoryMypage
 from fb.models import  MyPage,MyAlbum,MyPhoto
 from .models import *
 from .shop_action import  *
+from .fb_action import  *
 from .adminx import  insert_product
 from django.db.models import Q
 
@@ -27,6 +28,8 @@ def mul(x, y):
 def xsum(numbers):
     return sum(numbers)
 
+
+#从沙特站发布产品到主站
 @shared_task
 def post_to_mainshop():
     dest_shop = "yallasale-com"
@@ -214,7 +217,7 @@ def post_to_mainshop():
 
         # shopify.ShopifyResource.clear_session()
 
-
+#发布产品到Facebook的album
 @shared_task
 def post_to_album():
     #每个pange，每次发布一个新产品没发布过的产品到对应相册
@@ -296,3 +299,95 @@ def post_to_album():
 
     return
 
+#从Facebook删除已断货产品的图片（post待定）
+@shared_task
+def delete_stop_product():
+
+    from facebook_business.api import FacebookAdsApi
+    from facebook_business.adobjects.photo import Photo
+
+    adobjects = FacebookAdsApi.init(my_app_id, my_app_secret, access_token=my_access_token, debug=True)
+
+    products = ShopifyProduct.objects.filter( supply_status ="STOP" , listing_status = True)
+    for product in products:
+        myphotos = MyPhoto.objects.filter(name__icontains = product.handle)
+
+        for myphoto in myphotos:
+            fields = [
+                      ]
+            params = {
+
+            }
+            response = Photo(myphoto.photo_no).api_delete(
+                fields=fields,
+                params=params,
+            )
+            print("delte photo %s response is %s"%(myphoto.photo_no,response ))
+
+        #修改数据库记录
+        myphotos.update(listing_status=False)
+        obj, created = ShopifyProduct.objects.update_or_create(product_no=product.product_no,
+                                                               defaults={
+                                                                   'listing_status': False,
+                                                               }
+                                                               )
+    return
+
+#从Facebook删除已断货产品的图片（post待定）
+@shared_task
+def delete_stop_sku():
+
+    from facebook_business.api import FacebookAdsApi
+    from facebook_business.adobjects.photo import Photo
+
+    adobjects = FacebookAdsApi.init(my_app_id, my_app_secret, access_token=my_access_token, debug=True)
+
+    products = ShopifyVariant.objects.filter( supply_status ="STOP" , listing_status = True)
+    for product in products:
+        myphotos = MyPhoto.objects.filter(name__icontains = product.handle)
+
+        for myphoto in myphotos:
+            fields = [
+                      ]
+            params = {
+
+            }
+            response = Photo(myphoto.photo_no).api_delete(
+                fields=fields,
+                params=params,
+            )
+            print("delte photo %s response is %s"%(myphoto.photo_no,response ))
+
+        #修改数据库记录
+        myphotos.update(listing_status=False)
+        obj, created = ShopifyProduct.objects.update_or_create(product_no=product.product_no,
+                                                               defaults={
+                                                                   'listing_status': False,
+                                                               }
+                                                               )
+    return
+
+#发布产品到Facebook的page
+@shared_task
+def post_to_page():
+    # 选择所有可用的page
+    mypages = MyPage.objects.filter(active=True)
+    for mypage in mypages:
+        # 每次随机选择1 张未发布过的图片，如果没有可做的，则跳过
+        myphotos = MyPhoto.objects.filter(page_no=mypage.page_no, posted_times =0)
+
+        if not myphotos:
+            print("待发布的图片为空，跳出")
+            continue
+
+        myphoto = random.choice(myphotos)
+
+        print("当前处理的图片 %s" % (myphoto))
+
+        create_page_feed(mypage, myphoto)
+
+        # 修改数据库记录
+        myphotos.update(posted_times=myphoto.posted_times+1)
+
+
+    return

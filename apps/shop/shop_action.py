@@ -156,7 +156,7 @@ def post_photo_to_album(targer_page,album_no,product ):
     name = product.title + "  [" + product.handle+"]"
     options = ShopifyOptions.objects.filter(product_no=product.product_no).values()
     for option in options:
-        name = name + "\n   " + option.get("name") + " : " + option.get("values")
+        name = name + "\n\n   " + option.get("name") + " : " + option.get("values")
 
     max_price = ShopifyVariant.objects.filter(product_no=product.product_no).aggregate(Max("price")).get("price__max")
     name = name + "\n\nPrice:  " + str(int(max_price)) + "SAR"
@@ -207,6 +207,12 @@ def post_photo_to_album(targer_page,album_no,product ):
 
                                                               }
                                                     )
+    obj, created = ShopifyProduct.objects.update_or_create(product_no=product.product_no,
+                                                    defaults={
+                                                        'listing_status': True,
+                                                    }
+                                                    )
+
     #print("new_photo saved ", obj, created)
     return  1
 

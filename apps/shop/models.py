@@ -20,6 +20,13 @@ class Shop(models.Model):
         return self.shop_name
 
 class ShopifyProduct(models.Model):
+    SUPPLY_STATUS = (
+        ("NORMAL", "正常"),
+        ("DELAY", "供货延迟"),
+        ("STOP", "断货"),
+        # ("PAUSE", "缺货"),
+    )
+
     shop = models.ForeignKey(Shop, related_name='shop_product', null=True, on_delete=models.CASCADE,
                                  verbose_name="店铺")
     shop_name = models.CharField(u'店铺名', default='', max_length=100,null=True, blank=True)
@@ -48,6 +55,12 @@ class ShopifyProduct(models.Model):
 
     listed = models.BooleanField(u'已发布', default=False)
 
+    listing_status = models.BooleanField(u'发布到Facebook', default=False)
+
+    supply_status = models.CharField(u'供应状态', choices=SUPPLY_STATUS, max_length=50, default='NORMAL', blank=True)
+    supply_comments = models.CharField(u'供应备注', max_length=500, default='', blank=True)
+
+
     category_code = models.CharField(u'类目', default='', max_length=100, null=True,blank=True)
 
     class Meta:
@@ -59,6 +72,13 @@ class ShopifyProduct(models.Model):
         return self.handle
 
 class ShopifyVariant(models.Model):
+    SUPPLY_STATUS = (
+        ("NORMAL", "正常"),
+        ("DELAY", "供货延迟"),
+        ("STOP", "断货"),
+        # ("PAUSE", "缺货"),
+    )
+
     shopifyproduct = models.ForeignKey(ShopifyProduct, related_name='product_variant', null=True, on_delete=models.CASCADE,
                                  verbose_name="商品")
     product_no = models.CharField(u'product_no',  max_length=100,default='', blank=True, null=True)
@@ -92,6 +112,11 @@ class ShopifyVariant(models.Model):
     tax_code = models.CharField(u'tax_code', default='', max_length=200, blank=True)
     title = models.CharField(u'title', default='', max_length=500,  null=True,blank=True)
     sku = models.CharField(u'title', default='', max_length=100,  null=True,blank=True)
+
+    listing_status = models.BooleanField(u'发布到Facebook', default=False)
+    supply_status = models.CharField(u'供应状态', choices=SUPPLY_STATUS, max_length=50, default='NORMAL', blank=True)
+    supply_comments = models.CharField(u'供应备注', max_length=500, default='', blank=True)
+
     class Meta:
         verbose_name = "变体"
         verbose_name_plural = verbose_name

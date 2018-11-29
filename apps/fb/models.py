@@ -10,6 +10,9 @@ class MyPage(models.Model):
     page = models.CharField(u'主页', default='', max_length=100, blank=True)
     access_token = models.CharField(u'access_token', max_length=500, null=True, blank=True)
 
+    message = models.TextField(u'促销文案', max_length=500, null=True, blank=True)
+    slogan = models.CharField(u'slogan', max_length=500, null=True, blank=True)
+
     is_published = models.BooleanField(u"page发布状态",default=False, null=True, blank=True)
     link = models.CharField(u'链接', max_length=500, null=True, blank=True)
 
@@ -181,6 +184,8 @@ class MyPhoto(models.Model):
     comment_count = models.CharField(max_length=100,null=True, blank=True, verbose_name="comment_count")
 
     product_no = models.CharField(max_length=30, null=True, blank=True, verbose_name="product_no")
+    listing_status = models.BooleanField(u'发布到相册的状态', default=True)
+    posted_times = models.IntegerField(u'发布到主页的次数',default=0,blank=True, null=True)
 
     class Meta:
         verbose_name = "Photo"

@@ -90,7 +90,7 @@ class MyPageAdmin(object):
     show_promote.allow_tags = True
 
     #actions = ["batch_updatepage", ]
-    list_display = ('page', 'page_no','is_published','active','link', 'show_logo','show_price','show_promote','conversation_update_time',
+    list_display = ('page', 'page_no','is_published','active','link','message',  'show_logo','show_price','show_promote','conversation_update_time',
                    )
 
     list_editable = ['active',]

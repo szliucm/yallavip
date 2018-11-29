@@ -63,6 +63,7 @@ INSTALLED_APPS = [
     'xadmin',   #注册xadmin
     'django_celery_results',
     'django_celery_beat',
+    'django_extensions',
 
 
 ]
