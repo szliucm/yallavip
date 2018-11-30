@@ -185,6 +185,7 @@ class MyPhoto(models.Model):
 
     product_no = models.CharField(max_length=30, null=True, blank=True, verbose_name="product_no")
     listing_status = models.BooleanField(u'发布到相册的状态', default=True)
+
     posted_times = models.IntegerField(u'发布到主页的次数',default=0,blank=True, null=True)
 
     class Meta:
