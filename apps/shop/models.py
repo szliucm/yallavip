@@ -307,7 +307,7 @@ class ProductCategoryMypage(models.Model):
 
     last_no = models.BigIntegerField(u'最后更新产品ID', default=0, null=True,blank=True)
 
-
+    active = models.BooleanField(u'page类目状态', default=True)
 
 
 

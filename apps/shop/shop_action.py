@@ -135,7 +135,7 @@ def post_photo_to_album(targer_page,album_no,product ):
         print("photo exist")
         return 0
     else:
-        print("now we need to create new photos")
+        print("now we need to create new photos for %s"%(product.handle))
 
 
     adobjects = FacebookAdsApi.init(my_app_id, my_app_secret, access_token=get_token(page_no), debug=True)
@@ -144,7 +144,8 @@ def post_photo_to_album(targer_page,album_no,product ):
     #print("product.product_no ", product.product_no)
     ori_images = ShopifyImage.objects.filter(product_no=product.product_no).order_by('position')
     if not ori_images :
-        print("no image")
+
+        print("no image %s"%(product.product_no))
         return 0
 
     ori_image = random.choice(ori_images)

@@ -241,7 +241,7 @@ def post_to_album():
 
         #print("主页已有相册", album_dict)
 
-        categories = mypage.category_page.all()
+        categories = mypage.category_page.filter(active=True)
 
         #每次随机选择一个类目，发5张图片，如果类目没有可做的，则跳过
         if not categories:
@@ -258,6 +258,7 @@ def post_to_album():
             order_by("product_no")
         if not products :
             print("当前类目没有产品了，跳出")
+            mypage.category_page.filter(category=category).update(active=False)
             continue
 
         # 这个品类是否已经建了相册
