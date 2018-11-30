@@ -258,7 +258,7 @@ def post_to_album():
             order_by("product_no")
         if not products :
             print("当前类目没有产品了，跳出")
-            ProductCategoryMypage.objects.filter(mypage = mypage, productcategory=category).update(active=False)
+            category.update(active=False)
             continue
 
         # 这个品类是否已经建了相册
