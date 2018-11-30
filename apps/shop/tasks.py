@@ -254,7 +254,8 @@ def post_to_album():
 
         # 找出每个品类下未发布的产品
         products = ShopifyProduct.objects.filter(category_code=category.productcategory.code,
-                                                product_no__gt=category.last_no). \
+                                                product_no__gt=category.last_no,
+                                                 handle__startswith='a'). \
             order_by("product_no")
         if not products :
             print("当前类目没有产品了，跳出")
