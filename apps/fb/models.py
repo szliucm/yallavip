@@ -1,4 +1,5 @@
 from django.db import models
+#from shop.models import  ShopifyProduct,ShopifyVariant
 
 
 
@@ -294,4 +295,5 @@ class ConversationUpdate(MyPage):
         verbose_name_plural = verbose_name
     def __str__(self):
         return self.page_no
+
 

@@ -29,9 +29,7 @@ from facebook_business.adobjects.adsinsights import AdsInsights
 from django.shortcuts import get_object_or_404,get_list_or_404,render
 from import_export import resources,fields
 from import_export.widgets import ForeignKeyWidget
-from .models import  MyPage, MyAdAccount,MyCampaign, MyAdset, MyAd, \
-            MyFeed, MyAlbum,MyPhoto, Message, Conversation, FeedUpdate,AlbumUpdate, ConversationUpdate,\
-            MyInsight
+from .models import  *
 
 
 from .page_action import ConnectPageCategory
@@ -1734,6 +1732,9 @@ class ConversationUpdateAdmin(object):
             ConversationUpdate.objects.filter(page_no = target_page).update(conversation_update_time = now_time )
 
     batch_update.short_description = "批量更新主页会话"
+
+
+
 
 '''
 获取system user token

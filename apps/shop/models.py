@@ -317,3 +317,74 @@ class ProductCategoryMypage(models.Model):
 
     def __str__(self):
         return self.productcategory.album_name
+
+
+class MyPorduct(models.Model):
+    OBJ_TYPE = (
+        ("PRODUCT", "单品"),
+        ("OVERSEAS", "海外仓包裹"),
+
+    )
+    obj_type = models.CharField(choices=OBJ_TYPE,default='PRODUCT',max_length=30, null=True, blank=True, verbose_name="产品类型")
+
+    shopifyproduct = models.ForeignKey('ShopifyProduct', null=True, blank=True, verbose_name="shopify产品", help_text="shopify产品",
+                                related_name="product_resouse", on_delete=models.CASCADE)
+    shopifyvariant = models.ForeignKey('ShopifyVariant', null=True, blank=True, verbose_name="海外仓商品", help_text="海外仓商品",
+                                related_name="variant_resouse", on_delete=models.CASCADE)
+
+    def name(self):  # 计算字段要显示在修改页面中只能定义在只读字段中(否则不显示):readonly_fields = ('sc',)
+        if self.obj_type == "PRODUCT":
+            return self.shopifyproduct.handle
+        else:
+            return  self.shopifyvariant.sku
+
+    name.short_description = '产品名'  # 用于显示时的名字 , 没有这个,字段标题将显示'name'
+
+
+    class Meta:
+        verbose_name = "爆款"
+        verbose_name_plural = verbose_name
+    def __str__(self):
+
+        if self.obj_type == "PRODUCT":
+            return self.shopifyproduct.handle
+        else:
+            return  self.shopifyvariant.sku
+
+
+class ProductResources(models.Model):
+    product = models.ForeignKey(MyPorduct, null=True, blank=True, verbose_name="fb产品",
+                                        related_name="product_resouse",on_delete=models.CASCADE)
+
+    resource = models.FileField(u'资源', upload_to='resource/', default="", null=True, blank=True)
+
+    RESOURCE_CATE = (
+        ("IMAGE", "图片"),
+        ("VIDEO", "视频"),
+    )
+    resource_cate = models.CharField(choices=RESOURCE_CATE, default='IMAGE', max_length=30, null=True, blank=True,
+                                     verbose_name="资源性质")
+
+    RESOURCE_TYPE = (
+        ("SKU", "sku自带"),
+        ("AUTO", "自带生成"),
+        ("RAW", "素材"),
+        ("PS", "成品"),
+    )
+    resource_type = models.CharField(choices=RESOURCE_TYPE, default='RAW', max_length=30, null=True, blank=True,
+                                verbose_name="资源类型")
+
+
+
+    created_time = models.DateTimeField(null=True, blank=True, verbose_name="上传时间")
+    staff = models.CharField(u'上传人', default='', max_length=100, null=True,blank=True)
+
+
+    class Meta:
+        verbose_name = "资源"
+        verbose_name_plural = verbose_name
+    def __str__(self):
+        if self.product.obj_type == "PRODUCT":
+            return self.product.shopifyproduct.handle
+        else:
+            return  self.product.shopifyvariant.sku

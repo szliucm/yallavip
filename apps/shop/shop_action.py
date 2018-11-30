@@ -193,10 +193,11 @@ def post_photo_to_album(targer_page,album_no,product ):
                                                             'page_no': page_no,
                                                                 'album_no': album_no,
                                                               "product_no": product.product_no,
+                                                                'listing_status':True,
                                                               'created_time':
-                                                                  photo["created_time"].split('+')[0],
+                                                                  photo["created_time"],#.split('+')[0],
                                                               'updated_time':
-                                                                  photo["updated_time"].split('+')[0],
+                                                                  photo["updated_time"],#.split('+')[0],
 
                                                               'name': photo.get("name"),
                                                               'picture': photo["picture"],
