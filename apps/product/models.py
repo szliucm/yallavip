@@ -1,5 +1,6 @@
 from django.db import models
 from fb.models import MyPage
+from shop.models import ShopifyProduct, ShopifyVariant
 
 # Create your models here.
 class Product(models.Model):
@@ -71,3 +72,4 @@ class ProductCategoryMypage(models.Model):
     def __str__(self):
         return self.productcategory.name
 '''
+

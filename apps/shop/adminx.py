@@ -61,6 +61,7 @@ my_access_token = "EAAHZCz2P7ZAuQBABHO6LywLswkIwvScVqBP2eF5CrUt4wErhesp8fJUQVqRl
 
 from .shop_action import Post_to_Album
 
+
 def get_token(target_page):
     url = "https://graph.facebook.com/v3.2/{}?fields=access_token".format(target_page)
     param = dict()
@@ -401,6 +402,8 @@ class ShopAdmin(object):
             else:
                 max_product_no = product.product_no
 
+            print("max_product_no", max_product_no)
+
             #删除所有可能重复的产品信息
 
             ShopifyVariant.objects.filter(product_no__gt=max_product_no).delete()
@@ -420,8 +423,8 @@ class ShopAdmin(object):
             r = requests.get(url, params)
             data = json.loads(r.text)
 
-            if DEBUG:
-                print("product count is ", data["count"])
+
+            print("product count is ", data["count"])
 
             total_count = data["count"]
 
@@ -448,7 +451,7 @@ class ShopAdmin(object):
                                   "updated_at,tags,vendor,variants,images,options",
                         # "fields": "product_id",
                     }
-                    # print(("params is ", params))
+                    print(("params is ", params))
 
                     r = requests.get(url, params)
                     products = json.loads(r.text)["products"]
@@ -631,16 +634,15 @@ class ShopifyProductAdmin(object):
 
     show_album.short_description = "相册名"
 
-    list_display = ['shop_name', 'product_no','listing_status','supply_status', 'handle','category_code','show_album', 'created_at', "updated_at", "listed", "title"]
+    list_display = ['shop_name', 'product_no','listing_status','supply_status', 'handle','category_code', 'created_at', "updated_at", "listed", "title"]
     # 'sku_name','img',
 
     search_fields = ["handle", "product_no"]
     list_filter = ['shop_name', 'listed', "created_at", "tags","category_code"]
     list_editable = ['listing_status','supply_status',]
-    actions = [ "delete_product","update_cate","list_product"]
+    actions = [ "delete_product","update_cate",]#"list_product"]
     # inlines = [VariantInline, ]
     ordering = ['-product_no']
-
 
 
 
@@ -1449,6 +1451,8 @@ class ProductCategoryMypageAdmin(object):
     list_editable = []
     actions = []
 
+
+'''
 @xadmin.sites.register(MyPorduct)
 class MyPorductAdmin(object):
 
@@ -1513,3 +1517,4 @@ class ProductResourcesAdmin(object):
     list_display = ["product", "resource_cate","resource_type","resource", "created_time","staff", ]
     search_fields = ["product",  ]
     list_filter = ("resource_cate","resource_type","staff",)
+'''

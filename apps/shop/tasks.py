@@ -1,6 +1,7 @@
 # Create your tasks here
 from __future__ import absolute_import, unicode_literals
 import numpy as np, re
+
 from celery import shared_task
 
 
@@ -10,6 +11,7 @@ from shop.models import ProductCategory,ProductCategoryMypage
 from fb.models import  MyPage,MyAlbum,MyPhoto
 from .models import *
 from .shop_action import  *
+
 from .fb_action import  *
 from .adminx import  insert_product
 from django.db.models import Q

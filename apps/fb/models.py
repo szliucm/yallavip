@@ -31,6 +31,7 @@ class MyPage(models.Model):
         verbose_name = "主页"
         verbose_name_plural = verbose_name
 
+        app_label = 'fb'
     def __str__(self):
         return self.page
 
@@ -118,6 +119,7 @@ class MyAd(models.Model):
         verbose_name = "广告"
         verbose_name_plural = verbose_name
 
+        app_label = 'fb'
     def __str__(self):
         return self.ad_no
 
@@ -143,6 +145,7 @@ class MyFeed(models.Model):
     class Meta:
         verbose_name = "Feed"
         verbose_name_plural = verbose_name
+        app_label = 'fb'
     def __str__(self):
         #return 'business.facebook.com'+ self.link
         return  self.feed_no
@@ -192,6 +195,7 @@ class MyPhoto(models.Model):
     class Meta:
         verbose_name = "Photo"
         verbose_name_plural = verbose_name
+        app_label = 'fb'
     def __str__(self):
         #return 'business.facebook.com'+ self.link
         return  self.photo_no
@@ -295,5 +299,7 @@ class ConversationUpdate(MyPage):
         verbose_name_plural = verbose_name
     def __str__(self):
         return self.page_no
+
+
 
 

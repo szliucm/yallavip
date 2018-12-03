@@ -67,6 +67,7 @@ class ShopifyProduct(models.Model):
         verbose_name = "shopify商品"
         verbose_name_plural = verbose_name
 
+        app_label = 'shop'
 
     def __str__(self):
         return self.handle
@@ -121,6 +122,7 @@ class ShopifyVariant(models.Model):
         verbose_name = "变体"
         verbose_name_plural = verbose_name
 
+        app_label = "shop"
 
     def __str__(self):
         return self.variant_no
@@ -318,6 +320,7 @@ class ProductCategoryMypage(models.Model):
     def __str__(self):
         return self.productcategory.album_name
 
+'''
 
 class MyPorduct(models.Model):
     OBJ_TYPE = (
@@ -325,12 +328,14 @@ class MyPorduct(models.Model):
         ("OVERSEAS", "海外仓包裹"),
 
     )
+
     obj_type = models.CharField(choices=OBJ_TYPE,default='PRODUCT',max_length=30, null=True, blank=True, verbose_name="产品类型")
 
     shopifyproduct = models.ForeignKey('ShopifyProduct', null=True, blank=True, verbose_name="shopify产品", help_text="shopify产品",
-                                related_name="product_resouse", on_delete=models.CASCADE)
+                                related_name="product_shop", on_delete=models.CASCADE)
     shopifyvariant = models.ForeignKey('ShopifyVariant', null=True, blank=True, verbose_name="海外仓商品", help_text="海外仓商品",
-                                related_name="variant_resouse", on_delete=models.CASCADE)
+                                related_name="variant_shop", on_delete=models.CASCADE)
+
 
     def name(self):  # 计算字段要显示在修改页面中只能定义在只读字段中(否则不显示):readonly_fields = ('sc',)
         if self.obj_type == "PRODUCT":
@@ -344,6 +349,7 @@ class MyPorduct(models.Model):
     class Meta:
         verbose_name = "爆款"
         verbose_name_plural = verbose_name
+
     def __str__(self):
 
         if self.obj_type == "PRODUCT":
@@ -354,7 +360,7 @@ class MyPorduct(models.Model):
 
 class ProductResources(models.Model):
     product = models.ForeignKey(MyPorduct, null=True, blank=True, verbose_name="fb产品",
-                                        related_name="product_resouse",on_delete=models.CASCADE)
+                                        related_name="resouse_product",on_delete=models.CASCADE)
 
     resource = models.FileField(u'资源', upload_to='resource/', default="", null=True, blank=True)
 
@@ -388,3 +394,4 @@ class ProductResources(models.Model):
             return self.product.shopifyproduct.handle
         else:
             return  self.product.shopifyvariant.sku
+'''

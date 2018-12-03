@@ -42,6 +42,7 @@ my_access_token = "EAAHZCz2P7ZAuQBABHO6LywLswkIwvScVqBP2eF5CrUt4wErhesp8fJUQVqRl
 def get_token(target_page):
 
     url = "https://graph.facebook.com/v3.2/{}?fields=access_token".format(target_page)
+
     param = dict()
     param["access_token"] = my_access_token
 

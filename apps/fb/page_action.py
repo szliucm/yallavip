@@ -20,7 +20,6 @@ from xadmin.views.base import filter_hook
 from shop.models import ProductCategory,ProductCategoryMypage
 
 
-
 from facebook_business.api import FacebookAdsApi
 from facebook_business.exceptions import FacebookRequestError
 from facebook_business.adobjects.systemuser import SystemUser
