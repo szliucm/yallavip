@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'product',
 
     'sysadmin',
+    'prs',
     'shop',
     'mytest',
 
