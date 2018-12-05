@@ -127,7 +127,7 @@ class MyFeed(models.Model):
     page_no = models.CharField(max_length=30, null=True, blank=True, verbose_name="PageID")
     feed_no = models.CharField(default='', unique=True, max_length=50, blank=True, verbose_name="FeedID")
     type = models.CharField(default='',  max_length=50, blank=True, verbose_name="type")
-    message = models.CharField(default='',  max_length=3000, blank=True, verbose_name="message")
+    message = models.CharField(default='',  max_length=3000, null=True, blank=True, verbose_name="message")
     sku = models.CharField(default='', max_length=100, blank=True, verbose_name="sku")
 
     created_time = models.DateTimeField(null=True, blank=True, verbose_name="创建时间")

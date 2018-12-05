@@ -95,7 +95,7 @@ class MyPageAdmin(object):
     list_editable = ['active',]
     #search_fields = ['logistic_no', ]
     list_filter = ('is_published','active',)
-    actions = ["batch_update_accounts",ConnectPageCategory,"batch_update_albums","batch_update_ads",]
+    actions = ["batch_update_accounts","batch_update_feed", ConnectPageCategory,"batch_update_albums","batch_update_ads",]
 
     def batch_update_accounts(self, request, queryset):
 
@@ -188,7 +188,93 @@ class MyPageAdmin(object):
 
     batch_update_albums.short_description = "批量下载相册信息"
 
+    def batch_update_feed(self, request, queryset):
+        adobjects = FacebookAdsApi.init(access_token=my_access_token, debug=True)
+        for row in queryset:
+            page_no = row.page_no
+            # 重置原有相册信息为不活跃
+            #MyFeed.objects.filter(page_no=page_no).update(active=False)
 
+            fields = ["created_time", "description", "id",
+                      "type", "message", "name",
+                      "actions_link","actions_name",
+                      "likes.summary(true)", "comments.summary(true)"
+                      ]
+            params = {
+
+            }
+            feeds = Page(page_no).get_feed(
+                fields=fields,
+                params=params,
+            )
+
+            for feed in feeds:
+                obj, created = MyFeed.objects.update_or_create(feed_no=feed["id"],
+                                                                defaults={'page_no': page_no,
+                                                                          'created_time':
+                                                                              feed["created_time"],
+                                                                          'message': feed.get("message"),
+                                                                          'description': feed.get("description"),
+                                                                          'name': feed.get("name"),
+                                                                          'type': feed.get("type"),
+                                                                          'actions_link': feed.get("actions_link"),
+                                                                          'actions_name': feed.get("actions_name"),
+                                                                          'like_count': feed["likes"]["summary"][
+                                                                              "total_count"],
+                                                                          'comment_count': feed["comments"]["summary"][
+                                                                              "total_count"],
+
+
+                                                                          }
+                                                                )
+
+                print("feed is ", feed)
+
+    batch_update_feed.short_description = "批量下载feed信息"
+
+    def batch_update_ad(self, request, queryset):
+        adobjects = FacebookAdsApi.init(access_token=my_access_token, debug=True)
+        for row in queryset:
+            page_no = row.page_no
+            # 重置原有相册信息为不活跃
+            #MyFeed.objects.filter(page_no=page_no).update(active=False)
+
+            fields = ["created_time", "description", "id",
+                      "type", "message", "name",
+                      "actions_link","actions_name",
+                      "likes.summary(true)", "comments.summary(true)"
+                      ]
+            params = {
+
+            }
+            feeds = Page(page_no).get_feed(
+                fields=fields,
+                params=params,
+            )
+
+            for feed in feeds:
+                obj, created = MyFeed.objects.update_or_create(feed_no=feed["id"],
+                                                                defaults={'page_no': page_no,
+                                                                          'created_time':
+                                                                              feed["created_time"],
+                                                                          'message': feed.get("message"),
+                                                                          'description': feed.get("description"),
+                                                                          'name': feed.get("name"),
+                                                                          'type': feed.get("type"),
+                                                                          'actions_link': feed.get("actions_link"),
+                                                                          'actions_name': feed.get("actions_name"),
+                                                                          'like_count': feed["likes"]["summary"][
+                                                                              "total_count"],
+                                                                          'comment_count': feed["comments"]["summary"][
+                                                                              "total_count"],
+
+
+                                                                          }
+                                                                )
+
+                print("feed is ", feed)
+
+    batch_update_ad.short_description = "批量下载ad信息"
 
     def batch_update_ads(self, request, queryset):
         url = "https://graph.facebook.com/v3.2/me/adaccounts"
@@ -222,7 +308,7 @@ class MyFeedAdmin(object):
 
     list_display = ["page_no", "feed_no", "type","sku","created_time", "actions_link", "actions_name", "share_count",
                     "comment_count", "like_count", "message",]
-    search_fields = ['feed_no', "page_no",]
+    search_fields = ['feed_no', "page_no","message",]
     actions = ["batch_update_sku", "create_page_feed"]
 
     def create_page_feed(self, request, queryset):
