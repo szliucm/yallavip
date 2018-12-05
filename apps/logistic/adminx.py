@@ -754,7 +754,10 @@ class OverseaPackageAdmin(object):
 
             res = requests.post(requrl, params=param)
 
-            print("response is ", res)
+
+            if res.status_code != 200:
+                print("error !!!!!! response is ", res)
+                continue
 
             data = json.loads(res.text)
             print("data",data)
