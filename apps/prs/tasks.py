@@ -12,7 +12,7 @@ from .models import *
 from shop.models import  Shop, ShopifyProduct, ShopifyVariant, ShopifyImage, ShopifyOptions
 
 from .shop_action import sync_shop
-
+from orders.models import Order
 
 
 #更新ali产品数据，把vendor和产品信息连接起来
@@ -242,4 +242,101 @@ def post_to_mainshop():
 
     #上传完后整体更新目标站数据
     sync_shop(dest_shop)
+
+#把拒签且未上架的产品发布到主站
+@shared_task
+def rejected_package():
+
+    from logistic.models import  Package
+
+    from .shop_action import create_package_sku
+
+    dest_shop = "yallasale-com"
+    discount = 0.9
+    min_product_no = 999999999999999
+
+    packages = Package.objects.filter(deal="REFUSED",resell_status="NONE" )
+    n=0
+
+    for package in packages:
+        order = Order.objects.filter(logistic_no=package.logistic_no).first()
+        print("order",  order)
+        if not order:
+            print("cannot find the order",package.logistic_no )
+            continue
+
+        product_no,sku_created = create_package_sku(dest_shop, order, discount)
+
+
+
+        if sku_created:
+            if product_no < min_product_no:
+                min_product_no = product_no
+
+
+
+            Package.objects.filter(pk=package.pk).update(resell_status="LISTING")
+
+        n =n+1
+        if n>10:
+            break
+        else:
+            print("******", n)
+
+    # 上传完后整体更新目标站数据
+    sync_shop(dest_shop, min_product_no)
+
+
+    return  True
+
+
+#生成海外仓包裹的视频
+@shared_task
+def package_video():
+    from .video import  get_order_video
+    packages = MyProductPackage.objects.all()
+    n = 0
+    for package in packages:
+        order = Order.objects.get(order_no = package.product_no)
+        get_order_video(order)
+        n=n+1
+        if n >5:
+            break
+
+#生成海外仓包裹的视频,使用Facebook的接口，上传图片直接生成slideshow
+@shared_task
+def package_slideshow():
+    from .video import  get_order_slideshow
+
+    #package = MyProductPackage.objects.all().order_by("order_no").first()
+    packages = MyProductPackage.objects.all()
+    print("packages", packages)
+    package = packages.first()
+    order = Order.objects.filter(order_no = package.order_no).first()
+    get_order_slideshow(order)
+
+#同步海外仓包裹的状态，已经发布到主站的信息，更新到prs里
+@shared_task
+def package_sync():
+    from .shop_action import sycn_package
+
+    sycn_package()
+    return
+
+#扫描feed，匹配到产品
+@shared_task
+def feed_sync_product():
+    from .fb_action import sycn_feed_product
+
+    sycn_feed_product()
+    return
+
+@shared_task
+def ad_sycn_product():
+    from .fb_action import sycn_ad_product
+
+    sycn_ad_product()
+    return
+
+
 

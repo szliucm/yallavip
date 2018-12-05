@@ -1,20 +1,26 @@
+from .models import *
 from shop.models import  Shop, ShopifyProduct, ShopifyVariant, ShopifyImage, ShopifyOptions
+
+
+from orders.models import Order
+
 import requests
 import json
 
 #同步shopify信息到系统数据库
-def sync_shop(shop):
+def sync_shop(shop, max_product_no =None):
 
     #获取店铺信息
     shop_obj = Shop.objects.get(shop_name=shop)
     shop_url = "https://%s:%s@%s.myshopify.com" % (shop_obj.apikey, shop_obj.password, shop_obj.shop_name)
 
-    # 取得系统中已有的最大product_no
-    product = ShopifyProduct.objects.filter(shop_name=shop).order_by('-product_no').first()
-    if product is None:
-        max_product_no = "0"
-    else:
-        max_product_no = product.product_no
+    if not max_product_no:
+        # 取得系统中已有的最大product_no
+        product = ShopifyProduct.objects.filter(shop_name=shop).order_by('-product_no').first()
+        if product is None:
+            max_product_no = "0"
+        else:
+            max_product_no = product.product_no
 
     print("max_product_no", max_product_no)
 
@@ -176,3 +182,173 @@ def insert_product(shop_name, products):
         ShopifyImage.objects.bulk_create(image_list)
         ShopifyOptions.objects.bulk_create(option_list)
         ShopifyProduct.objects.bulk_create(product_list)
+
+#创建海外仓商品，先只考虑一个包裹对应一个订单的情况
+def create_package_sku(dest_shop, order, discount):
+    # 初始化SDK
+    shop_obj = Shop.objects.get(shop_name=dest_shop)
+
+    shop_url = "https://%s:%s@%s.myshopify.com" % (shop_obj.apikey, shop_obj.password, shop_obj.shop_name)
+
+    # url = shop_url + "/admin/products.json"
+
+    # 每100个包裹创建一个海外仓商品，包裹作为变体存放。，否则创建新的
+    #以订单号为基准创建handle和sku
+
+
+
+    #package_no = order.package_no
+    #print("package_no is ", package_no)
+
+    #handle_new = "S" + package_no[6:10]
+
+    order_no = order.order_no
+    handle_new = "S" + order_no[:-2]
+    # 创建变体
+    variants_list = []
+    #sku = handle_new + "-" + package_no[10:]
+    sku = order.order_no
+    print("handle_new  sku", handle_new, sku)
+    try:
+        order_amount = float(order.order_amount)
+    except:
+
+        print("order_amount",order, order.order_amount)
+
+        return None, False
+
+    variant_item = {
+
+        "price": int( order_amount* discount),
+        "compare_at_price": order_amount,
+        "sku": sku,
+        "option1": order_no,
+
+        "title": order_no,
+        "taxable": "true",
+        "inventory_management": "shopify",
+        "fulfillment_service": "manual",
+        "inventory_policy": "continue",
+
+        "inventory_quantity": 1,
+        "requires_shipping": "true",
+        "weight": order.weight,
+        "weight_unit": "g",
+
+    }
+    #print("variant_item", variant_item)
+    variants_list.append(variant_item)
+
+    # 所以先检测商品是否存在
+    url = shop_url + "/admin/products.json"
+    params = {
+        "handle": handle_new,
+        # "page": 1,
+        # "limit": 100,
+        # "since_id": max_product_no,
+        "fields": "id,handle, variants",
+    }
+
+    response = requests.get(url, params)
+    #print("url %s, params %s , response %s" % (url, json.dumps(params), response))
+
+    data = json.loads(response.text)
+    #print("check ori_product data is ", data)
+
+    headers = {
+        "Content-Type": "application/json",
+        "charset": "utf-8",
+
+    }
+
+    ori_products = data.get("products")
+
+    #print("ori_products", ori_products, len(ori_products))
+
+    if len(ori_products) == 0:
+        print("product does not exist yet")
+        # 创建新商品
+        url = shop_url + "/admin/products.json"
+
+        params = {
+            "product": {
+                "handle": handle_new,
+                "title": "Overseas Package " + handle_new,
+                "variants": variants_list,
+            }
+        }
+
+        response = requests.post(url, headers=headers, data=json.dumps(params))
+        data = json.loads(response.text)
+        new_product = data.get("product")
+        if new_product is None:
+            # 创建新产品失败
+            print("data is ", data)
+            return None, False
+
+
+
+
+    elif len(ori_products) == 1:
+
+        ori_product = ori_products[0]
+        if ori_product is None:
+            # 获取原有产品失败
+            print("data is ", data)
+            return None,False
+        else:
+            print("product exist", ori_product["handle"])
+            # 获取原有产品信息
+            for k in range(len(ori_product["variants"])):
+                variant_row = ori_product["variants"][k]
+                #print("variant_row is ", variant_row)
+                variant_item = {
+
+                    "id": variant_row.get("id"),
+
+                }
+
+                variants_list.append(variant_item)
+
+            # 更新原有商品
+            # PUT /admin/products/#{product_id}.json
+            url = shop_url + "/admin/products/%s.json" % (ori_product.get("id"))
+
+            params = {
+                "product": {
+                    "id": ori_product.get("id"),
+                    # "title": "Overseas Package " + handle_new,
+                    "variants": variants_list,
+                }
+            }
+
+            response = requests.put(url, headers=headers, data=json.dumps(params))
+            data = json.loads(response.text)
+            new_product = data.get("product")
+            if new_product is None:
+                # 更新原有产品变体失败
+                print("fail to update variant")
+                print("data is ", data)
+                return None, False
+
+    else:
+        print("unknow error")
+        return None,False
+
+    print("new product is ", new_product.get("id"))
+
+    return ( new_product.get("id"), True)
+
+
+def sycn_package():
+    variants =  ShopifyVariant.objects.filter(sku__startswith ="579815")
+    print(variants)
+    for variant in variants:
+        MyProductPackage.objects.update_or_create(
+            order_no=variant.sku,
+            defaults={
+                "shopifyvariant" : variant,
+                "obj_type": "OVERSEAS"
+            }
+        )
+    return

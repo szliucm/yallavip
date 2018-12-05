@@ -20,6 +20,11 @@ class Shop(models.Model):
         return self.shop_name
 
 class ShopifyProduct(models.Model):
+    #myproduct = models.ForeignKey('prs.MyProduct', null=True, blank=True, verbose_name="产品",
+     #                             related_name="shop_myproduct", on_delete=models.CASCADE)
+    #myproductali = models.ForeignKey('prs.MyProductAli', null=True, blank=True, verbose_name="货源",
+     #                                related_name="shop_myali", on_delete=models.CASCADE)
+
     SUPPLY_STATUS = (
         ("NORMAL", "正常"),
         ("DELAY", "供货延迟"),
@@ -62,6 +67,9 @@ class ShopifyProduct(models.Model):
 
 
     category_code = models.CharField(u'类目', default='', max_length=100, null=True,blank=True)
+
+    total_orders = models.IntegerField(u'总订单数', default=0, blank=True, null=True)
+    total_quantity = models.IntegerField(u'总销售数', default=0, blank=True, null=True)
 
     class Meta:
         verbose_name = "shopify商品"
@@ -117,6 +125,9 @@ class ShopifyVariant(models.Model):
     listing_status = models.BooleanField(u'发布到Facebook', default=False)
     supply_status = models.CharField(u'供应状态', choices=SUPPLY_STATUS, max_length=50, default='NORMAL', blank=True)
     supply_comments = models.CharField(u'供应备注', max_length=500, default='', blank=True)
+
+    total_orders = models.IntegerField(u'总订单数', default=0, blank=True, null=True)
+    total_quantity = models.IntegerField(u'总销售数', default=0, blank=True, null=True)
 
     class Meta:
         verbose_name = "变体"

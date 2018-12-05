@@ -640,10 +640,44 @@ class ShopifyProductAdmin(object):
     search_fields = ["handle", "product_no"]
     list_filter = ['shop_name', 'listed', "created_at", "tags","category_code"]
     list_editable = ['listing_status','supply_status',]
-    actions = [ "delete_product","update_cate",]#"list_product"]
+    actions = [ "download_product", "delete_product","update_cate",]#"list_product"]
     # inlines = [VariantInline, ]
     ordering = ['-product_no']
 
+    def download_product(self, request, queryset):
+        # 定义actions函数
+
+        for product in queryset:
+            shop_obj = Shop.objects.get(shop_name=product.shop_name)
+            product_no = product.product_no
+
+            print("product", product)
+
+            #删除所有可能重复的产品信息
+            ShopifyProduct.objects.filter(product_no=product_no).delete()
+            ShopifyVariant.objects.filter(product_no=product_no).delete()
+            ShopifyImage.objects.filter(product_no=product_no).delete()
+            ShopifyOptions.objects.filter(product_no=product_no).delete()
+
+            shop_url = "https://%s:%s@%s.myshopify.com" % (shop_obj.apikey, shop_obj.password, shop_obj.shop_name)
+            url = shop_url + "/admin/products/%s.json"%(product_no)
+            params = {
+                "fields": "id,handle,body_html,title,product_type,created_at,published_at,"
+                          "updated_at,tags,vendor,variants,images,options",
+
+            }
+            print(("params is ", params))
+
+            r = requests.get(url, params)
+            product = json.loads(r.text)["product"]
+
+            products =[]
+            products.append(product)
+            insert_product(shop_obj.shop_name, products)
+
+
+
+    download_product.short_description = "更新产品"
 
 
     def create_product(self, request, queryset):

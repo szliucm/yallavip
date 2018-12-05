@@ -96,6 +96,7 @@ class Package(models.Model):
                                        blank=True)
 
     RESELL_STATUS = (
+        ("NONE", "未处理"),
         ("LISTING", "上架中"),
         ("UNLISTING", "下架中"),
         ("REDELIVERING", "二次销售派送中"),
