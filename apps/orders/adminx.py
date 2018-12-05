@@ -166,7 +166,7 @@ class OrderAdmin(object):
     # list_display_links = ["show_conversation"]
     search_fields = ["order_no",'logistic_no', ]
     list_filter = ( "order_status","package_status", "verify_time","order_time","send_time")
-    ordering = ['-order_no']
+    ordering = ['-order_time']
     #data_charts = {
     #    "order_count": {'title': u"订单统计","x-field": "order_time", "y-field": ("order_no", ), "order": ('order_time',)},
     #}
@@ -234,7 +234,7 @@ class OrderAdmin(object):
         for row in queryset:
             if(row.logistic_no is None ):
                 continue
-
+            '''
             ############准备参数
             requrl = "http://api.jcex.com/JcexJson/api/notify/sendmsg"
             param = dict()
@@ -391,7 +391,7 @@ class OrderAdmin(object):
             print("data", data)
 
             continue  ####################         debug
-
+            '''
 
 
 
