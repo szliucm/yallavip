@@ -144,7 +144,7 @@ class MyProductShopifyAdmin(object):
 
 @xadmin.sites.register(MyProductAli)
 class MyProductAliAdmin(object):
-    list_display = [ 'vendor_no', 'url','listing',"created_time","staff","active",]
+    list_display = [ "myproductcate",'vendor_no', 'url','listing',"created_time","staff","active",]
 
     # 'sku_name','img',
 
@@ -193,7 +193,7 @@ class MyProductResourcesAdmin(object):
 
     show_resource.short_description = '创意图'
 
-    list_display = ['myproduct','show_resource', "myproductali", 'name',"resource_target","resource_cate","resource_type","created_time","staff", ]
+    list_display = ['myproduct','show_resource', "myproductali", 'name',"message", "resource_target","resource_cate","resource_type","created_time","staff", ]
     # 'sku_name','img',
 
     search_fields = ["myproduct","resource" ]
