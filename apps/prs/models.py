@@ -41,6 +41,9 @@ class MyProduct(models.Model):
     obj_type = models.CharField(choices=OBJ_TYPE, default='PRODUCT', max_length=30, null=True, blank=True,
                                 verbose_name="产品类型")
 
+    created_time = models.DateTimeField(null=True, blank=True, verbose_name="上传时间")
+    staff = models.CharField(u'运营经理', default='', max_length=100, null=True, blank=True)
+
 
     class Meta:
         verbose_name = "产品基础信息"
@@ -60,13 +63,19 @@ class MyProductAli(models.Model):
                                   related_name="ali_productcate", on_delete=models.CASCADE)
     vendor_no = models.CharField(default='unknow', max_length=200,  null=True, blank=True, verbose_name="供应商编号")
 
+
     url = models.CharField(default='',max_length=300, null=True, blank=True, verbose_name="1688链接")
 
     listing = models.BooleanField(default=False, verbose_name="已上架")
+    active  = models.BooleanField(default=True, verbose_name="可用")
+
+    created_time = models.DateTimeField(null=True, blank=True, verbose_name="上传时间")
+    staff = models.CharField(u'运营经理', default='', max_length=100, null=True, blank=True)
 
     class Meta:
         verbose_name = "1688产品"
         verbose_name_plural = verbose_name
+
 
     def __str__(self):
         if self.vendor_no:
@@ -143,6 +152,8 @@ class MyProductPackage(MyProduct):
                                related_name="variant_pacakge", on_delete=models.CASCADE)
     order_no = models.CharField( default='', max_length=100, null=True, blank=True,
                                 verbose_name="原包裹号")
+    #skus = models.CharField( default='', max_length=100, null=True, blank=True,
+     #                           verbose_name="原包裹号")
 
     class Meta:
         verbose_name = "海外仓包裹"

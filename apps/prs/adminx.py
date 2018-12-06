@@ -15,6 +15,25 @@ import os
 
 from django.conf import settings
 
+@xadmin.sites.register(MyProduct)
+class MyProductAdmin(object):
+    list_display = [ ]
+    # 'sku_name','img',
+
+    search_fields = [ ]
+    list_filter = [ ]
+    list_editable = []
+    readonly_fields = ()
+    actions = []
+
+    def save_models(self):
+        obj = self.new_obj
+        obj.staff = str(self.request.user)
+        obj.created_time = datetime.now()
+
+        obj.save()
+
+
 class MyProductShopifyResource(resources.ModelResource):
     #product_no = fields.Field(attribute='product_no', column_name='product_no')
     #total_orders = fields.Field(attribute='total_orders', column_name='total_orders')
@@ -50,7 +69,7 @@ class MyProductShopifyAdmin(object):
 
     def show_fb(self, obj):
 
-        fb = obj.fb_product.values_list('obj_type').annotate(Count('id'))
+        fb = obj.fb_product.values_list('obj_type','mypage__page').annotate(Count('id'))
 
         fb = re.split(r"\[|\]", str(fb))
 
@@ -106,7 +125,7 @@ class MyProductShopifyAdmin(object):
 
 
 
-    list_display = [ "handle","category_code", "show_image","obj_type", "week_orders","week_quantity","total_orders", 'total_quantity','show_resource','show_fb','show_link',]
+    list_display = [ "handle","category_code", "show_image","obj_type", "week_orders","week_quantity","total_orders", 'total_quantity','show_resource','show_fb',]
 
 
     search_fields = ["myproduct","myproductali","shopifyproduct" ,]
@@ -125,14 +144,23 @@ class MyProductShopifyAdmin(object):
 
 @xadmin.sites.register(MyProductAli)
 class MyProductAliAdmin(object):
-    list_display = [ 'vendor_no', 'url',]
+    list_display = [ 'vendor_no', 'url','listing',"created_time","staff","active",]
+
     # 'sku_name','img',
 
     search_fields = ["url","myproductcate", ]
-    list_filter = ["myproductcate", ]
-    list_editable = []
-    readonly_fields = ("vendor_no",)
+    list_filter = ["myproductcate","created_time","staff", ]
+    list_editable = ["active",]
+    readonly_fields = ("vendor_no","created_time","staff",)
     actions = []
+
+    def save_models(self):
+        obj = self.new_obj
+        obj.staff = str(self.request.user)
+        obj.created_time = datetime.now()
+        obj.vendor_no = obj.url.partition(".html")[0].rpartition("/")[1]
+
+        obj.save()
 
 '''
 @xadmin.sites.register(MyProductAliShop)
@@ -178,7 +206,6 @@ class MyProductResourcesAdmin(object):
         obj = self.new_obj
         obj.staff = str(self.request.user)
         obj.created_time = datetime.now()
-        print("haha")
         obj.save()
 
 

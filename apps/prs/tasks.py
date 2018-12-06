@@ -332,7 +332,7 @@ def feed_sync_product():
     return
 
 @shared_task
-def ad_sycn_product():
+def ad_sync_product():
     from .fb_action import sycn_ad_product
 
     sycn_ad_product()
