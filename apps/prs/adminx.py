@@ -150,7 +150,7 @@ class MyProductAliAdmin(object):
 
     search_fields = ["url","myproductcate", ]
     list_filter = ["myproductcate","created_time","staff", ]
-    list_editable = ["active",]
+    list_editable = ['listing',"active",]
     readonly_fields = ("vendor_no","created_time","staff",)
     actions = []
 
