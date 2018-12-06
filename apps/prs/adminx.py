@@ -128,8 +128,8 @@ class MyProductShopifyAdmin(object):
     list_display = [ "handle","category_code", "show_image","obj_type", "week_orders","week_quantity","total_orders", 'total_quantity','show_resource','show_fb',]
 
 
-    search_fields = ["myproduct","myproductali","shopifyproduct" ,]
-    list_filter = ["obj_type",]
+    search_fields = ["handle",]
+    list_filter = ["obj_type","category_code", ]
     list_editable = []
     readonly_fields = ("shopifyproduct",)
     ordering = ['-week_orders']
