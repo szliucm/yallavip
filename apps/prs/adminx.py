@@ -178,7 +178,7 @@ class MyProductAliShopAdmin(object):
 @xadmin.sites.register(MyProductResources)
 class MyProductResourcesAdmin(object):
     def show_resource(self, obj):
-        DEV = True
+        DEV = False
         if DEV:
             domain = "http://dev.yallavip.com:8000"
         else:
