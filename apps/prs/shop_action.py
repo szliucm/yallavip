@@ -621,9 +621,14 @@ def post_ali():
 
         if dest_product > 0:
             print("这个产品已经发布过了！！！！", vendor_no)
+            MyProductAli.objects.filter(pk=aliproduct.pk).update(posted_mainshop=True)
             continue
 
         ori_product = ShopifyProduct.objects.filter(shop_name=ori_shop, vendor=vendor_no).order_by('product_no').first()
+        if not ori_product:
+            print("这个产品还没发布到沙特站！！！！", vendor_no)
+            MyProductAli.objects.filter(pk=aliproduct.pk).update(listing=False)
+            continue
 
         posted = post_mainshop(ori_product, max_id+n, shop_obj)
         # 修改发布状态
