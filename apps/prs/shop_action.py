@@ -2,6 +2,8 @@ from .models import *
 from shop.models import  Shop, ShopifyProduct, ShopifyVariant, ShopifyImage, ShopifyOptions
 
 import  re
+import random
+
 
 from orders.models import Order
 from celery import shared_task
