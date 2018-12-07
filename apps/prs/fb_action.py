@@ -91,44 +91,51 @@ def sycn_ad_product():
 #########把创意发到feed
 ######################################
 def post_creative_feed():
-    fbs = MyProductFb.objects.filter(published=False,ojb_type="FEED",resource_cate="IMAGE")
+    fbs = MyProductFb.objects.filter(published=False,ojb_type="FEED")
+    print("fbs", fbs)
     for fb in fbs:
-        # 发图片post
-        page_id = fb.mypage.page_no
-        token = get_token(page_id)
-        FacebookAdsApi.init(access_token=token)
-        domain = "http://admin.yallavip.com"
-        resource = str(fb.resource)
-        destination_url = domain + os.path.join(settings.MEDIA_URL, resource)
 
-        fields = [
-        ]
-        params = {
-            'url': destination_url,
-            'published': 'false',
-        }
-        photo_to_be_post = Page(page_id).create_photo(
-            fields=fields,
-            params=params,
-        )
-        photo_to_be_post_id = photo_to_be_post.get_id()
+        if fb.myresource.resource_cate != "IMAGE":
+            print("不是图片")
+            continue
+        elif fb.myresource.resource_cate == "IMAGE":
 
-        fields = [
-            'object_id',
-        ]
-        params = {
-            'message': fb.message,
-            'attached_media': [{'media_fbid': photo_to_be_post_id}],
-        }
-        feed_post_with_image = Page(page_id).create_feed(
-            fields=fields,
-            params=params,
-        )
+            # 发图片post
+            page_id = fb.mypage.page_no
+            token = get_token(page_id)
+            FacebookAdsApi.init(access_token=token)
+            domain = "http://admin.yallavip.com"
+            resource = str(fb.resource)
+            destination_url = domain + os.path.join(settings.MEDIA_URL, resource)
+
+            fields = [
+            ]
+            params = {
+                'url': destination_url,
+                'published': 'false',
+            }
+            photo_to_be_post = Page(page_id).create_photo(
+                fields=fields,
+                params=params,
+            )
+            photo_to_be_post_id = photo_to_be_post.get_id()
+
+            fields = [
+                'object_id',
+            ]
+            params = {
+                'message': fb.message,
+                'attached_media': [{'media_fbid': photo_to_be_post_id}],
+            }
+            feed_post_with_image = Page(page_id).create_feed(
+                fields=fields,
+                params=params,
+            )
 
 
-        feed_post_with_image_id = feed_post_with_image.get_id()
+            feed_post_with_image_id = feed_post_with_image.get_id()
 
-        print("Wow ", page_id, feed_post_with_image_id)
+            print("Wow ", page_id, feed_post_with_image_id)
 
 
 
