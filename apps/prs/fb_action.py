@@ -138,7 +138,7 @@ def post_creative_feed():
 
             feed_post_with_image_id = feed_post_with_image.get_id()
 
-            MyProductFb.objects.filter(pk=fb.pk).update(fb_id=feed_post_with_image_id)
+            MyProductFb.objects.filter(pk=fb.pk).update(fb_id=feed_post_with_image_id,published=True)
 
             print("Wow ", page_id, feed_post_with_image_id)
 
@@ -150,8 +150,47 @@ def post_creative_feed():
 
 #####################################
 #########把表现较好的product发到feed
+#########每个page从产品排行榜里随机选一个产品，组成动图，发到feed里
 ######################################
 def post_product_feed():
+    from .video import fb_slideshow
+    from shop.models import  ShopifyImage
+    page_nos = MyPage.objects.filter(active=True).values_list('page_no', flat=True)
+    #page_nos = ["358078964734730"]   #for debug
+    for page_no in page_nos:
+        product = MyProductShopify.objects.order_by('?')[:1].first()
+        print("result is ",page_no, product.handle, product.product_no)
+        images = ShopifyImage.objects.filter(product_no=product.product_no).values_list('src', flat=True).order_by("position")
 
+        images_count = len(images)
+        if images_count<3:
+            print("图片太少")
+            continue
+        elif images_count>7:
+            images = images[:7]
+
+        post_id = fb_slideshow(list(images), page_no)
+
+        print("postid ", post_id)
+
+
+
+
+
+    return
+
+
+#####################################
+#########把海外仓包裹发到feed
+#########每个sku对应的图片组成动图，发到feed里
+######################################
+def post_order_feed():
+    from .video import get_order_image_src, fb_slideshow
+
+    page_nos = MyPage.objects.filter(active=True).values_list('page_no', flat=True)
+
+    for page_no in page_nos:
+        images = get_order_image_src(order)
+        fb_slideshow(images, page_no)
 
     return

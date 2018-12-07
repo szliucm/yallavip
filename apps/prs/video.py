@@ -180,44 +180,22 @@ def get_order_image_src(order):
     print("image_list", image_list)
     return image_list
 
-
-def get_order_slideshow(order):
+def fb_slideshow(images, target_page):
     from fb.adminx import get_token
     import requests
     import json
-
-    target_page = "546407779047102"
-
-    images = get_order_image_src(order)
     if not images:
         print("no got images")
         return
-
-
     url = "https://graph.facebook.com/v3.2/{}/videos".format(target_page)
-    '''
-    params = dict()
-    #params["access_token"] = get_token(target_page)
-    slideshow_spec = {
-                         "images_urls": images,
-                         "duration_ms": 1500,
-                         "transition_ms": 300,
-                     },
-
-    slideshow_spec = json.dumps(slideshow_spec)
-    params["slideshow_spec"] = slideshow_spec
-
-    print("url slideshow_spec", url, slideshow_spec)
-    '''
-
     params = {
-        'slideshow_spec' : {
-                         "images_urls": images,
-                         "duration_ms": 1000,
-                         "transition_ms": 200,
-                     },
+        'slideshow_spec': {
+            "images_urls": images,
+            "duration_ms": 1000,
+            "transition_ms": 200,
+        },
 
-        'access_token':get_token(target_page)
+        'access_token': get_token(target_page)
     }
 
     headers = {
@@ -225,14 +203,7 @@ def get_order_slideshow(order):
         "charset": "utf-8",
 
     }
-
-    #url ="https://graph.facebook.com/v3.2/358078964734730/videos?access_token=EAAGOOkWV6LgBAAfSaSCOnZCg0kPPfbSJ1nQ5ZAMPq1XHLtvGynhUtf5QQZB8RWORI7br6VdreUGaF9V8Bq7ZAE8dl1BTIHmddLytdhOKLii2P3neX9TSwZA7isDhQ4Qq5hsTXAnPMR56TDYOGFE4EDHqN6nJ8SCSSjFIF3qbGSiD8SDOgTmKfqWZAZANZAqAKesjyDtAD6f4d5v7bQpdvBYJ"
-    #var = "&slideshow_spec"
-    #params = "%7b%22images_urls%22%3a+%5b%22https%3a%2f%2fcdn.shopify.com%2fs%2ffiles%2f1%2f2729%2f0740%2fproducts%2fIL201706091336481875_998.jpg%3fv%3d1531934096%22%2c+%22https%3a%2f%2fcdn.shopify.com%2fs%2ffiles%2f1%2f2729%2f0740%2fproducts%2f8182265194_1099362143_914.jpg%3fv%3d1537862177%22%2c+%22https%3a%2f%2fcdn.shopify.com%2fs%2ffiles%2f1%2f2729%2f0740%2fproducts%2f8182265194_1099362143_914.jpg%3fv%3d1537862177%22%2c+%22https%3a%2f%2fcdn.shopify.com%2fs%2ffiles%2f1%2f2729%2f0740%2fproducts%2f8182259332_1099362143_416.jpg%3fv%3d1537862177%22%2c+%22https%3a%2f%2fcdn.shopify.com%2fs%2ffiles%2f1%2f2729%2f0740%2fproducts%2f8169757733_1099362143_370.jpg%3fv%3d1537862177%22%5d%2c+%22duration_ms%22%3a+1500%2c%22transition_ms%22%3a+300%7d"
-    r = requests.post(url,headers=headers,data=json.dumps(params))
-
-
-
+    r = requests.post(url, headers=headers, data=json.dumps(params))
 
     data = json.loads(r.text)
     print("r", r)
@@ -240,21 +211,3 @@ def get_order_slideshow(order):
     return data.get("id")
 
 
-    '''
-    curl \
-    - F
-    'slideshow_spec={\
-         "images_urls":[\
-           "https://scontent.xx.fbcdn.net/hads-xtf1/t45.1600-4/11410027_6032434826375_425068598_n.png",\
-           "https://scontent.xx.fbcdn.net/hads-xtp1/t45.1600-4/11410105_6031519058975_1161644941_n.png",\
-           "http://vignette1.wikia.nocookie.net/parody/images/2/27/Minions_bob_and_his_teddy_bear_2.jpg"\
-         ],\
-         "duration_ms": 2000,\
-         "transition_ms": 200\
-       }' \
-    - F
-    'access_token=XXXXXXXXXXXXXX' \
-    "https://graph-video.facebook.com/<API_VERSION>/<PAGE_ID/USER_ID>/videos"
-    '''
-
-    return
