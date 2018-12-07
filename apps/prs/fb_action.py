@@ -138,7 +138,7 @@ def post_creative_feed():
 
             feed_post_with_image_id = feed_post_with_image.get_id()
 
-            MyProductFb.objects.get(pk=fb.pk).update(fb_id=feed_post_with_image_id)
+            MyProductFb.objects.filter(pk=fb.pk).update(fb_id=feed_post_with_image_id)
 
             print("Wow ", page_id, feed_post_with_image_id)
 
