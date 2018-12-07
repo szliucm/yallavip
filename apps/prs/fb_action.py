@@ -127,7 +127,7 @@ def post_creative_feed():
                 'object_id',
             ]
             params = {
-                'message': fb.message,
+                'message': fb.myresource.message,
                 'attached_media': [{'media_fbid': photo_to_be_post_id}],
             }
             feed_post_with_image = Page(page_id).create_feed(
