@@ -554,6 +554,9 @@ def post_saudi():
     dest_shop = "yallasale-com"
     ori_shop = "yallavip-saudi"
 
+    sync_shop(ori_shop)
+    sync_shop(dest_shop)
+
     shop_obj = Shop.objects.get(shop_name=dest_shop)
 
     max_id = Shop.objects.get(shop_name=dest_shop).max_id
@@ -603,8 +606,8 @@ def post_ali():
     dest_shop = "yallasale-com"
     ori_shop = "yallavip-saudi"
 
-    #sync_shop(ori_shop)
-    #sync_shop(dest_shop)
+    sync_shop(ori_shop)
+    sync_shop(dest_shop)
     shop_obj = Shop.objects.get(shop_name=dest_shop)
     max_id = Shop.objects.get(shop_name=dest_shop).max_id
 
