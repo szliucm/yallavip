@@ -207,8 +207,7 @@ class OrderAdmin(object):
 
     def fullfill(self, request, queryset):
         for row in queryset:
-            if not row.logistic_no :
-                continue
+
             ############准备参数
             requrl = "http://api.jcex.com/JcexJson/api/notify/sendmsg"
             param = dict()
