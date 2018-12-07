@@ -537,7 +537,7 @@ def post_mainshop(ori_product,max_id,shop_obj):
         insert_product(shop_obj.shop_name, products)
 
         # 修改handle最大值
-        Shop.objects.filter(shop_name=shop_obj.shopname).update(max_id=max_id)
+        Shop.objects.filter(shop_name=shop_obj.shop_name).update(max_id=max_id)
 
         print("产品发布成功！！！！" )
         return True
