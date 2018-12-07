@@ -364,7 +364,7 @@ class OrderAdmin(object):
             ####################处理返回结果
             print("response is ", res)
 
-            data = json.loads(res.text).get("data")
+            data = json.loads(res.text).get("data")[0]
             print("data", data)
 
             if data.get("resultcode") == "success":
