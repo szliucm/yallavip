@@ -19,6 +19,7 @@ from facebook_business.adobjects.adsinsights import AdsInsights
 
 import os
 import requests
+import json
 
 from django.conf import settings
 
