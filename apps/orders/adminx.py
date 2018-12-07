@@ -367,12 +367,13 @@ class OrderAdmin(object):
             data = json.loads(res.text).get("data")[0]
             print("data", data)
 
-            if data.get("resultcode") == "success":
-                print("发货成功")
-                waybillnumber = data.get("waybillnumber")
-            else:
+            if data.get("resultcode") == "failure":
                 print("发货失败")
                 waybillnumber = "error"
+            else:
+                print("发货成功")
+                waybillnumber = data.get("waybillnumber")
+
 
             Order.objects.filter(pk=row.pk).update(logistic_no=waybillnumber)
 
