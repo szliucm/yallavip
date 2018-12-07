@@ -1,6 +1,6 @@
 from django.db import models
 from fb.models import MyPhoto,MyFeed,MyAd
-from shop.models import ShopifyProduct,ShopifyVariant
+
 from datetime import datetime
 
 
@@ -198,6 +198,9 @@ class MyProductFb(models.Model):
                                related_name="fb_ad", on_delete=models.CASCADE)
     myresource = models.ForeignKey('MyProductResources', null=True, blank=True, verbose_name="创意",
                              related_name="fb_resource", on_delete=models.CASCADE)
+
+    fb_id = models.CharField(default='',max_length=100, null=True, blank=True, verbose_name="接触点代码")
+
 
     published = models.BooleanField(default=False, verbose_name="发布状态")
 

@@ -177,6 +177,21 @@ class MyProductAliShopAdmin(object):
 
 @xadmin.sites.register(MyProductResources)
 class MyProductResourcesAdmin(object):
+    def show_fb(self, obj):
+
+        fb = obj.fb_resource.values_list('obj_type','mypage__page','published',).annotate(Count('id'))
+
+        fb = re.split(r"\[|\]", str(fb))
+
+
+        if len(fb) > 1:
+
+            return fb[1]
+        else:
+            return ''
+
+    show_fb.short_description = "接触点统计"
+
     def show_resource(self, obj):
         DEV = False
         if DEV:
@@ -193,7 +208,7 @@ class MyProductResourcesAdmin(object):
 
     show_resource.short_description = '创意图'
 
-    list_display = ['myproduct','show_resource', "myproductali", 'name',"message", "resource_target","resource_cate","resource_type","created_time","staff", ]
+    list_display = ['myproduct','show_resource', "myproductali", 'name',"message", "resource_target","resource_cate","resource_type","show_fb","created_time","staff", ]
     # 'sku_name','img',
 
     search_fields = ["myproduct","resource" ]
@@ -229,7 +244,7 @@ class MyProductFbAdmin(object):
 
     show_handle.short_description = '货号'
 
-    list_display = [ "mypage", "myresource", 'myproduct',"myphoto", 'myfeed',"myad","obj_type", ]
+    list_display = [ "mypage", "myresource", 'myproduct',"myphoto", 'myfeed',"myad","obj_type", "published", ]
     # 'sku_name','img',
 
     search_fields = ["myproduct","myresource" ]
