@@ -181,6 +181,7 @@ class Order(models.Model):
         ("DESTROYED", "销毁"),
 
 
+
     )
     resell_status = models.CharField(choices=RESELL_STTUS, max_length=50, default='UNLISTING', verbose_name="二次销售状态",
                                    blank=True)

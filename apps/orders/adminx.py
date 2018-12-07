@@ -365,10 +365,19 @@ class OrderAdmin(object):
             ####################处理返回结果
             print("response is ", res)
 
-            data = json.loads(res.text)
+            data = json.loads(res.text).get("data")
             print("data", data)
 
-            continue  ####################         debug
+            if data.get("resultcode") == "success":
+                print("发货成功")
+                waybillnumber = data.get("waybillnumber")
+            else:
+                print("发货失败")
+                waybillnumber = "error"
+
+            Order.objects.filter(pk=row.pk).update(logistic_no=waybillnumber)
+
+
         return
 
     fullfill.short_description = "批量发货"
