@@ -595,8 +595,6 @@ def post_saudi():
             #MyProductAli.objects.filter(pk=aliproduct.pk).update(post_error=True)
             continue
 
-        if n>2:
-            return
 
 #####################################
 #########把单独找的1688链接发到主站
@@ -634,8 +632,6 @@ def post_ali():
             n = n + 1
         else:
             print("创建新产品失败")
-            return
-
             MyProductAli.objects.filter(pk=aliproduct.pk).update(post_error=True)
             continue
 
