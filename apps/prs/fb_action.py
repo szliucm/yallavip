@@ -128,7 +128,7 @@ def post_creative_feed():
 
         feed_post_with_image_id = feed_post_with_image.get_id()
 
-        print("Wow ", feed_post_with_image_id)
+        print("Wow ", page_id, feed_post_with_image_id)
 
 
 
