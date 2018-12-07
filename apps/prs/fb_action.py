@@ -108,7 +108,7 @@ def post_creative_feed():
             token = get_token(page_id)
             FacebookAdsApi.init(access_token=token)
             domain = "http://admin.yallavip.com"
-            resource = str(fb.resource)
+            resource = str(fb.myresource.resource)
             destination_url = domain + os.path.join(settings.MEDIA_URL, resource)
 
             fields = [
