@@ -11,6 +11,7 @@ class Shop(models.Model):
     #max_product_no = models.CharField(u'max_product_no', default='', max_length=100, blank=True)
     product_updated_time = models.DateTimeField(u'product最后更新时间', auto_now=False, null=True, blank=True)
     customer_updated_time = models.DateTimeField(u'customer最后更新时间', auto_now=False, null=True, blank=True)
+    max_id = models.IntegerField(u'max_id', default=0, null=True,blank=True)
     class Meta:
         verbose_name = "店铺"
         verbose_name_plural = verbose_name

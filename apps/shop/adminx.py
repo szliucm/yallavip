@@ -866,7 +866,7 @@ class ShopifyProductAdmin(object):
 
             product_id = product.product_no
             if product_id is None:
-                continue;
+                continue
             else:
                 url = shop_url + "/admin/products/%s.json" % (product_id)
 
@@ -878,9 +878,9 @@ class ShopifyProductAdmin(object):
 
                 r = requests.delete(url, headers=headers)
                 print("response is ",r)
+            # 删除本地数据库记录
+            ShopifyProduct.objects.filter(pk=product.pk).delete()
 
-        #删除本地数据库记录
-        queryset.delete()
 
     delete_product.short_description = "删除主店铺产品"
 

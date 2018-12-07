@@ -158,7 +158,7 @@ class MyProductAliAdmin(object):
         obj = self.new_obj
         obj.staff = str(self.request.user)
         obj.created_time = datetime.now()
-        obj.vendor_no = obj.url.partition(".html")[0].rpartition("/")[1]
+        obj.vendor_no = obj.url.partition(".html")[0].rpartition("/")[2]
 
         obj.save()
 

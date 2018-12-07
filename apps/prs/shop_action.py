@@ -1,8 +1,10 @@
 from .models import *
 from shop.models import  Shop, ShopifyProduct, ShopifyVariant, ShopifyImage, ShopifyOptions
 
+import  re
 
 from orders.models import Order
+from celery import shared_task
 
 import requests
 import json
@@ -77,7 +79,170 @@ def sync_shop(shop, max_product_no =None):
             print("products for the shop {} completed".format(shop))
             break
 
-#插入shopify产品记录到系统数据库
+########################
+####### 在主站创建一个新产品
+####### 返回新产品
+#######################
+def post_new_product(shop_obj, product, handle_new ):
+    print("开始创建新产品")
+    #print(shop_obj)
+    #print(product)
+    print(handle_new)
+
+
+    # 初始化SDK
+    #shop_obj = Shop.objects.get(shop_name=shop_name)
+    shop_url = "https://%s:%s@%s.myshopify.com" % (shop_obj.apikey, shop_obj.password, shop_obj.shop_name)
+    url = shop_url + "/admin/products.json"
+
+    imgs_list = []
+
+    imgs = ShopifyImage.objects.filter(product_no=product.product_no).values('image_no', 'src').order_by(
+        'position')
+
+    for img in imgs:
+        image = {
+            "src": img["src"],
+            "image_no": img["image_no"]
+        }
+        imgs_list.append(image)
+
+
+    params = {
+        "product": {
+            "handle": handle_new,
+            "title": product.title,
+            "body_html": product.body_html,
+            "vendor": product.vendor,
+            "product_type": product.product_type,
+            "tags": product.tags,
+            "images": imgs_list,
+            # "variants": variants_list,
+            # "options": option_list
+        }
+    }
+    headers = {
+        "Content-Type": "application/json",
+        "charset": "utf-8",
+
+    }
+
+    r = requests.post(url, headers=headers, data=json.dumps(params))
+    data = json.loads(r.text)
+    new_product = data.get("product")
+    if new_product is None:
+        print("post product error data is ", data)
+        print("parmas is ", params)
+        return  None
+
+
+    new_product_no = new_product.get("id")
+
+
+    # 增加变体
+
+    # image
+    image_dict = {}
+    for k_img in range(len(new_product["images"])):
+        image_row = new_product["images"][k_img]
+        new_image_no = image_row["id"]
+        # new_image_list.append(image_no)
+        old_image_no = imgs_list[k_img]["image_no"]
+
+        image_dict[old_image_no] = new_image_no
+        # print("old image %s new image %s"%(old_image_no, new_image_no ))
+
+    # option
+    option_list = []
+
+    options = ShopifyOptions.objects.filter(product_no=product.product_no).values('name', 'values')
+    for row in options:
+        option = {
+            "name": row["name"],
+            "values": re.split('[.]', row["values"])
+        }
+        option_list.append(option)
+
+    # variant
+    variants_list = []
+
+    variants = ShopifyVariant.objects.filter(product_no=product.product_no).values()
+
+    for variant in variants:
+        old_image_no = variant.get("image_no")
+        new_image_no = image_dict.get(old_image_no)
+        print("image dict  %s %s " % (old_image_no, new_image_no))
+
+        sku = handle_new
+        option1 = variant.get("option1")
+        option2 = variant.get("option2")
+        option3 = variant.get("option3")
+
+        if option1:
+            sku = sku + "-" + option1.replace("&", '').replace('-', '').replace('.', '').replace(' ', '')
+            if option2:
+                sku = sku + "_" + option2.replace("&", '').replace('-', '').replace('.', '').replace(' ', '')
+                if option3:
+                    sku = sku + "_" + option3.replace("&", '').replace('-', '').replace('.', '').replace(' ',
+                                                                                                         '')
+
+        variant_item = {
+            "option1": option1,
+            "option2": option2,
+            "option3": option3,
+            "price": int(float(variant.get("price")) * 2.3),
+            "compare_at_price": int(float(variant.get("price")) * 2.3 * random.uniform(2, 3)),
+            "sku": sku,
+            "position": variant.get("position"),
+            "image_id": new_image_no,
+            "grams": variant.get("grams"),
+            "title": variant.get("title"),
+            "taxable": "true",
+            "inventory_management": "shopify",
+            "fulfillment_service": "manual",
+            "inventory_policy": "continue",
+
+            "inventory_quantity": 10000,
+            "requires_shipping": "true",
+            "weight": 0.5,
+            "weight_unit": "kg",
+
+        }
+        # print("variant_item", variant_item)
+        variants_list.append(variant_item)
+
+    params = {
+        "product": {
+            "variants": variants_list,
+            "options": option_list,
+
+        }
+    }
+    headers = {
+        "Content-Type": "application/json",
+        "charset": "utf-8",
+
+    }
+
+    # print("upload data is ",json.dumps(params))
+
+    url = shop_url + "/admin/products/%s.json" % (new_product_no)
+    r = requests.put(url, headers=headers, data=json.dumps(params))
+    data = json.loads(r.text)
+
+    new_product = data.get("product")
+    if new_product is None:
+        print("post variant error data is ", data)
+        print("product.product_no is ", product.product_no)
+        print("parmas is ",params )
+        return  None
+
+    print("new_product_no is", new_product.get("id"))
+    return new_product
+
+#################################
+#####插入shopify产品记录到系统数据库
+################################
 def insert_product(shop_name, products):
     for j in range(len(products)):
         product_list = []
@@ -182,6 +347,8 @@ def insert_product(shop_name, products):
         ShopifyImage.objects.bulk_create(image_list)
         ShopifyOptions.objects.bulk_create(option_list)
         ShopifyProduct.objects.bulk_create(product_list)
+
+
 
 #创建海外仓商品，先只考虑一个包裹对应一个订单的情况
 def create_package_sku(dest_shop, order, discount):
@@ -351,4 +518,123 @@ def sycn_package():
                 "obj_type": "OVERSEAS"
             }
         )
+    return
+
+
+################################
+#####发一个产品到主站
+###############################
+def post_mainshop(ori_product,max_id,shop_obj):
+
+    new_product = post_new_product(shop_obj, ori_product, 'a' + str(max_id ))
+
+    if new_product:
+        products = []
+        products.append(new_product)
+        # 插入到系统数据库
+        insert_product(shop_obj.shop_name, products)
+
+        # 修改handle最大值
+        Shop.objects.filter(shop_name=shop_obj.shopname).update(max_id=max_id)
+
+        print("产品发布成功！！！！" )
+        return True
+    else:
+
+        print("产品发布失败！！！！")
+        return  False
+
+##################################
+####把沙特站未发的发到主站
+####################################
+@shared_task
+def post_saudi():
+    dest_shop = "yallasale-com"
+    ori_shop = "yallavip-saudi"
+
+    shop_obj = Shop.objects.get(shop_name=dest_shop)
+
+    max_id = Shop.objects.get(shop_name=dest_shop).max_id
+    handle = 'a' + str(max_id)
+    product_init = ShopifyProduct.objects.filter(shop_name=dest_shop, handle= handle).order_by('-product_no').first()
+    print("主店最新的产品 handle 是%s  供应商是 %s" % ( product_init.handle, product_init.vendor))
+
+    latest_ori_product = ShopifyProduct.objects.filter(shop_name=ori_shop, vendor=product_init.vendor).order_by(
+        '-product_no').first()
+    print("沙特站最后更新的产品是 供应商是 %s,product_no is %d " % (
+         latest_ori_product.vendor, latest_ori_product.product_no))
+
+    ori_products = ShopifyProduct.objects.filter(shop_name=ori_shop,
+                                                 product_no__gt=latest_ori_product.product_no).order_by('product_no')
+
+    total_to_update = ori_products.count()
+    print("沙特站最新的还有 %d 需要发布" % (total_to_update))
+
+
+    n=1
+    for ori_product in ori_products:
+
+        vendor_no = ori_product.vendor
+        print("vendor_no", vendor_no)
+
+        dest_product = ShopifyProduct.objects.filter(shop_name=dest_shop, vendor=vendor_no).count()
+
+        if dest_product > 0:
+            print("这个产品已经发布过了！！！！", vendor_no)
+            continue
+
+        print("********************ord_product",ori_product,shop_obj )
+        posted = post_mainshop(ori_product, max_id+n, shop_obj)
+        # 修改发布状态
+        if posted:
+            #MyProductAli.objects.filter(pk=aliproduct.pk).update(posted_mainshop=True)
+            n = n + 1
+        else:
+            #MyProductAli.objects.filter(pk=aliproduct.pk).update(post_error=True)
+            continue
+
+        if n>2:
+            return
+
+#####################################
+#########把单独找的1688链接发到主站
+######################################
+def post_ali():
+    dest_shop = "yallasale-com"
+    ori_shop = "yallavip-saudi"
+
+    #sync_shop(ori_shop)
+    #sync_shop(dest_shop)
+    shop_obj = Shop.objects.get(shop_name=dest_shop)
+    max_id = Shop.objects.get(shop_name=dest_shop).max_id
+
+    print("max_id ", max_id)
+
+    n = 1
+    aliproducts = MyProductAli.objects.filter(listing=True,posted_mainshop=False)
+
+    for aliproduct in aliproducts:
+        vendor_no = aliproduct.url.partition(".html")[0].rpartition("/")[2]
+        print("vendor_no", vendor_no)
+
+        dest_product = ShopifyProduct.objects.filter(shop_name=dest_shop, vendor=vendor_no).count()
+
+        if dest_product > 0:
+            print("这个产品已经发布过了！！！！", vendor_no)
+            continue
+
+        ori_product = ShopifyProduct.objects.filter(shop_name=ori_shop, vendor=vendor_no)
+
+        posted = post_mainshop(ori_product, max_id+n, shop_obj)
+        # 修改发布状态
+        if posted:
+            MyProductAli.objects.filter(pk=aliproduct.pk).update(posted_mainshop=True)
+            n = n + 1
+        else:
+            print("创建新产品失败")
+            return
+
+            MyProductAli.objects.filter(pk=aliproduct.pk).update(post_error=True)
+            continue
+
     return

@@ -36,6 +36,29 @@ from xadmin.filters import manager as filter_manager, FILTER_PREFIX, SEARCH_VAR,
 from django.utils.html import format_html
 
 
+#批量导入，修改时区
+'''
+from django.utils.timezone import localtime
+from import_export.widgets import DateTimeWidget
+from django.conf import settings
+
+from pytz import timezone
+from datetime import datetime
+#import datetime
+
+
+class TzDateTimeWidget(DateTimeWidget):
+
+    def render(self, value, obj=None):
+        if settings.USE_TZ:
+            #dubai_tz = timezone("Asia/Dubai")
+            dubai_tz = timezone("Asia/Shanghai")
+            #value_time = datetime.strptime(value,'%Y-%m-%d %H:%M:%S')
+            #value = value_time.astimezone(dubai_tz)
+            value = value.replace(tzinfo=dubai_tz)
+        return super(TzDateTimeWidget, self).render(value)
+'''
+
 
 def valid_phone(x):
     x = str(x)
@@ -107,8 +130,11 @@ class OrderResource(resources.ModelResource):
     logistic_no = fields.Field(attribute='logistic_no', column_name='物流追踪号')
     logistic_type = fields.Field(attribute='logistic_type', column_name='物流方式')
 
-    order_time = fields.Field(attribute='order_time', column_name='下单时间')
-    send_time = fields.Field(attribute='send_time', column_name='发货时间')
+    order_time = fields.Field(attribute='order_time', column_name='下单时间')#,widget=TzDateTimeWidget())
+
+    send_time = fields.Field(attribute='send_time', column_name='发货时间')#,widget=TzDateTimeWidget())
+
+
 
     class Meta:
         model = Order
@@ -177,7 +203,175 @@ class OrderAdmin(object):
 
 
 
-    actions = ['start_verify','batch_copy','start_package_track',]
+    actions = ['fullfill', 'start_verify','batch_copy','start_package_track',]
+
+    def fullfill(self, request, queryset):
+        for row in queryset:
+            if not row.logistic_no :
+                continue
+            ############准备参数
+            requrl = "http://api.jcex.com/JcexJson/api/notify/sendmsg"
+            param = dict()
+            param["service"] = 'orders'
+
+            param_data = dict()
+            # param_data["customerid"] = "3c917d0c-6290-11e8-a277-6c92bf623ff2"
+
+
+            param_data["Data"] = {
+                    "apiplatform": "平台名称",
+                    "jcexkey": "NET",
+                    "customerid": "3c917d0c-6290-11e8-a277-6c92bf623ff2",
+                    "customer": "SZFY6214",
+                    "packages": [
+                        {
+                            "paymentmethod": "",
+                            "branchoffice": "",
+                            "waybillnumber": row.logistic_no,
+                            "platnumber": "",
+                            "referencenumber": row.package_no,
+                            "transfernumber": "",
+                            "productid": "PK1280",
+                            "productname": "华南-沙特专线-COD电商小包",
+                            "servicetype": "",
+                            "pickupservice": [],
+                            "expressnetwork": "",
+                            "estimatedfee": "",
+                            "feenotes": "",
+                            "feenotesperson": "",
+                            "feenotestime": "",
+                            "operationnotes": "",
+                            "operationnotesperson": "",
+                            "operationnotestime": "",
+                            "returnsign": "",
+                            "returnperson": "",
+                            "returntime": "",
+                            "returnreason": "",
+                            "receivewarehouse": "",
+                            "status": "",
+                            "waybillcompleted": "",
+                            "inputname": "",
+                            "inputtime": "",
+                            "senderinformation": [
+                                {
+                                    "sendername": "LiuPeng",
+                                    "senderchinesename": "刘鹏",
+                                    "sendercompany": "Yallavip.com",
+                                    "senderphone": "86-157-6887-9089",
+                                    "sendercountry": "CN",
+                                    "sendercity": "shenzhen",
+                                    "sendertown": "",
+                                    "senderpostcode": "",
+                                    "senderaddress": re.sub('[!@#&]', '', "#26-1 Yayuan Road ,BanTian Street LongGang District,ShenZhen City,China") ,
+                                    "senderemail": "",
+                                    "sendercustomsregistrationcode": "",
+                                    "sendercustomsoperatingunits": "",
+                                    "senderproxycode": ""
+                                }
+                            ],
+                            "recipientinformation": [
+                                {
+                                    "recipientname": row.receiver_name,
+                                    "recipientphone": row.receiver_phone,
+                                    "recipientcountry": "SA",
+                                    "recipientpostcode": "",
+                                    "recipientcity": row.receiver_city,
+                                    "recipientstate": "",
+                                    "recipienttown": "",
+                                    "recipienthousenumber": "",
+                                    "recipientaddress": re.sub('[!@#&]', '', row.receiver_addr1 + row.receiver_addr2),
+                                    "recipientcompany": row.receiver_name,
+                                    "recipientemail": "",
+                                    "recipientdutyparagraph": ""
+                                }
+                            ],
+                            "invoiceinformation": [
+                                {
+                                    "chinesename": "包包",
+                                    "englishname": "bag",
+                                    "hscode": "",
+                                    "inpieces": "5",
+                                    "unitpriceamount": "4.00",
+                                    "declarationamount": "20.00",
+                                    "declarationcurrency": "USD",
+                                    "materialquality": "",
+                                    "purpose": "",
+                                    "measurementunit": "",
+                                    "specificationmodel": ""
+                                }
+                            ],
+                            "weightinformation": [
+                                {
+                                    "weightmethod": "",
+                                    "totalpackages": "1",
+                                    "itemtype": "包裹",
+                                    "totalweight": row.weight,
+                                }
+                            ],
+                            "detailpackage": [
+                                {
+                                    "actualweight": row.weight,
+                                    "child_number": "",
+                                    "length": "1",
+                                    "width": "1",
+                                    "height": "1",
+                                    "volume": "",
+                                    "volumeweight": "",
+                                    "item":[
+                                    {
+                                        "englishname": "bag",
+                                        "hscode": "",
+                                        "inpieces": "5",
+                                        "unitpriceamount": "4",
+                                        "unitpriceweight": "1",
+                                        "declarationamount": "20",
+                                        "declarationcurrency": "USD",
+                                    }
+                                    ]
+                                }
+                            ],
+                            "specialservice": [
+                                {
+                                    "servicename": "W7",
+                                    "costamount": row.order_amount,
+                                    "costcurrency": "SAR",
+                                    "description": ""
+                                }
+                            ],
+                        }
+                    ]
+
+            }
+
+
+
+
+
+            data_body = base64.b64encode(json.dumps(param_data).encode('utf-8'))
+            param["data_body"] = data_body
+
+            ########################提交
+            print("start update track \n requrl is %s \ndata_body is %s " % (requrl, json.dumps(param_data)))
+
+            ###调试用，导出请求的内容
+
+            with open("./hmm.json", 'w', encoding='utf-8') as json_file:
+
+                json.dump(param_data, json_file, ensure_ascii=False)
+
+
+            res = requests.post(requrl, params=param)
+
+            ####################处理返回结果
+            print("response is ", res)
+
+            data = json.loads(res.text)
+            print("data", data)
+
+            continue  ####################         debug
+        return
+
+    fullfill.short_description = "批量发货"
 
     def start_verify(self, request, queryset):
         # 定义actions函数

@@ -31,6 +31,8 @@ class MyProduct(models.Model):
     #handle = models.CharField(u'handle', default='', max_length=256, null=True, blank=True)
     #total_orders = models.IntegerField(u'总订单数', default=0, blank=True, null=True)
     #total_quantity = models.IntegerField(u'总销售数', default=0, blank=True, null=True)
+    product_number = models.CharField(u'货号', default='', max_length=256, null=True, blank=True)
+
     OBJ_TYPE = (
         ("PRODUCT", "单品"),
         ("COMBO", "组合商品"),
@@ -53,7 +55,7 @@ class MyProduct(models.Model):
 
     def __str__(self):
 
-        return  str(self.id)
+        return  self.product_number
 
 class MyProductAli(models.Model):
 
@@ -67,6 +69,10 @@ class MyProductAli(models.Model):
     url = models.CharField(default='',max_length=300, null=True, blank=True, verbose_name="1688链接")
 
     listing = models.BooleanField(default=False, verbose_name="已上架")
+    posted_mainshop = models.BooleanField(default=False, verbose_name="上架到主站")
+    post_error = models.BooleanField(default=False, verbose_name="发布到主站失败")
+
+
     active  = models.BooleanField(default=True, verbose_name="可用")
 
     created_time = models.DateTimeField(null=True, blank=True, verbose_name="上传时间")
@@ -109,8 +115,8 @@ class MyProductShopify(MyProduct):
                                   related_name="shop_ali", on_delete=models.CASCADE)
 
 
-    shopifyproduct = models.ForeignKey('shop.ShopifyProduct', null=True, blank=True, verbose_name="shopify产品",
-                                related_name="shop_product", on_delete=models.CASCADE)
+    #shopifyproduct = models.ForeignKey('shop.ShopifyProduct', null=True, blank=True, verbose_name="shopify产品",
+     #                           related_name="shop_product", on_delete=models.CASCADE)
     #shopifyvariant = models.ForeignKey('shop.ShopifyVariant', null=True, blank=True, verbose_name="shopify变体",
      #                          related_name="shop_variant", on_delete=models.CASCADE)
 
@@ -148,8 +154,8 @@ class MyProductShopify(MyProduct):
 
 class MyProductPackage(MyProduct):
 
-    shopifyvariant = models.ForeignKey('shop.ShopifyVariant', null=True, blank=True, verbose_name="shopify变体",
-                               related_name="variant_pacakge", on_delete=models.CASCADE)
+    #shopifyvariant = models.ForeignKey('shop.ShopifyVariant', null=True, blank=True, verbose_name="shopify变体",
+     #                          related_name="variant_pacakge", on_delete=models.CASCADE)
     order_no = models.CharField( default='', max_length=100, null=True, blank=True,
                                 verbose_name="原包裹号")
     #skus = models.CharField( default='', max_length=100, null=True, blank=True,
