@@ -623,7 +623,7 @@ def post_ali():
             print("这个产品已经发布过了！！！！", vendor_no)
             continue
 
-        ori_product = ShopifyProduct.objects.filter(shop_name=ori_shop, vendor=vendor_no)
+        ori_product = ShopifyProduct.objects.filter(shop_name=ori_shop, vendor=vendor_no).order_by('product_no').first()
 
         posted = post_mainshop(ori_product, max_id+n, shop_obj)
         # 修改发布状态
