@@ -91,7 +91,8 @@ def sycn_ad_product():
 #########把创意发到feed
 ######################################
 def post_creative_feed():
-    fbs = MyProductFb.objects.filter(published=False,ojb_type="FEED")
+    fbs = MyProductFb.objects.filter(published=False,obj_type="FEED")
+
     print("fbs", fbs)
     for fb in fbs:
 
