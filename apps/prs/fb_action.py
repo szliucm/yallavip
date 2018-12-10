@@ -203,6 +203,7 @@ def post_product_feed():
 #####################################
 #########把表现较好的product发到feed
 #########每个page,从产品排行榜里随机选七个产品，组成动图，发到feed里
+#########太乱，暂时不用这个了
 ######################################
 def post_7_products_feed():
     from .video import fb_slideshow

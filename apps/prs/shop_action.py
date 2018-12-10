@@ -540,7 +540,7 @@ def post_mainshop(ori_product,max_id,shop_obj):
         Shop.objects.filter(shop_name=shop_obj.shop_name).update(max_id=max_id)
 
         print("产品发布成功！！！！" )
-        return True
+        return new_product
     else:
 
         print("产品发布失败！！！！")
@@ -636,7 +636,7 @@ def post_ali():
         posted = post_mainshop(ori_product, max_id+n, shop_obj)
         # 修改发布状态
         if posted:
-            MyProductAli.objects.filter(pk=aliproduct.pk).update(posted_mainshop=True)
+            MyProductAli.objects.filter(pk=aliproduct.pk).update(posted_mainshop=True, handle=posted.handle , product_no=posted.product_no,)
             n = n + 1
         else:
             print("创建新产品失败")

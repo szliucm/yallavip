@@ -230,4 +230,12 @@ def product_feed():
 
     return
 
+def products_feed():
+    from .fb_action import post_7_products_feed
+
+    post_7_products_feed()
+
+    return
+
+
 
