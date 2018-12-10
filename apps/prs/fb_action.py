@@ -185,7 +185,7 @@ def post_product_feed():
 
         product = MyProductShopify.objects.order_by('?')[:1].first()
 
-        images = ShopifyImage.objects.filter(product_no=product.product_no).values_list('src', flat=True).order_by("position")
+        images = ShopifyImage.objects.filter(product_no=product.product_no).order_by("position")
 
         images_count = len(images)
         if images_count<3:
