@@ -303,7 +303,7 @@ class ProductCategory(models.Model):
     cate_1 = models.CharField(u'cate_1', default='', max_length=256, null=True, blank=True)
     cate_2 = models.CharField(u'cate_2', default='', max_length=256, null=True, blank=True)
     cate_3 = models.CharField(u'cate_3', default='', max_length=256, null=True, blank=True)
-    album_name = models.CharField(u'相册名', default='', max_length=256, null=True, blank=True)
+
     class Meta:
         verbose_name = "商品类别"
         verbose_name_plural = verbose_name
@@ -318,6 +318,8 @@ class ProductCategoryMypage(models.Model):
                                         related_name="category_page",on_delete=models.CASCADE)
     productcategory = models.ForeignKey(ProductCategory, null=True, blank=True, verbose_name="产品类别", help_text="产品类别",
                                related_name="page_category", on_delete=models.CASCADE)
+
+    album_name = models.CharField(u'相册名', default='', max_length=256, null=True, blank=True)
 
     last_no = models.BigIntegerField(u'最后更新产品ID', default=0, null=True,blank=True)
 

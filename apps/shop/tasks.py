@@ -256,6 +256,8 @@ def post_to_album():
 
         # 找出每个品类下未发布的产品
         products = ShopifyProduct.objects.filter(category_code=category.productcategory.code,
+                                                 shop_name="yallasale-com",
+                                                 published_at__gt='2018-11-01',
                                                 product_no__gt=category.last_no,
                                                  handle__startswith='a'). \
             order_by("product_no")

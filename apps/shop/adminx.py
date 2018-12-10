@@ -926,8 +926,8 @@ class ShopifyProductAdmin(object):
 
 
 
-            if len(cate_1)>0  and len(cate_2)>0 :                   #and len(cate_3)>0:
-                category_code = cate_1 + "_" + cate_2               #+ "_" + cate_3
+            if len(cate_1)>0  and len(cate_2)>0 and len(cate_3)>0:
+                category_code = cate_1 + "_" + cate_2 + "_" + cate_3
             else:
                 category_code = ""
 
