@@ -70,6 +70,8 @@ class MyProductAli(models.Model):
 
     listing = models.BooleanField(default=False, verbose_name="已上架")
     posted_mainshop = models.BooleanField(default=False, verbose_name="上架到主站")
+    product_no = models.CharField(default='',max_length=300, null=True, blank=True, verbose_name="product_no")
+    handle = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="货号")
     post_error = models.BooleanField(default=False, verbose_name="发布到主站失败")
 
 
@@ -198,6 +200,7 @@ class MyProductFb(models.Model):
                                related_name="fb_ad", on_delete=models.CASCADE)
     myresource = models.ForeignKey('MyProductResources', null=True, blank=True, verbose_name="创意",
                              related_name="fb_resource", on_delete=models.CASCADE)
+
 
     fb_id = models.CharField(default='',max_length=100, null=True, blank=True, verbose_name="接触点代码")
 
