@@ -276,7 +276,7 @@ def post_to_album():
                 continue
 
             # 这个品类是否已经建了相册
-            category_album = category.productcategory.album_name
+            category_album = category.album_name
             target_album = album_dict.get(category_album)
 
             #print("品类需要的相册 %s, 已有相册 %s" % (category_album, target_album))
