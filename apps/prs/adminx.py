@@ -174,7 +174,7 @@ class MyProductAliAdmin(object):
     def sync(self, request, queryset):
         dest_shop = "yallasale-com"
 
-        from shop.models import ShopifyProduct,
+        #from shop.models import ShopifyProduct,
 
         for row in queryset:
             product = ShopifyProduct.objects.filter(shop_name=dest_shop, vendor=row.vendor_no).first()
