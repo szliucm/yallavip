@@ -188,7 +188,7 @@ class OrderAdmin(object):
 
     import_export_args = {"import_resource_class": OrderResource, "export_resource_class": OrderResource}
 
-    list_display = ["order_no", "order_status","weight","package_status", "order_time","send_time","verify_time", "logistic_no","order_comment"]
+    list_display = ["order_no", "order_status","weight","package_status", "order_time","send_time","verify_time", "logistic_no","waybillnumber","order_comment"]
     list_editable = ["weight"]
     # list_display_links = ["show_conversation"]
     search_fields = ["order_no",'logistic_no', ]
