@@ -1457,20 +1457,18 @@ class ProductCategoryResource(resources.ModelResource):
         skip_unchanged = True
         report_skipped = True
         import_id_fields = ('code',)
-        fields = ('code','cate_1', 'cate_2', 'cate_3', 'album_name',)
+        fields = ('code','cate_1', 'cate_2', 'cate_3',)
         # exclude = ()
 
 @xadmin.sites.register(ProductCategory)
 class ProductCategoryAdmin(object):
 
-
-
     import_export_args = {"import_resource_class": ProductCategoryResource, "export_resource_class": ProductCategoryResource}
 
-    list_display = [ 'code','cate_1', 'cate_2', 'cate_3', 'album_name',]
+    list_display = [ 'code','cate_1', 'cate_2', 'cate_3', ]
 
 
-    search_fields = ["album_name",]
+    search_fields = []
     list_filter = ['cate_1', 'cate_2', 'cate_3',]
     list_editable = []
     actions = []
@@ -1478,12 +1476,12 @@ class ProductCategoryAdmin(object):
 @xadmin.sites.register(ProductCategoryMypage)
 class ProductCategoryMypageAdmin(object):
 
-    list_display = [ 'mypage','productcategory','last_no', ]
+    list_display = [ 'mypage','productcategory',"album_name", 'last_no', ]
 
 
     search_fields = ["mypage","productcategory"]
     list_filter = ['mypage', 'productcategory',]
-    list_editable = []
+    list_editable = ["album_name", ]
     actions = []
 
 
