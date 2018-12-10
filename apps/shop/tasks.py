@@ -271,6 +271,9 @@ def post_to_album():
                 order_by("product_no")
             if not products :
                 print("当前类目没有产品了，跳出")
+                print(category.productcategory.code)
+                print(category.last_no)
+
                 ProductCategoryMypage.objects.filter(pk= category.pk).update(active=False)
 
                 continue
