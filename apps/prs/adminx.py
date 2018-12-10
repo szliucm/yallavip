@@ -144,12 +144,29 @@ class MyProductShopifyAdmin(object):
 
 @xadmin.sites.register(MyProductAli)
 class MyProductAliAdmin(object):
-    list_display = [ "myproductcate",'vendor_no', 'url','listing',"created_time","staff","active",]
+    def show_image(self, obj):
+
+        try:
+            #img = mark_safe('<img src="%s" width="100px" />' % (obj.logo.url,))
+
+            img = mark_safe(
+                '<a href="%s" target="view_window"><img src="%s" width="100px"></a>' % (
+                    "https://www.yallavip.com/products/"+obj.handle,
+                    ShopifyImage.objects.get(product_no=obj.product_no,position=1).src,
+                    ))
+
+        except Exception as e:
+            img = ''
+        return img
+
+    show_image.short_description = "产品图"
+
+    list_display = [ "show_image","myproductcate",'handle', 'listing',"posted_mainshop","created_time","staff","active",'url',]
 
     # 'sku_name','img',
 
     search_fields = ["url","myproductcate", ]
-    list_filter = ["myproductcate","created_time","staff", ]
+    list_filter = ["myproductcate","created_time","staff",  'listing',"posted_mainshop",]
     list_editable = ['listing',"active",]
     readonly_fields = ("vendor_no","created_time","staff",)
     actions = []
