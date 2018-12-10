@@ -8,7 +8,7 @@ import  re
 from django.utils.safestring import mark_safe
 
 from .models import *
-from shop.models import ShopifyImage
+from shop.models import ShopifyProduct, ShopifyImage
 from .choose_target import ChoosePage
 
 import os
@@ -174,7 +174,7 @@ class MyProductAliAdmin(object):
     def sync(self, request, queryset):
         dest_shop = "yallasale-com"
 
-        #from shop.models import ShopifyProduct,
+
 
         for row in queryset:
             product = ShopifyProduct.objects.filter(shop_name=dest_shop, vendor=row.vendor_no).first()
