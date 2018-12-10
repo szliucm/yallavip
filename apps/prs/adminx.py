@@ -131,7 +131,7 @@ class MyProductShopifyAdmin(object):
     search_fields = ["handle",]
     list_filter = ["obj_type","category_code", ]
     list_editable = []
-    readonly_fields = ("shopifyproduct",)
+    readonly_fields = ()
     ordering = ['-week_orders']
     actions = ["reset_count",]
 
@@ -183,7 +183,7 @@ class MyProductAliAdmin(object):
                 MyProductAli.objects.filter(pk=row.pk).update(posted_mainshop=True, handle=product.handle,
                                                                  product_no=product.product_no, )
 
-    sync.short_description = "批量更新accounts"
+    sync.short_description = "批量同步shopify信息"
 
     def save_models(self):
         obj = self.new_obj
