@@ -220,7 +220,6 @@ def post_product_feed():
 
             dest_images.append(iamge_url)
 
-
         post_id = fb_slideshow(list(dest_images), page_no)
 
         print("postid ", post_id)
