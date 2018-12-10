@@ -98,18 +98,34 @@ def post_creative_feed():
     print("fbs", fbs)
     for fb in fbs:
 
-        if fb.myresource.resource_cate != "IMAGE":
-            print("不是图片")
-            continue
+        page_id = fb.mypage.page_no
+        token = get_token(page_id)
+        FacebookAdsApi.init(access_token=token)
+        domain = "http://dev.yallavip.com:8000"
+        #domain = "http://admin.yallavip.com"
+        resource = str(fb.myresource.resource)
+        destination_url = domain + os.path.join(settings.MEDIA_URL, resource)
+        feed_post = None
+        if fb.myresource.resource_cate == "VIDEO":
+            print("视频")
+            fields = [
+            ]
+            params = {
+                'title': fb.myresource.message,
+                'description':fb.myresource.message,
+                'file_url': destination_url,
+                'published': 'true',
+            }
+            feed_post = Page(page_id).create_video(
+                fields=fields,
+                params=params,
+            )
+
+
         elif fb.myresource.resource_cate == "IMAGE":
 
             # 发图片post
-            page_id = fb.mypage.page_no
-            token = get_token(page_id)
-            FacebookAdsApi.init(access_token=token)
-            domain = "http://admin.yallavip.com"
-            resource = str(fb.myresource.resource)
-            destination_url = domain + os.path.join(settings.MEDIA_URL, resource)
+
 
             fields = [
             ]
@@ -130,18 +146,21 @@ def post_creative_feed():
                 'message': fb.myresource.message,
                 'attached_media': [{'media_fbid': photo_to_be_post_id}],
             }
-            feed_post_with_image = Page(page_id).create_feed(
+            feed_post = Page(page_id).create_feed(
                 fields=fields,
                 params=params,
             )
 
 
-            feed_post_with_image_id = feed_post_with_image.get_id()
 
-            MyProductFb.objects.filter(pk=fb.pk).update(fb_id=feed_post_with_image_id,published=True)
 
-            print("Wow ", page_id, feed_post_with_image_id)
+        if feed_post:
+            feed_post_id = feed_post.get_id()
 
+            if feed_post_id:
+                MyProductFb.objects.filter(pk=fb.pk).update(fb_id=feed_post_id, published=True)
+
+                print("Wow ", page_id, feed_post_id)
 
 
 
@@ -159,15 +178,51 @@ def post_product_feed():
     #page_nos = ["358078964734730"]   #for debug
     for page_no in page_nos:
         product = MyProductShopify.objects.order_by('?')[:1].first()
-        print("result is ",page_no, product.handle, product.product_no)
+
         images = ShopifyImage.objects.filter(product_no=product.product_no).values_list('src', flat=True).order_by("position")
 
         images_count = len(images)
         if images_count<3:
             print("图片太少")
+            print("result is ", page_no, product.handle, product.product_no)
+            print(images)
             continue
         elif images_count>7:
             images = images[:7]
+
+        post_id = fb_slideshow(list(images), page_no)
+
+        print("postid ", post_id)
+
+
+
+
+
+    return
+
+#####################################
+#########把表现较好的product发到feed
+#########每个page,从产品排行榜里随机选七个产品，组成动图，发到feed里
+######################################
+def post_7_products_feed():
+    from .video import fb_slideshow
+    from shop.models import  ShopifyImage
+    page_nos = MyPage.objects.filter(active=True).values_list('page_no', flat=True)
+    #page_nos = ["358078964734730"]   #for debug
+    for page_no in page_nos:
+
+        products = MyProductShopify.objects.order_by('?')[:7]
+        images = []
+        for product in products:
+            print("result is ",page_no, product.handle, product.product_no)
+            image = ShopifyImage.objects.filter(product_no=product.product_no).values_list('src', flat=True).order_by('?').first()
+            images.append(image)
+
+        images_count = len(images)
+        if images_count<3:
+            print("图片太少")
+            continue
+
 
         post_id = fb_slideshow(list(images), page_no)
 
@@ -194,3 +249,4 @@ def post_order_feed():
         fb_slideshow(images, page_no)
 
     return
+
