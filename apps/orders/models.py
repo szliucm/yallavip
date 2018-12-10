@@ -91,6 +91,7 @@ class Order(models.Model):
 
     package_no = models.CharField(u'包裹号', default='', max_length=100, blank=True)
     logistic_no = models.CharField(u'物流追踪号', default='', max_length=100, blank=True)
+    waybillnumber = models.CharField(u'佳成单号', default='', max_length=100, blank=True)
 
     logistic_type = models.CharField(u'物流方式', default='', max_length=100, blank=True)
     weight = models.CharField(u'称重重量', default='', max_length=100, blank=True)

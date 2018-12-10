@@ -376,7 +376,7 @@ class OrderAdmin(object):
                 waybillnumber = data.get("waybillnumber")
 
 
-            Order.objects.filter(pk=row.pk).update(logistic_no=waybillnumber)
+            Order.objects.filter(pk=row.pk).update(logistic_no=waybillnumber, waybillnumber=waybillnumber)
 
 
         return
