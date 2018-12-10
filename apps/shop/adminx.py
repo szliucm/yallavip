@@ -1462,7 +1462,6 @@ class ProductCategoryResource(resources.ModelResource):
 
 @xadmin.sites.register(ProductCategory)
 class ProductCategoryAdmin(object):
-
     import_export_args = {"import_resource_class": ProductCategoryResource, "export_resource_class": ProductCategoryResource}
 
     list_display = [ 'code','cate_1', 'cate_2', 'cate_3', ]
