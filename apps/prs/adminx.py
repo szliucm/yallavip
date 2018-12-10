@@ -165,9 +165,9 @@ class MyProductAliAdmin(object):
 
     # 'sku_name','img',
 
-    search_fields = ["url","myproductcate", ]
+    search_fields = ["url","myproductcate","vendor_no", ]
     list_filter = ["myproductcate","created_time","staff",  'listing',"posted_mainshop",]
-    list_editable = ['listing',"active",]
+    list_editable = ['listing',"active","posted_mainshop",]
     readonly_fields = ("vendor_no","created_time","staff",)
     actions = []
 
