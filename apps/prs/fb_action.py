@@ -1,5 +1,6 @@
-from .models import MyProductShopify,MyProductFb, ShopifyVariant
+from .models import MyProductShopify,MyProductFb
 from fb.models import MyFeed,MyPage,MyAd
+from shop.models import ShopifyVariant
 from django.db.models import Max
 import random
 
