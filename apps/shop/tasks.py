@@ -232,7 +232,7 @@ def post_to_album():
     #选择所有可用的page
     mypages = MyPage.objects.filter(active=True)
     for mypage in mypages:
-        posted = 0
+
         print("当前处理主页", mypage)
 
         # 主页已有的相册
@@ -245,61 +245,69 @@ def post_to_album():
 
         categories = mypage.category_page.filter(active=True)
 
-        #每次随机选择一个类目，发5张图片，如果类目没有可做的，则跳过
+
         if not categories:
             print("类目为空，跳出")
             continue
 
-        category = random.choice(categories)
+       #至少发6 张图片# 每次随机选择一个类目，发6 张图片，如果类目没有可做的，则跳过，选择下一个类目
+        posted = 0
+        cates = 0
+        categories_count = len(categories)
 
-        print("当前处理的类目 %s" % (category))
+        while  posted <=5 and  cates <= categories_count:
 
-        # 找出每个品类下未发布的产品
-        products = ShopifyProduct.objects.filter(category_code=category.productcategory.code,
-                                                 shop_name="yallasale-com",
-                                                 published_at__gt='2018-11-01',
-                                                product_no__gt=category.last_no,
-                                                 handle__startswith='a'). \
-            order_by("product_no")
-        if not products :
-            print("当前类目没有产品了，跳出")
-            ProductCategoryMypage.objects.filter(pk= category.pk).update(active=False)
 
-            continue
+            category = random.choice(categories)
+            cates = cates + 1
+            print("当前处理的类目 %s" % (category))
 
-        # 这个品类是否已经建了相册
-        category_album = category.productcategory.album_name
-        target_album = album_dict.get(category_album)
+            # 找出每个品类下未发布的产品
+            products = ShopifyProduct.objects.filter(category_code=category.productcategory.code,
+                                                     shop_name="yallasale-com",
+                                                     published_at__gt='2018-11-01',
+                                                    product_no__gt=category.last_no,
+                                                     handle__startswith='a'). \
+                order_by("product_no")
+            if not products :
+                print("当前类目没有产品了，跳出")
+                ProductCategoryMypage.objects.filter(pk= category.pk).update(active=False)
 
-        #print("品类需要的相册 %s, 已有相册 %s" % (category_album, target_album))
+                continue
 
-        if not target_album :
-            #print("此类目还没有相册，新建一个")
-            album_list = []
-            album_list.append(category_album)
+            # 这个品类是否已经建了相册
+            category_album = category.productcategory.album_name
+            target_album = album_dict.get(category_album)
 
-            target_album = create_new_album(mypage.page_no, album_list)[0]
+            #print("品类需要的相册 %s, 已有相册 %s" % (category_album, target_album))
 
-        #print("target_album %s" % (target_album))
+            if not target_album :
+                #print("此类目还没有相册，新建一个")
+                album_list = []
+                album_list.append(category_album)
 
-        # 发到指定相册
-        n = 0
-        for product in products:
-            posted = posted + post_photo_to_album(mypage, target_album, product)
+                target_album = create_new_album(mypage.page_no, album_list)[0]
 
-            obj, created = ProductCategoryMypage.objects.update_or_create(
-                mypage=mypage, productcategory=category.productcategory,
-                defaults={
-                    'last_no': product.product_no
-                },
+            #print("target_album %s" % (target_album))
 
-            )
-            #print("更新page_类目记录 %s %s %s" % (mypage, category.productcategory, product.product_no))
-            #print("created is ", created)
-            #print("obj is ", obj)
-            n = n+1
-            if n>5:
-                break
+            # 发到指定相册
+            n = 0
+            for product in products:
+                posted = posted + post_photo_to_album(mypage, target_album, product)
+
+                obj, created = ProductCategoryMypage.objects.update_or_create(
+                    mypage=mypage, productcategory=category.productcategory,
+                    defaults={
+                        'last_no': product.product_no
+                    },
+
+                )
+                #print("更新page_类目记录 %s %s %s" % (mypage, category.productcategory, product.product_no))
+                #print("created is ", created)
+                #print("obj is ", obj)
+                n = n+1
+                if n>5:
+                    break
 
 
 

@@ -1,6 +1,7 @@
-from .models import MyProductShopify,MyProductFb
+from .models import MyProductShopify,MyProductFb, ShopifyVariant
 from fb.models import MyFeed,MyPage,MyAd
-
+from django.db.models import Max
+import random
 
 from django.utils.safestring import mark_safe
 from facebook_business.api import FacebookAdsApi
@@ -174,9 +175,13 @@ def post_creative_feed():
 def post_product_feed():
     from .video import fb_slideshow
     from shop.models import  ShopifyImage
-    page_nos = MyPage.objects.filter(active=True).values_list('page_no', flat=True)
+    from shop.photo_mark import photo_mark
+
+    pages = MyPage.objects.filter(active=True)      #.values_list('page_no', flat=True)
     #page_nos = ["358078964734730"]   #for debug
-    for page_no in page_nos:
+    for page in pages:
+        page_no= page.page_no
+
         product = MyProductShopify.objects.order_by('?')[:1].first()
 
         images = ShopifyImage.objects.filter(product_no=product.product_no).values_list('src', flat=True).order_by("position")
@@ -190,7 +195,32 @@ def post_product_feed():
         elif images_count>7:
             images = images[:7]
 
-        post_id = fb_slideshow(list(images), page_no)
+        #######################
+            # 打标
+            # name = product.title + "  [" + product.handle + "]"
+            # options = ShopifyOptions.objects.filter(product_no=product.product_no).values()
+            # for option in options:
+            #   name = name + "\n\n   " + option.get("name") + " : " + option.get("values")
+
+        max_price = ShopifyVariant.objects.filter(product_no=product.product_no).aggregate(Max("price")).get(
+            "price__max")
+        # name = name + "\n\nPrice:  " + str(int(max_price)) + "SAR"
+
+        # 打标
+        price1 = int(max_price)
+        price2 = int(price1 * random.uniform(2, 3))
+
+        dest_images =[]
+        for ori_image in images:
+            image, iamge_url = photo_mark(ori_image, product, str(price1), str(price2), page, type="album")
+            if not image:
+                print("打水印失败")
+                continue
+
+            dest_images.append(iamge_url)
+
+
+        post_id = fb_slideshow(list(dest_images), page_no)
 
         print("postid ", post_id)
 
@@ -217,6 +247,9 @@ def post_7_products_feed():
         for product in products:
             print("result is ",page_no, product.handle, product.product_no)
             image = ShopifyImage.objects.filter(product_no=product.product_no).values_list('src', flat=True).order_by('?').first()
+
+
+
             images.append(image)
 
         images_count = len(images)
