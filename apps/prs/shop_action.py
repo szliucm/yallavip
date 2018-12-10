@@ -620,11 +620,12 @@ def post_ali():
         vendor_no = aliproduct.url.partition(".html")[0].rpartition("/")[2]
         print("vendor_no", vendor_no)
 
-        dest_product = ShopifyProduct.objects.filter(shop_name=dest_shop, vendor=vendor_no).count()
+        dest_product = ShopifyProduct.objects.filter(shop_name=dest_shop, vendor=vendor_no).first()
 
         if dest_product > 0:
             print("这个产品已经发布过了！！！！", vendor_no)
-            MyProductAli.objects.filter(pk=aliproduct.pk).update(posted_mainshop=True)
+            MyProductAli.objects.filter(pk=aliproduct.pk).update(posted_mainshop=True,handle=dest_product.get("handle"),
+                                                                 product_no=dest_product.get("product_no"), )
             continue
 
         ori_product = ShopifyProduct.objects.filter(shop_name=ori_shop, vendor=vendor_no).order_by('product_no').first()
@@ -641,8 +642,9 @@ def post_ali():
             continue
 
         else:
+            #shopify返回的产品结构里，id 对应product_no
             MyProductAli.objects.filter(pk=aliproduct.pk).update(posted_mainshop=True, handle=posted.get("handle"),
-                                                                 product_no=posted.get("product_no"), )
+                                                                 product_no=posted.get("id"), )
             n = n + 1
 
     return

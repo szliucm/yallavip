@@ -920,13 +920,14 @@ class ShopifyProductAdmin(object):
                     cate_1 = cate_dict.get(tag_tmp.strip(),"")
                 elif tag_level == 2:
                     cate_2 = cate_dict.get(tag_tmp.strip(),"")
+
                 elif tag_level == 3:
                     cate_3 = cate_dict.get(tag_tmp.strip(),"")
 
 
 
-            if len(cate_1)>0  and len(cate_2)>0 and len(cate_3)>0:
-                category_code = cate_1 + "_" + cate_2 + "_" + cate_3
+            if len(cate_1)>0  and len(cate_2)>0 :                   #and len(cate_3)>0:
+                category_code = cate_1 + "_" + cate_2               #+ "_" + cate_3
             else:
                 category_code = ""
 
