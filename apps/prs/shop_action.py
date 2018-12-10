@@ -635,12 +635,14 @@ def post_ali():
 
         posted = post_mainshop(ori_product, max_id+n, shop_obj)
         # 修改发布状态
-        if posted:
-            MyProductAli.objects.filter(pk=aliproduct.pk).update(posted_mainshop=True, handle=posted.handle , product_no=posted.product_no,)
-            n = n + 1
-        else:
+        if not posted:
             print("创建新产品失败")
             MyProductAli.objects.filter(pk=aliproduct.pk).update(post_error=True)
             continue
+
+        else:
+            MyProductAli.objects.filter(pk=aliproduct.pk).update(posted_mainshop=True, handle=posted.get("handle"),
+                                                                 product_no=posted.get("product_no"), )
+            n = n + 1
 
     return
