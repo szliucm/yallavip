@@ -169,7 +169,21 @@ class MyProductAliAdmin(object):
     list_filter = ["myproductcate","created_time","staff",  'listing',"posted_mainshop",]
     list_editable = ['listing',"active","posted_mainshop",]
     readonly_fields = ("vendor_no","created_time","staff",)
-    actions = []
+    actions = ["sync"]
+
+    def sync(self, request, queryset):
+        dest_shop = "yallasale-com"
+
+        from shop.models import ShopifyProduct,
+
+        for row in queryset:
+            product = ShopifyProduct.objects.filter(shop_name=dest_shop, vendor=row.vendor_no).first()
+
+            if product:
+                MyProductAli.objects.filter(pk=row.pk).update(posted_mainshop=True, handle=product.get("handle"),
+                                                                 product_no=product.get("product_no"), )
+
+    sync.short_description = "批量更新accounts"
 
     def save_models(self):
         obj = self.new_obj
