@@ -102,6 +102,10 @@ def post_creative_feed():
 
         fb = MyProductFb.objects.filter(published=False,obj_type="FEED",mypage__page_no= page_id).order_by("myresource__created_time").first()
 
+        if not fb:
+            print("no content to post ")
+            continue
+
         print("fb", fb)
 
 
