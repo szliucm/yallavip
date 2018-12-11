@@ -206,6 +206,7 @@ class MyProductFb(models.Model):
 
 
     published = models.BooleanField(default=False, verbose_name="发布状态")
+    published_time = models.DateTimeField(null=True, blank=True, verbose_name="发布时间")
 
     def product_fb_no(self):  # 计算字段要显示在修改页面中只能定义在只读字段中(否则不显示):readonly_fields = ('sc',)
 
@@ -237,6 +238,7 @@ class MyProductResources(models.Model):
                                   related_name="resource_ali", on_delete=models.CASCADE)
 
     name = models.CharField( default='', max_length=100, verbose_name="创意名",help_text="便于理解和管理的名字")
+    title = models.TextField(verbose_name="标题", default='', max_length=300, null=True, blank=True)
     message = models.TextField(verbose_name="文案",default='',max_length=300,null=True,blank=True)
     resource = models.FileField(u'创意', upload_to='resource/', default="", null=True, blank=True)
 

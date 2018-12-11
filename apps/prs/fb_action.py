@@ -95,16 +95,21 @@ def sycn_ad_product():
 #########把创意发到feed
 ######################################
 def post_creative_feed():
-    fbs = MyProductFb.objects.filter(published=False,obj_type="FEED")
+    pages = MyPage.objects.filter(active=True)  # .values_list('page_no', flat=True)
+    # page_nos = ["358078964734730"]   #for debug
+    for page in pages:
+        page_id = page.page_no
 
-    print("fbs", fbs)
-    for fb in fbs:
+        fb = MyProductFb.objects.filter(published=False,obj_type="FEED",mypage_page_no= page_id).order_by("myresource__created_time").first()
 
-        page_id = fb.mypage.page_no
+        print("fb", fb)
+
+
+
         token = get_token(page_id)
         FacebookAdsApi.init(access_token=token)
-        domain = "http://dev.yallavip.com:8000"
-        #domain = "http://admin.yallavip.com"
+        #domain = "http://dev.yallavip.com:8000"
+        domain = "http://admin.yallavip.com"
         resource = str(fb.myresource.resource)
         destination_url = domain + os.path.join(settings.MEDIA_URL, resource)
         feed_post = None
@@ -113,7 +118,7 @@ def post_creative_feed():
             fields = [
             ]
             params = {
-                'title': fb.myresource.message,
+                'title': fb.myresource.title,
                 'description':fb.myresource.message,
                 'file_url': destination_url,
                 'published': 'true',
@@ -160,9 +165,9 @@ def post_creative_feed():
             feed_post_id = feed_post.get_id()
 
             if feed_post_id:
-                MyProductFb.objects.filter(pk=fb.pk).update(fb_id=feed_post_id, published=True)
+                MyProductFb.objects.filter(pk=fb.pk).update(fb_id=feed_post_id, published=True,published_time=feed_post.created_time )
 
-                print("Wow ", page_id, feed_post_id)
+                print("Wow ", page_id, feed_post_id, feed_post.link)
 
 
 
