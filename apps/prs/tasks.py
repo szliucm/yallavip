@@ -239,3 +239,12 @@ def products_feed():
 
 
 
+#####################################
+#########把创意发到feed
+######################################
+@shared_task
+def creative_feed():
+    from .fb_action import post_creative_feed
+
+    post_creative_feed()
+    return
