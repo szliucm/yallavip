@@ -170,7 +170,7 @@ def post_creative_feed():
             feed_post_id = feed_post.get_id()
 
             if feed_post_id:
-                MyProductFb.objects.filter(pk=fb.pk).update(fb_id=feed_post_id, published=True,published_time=datetime.utctime() )
+                MyProductFb.objects.filter(pk=fb.pk).update(fb_id=feed_post_id, published=True,published_time=datetime.utcnow() )
 
                 print("Wow ", page_id, feed_post_id, feed_post.link)
 
