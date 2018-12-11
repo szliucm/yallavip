@@ -100,7 +100,7 @@ def post_creative_feed():
     for page in pages:
         page_id = page.page_no
 
-        fb = MyProductFb.objects.filter(published=False,obj_type="FEED",mypage_page_no= page_id).order_by("myresource__created_time").first()
+        fb = MyProductFb.objects.filter(published=False,obj_type="FEED",mypage__page_no= page_id).order_by("myresource__created_time").first()
 
         print("fb", fb)
 
