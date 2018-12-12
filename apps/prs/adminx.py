@@ -161,7 +161,7 @@ class MyProductAliAdmin(object):
 
     show_image.short_description = "产品图"
 
-    list_display = [ "show_image","myproductcate",'handle', 'listing',"posted_mainshop","created_time","staff","active",'url',]
+    list_display = [ "show_image","myproductcate",'handle', 'listing',"posted_mainshop","created_time","staff","active",]
 
     # 'sku_name','img',
 

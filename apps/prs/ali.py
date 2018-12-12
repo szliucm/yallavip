@@ -113,36 +113,89 @@ def ali_list(html):
         print("type  offer_id",type(offer_id), offer_id)
 
 # 1688offer
-def ali(offer_id):
-    '''
-    html_ori = request('https://detail.1688.com/offer/{}.html'.format(offer_id)).content
-    with open('ali.txt', 'wb') as f:
+def list_ali_product(offer_id,  max_id, shop_obj):
+    from shop.models import Shop, ShopifyProduct
+    from prs.shop_action import post_product_main, post_product_variant,insert_product
 
-        f.write(html_ori)
-    '''
+    #dest_shop = "yallasale-com"
+    #shop_obj = Shop.objects.get(shop_name=dest_shop)
 
-    f = open("ali.txt", "rb")
+    shop_url = "https://%s:%s@%s.myshopify.com" % (shop_obj.apikey, shop_obj.password, shop_obj.shop_name)
+    product = ShopifyProduct()
 
-    html = f.read()
+    html = request('https://detail.1688.com/offer/{}.html'.format(offer_id)).content
+    #with open('ali.txt', 'wb') as f:
+     #   f.write(html)
+
+
+    #f = open("ali.txt", "rb")
+
+    #html = f.read()
 
     htmlEmt = etree.HTML(html)
 
-
-
-    #result = etree.tostring(htmlEmt)
-    # utf-8 格式输出
-    #print(result.decode("utf-8"))
-
     #取主图
+    imgs_list=[]
+
     divs = htmlEmt.xpath('//ul[@class="nav nav-tabs fd-clr"]/li/@data-imgs')
+    image_no = 0
     for div in divs:
         print("type  div", type(div), div)
         imgs = json.loads(div)
-        print("image is ", imgs["original"])
-        #imgs = div.xpath('/@data-imgs')
-        #print(imgs)
+        image = {
+            "src": imgs["original"],
+            "image_no": image_no
+        }
+        imgs_list.append(image)
+        image_no += 1
 
-    #取颜色
+    # 标题
+    title_ori = htmlEmt.xpath('//h1[@class="d-title"]/text()')
+    product.title = fanyi(title_ori)
+
+    product.body_html= product.title
+    product.vendor = offer_id
+    product.product_type = 'auto'
+    #
+
+    ##############################
+    ############可以发布主产品了
+    #############################
+    handle_new = 'a' + str(max_id)
+    new_product = post_product_main(shop_url, handle_new, product, imgs_list)
+    if new_product:
+        products = []
+        products.append(new_product)
+        # 插入到系统数据库
+        insert_product(shop_obj.shop_name, products)
+
+        # 修改handle最大值
+        Shop.objects.filter(shop_name=shop_obj.shop_name).update(max_id=max_id)
+
+        print("产品发布成功！！！！" )
+        return new_product
+    else:
+
+        print("产品发布失败！！！！")
+        return  False
+
+    # 新创建的主图信息
+    image_dict = {}
+    for k_img in range(len(new_product["images"])):
+        image_row = new_product["images"][k_img]
+        new_image_no = image_row["id"]
+        # new_image_list.append(image_no)
+        old_image_src = imgs_list[k_img]["src"]
+
+        image_dict[old_image_src] = new_image_no
+        # print("old image %s new image %s"%(old_image_no, new_image_no ))
+
+
+    option_list =[]
+
+    # 取颜色
+    option1_list = []
+
     print("颜色")
     divs = htmlEmt.xpath('//ul[@class="list-leading"]/li/div')
     for div in divs:
@@ -158,29 +211,91 @@ def ali(offer_id):
         color_name = json.loads(color_name_div)
         print("color_name is ", color_name["name"],fanyi(color_name["name"]))
 
-    #取sku
+        option1_list.append(fanyi(color_name["name"]))
 
+
+    option = {
+        "name": "color",
+        "values": option1_list
+    }
+    #插入规格
+    option_list.append(option)
+
+
+    #取尺码
+    option2_list = []
+    price_dict = {}
     print("尺码")
     divs = htmlEmt.xpath('//*[@class="table-sku"]/tr')
     for div in divs:
         #print("type  div", type(div), div)
-        name = div.find('.//td[@class="name"]/span').text
+        option2 = div.find('.//td[@class="name"]/span').text
         price = div.find('.//td[@class="price"]/span/em').text
 
-        print("name price ", name, price)
+        print("option2 price ", option2, price)
+        price_dict[option2] = price
+
+        option2_list.append(option2)
+
+    option = {
+        "name": "size",
+        "values": option2_list
+    }
+    # 插入规格
+    option_list.append(option)
+
+    #创建变体
+    old_image_no = 0
+    position = 0
+    variants_list = []
+    for option1 in option1_list:
+        for option2 in option2_list:
+            new_image_no = image_dict.get(old_image_no)
+            sku = handle_new
+            option1 = option1
+            option2 = option2
+            option3 = None
+
+            if option1:
+                sku = sku + "-" + option1.replace("&", '').replace('-', '').replace('.', '').replace(' ', '')
+                if option2:
+                    sku = sku + "_" + option2.replace("&", '').replace('-', '').replace('.', '').replace(' ', '')
+                    if option3:
+                        sku = sku + "_" + option3.replace("&", '').replace('-', '').replace('.', '').replace(' ', '')
+
+            variant_item = {
+                "option1": option1,
+                "option2": option2,
+                "option3": option3,
+                "price": int(float(price_dict[option2]) * 2.8),
+                "compare_at_price": int(float( price_dict[option2]) * 2.8 * random.uniform(2, 3)),
+                "sku": sku,
+                "position": position ,
+                "image_id": new_image_no,
+                "grams": 0,
+                "title": sku,
+                "taxable": "true",
+                "inventory_management": "shopify",
+                "fulfillment_service": "manual",
+                "inventory_policy": "continue",
+
+                "inventory_quantity": 10000,
+                "requires_shipping": "true",
+                "weight": 0.5,
+                "weight_unit": "kg",
+
+            }
+            # print("variant_item", variant_item)
+            variants_list.append(variant_item)
+            position += 1
+        old_image_no += 1
+
+    posted = post_product_variant(shop_url, new_product.product_no, variants_list, option_list)
 
 
+    #f.close()
 
-    #标题
-    print("标题")
-    title_ori = htmlEmt.xpath('//h1[@class="d-title"]/text()')
-    title = fanyi(title_ori)
-    print("标题 ", title_ori, title)
-    #
-
-    f.close()
-
-    return
+    return posted
 
 
 
@@ -440,6 +555,8 @@ def get_products():
 
     print(' (●ˇ∀ˇ●) '*5)
     print('一共%d条数据'%index)
+
+
 
 
 

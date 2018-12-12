@@ -81,6 +81,73 @@ def sync_shop(shop, max_product_no =None):
             print("products for the shop {} completed".format(shop))
             break
 
+#创建产品主体
+def post_product_main(shop_url, handle_new, product, imgs_list):
+    params = {
+            "product": {
+                "handle": handle_new,
+                "title": product.title,
+                "body_html": product.body_html,
+                "vendor": product.vendor,
+                "product_type": product.product_type,
+                "tags": product.tags,
+                "images": imgs_list,
+                # "variants": variants_list,
+                # "options": option_list
+            }
+        }
+    headers = {
+        "Content-Type": "application/json",
+        "charset": "utf-8",
+
+    }
+    # 初始化SDK
+    # shop_obj = Shop.objects.get(shop_name=shop_name)
+    url = shop_url + "/admin/products.json"
+
+    r = requests.post(url, headers=headers, data=json.dumps(params))
+    data = json.loads(r.text)
+    new_product = data.get("product")
+    if new_product is None:
+        print("post product error data is ", data)
+        print("parmas is ", params)
+        return  None
+    else:
+        return  new_product
+
+
+def post_product_variant(shop_url, product_no,variants_list, option_list ):
+    params = {
+        "product": {
+            "variants": variants_list,
+            "options": option_list,
+
+        }
+    }
+    headers = {
+        "Content-Type": "application/json",
+        "charset": "utf-8",
+
+    }
+
+    # print("upload data is ",json.dumps(params))
+
+    url = shop_url + "/admin/products/%s.json" % (product_no)
+    r = requests.put(url, headers=headers, data=json.dumps(params))
+    data = json.loads(r.text)
+
+    new_product = data.get("product")
+    if not new_product:
+        print("创建变体失败")
+        print("post variant error data is ", data)
+        print("product.product_no is ", product_no)
+        print("parmas is ", params)
+        return None
+    else:
+        return  new_product
+
+
+
 ########################
 ####### 在主站创建一个新产品
 ####### 返回新产品
@@ -706,5 +773,55 @@ def update_cate():
 
             )
         print("product %s 更新类目%s成功 "%(product.handle, category_code))
+
+    return
+
+#####################################
+#########把单独找的1688链接直接发到主站，不经过沙特站
+######################################
+def post_ali_direct():
+    from .ali import  list_ali_product
+    dest_shop = "yallasale-com"
+    #ori_shop = "yallavip-saudi"
+
+    #sync_shop(ori_shop)
+    sync_shop(dest_shop)
+    shop_obj = Shop.objects.get(shop_name=dest_shop)
+    max_id = Shop.objects.get(shop_name=dest_shop).max_id
+
+    print("max_id ", max_id)
+
+    n = 1
+    aliproducts = MyProductAli.objects.filter(listing=True,posted_mainshop=False)
+
+    for aliproduct in aliproducts:
+        vendor_no = aliproduct.url.partition(".html")[0].rpartition("/")[2]
+        print("vendor_no", vendor_no)
+
+        dest_product = ShopifyProduct.objects.filter(shop_name=dest_shop, vendor=vendor_no).first()
+
+        if dest_product :
+            print("这个产品已经发布过了！！！！", vendor_no)
+            MyProductAli.objects.filter(pk=aliproduct.pk).update(posted_mainshop=True,handle=dest_product.handle,
+                                                                 product_no=dest_product.product_no )
+
+            continue
+
+        ##############
+        ####发布到主站
+        #############
+        posted = list_ali_product(vendor_no, max_id+n, shop_obj)
+
+        # 修改发布状态
+        if not posted:
+            print("创建新产品失败")
+            MyProductAli.objects.filter(pk=aliproduct.pk).update(post_error=True)
+            continue
+
+        else:
+            #shopify返回的产品结构里，id 对应product_no
+            MyProductAli.objects.filter(pk=aliproduct.pk).update(posted_mainshop=True, handle=posted.get("handle"),
+                                                                 product_no=posted.get("id"), )
+            n = n + 1
 
     return
