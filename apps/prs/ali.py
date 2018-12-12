@@ -295,7 +295,7 @@ def list_ali_product(offer_id,  max_id, shop_obj):
             position += 1
         old_image_no += 1
 
-    posted = post_product_variant(shop_url, new_product.product_no, variants_list, option_list)
+    posted = post_product_variant(shop_url, new_product.get("product_no"), variants_list, option_list)
 
 
     #f.close()
