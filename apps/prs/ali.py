@@ -151,7 +151,12 @@ def list_ali_product(offer_id,  max_id, shop_obj):
 
     # 标题
     title_ori = htmlEmt.xpath('//h1[@class="d-title"]/text()')
-    product.title = fanyi(title_ori)
+    if title_ori:
+        product.title = fanyi(title_ori)
+    else:
+        print("title is empty")
+        return False
+
 
     product.body_html= product.title
     product.vendor = offer_id
@@ -173,7 +178,7 @@ def list_ali_product(offer_id,  max_id, shop_obj):
         Shop.objects.filter(shop_name=shop_obj.shop_name).update(max_id=max_id)
 
         print("产品发布成功！！！！" )
-        return new_product
+
     else:
 
         print("产品发布失败！！！！")
