@@ -304,7 +304,7 @@ class MyProductCategoryAdmin(object):
 
     import_export_args = {"import_resource_class": MyProductCategoryResource, "export_resource_class": MyProductCategoryResource}
 
-    list_display = [ 'code','cate_1', 'cate_2', 'cate_3', 'album_name',]
+    list_display = [ 'code','cate_1', 'cate_2', 'cate_3', 'album_name','keywords']
 
 
     search_fields = ["album_name",]

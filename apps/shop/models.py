@@ -304,6 +304,7 @@ class ProductCategory(models.Model):
     cate_2 = models.CharField(u'cate_2', default='', max_length=256, null=True, blank=True)
     cate_3 = models.CharField(u'cate_3', default='', max_length=256, null=True, blank=True)
     keywords = models.CharField(u'关键词', default='', max_length=256, null=True, blank=True)
+    ali_list_link = models.TextField(u'1688搜索链接', default='', max_length=512, null=True, blank=True)
     class Meta:
         verbose_name = "商品类别"
         verbose_name_plural = verbose_name

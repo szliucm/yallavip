@@ -1464,12 +1464,12 @@ class ProductCategoryResource(resources.ModelResource):
 class ProductCategoryAdmin(object):
     import_export_args = {"import_resource_class": ProductCategoryResource, "export_resource_class": ProductCategoryResource}
 
-    list_display = [ 'code','cate_1', 'cate_2', 'cate_3', 'keywords',]
+    list_display = [ 'code','cate_1', 'cate_2', 'cate_3', 'ali_list_link',]
 
 
     search_fields = []
     list_filter = ['cate_1', 'cate_2', 'cate_3',]
-    list_editable = ["keywords",]
+    list_editable = ["ali_list_link",]
     actions = []
 
 @xadmin.sites.register(ProductCategoryMypage)
