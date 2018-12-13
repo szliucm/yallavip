@@ -237,9 +237,9 @@ class MyProductResources(models.Model):
     myproductali = models.ForeignKey('MyProductAli', null=True, blank=True, verbose_name="1688信息",
                                   related_name="resource_ali", on_delete=models.CASCADE)
 
-    name = models.CharField( default='', max_length=100, verbose_name="创意名",help_text="便于理解和管理的名字")
-    title = models.TextField(verbose_name="标题", default='', max_length=300, null=True, blank=True)
-    message = models.TextField(verbose_name="文案",default='',max_length=300,null=True,blank=True)
+    name = models.CharField( default='', max_length=300, verbose_name="创意名",help_text="便于理解和管理的名字")
+    title = models.TextField(verbose_name="标题", default='', max_length=512, null=True, blank=True)
+    message = models.TextField(verbose_name="文案",default='',max_length=2048,null=True,blank=True)
     resource = models.FileField(u'创意', upload_to='resource/', default="", null=True, blank=True)
 
     RESOURCE_TARGET = (
