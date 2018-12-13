@@ -177,7 +177,8 @@ def list_ali_product(offer_id,  max_id, shop_obj):
         # 修改handle最大值
         Shop.objects.filter(shop_name=shop_obj.shop_name).update(max_id=max_id)
 
-        print("产品发布成功！！！！" )
+        print("产品发布成功！！！！"  )
+        print(type(new_product),new_product.get("id"))
 
     else:
 
@@ -295,7 +296,7 @@ def list_ali_product(offer_id,  max_id, shop_obj):
             position += 1
         old_image_no += 1
 
-    posted = post_product_variant(shop_url, new_product.get("product_no"), variants_list, option_list)
+    posted = post_product_variant(shop_url, new_product.get("id"), variants_list, option_list)
 
 
     #f.close()
