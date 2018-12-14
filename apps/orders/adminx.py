@@ -14,7 +14,7 @@ from import_export.widgets import ForeignKeyWidget
 from .models import Order, OrderDetail,Verify, OrderConversation,ClientService,Verification,\
         Logistic_winlink,Logistic_jiacheng,Logistic_status,Logistic_trail, Sms,Logistic, OrderTrack,\
         LogisticAccount
-from shop.models import ShopifyVariant
+from shop.models import ShopifyProduct, ShopifyVariant
 
 from conversations.models import Conversation
 from logistic.models import Package
@@ -207,7 +207,67 @@ class OrderAdmin(object):
     actions = ['fullfill', 'start_verify','batch_copy','start_package_track',]
 
     def fullfill(self, request, queryset):
+        from prs.ali import fanyi_en
+
         for row in queryset:
+            #统计订单明细
+            orderdetails  = row.order_orderdetail.all()
+            package = {}
+            total_amount = 0
+
+            for orderdetail in orderdetails:
+                variant = ShopifyVariant.objects.filter(sku = orderdetail.sku).first()
+                if variant:
+                    product = ShopifyProduct.objects.filter(product_no = variant.product_no).first()
+
+                    if product:
+                        cat = product.cate_2
+                        print("product", product, product.cate_2)
+                        if cat:
+                            total_amount = total_amount + int(float(orderdetail.product_quantity) * float(orderdetail.price))
+                            #超过1000 就不登记了
+                            if total_amount >1000:
+                                break
+
+                            values = package.get(cat,{})
+                            values["quantity"] = int(values.get("quantity", "0")) + int(float(orderdetail.product_quantity))
+                            values["amount"] = int(values.get("amount", "0")) + int(float(orderdetail.product_quantity) * float(orderdetail.price))
+                            package[cat]=  values
+            invoiceinformation_list = []
+            item_list = []
+            for key, value in package.items():
+                print(key, ' value : ', value)
+
+                invoiceinformation = {
+                    "chinesename": fanyi_en(key),
+                    "englishname": key,
+                    "hscode": "",
+                    "inpieces": str(value.get("quantity", "0")),
+                    "unitpriceamount": str(value.get("amount", "0")*0.26/value.get("quantity", "0")).strip(".")[0],
+                    "declarationamount": str(value.get("amount", "0")*0.26).strip(".")[0],
+                    "declarationcurrency": "USD",
+                    "materialquality": "",
+                    "purpose": "",
+                    "measurementunit": "",
+                    "specificationmodel": ""
+                    }
+                invoiceinformation_list.append(invoiceinformation)
+
+                item={
+                        "englishname": key,
+                        "hscode": "",
+                        "inpieces": str(value.get("quantity")),
+                        "unitpriceamount": str(value.get("amount", "0")*0.26/value.get("quantity", "0")).strip(".")[0],
+                        "unitpriceweight": "1",
+                        "declarationamount": str(value.get("amount", "0")*0.26).strip(".")[0],
+                        "declarationcurrency": "USD",
+                    }
+                item_list.append(item)
+
+            print(invoiceinformation_list,"\n\n", item_list)
+
+
+
 
             ############准备参数
             requrl = "http://api.jcex.com/JcexJson/api/notify/sendmsg"
@@ -285,21 +345,7 @@ class OrderAdmin(object):
                                     "recipientdutyparagraph": ""
                                 }
                             ],
-                            "invoiceinformation": [
-                                {
-                                    "chinesename": "包包",
-                                    "englishname": "bag",
-                                    "hscode": "",
-                                    "inpieces": "5",
-                                    "unitpriceamount": "4.00",
-                                    "declarationamount": "20.00",
-                                    "declarationcurrency": "USD",
-                                    "materialquality": "",
-                                    "purpose": "",
-                                    "measurementunit": "",
-                                    "specificationmodel": ""
-                                }
-                            ],
+                            "invoiceinformation":invoiceinformation_list,
                             "weightinformation": [
                                 {
                                     "weightmethod": "",
@@ -317,17 +363,7 @@ class OrderAdmin(object):
                                     "height": "1",
                                     "volume": "",
                                     "volumeweight": "",
-                                    "item":[
-                                    {
-                                        "englishname": "bag",
-                                        "hscode": "",
-                                        "inpieces": "5",
-                                        "unitpriceamount": "4",
-                                        "unitpriceweight": "1",
-                                        "declarationamount": "20",
-                                        "declarationcurrency": "USD",
-                                    }
-                                    ]
+                                    "item":item_list,
                                 }
                             ],
                             "specialservice": [
@@ -342,8 +378,37 @@ class OrderAdmin(object):
                     ]
 
             }
+            '''
+            "invoiceinformation": [
 
+                {
+                    "chinesename": "包包",
+                    "englishname": "bag",
+                    "hscode": "",
+                    "inpieces": "5",
+                    "unitpriceamount": "4.00",
+                    "declarationamount": "20.00",
+                    "declarationcurrency": "USD",
+                    "materialquality": "",
+                    "purpose": "",
+                    "measurementunit": "",
+                    "specificationmodel": ""
+                }
 
+            ],
+            
+             "item":[
+                                    {
+                                        "englishname": "bag",
+                                        "hscode": "",
+                                        "inpieces": "5",
+                                        "unitpriceamount": "4",
+                                        "unitpriceweight": "1",
+                                        "declarationamount": "20",
+                                        "declarationcurrency": "USD",
+                                    }
+                                    ]
+            '''
 
 
 
@@ -355,9 +420,8 @@ class OrderAdmin(object):
 
             ###调试用，导出请求的内容
 
-            with open("./hmm.json", 'w', encoding='utf-8') as json_file:
-
-                json.dump(param_data, json_file, ensure_ascii=False)
+            #with open("./hmm.json", 'w', encoding='utf-8') as json_file:
+                #json.dump(param_data, json_file, ensure_ascii=False)
 
 
             res = requests.post(requrl, params=param)
