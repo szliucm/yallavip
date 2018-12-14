@@ -333,7 +333,7 @@ class OrderAdmin(object):
                             "specialservice": [
                                 {
                                     "servicename": "W7",
-                                    "costamount": row.order_amount,
+                                    "costamount": row.order_amount.split(".")[0],
                                     "costcurrency": "SAR",
                                     "description": ""
                                 }
