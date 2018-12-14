@@ -1460,6 +1460,7 @@ class ProductCategoryResource(resources.ModelResource):
         fields = ('code','cate_1', 'cate_2', 'cate_3',)
         # exclude = ()
 
+
 @xadmin.sites.register(ProductCategory)
 class ProductCategoryAdmin(object):
     import_export_args = {"import_resource_class": ProductCategoryResource, "export_resource_class": ProductCategoryResource}
