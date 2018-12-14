@@ -311,7 +311,11 @@ class ProductCategory(models.Model):
         verbose_name_plural = verbose_name
 
     def __str__(self):
-        return self.cate_1
+        if self.code:
+            return self.code
+        else:
+            return "None"
+
 
 
 
@@ -334,7 +338,10 @@ class ProductCategoryMypage(models.Model):
         verbose_name_plural = verbose_name
 
     def __str__(self):
-        return self.productcategory.code
+        if self.album_name:
+            return self.album_name
+        else:
+            return "None"
 
 '''
 
