@@ -26,6 +26,7 @@ class ShopifyProduct(models.Model):
     #myproductali = models.ForeignKey('prs.MyProductAli', null=True, blank=True, verbose_name="货源",
      #                                related_name="shop_myali", on_delete=models.CASCADE)
 
+
     SUPPLY_STATUS = (
         ("NORMAL", "正常"),
         ("DELAY", "供货延迟"),

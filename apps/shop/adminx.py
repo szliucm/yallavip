@@ -1473,6 +1473,7 @@ class ProductCategoryAdmin(object):
     list_editable = ["ali_list_link",]
     actions = []
 
+
 @xadmin.sites.register(ProductCategoryMypage)
 class ProductCategoryMypageAdmin(object):
 
