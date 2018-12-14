@@ -311,7 +311,7 @@ class ProductCategory(models.Model):
         verbose_name_plural = verbose_name
 
     def __str__(self):
-        return self.code
+        return self.cate_1
 
 
 
@@ -334,7 +334,7 @@ class ProductCategoryMypage(models.Model):
         verbose_name_plural = verbose_name
 
     def __str__(self):
-        return self.album_name
+        return self.productcategory.code
 
 '''
 
