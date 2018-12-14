@@ -126,7 +126,7 @@ class OrderResource(resources.ModelResource):
     receiver_phone = fields.Field(attribute='receiver_phone', column_name='收货人电话')
 
     package_no = fields.Field(attribute='package_no', column_name='包裹号')
-    weight = fields.Field(attribute='weight', column_name='称重重量(g)')
+    #weight = fields.Field(attribute='weight', column_name='称重重量(g)')
     #logistic_no = fields.Field(attribute='logistic_no', column_name='物流追踪号') #物流号由运营系统直接从佳成系统取，不用店小秘生成的，合联的如果需要，就另外做个入口
     logistic_type = fields.Field(attribute='logistic_type', column_name='物流方式')
 
@@ -143,7 +143,7 @@ class OrderResource(resources.ModelResource):
         import_id_fields = ('order_no',)
         fields = ('order_no', 'order_status', 'buyer_name',  'order_amount', 'order_comment',
                   'warhouse_comment', 'cs_comment', 'receiver_name', 'receiver_addr1', 'receiver_addr2',
-                  'receiver_city', 'receiver_country', 'receiver_phone', 'package_no', 'weight' 'logistic_type',
+                  'receiver_city', 'receiver_country', 'receiver_phone', 'package_no','logistic_type',
                   'order_time','send_time')
         # exclude = ()
     '''
