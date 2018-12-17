@@ -221,7 +221,7 @@ class OrderAdmin(object):
                     product = ShopifyProduct.objects.filter(product_no = variant.product_no).first()
 
                     if product:
-                        cat = product.cate_2
+                        cat = product.cate_1 +' ' + product.cate_2
                         print("product", product, product.cate_2)
                         if cat:
                             total_amount = total_amount + int(float(orderdetail.product_quantity) * float(orderdetail.price))

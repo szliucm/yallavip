@@ -780,7 +780,7 @@ def update_cate():
 #########把单独找的1688链接直接发到主站，不经过沙特站
 ######################################
 def post_ali_direct():
-    from .ali import  list_ali_product
+    from .ali import  get_ali_product
     dest_shop = "yallasale-com"
     #ori_shop = "yallavip-saudi"
 
@@ -810,7 +810,7 @@ def post_ali_direct():
         ##############
         ####发布到主站
         #############
-        posted = list_ali_product(vendor_no, max_id+n, shop_obj)
+        posted = get_ali_product(vendor_no, max_id+n)
 
         # 修改发布状态
         if not posted:
@@ -822,6 +822,63 @@ def post_ali_direct():
             #shopify返回的产品结构里，id 对应product_no
             MyProductAli.objects.filter(pk=aliproduct.pk).update(posted_mainshop=True, handle=posted.get("handle"),
                                                                  product_no=posted.get("id"), )
-            n = n + 1
+            n += 1
 
     return
+
+#####################################
+#########按类目把1688产品直接发到主站，不经过沙特站
+######################################
+def post_ali_cate():
+    from prs.ali import  get_ali_list, get_ali_product
+    dest_shop = "yallasale-com"
+
+    sync_shop(dest_shop)
+    shop_obj = Shop.objects.get(shop_name=dest_shop)
+    max_id = Shop.objects.get(shop_name=dest_shop).max_id
+
+    n=1
+    cates = ProductCategory.objects.filter(ali_list_link__isnull=False)
+
+    print("beging to scan  cate")
+    for cate in cates:
+        tags = cate.code.replace("_",",")
+
+
+        url = cate.ali_list_link
+        print("url ***********",url)
+        continue
+        vendor_list = get_ali_list(url)
+
+
+        #debug 1214
+
+
+        for vendor_no in vendor_list:
+
+            dest_product = ShopifyProduct.objects.filter(shop_name=dest_shop, vendor=vendor_no).first()
+
+            if dest_product:
+                print("这个产品已经发布过了！！！！", vendor_no)
+
+                continue
+
+            ##############
+            ####发布到主站
+            #############
+
+            posted = get_ali_product(vendor_no, max_id + n,tags)
+
+            # 修改发布状态
+            if not posted:
+                print("创建新产品失败")
+
+                continue
+
+            else:
+                # shopify返回的产品结构里，id 对应product_no
+                n += 1
+    return
+
+
+

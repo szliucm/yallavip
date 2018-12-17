@@ -106,17 +106,16 @@ def ali_list(html):
     #print("vendor_no is ", vendor_no)
 
     vendors = htmlEmt.xpath('//div[@class="sm-offer "]/ul/li')
-
-
-
+    vendor_list = []
     for vendor in vendors:
         #print("type  vendor",type(vendor), etree.tostring(vendor))
         offer_id = vendor.attrib.get('offerid')
+        vendor_list.append(offer_id)
         print("type  offer_id",type(offer_id), offer_id)
-
+    return  vendor_list
 
 #获取1688产品信息
-def get_ali_product(offer_id,max_id):
+def get_ali_product(offer_id,max_id,tags):
 
     from shop.models import Shop, ShopifyProduct
     from prs.shop_action import post_product_main, post_product_variant, insert_product
@@ -171,7 +170,7 @@ def get_ali_product(offer_id,max_id):
     product.body_html= product.title
     product.vendor = offer_id
     product.product_type = 'auto'
-
+    product.tags = tags
 
     option_list =[]
 
@@ -866,6 +865,57 @@ def crawle(key,page):
         for page in range(2,page+1):
             get_more_page(key,page)
 
+def get_ali_list(url):
+    print("url is ", url)
+
+    browser.get(url=url)
+    print("页面打开了")
+    try:
+        button=browser.find_element_by_class_name('identity-cancel')
+        button.click()
+    except:
+        pass
+
+    #input=browser.find_element_by_id('alisearch-keywords')
+    #input.send_keys(key)
+
+    #sea_button=browser.find_element_by_id('alisearch-submit')
+    #sea_button.click()
+    print("关掉可能弹出的页面")
+    try:
+        button_1=browser.find_element_by_class_name('s-overlay-close-l')
+        button_1.click()
+    except:
+        pass
+    try:
+        button_deal=browser.find_elements_by_css_selector('.sm-widget-sort.fd-clr.s-widget-sortfilt li')[1]
+        button_deal.click()
+    except:
+        pass
+    print("向下滚屏")
+    try:
+        browser.execute_script('window.scrollTo(0, document.body.scrollHeight)')
+        time.sleep(3)
+        browser.execute_script('window.scrollTo(0, document.body.scrollHeight)')
+        time.sleep(3)
+        browser.execute_script('window.scrollTo(0, document.body.scrollHeight)')
+        time.sleep(3)
+        browser.execute_script('window.scrollTo(0, document.body.scrollHeight)')
+        time.sleep(3)
+
+        wait.until(EC.presence_of_element_located((By.CSS_SELECTOR,'#offer60')))
+    except :
+        print('*'*30,'超时加载','*'*30,'\n\n\n')
+
+    print("获取产品数据")
+
+    return  ali_list(browser.page_source)
+    '''
+    if page>1:
+        for page in range(2,page+1):
+            get_more_page(key,page)
+    '''
+
 def get_more_page(key,page):
     page_input=browser.find_element_by_class_name('fui-paging-input')
     page_input.clear()
@@ -886,8 +936,8 @@ def get_more_page(key,page):
 def get_products():
     html=browser.page_source
 
-    ali_list(html)
-    return
+    return ali_list(html)
+
     items=doc('.sm-offer .fd-clr .sm-offer-item').items()
     index=0
     for item in items:

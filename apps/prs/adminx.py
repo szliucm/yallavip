@@ -239,10 +239,10 @@ class MyProductResourcesAdmin(object):
 
     show_resource.short_description = '创意图'
 
-    list_display = ['myproduct','show_resource', "myproductali", 'name',"message", "resource_target","resource_cate","resource_type","show_fb","created_time","staff", ]
+    list_display = ['myproduct','show_resource', "myproductali", 'name',"title","message", "resource_target","resource_cate","resource_type","show_fb","created_time","staff", ]
     # 'sku_name','img',
 
-    search_fields = ["myproduct","resource" ]
+    search_fields = ["resource" ,'name',"title","message",]
     list_filter = ["resource_target","resource_cate","resource_type" ,"created_time","staff", ]
     list_editable = []
     readonly_fields = ("created_time","staff", )
@@ -304,7 +304,7 @@ class MyProductCategoryAdmin(object):
 
     import_export_args = {"import_resource_class": MyProductCategoryResource, "export_resource_class": MyProductCategoryResource}
 
-    list_display = [ 'code','cate_1', 'cate_2', 'cate_3', 'album_name','keywords']
+    list_display = [ 'code','cate_1', 'cate_2', 'cate_3', 'album_name',]
 
 
     search_fields = ["album_name",]
