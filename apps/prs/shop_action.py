@@ -691,8 +691,8 @@ def post_ali():
 
         if dest_product is not None:
             print("这个产品已经发布过了！！！！", vendor_no)
-            MyProductAli.objects.filter(pk=aliproduct.pk).update(posted_mainshop=True,handle=dest_product.get("handle"),
-                                                                 product_no=dest_product.get("product_no"), )
+            MyProductAli.objects.filter(pk=aliproduct.pk).update(posted_mainshop=True,handle=dest_product.handle,
+                                                                 product_no=dest_product.product_no )
             continue
 
         ori_product = ShopifyProduct.objects.filter(shop_name=ori_shop, vendor=vendor_no).order_by('product_no').first()
