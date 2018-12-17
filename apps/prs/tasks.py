@@ -40,7 +40,7 @@ def update_myproductali():
                             vendor_no=vendor_no,
                 defaults={
                     "product_no" : product.product_no,
-                    "hndle":product.handle,
+                    "handle":product.handle,
             }
 
             )
