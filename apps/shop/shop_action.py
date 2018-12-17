@@ -209,10 +209,10 @@ def post_photo_to_album(targer_page,album_no,product ):
 
                                                               }
                                                     )
-    obj, created = ShopifyProduct.objects.update_or_create(product_no=product.product_no,
-                                                    defaults={
-                                                        'listing_status': True,
-                                                    }
+    obj, created = ShopifyProduct.objects.filter(product_no=product.product_no,).update(
+
+                                                        listing_status=True,
+
                                                     )
 
     #print("new_photo saved ", obj, created)
