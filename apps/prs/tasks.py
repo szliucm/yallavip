@@ -46,7 +46,7 @@ def update_myproductali():
             )
 
             MyProductAli.objects.filter(pk=ali_product.pk).update(
-                myproduct=obj,
+
                 vendor_no=vendor_no,
                 posted_mainshop = True,
                 handle=product.handle,
