@@ -26,7 +26,7 @@ def update_myproductali():
 
         #从链接获取供应商编号
         url = ali_product.url
-        vendor_no = url.partition(".html")[0].rpartition("/")[1]
+        vendor_no = url.partition(".html")[0].rpartition("/")[2]
         print("url %s vendor_no %s" % (url, vendor_no))
 
         #用供应商编号获取产品信息
