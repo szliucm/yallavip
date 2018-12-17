@@ -19,8 +19,8 @@ from orders.models import Order
 @shared_task
 def update_myproductali():
     dest_shop = "yallasale-com"
-
-    products = MyProductAli.objects.filter(listing=False)
+    sync_shop(dest_shop)
+    products = MyProductAli.objects.filter()
 
     for ali_product in products:
 
