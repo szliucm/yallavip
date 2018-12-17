@@ -285,7 +285,7 @@ class MyProductFbAdmin(object):
     actions = []
 
 
-
+'''
 class MyProductCategoryResource(resources.ModelResource):
 
 
@@ -309,4 +309,4 @@ class MyProductCategoryAdmin(object):
     list_filter = ['cate_1', 'cate_2', 'cate_3',]
     list_editable = []
     actions = []
-
+'''
