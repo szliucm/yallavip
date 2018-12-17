@@ -37,7 +37,6 @@ def update_myproductali():
         #在爆款管理中创建记录，并连接爆款记录和ali产品记录
         if product:
             obj, created= MyProductShopify.objects.update_or_create(
-
                             vendor_no=vendor_no,
                 defaults={
                     "product_no" : product.product_no,
