@@ -241,10 +241,13 @@ def thumbnail_video():
 
     videos = MyProductResources.objects.filter(thumbnail=False,resource_cate="VIDEO")
     for video in videos:
-        ori_video = video.resource
+        ori_video = os.path.join(settings.MEDIA_ROOT,str(video.resource))
+
+
         dest_img = ori_video.split(".")[0]+".jpg"
-        sub =  "ffmpeg -i %s -y -f mjpeg -ss 3 -t 0.001 -s 320x240 %s"\
-              % (ori_video, dest_img)
+
+        print("type", ori_video, dest_img)
+        sub =  "ffmpeg -i %s -y -f mjpeg -ss 3 -t 0.001 -s 320x240 %s" % (ori_video, dest_img)
 
         videoresult = subprocess.run(args=sub, shell=True)
 

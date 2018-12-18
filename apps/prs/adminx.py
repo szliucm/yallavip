@@ -246,7 +246,7 @@ class MyProductResourcesAdmin(object):
 
     show_resource.short_description = '创意图'
 
-    list_display = ['handle','show_resource', "myproductali", 'name',"title","message", "resource_target","resource_cate","resource_type","show_fb","created_time","staff", ]
+    list_display = [ 'name','handle','show_resource', "myproductali","title","message", "resource_target","resource_cate","resource_type","show_fb","created_time","staff", ]
     # 'sku_name','img',
 
     search_fields = ["resource" ,'name',"title","message",]
