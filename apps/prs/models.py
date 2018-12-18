@@ -270,10 +270,11 @@ class MyProductResources(models.Model):
         ("RAW", "素材"),
         ("PS", "成品"),
     )
+
     resource_type = models.CharField(choices=RESOURCE_TYPE, default='', max_length=30,
                                 verbose_name="创意性质")
 
-
+    thumbnail = models.BooleanField(default=False, verbose_name="视频生成缩略图")
 
     created_time = models.DateTimeField(null=True, blank=True, verbose_name="上传时间")
     staff = models.CharField(u'运营经理', default='', max_length=100, null=True,blank=True)

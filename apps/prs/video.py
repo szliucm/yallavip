@@ -231,3 +231,21 @@ def logo_video(video,logo,handle,price):
  ffmpeg -i a.mp4 -acodec copy -b:v 2073k -vf "[in]drawtext=fontsize=30:fontfile=ARIAL.TTF:text='a1234':x=(w-text_w)/2:y=(h-text_h)-50:box=1:boxcolor="yellow":boxborderw=10[text];movie=logo.png[logo];movie=logo.png[price];[text][logo]overlay=20:20[a];[a][price]overlay=20:main_h-overlay_h[out]" output.mp4
 '''
 
+
+#########################
+####扫描创意，把处理过的视频，生成缩略图
+#########################
+def thumbnail_video():
+    import subprocess
+    from .models import MyProductResources
+
+    videos = MyProductResources.objects.filter(thumbnail=False,resource_cate="VIDEO")
+    for video in videos:
+        ori_video = video.resource
+        dest_img = ori_video.split(".")[0]+".jpg"
+        sub =  "ffmpeg -i %s -y -f mjpeg -ss 3 -t 0.001 -s 320x240 %s"\
+              % (ori_video, dest_img)
+
+        videoresult = subprocess.run(args=sub, shell=True)
+
+

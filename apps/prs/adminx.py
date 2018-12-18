@@ -230,12 +230,19 @@ class MyProductResourcesAdmin(object):
         else:
             domain = "http://admin.yallavip.com"
         resource = str(obj.resource)
-        destination_url = domain + os.path.join(settings.MEDIA_URL, resource)
+        if obj.resource_cate == "IMAGE":
+            destination_url = domain + os.path.join(settings.MEDIA_URL, resource)
+        else:
+            dest_image = resource.split(".")[0] + ".jpg"
+            destination_url = domain + os.path.join(settings.MEDIA_URL, dest_image)
+
         try:
             img = mark_safe('<img src="%s" width="100px" />' % (destination_url))
         except Exception as e:
             img = ''
         return img
+
+
 
     show_resource.short_description = '创意图'
 
