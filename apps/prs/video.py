@@ -223,15 +223,17 @@ def logo_video(video,logo,price,handle,price1,price2):
 
 
     ori_video = os.path.join(settings.MEDIA_ROOT, video)
+    ori_logo = os.path.join(settings.MEDIA_ROOT, str(logo))
+
     video_output = ori_video.rpartition(".")[0] +  "_watermark.mp4"
-    price_dest = ori_video.rpartition(".")[0] +  ".jpeg"
-    print(handle, ori_video,logo,price)
+    price_dest = ori_video.rpartition(".")[0] +  ".png"
+    print(handle, ori_video,ori_logo,price)
 
     price_for_video(price, price1, price2, price_dest)
 
     #sub = "ffmpeg -i " + video + " -i /home/facelive/Downloads/image/11.png -filter_complex overlay=W-w " + url3 + file + ''
     sub = 'ffmpeg -y -i %s -acodec copy -b:v 2073k -vf "[in]drawtext=fontsize=30:fontfile=%s:text=%s:x=(w-text_w)/2:y=(h-text_h)-50:box=1:boxcolor="yellow":boxborderw=10[text];movie=%s[logo];movie=%s[price];[text][logo]overlay=20:20[a];[a][price]overlay=20:main_h-overlay_h[out]" %s'\
-                %(ori_video,FONT,handle,logo,price_dest, video_output)
+                %(ori_video,FONT,handle,ori_logo,price_dest, video_output)
 
     videoresult = subprocess.run(args=sub, shell=True)
     if videoresult.returncode == 0:

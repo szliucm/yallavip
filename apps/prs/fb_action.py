@@ -130,7 +130,7 @@ def post_creative_feed():
             price1 = int(max_price)
             price2 = int(price1 * random.uniform(2, 3))
 
-            result = logo_video(resource, page.logo,page.price, fb.myresource.handle, price1,price2)
+            result = logo_video(resource, page.logo,page.price, fb.myresource.handle, str(price1),str(price2))
             if not result:
                 print("视频失败")
                 continue

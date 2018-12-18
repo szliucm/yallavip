@@ -231,9 +231,9 @@ def photo_mark(ori_image,  product, price1, price2, targer_page,  type="album" )
     return  destination, destination_url
 
 def price_for_video(price, price1,price2,destination):
-
+    # 准备画布
     mark = Image.open(price)
-    # 画图
+
     # 设置所使用的字体
     font = ImageFont.truetype(FONT, int(70))
     draw = ImageDraw.Draw(mark)
@@ -243,7 +243,9 @@ def price_for_video(price, price1,price2,destination):
     font = ImageFont.truetype(FONT, int(30))
     draw.text((60 + int(10 * (3 - len(price2))), 160), price2, (255, 182, 193), font=font)  # 设置文字位置/内容/颜色/字体
     draw = ImageDraw.Draw(mark)
-    lw, lh = mark.size
 
-    #mark = mark.resize((int(lw), int(lh)), Image.ANTIALIAS)
-    mark.save(destination, 'JPEG', quality=95)
+    mark.save(destination)
+    print("save image to ",destination)
+    return
+
+
