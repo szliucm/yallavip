@@ -33,7 +33,7 @@ class MyPage(models.Model):
 
         app_label = 'fb'
     def __str__(self):
-        return self.page_no
+        return self.page
 
 class MyAdAccount(models.Model):
     adaccout_no = models.CharField(u'广告账户', default='', max_length=100, blank=True)
