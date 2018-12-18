@@ -211,3 +211,23 @@ def fb_slideshow(images, target_page):
     return data.get("id")
 
 
+def logo_video(video,logo,handle,price):
+    import os
+    import subprocess
+
+    video_output = "watermark_"+ video
+    #sub = "ffmpeg -i " + video + " -i /home/facelive/Downloads/image/11.png -filter_complex overlay=W-w " + url3 + file + ''
+    sub = 'ffmpeg -i %s -acodec copy -b:v 2073k -vf "[in]drawtext=fontsize=30:fontfile=ARIAL.TTF:text=%s:x=(w-text_w)/2:y=(h-text_h)-50:box=1:boxcolor="yellow":boxborderw=10[text];movie=%s[logo];movie=%s[price];[text][logo]overlay=20:20[a];[a][price]overlay=20:main_h-overlay_h[out]" %s'\
+                %(video,handle,logo,price, video_output)
+
+    videoresult = subprocess.run(args=sub, shell=True)
+
+
+
+    print("视频%s  logo完成！！",video)
+
+'''
+ #视频打水印： 文字+图片+图片
+ ffmpeg -i a.mp4 -acodec copy -b:v 2073k -vf "[in]drawtext=fontsize=30:fontfile=ARIAL.TTF:text='a1234':x=(w-text_w)/2:y=(h-text_h)-50:box=1:boxcolor="yellow":boxborderw=10[text];movie=logo.png[logo];movie=logo.png[price];[text][logo]overlay=20:20[a];[a][price]overlay=20:main_h-overlay_h[out]" output.mp4
+'''
+

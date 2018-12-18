@@ -120,6 +120,9 @@ def post_creative_feed():
         feed_post = None
         if fb.myresource.resource_cate == "VIDEO":
             print("视频")
+
+            logo_video(resource, page.logo, myproduct.product_number, price)
+
             fields = [
             ]
             params = {

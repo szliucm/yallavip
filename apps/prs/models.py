@@ -242,6 +242,8 @@ class MyProductResources(models.Model):
     message = models.TextField(verbose_name="文案",default='',max_length=2048,null=True,blank=True)
     resource = models.FileField(u'创意', upload_to='resource/', default="", null=True, blank=True)
 
+    handle = models.CharField( default='', max_length=300, verbose_name="货号", null=True, blank=True)
+
     RESOURCE_TARGET = (
         ("NEW", "新品"),
         ("HOT", "爆款"),

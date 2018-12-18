@@ -787,7 +787,7 @@ def post_ali_direct():
     #sync_shop(ori_shop)
     sync_shop(dest_shop)
     shop_obj = Shop.objects.get(shop_name=dest_shop)
-    max_id = Shop.objects.get(shop_name=dest_shop).max_id
+    max_id = shop_obj.max_id
 
     print("max_id ", max_id)
 
