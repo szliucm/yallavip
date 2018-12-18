@@ -1090,7 +1090,7 @@ class VerifyAdmin(object):
 
     ordering = ['-order__order_time']
     list_editable = ['phone_1', 'phone_2','verify_comments']
-    search_fields = ['order__order_no','verify_comments','cs_reply' ]
+    search_fields = ['order__order_no','verify_comments','cs_reply',"receiver_phone", ]
     list_filter = ('order__order_status','verify_status', 'sms_status', 'error_contact')
 
     model_icon = 'fa fa-address-book-o'
