@@ -2,6 +2,7 @@
 import os
 import cv2
 from PIL import Image
+from shop.photo_mark import  price_for_video
 
 '''
 def jpg2video(sp, fps):
@@ -29,6 +30,9 @@ import os,random
 from shop.models import ShopifyVariant,ShopifyImage
 from shop.photo_mark import photo_mark,get_remote_image,fill_image,clipResizeImg_new
 from django.conf import settings
+
+
+FONT = os.path.join(settings.BASE_DIR, "static/font/ARIAL.TTF")
 
 def get_order_video(order):
     """ 将图片合成视频. sp: 视频路径，fps: 帧率 """
@@ -211,20 +215,32 @@ def fb_slideshow(images, target_page):
     return data.get("id")
 
 
-def logo_video(video,logo,handle,price):
+def logo_video(video,logo,price,handle,price1,price2):
     import os
     import subprocess
 
-    video_output = "watermark_"+ video
+
+
+
+    ori_video = os.path.join(settings.MEDIA_ROOT, video)
+    video_output = ori_video.rpartition(".")[0] +  "_watermark.mp4"
+    price_dest = ori_video.rpartition(".")[0] +  ".jpeg"
+    print(handle, ori_video,logo,price)
+
+    price_for_video(price, price1, price2, price_dest)
+
     #sub = "ffmpeg -i " + video + " -i /home/facelive/Downloads/image/11.png -filter_complex overlay=W-w " + url3 + file + ''
-    sub = 'ffmpeg -i %s -acodec copy -b:v 2073k -vf "[in]drawtext=fontsize=30:fontfile=ARIAL.TTF:text=%s:x=(w-text_w)/2:y=(h-text_h)-50:box=1:boxcolor="yellow":boxborderw=10[text];movie=%s[logo];movie=%s[price];[text][logo]overlay=20:20[a];[a][price]overlay=20:main_h-overlay_h[out]" %s'\
-                %(video,handle,logo,price, video_output)
+    sub = 'ffmpeg -y -i %s -acodec copy -b:v 2073k -vf "[in]drawtext=fontsize=30:fontfile=%s:text=%s:x=(w-text_w)/2:y=(h-text_h)-50:box=1:boxcolor="yellow":boxborderw=10[text];movie=%s[logo];movie=%s[price];[text][logo]overlay=20:20[a];[a][price]overlay=20:main_h-overlay_h[out]" %s'\
+                %(ori_video,FONT,handle,logo,price_dest, video_output)
 
     videoresult = subprocess.run(args=sub, shell=True)
+    if videoresult.returncode == 0:
+        return  True
+    else:
+        return False
 
 
 
-    print("视频%s  logo完成！！",video)
 
 '''
  #视频打水印： 文字+图片+图片
@@ -250,5 +266,9 @@ def thumbnail_video():
         sub =  "ffmpeg -i %s -y -f mjpeg -ss 3 -t 0.001 -s 320x240 %s" % (ori_video, dest_img)
 
         videoresult = subprocess.run(args=sub, shell=True)
+        if videoresult.returncode == 0:
+            MyProductResources.objects.filter(pk=video.pk).update(thumbnail=True)
+        else:
+            print("转换失败")
 
 

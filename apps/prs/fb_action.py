@@ -1,7 +1,10 @@
 from .models import MyProductShopify,MyProductFb
 from fb.models import MyFeed,MyPage,MyAd
-from shop.models import ShopifyVariant
+from shop.models import ShopifyProduct, ShopifyVariant
+from .video import logo_video
+
 from django.db.models import Max
+from django.db.models import Q
 import random
 from datetime import datetime
 
@@ -96,33 +99,42 @@ def sycn_ad_product():
 #########把创意发到feed
 ######################################
 def post_creative_feed():
+
+
     pages = MyPage.objects.filter(active=True)  # .values_list('page_no', flat=True)
     # page_nos = ["358078964734730"]   #for debug
     for page in pages:
         page_id = page.page_no
 
-        fb = MyProductFb.objects.filter(published=False,obj_type="FEED",mypage__page_no= page_id).order_by("myresource__created_time").first()
+        fbs = MyProductFb.objects.filter(~Q(myresource__handle='')&Q(myresource__handle__isnull=False),published=False,obj_type='FEED',mypage__page_no= page_id, ).order_by('myresource__created_time')
 
-        if not fb:
+        if not fbs:
             print("no content to post ")
             continue
 
-        print("fb", fb)
-
-
+        fb= fbs.first()
 
         token = get_token(page_id)
         FacebookAdsApi.init(access_token=token)
-        #domain = "http://dev.yallavip.com:8000"
-        domain = "http://admin.yallavip.com"
+        domain = "http://dev.yallavip.com:8000"
+        #domain = "http://admin.yallavip.com"
         resource = str(fb.myresource.resource)
-        destination_url = domain + os.path.join(settings.MEDIA_URL, resource)
+
         feed_post = None
         if fb.myresource.resource_cate == "VIDEO":
             print("视频")
+            product = ShopifyProduct.objects.filter(handle=fb.myresource.handle ).first()
+            max_price = ShopifyVariant.objects.filter(product_no=product.product_no).aggregate(Max("price")).get(
+                        "price__max")
 
-            logo_video(resource, page.logo, myproduct.product_number, price)
+            price1 = int(max_price)
+            price2 = int(price1 * random.uniform(2, 3))
 
+            result = logo_video(resource, page.logo,page.price, fb.myresource.handle, price1,price2)
+            if not result:
+                print("视频失败")
+                continue
+            destination_url = domain + os.path.join(settings.MEDIA_URL, resource.rpartition(".")[0] + "_watermark.mp4")
             fields = [
             ]
             params = {
@@ -138,7 +150,7 @@ def post_creative_feed():
 
 
         elif fb.myresource.resource_cate == "IMAGE":
-
+            destination_url = domain + os.path.join(settings.MEDIA_URL, resource)
             # 发图片post
 
 

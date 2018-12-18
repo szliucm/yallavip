@@ -226,7 +226,7 @@ class MyProductFb(models.Model):
 
     def __str__(self):
 
-        return  self.product_fb_no()
+        return  str(self.pk)
 
 
 
