@@ -233,7 +233,7 @@ class MyProductResourcesAdmin(object):
         if obj.resource_cate == "IMAGE":
             destination_url = domain + os.path.join(settings.MEDIA_URL, resource)
         else:
-            dest_image = resource.split(".")[0] + ".jpg"
+            dest_image = resource.rpartition(".")[0] + ".jpg"
             destination_url = domain + os.path.join(settings.MEDIA_URL, dest_image)
 
         try:

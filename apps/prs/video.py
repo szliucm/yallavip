@@ -244,7 +244,7 @@ def thumbnail_video():
         ori_video = os.path.join(settings.MEDIA_ROOT,str(video.resource))
 
 
-        dest_img = ori_video.split(".")[0]+".jpg"
+        dest_img = ori_video.rpartition(".")[0]+".jpg"
 
         print("type", ori_video, dest_img)
         sub =  "ffmpeg -i %s -y -f mjpeg -ss 3 -t 0.001 -s 320x240 %s" % (ori_video, dest_img)
