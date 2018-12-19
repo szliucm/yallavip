@@ -130,7 +130,9 @@ def post_creative_feed():
             product = ShopifyProduct.objects.filter(handle=fb.myresource.handle ).first()
             max_price = ShopifyVariant.objects.filter(product_no=product.product_no).aggregate(Max("price")).get(
                         "price__max")
-
+            if(max_price) is None:
+                print("取最大价格出错")
+                continue
             price1 = int(max_price)
             price2 = int(price1 * random.uniform(2, 3))
 
