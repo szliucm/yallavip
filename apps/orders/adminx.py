@@ -235,10 +235,7 @@ class OrderAdmin(object):
                             package[cat]=  values
             invoiceinformation_list = []
             item_list = []
-            if len(package) ==0:
-                print("发货失败")
-                waybillnumber = "error"
-                Order.objects.filter(pk=row.pk).update(logistic_no=waybillnumber, waybillnumber=waybillnumber)
+
 
             for key, value in package.items():
                 print(key, ' value : ', value)
@@ -438,7 +435,7 @@ class OrderAdmin(object):
 
             ###################记日志###########################
             with open("wuliu.log", encoding="utf-8", mode="a") as logfile:
-                logfile.write(json.dumps(param_data).encode('utf-8'))
+                json.dumps(param_data,logfile)
                 logfile.write(data)
 
             print("data", data)
