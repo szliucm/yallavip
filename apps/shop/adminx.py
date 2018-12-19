@@ -1378,7 +1378,7 @@ class OverseaSellAdmin(object):
 
             continue
 
-        '''
+        
         for order in row:
             
                 #订单详情先不管
@@ -1409,7 +1409,7 @@ class OverseaSellAdmin(object):
                
 
         queryset.update(resell_status="LISTING")
-         '''
+         
         return
 
     batch_listing.short_description = "批量上架"
