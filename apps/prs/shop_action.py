@@ -106,6 +106,9 @@ def post_product_main(shop_url, handle_new, product, imgs_list):
     url = shop_url + "/admin/products.json"
 
     r = requests.post(url, headers=headers, data=json.dumps(params))
+    if r.text is None:
+        return  None
+
     data = json.loads(r.text)
     new_product = data.get("product")
     if new_product is None:
