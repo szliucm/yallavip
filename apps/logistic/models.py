@@ -7,7 +7,6 @@ class Package(models.Model):
     tracking_no = models.CharField(u'转单号', max_length=50, null=True, blank=True)
     send_time = models.DateTimeField(u'发货时间', auto_now=False, blank=True, null=True)
 
-
     real_weight = models.CharField(u'实重', max_length=100, null=True, blank=True)
     size_weight = models.CharField(u'体积重', max_length=100, null=True, blank=True)
     charge_weight = models.CharField(u'计费重', max_length=100, null=True, blank=True)
