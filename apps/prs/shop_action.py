@@ -810,7 +810,8 @@ def post_ali_direct():
         ##############
         ####发布到主站
         #############
-        posted = get_ali_product(vendor_no, max_id+n)
+        tags = aliproduct.myproductcate.code.replace("_", ",")
+        posted = get_ali_product(vendor_no, max_id+n,tags)
 
         # 修改发布状态
         if not posted:
