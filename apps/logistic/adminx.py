@@ -773,6 +773,12 @@ class OverseaPackageAdmin(object):
             if (len(statusdetail) == 0):
                 continue
 
+            real_weight = data["displaydetail"][0]["totalweight"]
+            charge_weight = data["displaydetail"][0]["chargeweight"]
+            size_weight = data["displaydetail"][0]["checkinvolumeweight"]
+
+
+
             # 最新状态
             if (len(statusdetail) > 0):
                 status_d = statusdetail[len(statusdetail) - 1]
@@ -786,7 +792,14 @@ class OverseaPackageAdmin(object):
 
                     logistic_update_locate=status_d["locate"],
                     logistic_start_date=logistic_start_date,
+                    real_weight=data["displaydetail"][0]["totalweight"],
+                    charge_weight = data["displaydetail"][0]["chargeweight"],
+                    size_weight = data["displaydetail"][0]["checkinvolumeweight"],
                 )
+
+            totalweight=  data["displaydetail"][0]["totalweight"]
+            chargeweight = data["displaydetail"][0]["chargeweight"]
+            checkinvolumeweight = data["displaydetail"][0]["checkinvolumeweight"]
 
             #获取转单号
             if(row.tracking_no is None):
