@@ -430,6 +430,11 @@ class OrderAdmin(object):
             print("response is ", res)
 
             data = json.loads(res.text).get("data")[0]
+
+            ###################记日志###########################
+            with open("wuliu.log", encoding="utf-8", mode="a") as logfile:
+                logfile.write(data)
+
             print("data", data)
 
             if data.get("resultcode") == "failure":
