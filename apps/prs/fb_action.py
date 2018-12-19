@@ -99,7 +99,7 @@ def sycn_ad_product():
 #########把创意发到feed
 ######################################
 def post_creative_feed():
-
+    import filetype
 
     pages = MyPage.objects.filter(active=True)  # .values_list('page_no', flat=True)
     # page_nos = ["358078964734730"]   #for debug
@@ -114,14 +114,18 @@ def post_creative_feed():
 
         fb= fbs.first()
 
+        local_resource = os.path.join(settings.MEDIA_ROOT, resource)
+
         token = get_token(page_id)
         FacebookAdsApi.init(access_token=token)
         #domain = "http://dev.yallavip.com:8000"
         domain = "http://admin.yallavip.com"
         resource = str(fb.myresource.resource)
+        local_resource = os.path.join(settings.MEDIA_ROOT, resource)
+        kind = filetype.guess(local_resource)
 
         feed_post = None
-        if fb.myresource.resource_cate == "VIDEO":
+        if kind.mime.find("video")>=0:
             print("视频")
             product = ShopifyProduct.objects.filter(handle=fb.myresource.handle ).first()
             max_price = ShopifyVariant.objects.filter(product_no=product.product_no).aggregate(Max("price")).get(
@@ -149,7 +153,8 @@ def post_creative_feed():
             )
 
 
-        elif fb.myresource.resource_cate == "IMAGE":
+        elif kind.mime.find("image")>=0:
+            print("图片")
             destination_url = domain + os.path.join(settings.MEDIA_URL, resource)
             # 发图片post
 
@@ -177,6 +182,9 @@ def post_creative_feed():
                 fields=fields,
                 params=params,
             )
+        else:
+            print("未知文件")
+            continue
 
 
 

@@ -261,7 +261,7 @@ class MyProductResourcesAdmin(object):
 
 
         for row in queryset:
-            #product = ShopifyProduct.objects.filter(shop_name=dest_shop, vendor=row.myproductali.vendor_no).first()
+            product = ShopifyProduct.objects.filter(shop_name=dest_shop, vendor=row.myproductali.vendor_no).first()
 
             #if product:
             MyProductResources.objects.filter(pk=row.pk).update(handle=row.myproductali.handle)
