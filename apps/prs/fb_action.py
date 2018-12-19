@@ -114,7 +114,7 @@ def post_creative_feed():
 
         fb= fbs.first()
 
-        local_resource = os.path.join(settings.MEDIA_ROOT, resource)
+
 
         token = get_token(page_id)
         FacebookAdsApi.init(access_token=token)
