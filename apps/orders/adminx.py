@@ -436,7 +436,7 @@ class OrderAdmin(object):
             ###################记日志###########################
             with open("wuliu.log", encoding="utf-8", mode="a") as logfile:
                 json.dump(param_data,logfile)
-                logfile.write(data)
+                json.dump(data, logfile, ensure_ascii=False)
 
             print("data", data)
 
