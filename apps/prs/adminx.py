@@ -253,7 +253,21 @@ class MyProductResourcesAdmin(object):
     list_filter = ["resource_target","resource_cate","resource_type" ,"created_time","staff", ]
     list_editable = ['handle',]
     readonly_fields = ("created_time","staff", )
-    actions = [ChoosePage,]
+    actions = [ChoosePage,"sync"]
+
+    def sync(self, request, queryset):
+        dest_shop = "yallasale-com"
+
+
+
+        for row in queryset:
+            product = ShopifyProduct.objects.filter(shop_name=dest_shop, vendor=row.vendor_no).first()
+
+            if product:
+                MyProductAli.objects.filter(pk=row.pk).update(posted_mainshop=True, handle=product.handle,
+                                                                 product_no=product.product_no, )
+
+    sync.short_description = "批量同步shopify信息"
 
     def save_models(self):
         obj = self.new_obj
