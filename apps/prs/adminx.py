@@ -264,8 +264,7 @@ class MyProductResourcesAdmin(object):
             product = ShopifyProduct.objects.filter(shop_name=dest_shop, vendor=row.vendor_no).first()
 
             if product:
-                MyProductAli.objects.filter(pk=row.pk).update(posted_mainshop=True, handle=product.handle,
-                                                                 product_no=product.product_no, )
+                MyProductResources.objects.filter(pk=row.pk).update(handle=product.handle)
 
     sync.short_description = "批量同步shopify信息"
 
