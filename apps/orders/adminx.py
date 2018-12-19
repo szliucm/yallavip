@@ -235,6 +235,11 @@ class OrderAdmin(object):
                             package[cat]=  values
             invoiceinformation_list = []
             item_list = []
+            if len(package) ==0:
+                print("发货失败")
+                waybillnumber = "error"
+                Order.objects.filter(pk=row.pk).update(logistic_no=waybillnumber, waybillnumber=waybillnumber)
+
             for key, value in package.items():
                 print(key, ' value : ', value)
 
