@@ -1313,7 +1313,7 @@ class ShopifyAddressAdmin(object):
         )
     )
 
-
+'''
 @xadmin.sites.register(OverseaSell)
 class OverseaSellAdmin(object):
     def order_no(self, obj):
@@ -1447,7 +1447,7 @@ class OverseaSellAdmin(object):
         if (len(query) > 0):
             queryset |= self.model.objects.filter(logistic_no__in=query.split(","))
         return queryset
-
+'''
 
 class ProductCategoryResource(resources.ModelResource):
 

@@ -284,7 +284,7 @@ class ShopifyCustomerAddress(models.Model):
     def __str__(self):
         return self.customer.customer_no
 '''
-
+'''
 class OverseaSell(Package):
     class Meta:
         proxy = True
@@ -295,6 +295,7 @@ class OverseaSell(Package):
 
     def __str__(self):
         return self.logistic_no
+'''
 
 class ProductCategory(models.Model):
     """
