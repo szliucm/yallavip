@@ -292,7 +292,7 @@ class MyProductResources(models.Model):
     def __str__(self):
         return self.name
 
-'''
+
 class MyFbProduct(models.Model):
     OBJ_TYPE = (
         ("PHOTO", "相册"),
@@ -325,4 +325,3 @@ class MyFbProduct(models.Model):
     def __str__(self):
 
         return  str(self.pk)
-'''
