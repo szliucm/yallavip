@@ -320,8 +320,13 @@ def post_to_album():
         for album in albums:
             album_dict[album.name] = album.album_no
 
+        print("当前主页已有相册", album_dict)
+
         albums = MyFbProduct.objects.filter(mypage__pk=mypage.pk, published=False) \
             .values_list('album_name').annotate(product_count=Count('id')).order_by('-product_count')
+
+        print("当前主页待处理产品相册", albums)
+
 
         album_list =[]
         for album in albums:
@@ -330,12 +335,15 @@ def post_to_album():
             else:
                 break
 
+        print("当前主页可处理产品相册", album_list)
+
         if len(album_list) == 0:
             print("没有相册需要处理了")
             continue
 
-        album_name = random.choice(album_list)
 
+        album_name = random.choice(album_list)
+        print("这次要处理的相册", album_name)
         # 是否已经建了相册
 
         target_album_no = album_dict.get(album_name)
