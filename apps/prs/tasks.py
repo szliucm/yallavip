@@ -321,6 +321,7 @@ def post_to_album():
             album_dict[album.name] = album.album_no
 
         categories = ProductCategoryMypage.objects.filter(mypage__pk=mypage.pk)
+        print("categories", categories)
         if categories.count() ==0:
             print("主页没有对应的品类")
 
@@ -328,7 +329,7 @@ def post_to_album():
 
         for i in range(categories.count()):
             category = random.choice(categories)
-
+            print("try category", category)
 
             products = MyFbProduct.objects.filter(mypage__pk = mypage.pk, cate_code= category.productcategory.code, published=False)
 
