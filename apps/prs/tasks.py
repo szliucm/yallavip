@@ -369,6 +369,7 @@ def post_to_album():
 
 
         # 发到指定相册
+        products =MyFbProduct.objects.filter(mypage__pk=mypage.pk, published=False, album_name =album_name).order_by(-myproduct.created_time)
         n = 0
         for product in products:
             posted = post_photo_to_album(mypage, target_album_no, product)
