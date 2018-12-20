@@ -332,7 +332,7 @@ def post_to_album():
         album_list =[]
         for album in albums:
             if album[1]>0:
-                album_list.append(album)
+                album_list.append(album[0])
             else:
                 break
 
@@ -361,6 +361,8 @@ def post_to_album():
             if len(target_albums)==0:
                 print("创建相册失败")
                 continue
+            else:
+                target_album_no = target_albums[0]
 
             print("target_album %s" % (album_list))
 
@@ -369,7 +371,7 @@ def post_to_album():
         # 发到指定相册
         n = 0
         for product in products:
-            posted = post_photo_to_album(mypage, target_album, product)
+            posted = post_photo_to_album(mypage, target_album_no, product)
 
             if posted:
                 obj, created = MyFbProduct.objects.filter(myproduct__pk=product.pk).update(
