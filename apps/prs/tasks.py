@@ -320,6 +320,7 @@ def post_to_album():
         for album in albums:
             album_dict[album.name] = album.album_no
 
+
         #print("当前主页已有相册", album_dict)
 
         albums = MyFbProduct.objects.filter(mypage__pk=mypage.pk, published=False) \
