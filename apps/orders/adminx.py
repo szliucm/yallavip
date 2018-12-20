@@ -231,7 +231,7 @@ class OrderAdmin(object):
 
                             if product:
                                 cat = product.cate_1 + ' ' + product.cate_2
-                                #print("product", product, cat,  )
+
                                 if cat:
                                     total_amount = total_amount + int(
                                         combination.quantity * float(variant.price))
@@ -252,6 +252,7 @@ class OrderAdmin(object):
 
                                     #print("\n after update", values)
                                     package[cat] = values
+                                    print("product", product, cat, values)
 
 
 
@@ -264,7 +265,7 @@ class OrderAdmin(object):
 
                         if product:
                             cat = product.cate_1 +' ' + product.cate_2
-                            print("product", product, product.cate_2)
+
                             if cat:
                                 total_amount = total_amount + int(float(orderdetail.product_quantity) * float(orderdetail.price))
                                 #超过1000 就不登记了
@@ -275,6 +276,7 @@ class OrderAdmin(object):
                                 values["quantity"] = int(values.get("quantity", "0")) + int(float(orderdetail.product_quantity))
                                 values["amount"] = int(values.get("amount", "0")) + int(float(orderdetail.product_quantity) * float(orderdetail.price))
                                 package[cat]=  values
+                                print("product", product, cat, values)
                 else:
                     print("暂不支持")
                     continue
