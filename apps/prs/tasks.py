@@ -352,7 +352,7 @@ def post_to_album():
 
 
         if not target_album_no :
-            print("此相册类目还没有创建，新建一个")
+            print("此相册还没有创建，新建一个")
             album_list = []
             album_list.append(album_name)
 
