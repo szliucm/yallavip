@@ -352,15 +352,19 @@ def post_to_album():
 
 
         if not target_album_no :
-            #print("此类目还没有相册，新建一个")
+            print("此相册类目还没有创建，新建一个")
             album_list = []
             album_list.append(album_name)
 
-            #target_album = create_new_album(mypage.page_no, album_list)[0]
+            target_albums = create_new_album(mypage.page_no, album_list)
+
+            if len(target_albums)==0:
+                print("创建相册失败")
+                continue
 
             print("target_album %s" % (album_list))
 
-        break
+
 
         # 发到指定相册
         n = 0
