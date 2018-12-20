@@ -1237,6 +1237,39 @@ class ShopifyProductAdmin(object):
                      )
     list_product.short_description = "同步到facebook产品资源管理"
 
+class CombinationResource(resources.ModelResource):
+    '''
+    shopifyproduct = fields.Field(
+        column_name='平台SKU',
+        attribute='shopifyproduct',
+        widget=ForeignKeyWidget(ShopifyProduct, 'handle'))
+    '''
+    handle = fields.Field(attribute='handle', column_name='平台SKU')
+    sku = fields.Field(attribute='sku', column_name='包含的商品SKU')
+    quantity = fields.Field(attribute='quantity', column_name='数量')
+
+    class Meta:
+        model = Combination
+        skip_unchanged = True
+        report_skipped = True
+        import_id_fields = ('handle','sku',)
+        fields = ( 'shopifyproduct','handle', 'sku',  'quantity',)
+        # exclude = ()
+
+
+@xadmin.sites.register(Combination)
+class CombinationAdmin(object):
+    import_export_args = {"import_resource_class": CombinationResource, "export_resource_class": CombinationResource}
+
+    list_display = [ 'shopifyproduct','handle', 'sku',  'quantity',]
+
+
+    search_fields = ["handle",]
+    list_filter = []
+    list_editable = []
+    actions = []
+
+
 
 class AddressInline(object):
     model = ShopifyAddress

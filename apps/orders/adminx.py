@@ -14,7 +14,7 @@ from import_export.widgets import ForeignKeyWidget
 from .models import Order, OrderDetail,Verify, OrderConversation,ClientService,Verification,\
         Logistic_winlink,Logistic_jiacheng,Logistic_status,Logistic_trail, Sms,Logistic, OrderTrack,\
         LogisticAccount
-from shop.models import ShopifyProduct, ShopifyVariant
+from shop.models import ShopifyProduct, ShopifyVariant,Combination
 
 from conversations.models import Conversation
 from logistic.models import Package
@@ -206,6 +206,7 @@ class OrderAdmin(object):
 
     actions = ['fullfill', 'start_verify','batch_copy','start_package_track',]
 
+
     def fullfill(self, request, queryset):
         from prs.ali import fanyi_en
 
@@ -216,23 +217,68 @@ class OrderAdmin(object):
             total_amount = 0
 
             for orderdetail in orderdetails:
-                variant = ShopifyVariant.objects.filter(sku = orderdetail.sku).first()
-                if variant:
-                    product = ShopifyProduct.objects.filter(product_no = variant.product_no).first()
+                sku = orderdetail.sku.lower()
+                if sku.find("zh") ==0:
+                    #组合商品
+                    combinations = Combination.objects.filter(handle =sku)
 
-                    if product:
-                        cat = product.cate_1 +' ' + product.cate_2
-                        print("product", product, product.cate_2)
-                        if cat:
-                            total_amount = total_amount + int(float(orderdetail.product_quantity) * float(orderdetail.price))
-                            #超过1000 就不登记了
-                            if total_amount >1000:
-                                break
+                    for combination in combinations:
+                        variant = ShopifyVariant.objects.filter(sku = combination.sku).first()
+                        print(variant)
+                        if variant:
 
-                            values = package.get(cat,{})
-                            values["quantity"] = int(values.get("quantity", "0")) + int(float(orderdetail.product_quantity))
-                            values["amount"] = int(values.get("amount", "0")) + int(float(orderdetail.product_quantity) * float(orderdetail.price))
-                            package[cat]=  values
+                            product = ShopifyProduct.objects.filter(product_no=variant.product_no).first()
+
+                            if product:
+                                cat = product.cate_1 + ' ' + product.cate_2
+                                #print("product", product, cat,  )
+                                if cat:
+                                    total_amount = total_amount + int(
+                                        combination.quantity * float(variant.price))
+                                    # 超过1000 就不登记了
+                                    if total_amount > 1000:
+
+                                        print("金额太高了",total_amount)
+                                        break
+
+                                    values = package.get(cat, {})
+
+                                    #print("\n before update",values)
+
+                                    values["quantity"] = int(values.get("quantity", "0")) + int(
+                                        float(orderdetail.product_quantity))
+                                    values["amount"] = int(values.get("amount", "0")) + int(
+                                        float(orderdetail.product_quantity) * float(orderdetail.price))
+
+                                    #print("\n after update", values)
+                                    package[cat] = values
+
+
+
+                elif sku.find("a") ==0:
+                    #常规商品
+
+                    variant = ShopifyVariant.objects.filter(sku = orderdetail.sku).first()
+                    if variant:
+                        product = ShopifyProduct.objects.filter(product_no = variant.product_no).first()
+
+                        if product:
+                            cat = product.cate_1 +' ' + product.cate_2
+                            print("product", product, product.cate_2)
+                            if cat:
+                                total_amount = total_amount + int(float(orderdetail.product_quantity) * float(orderdetail.price))
+                                #超过1000 就不登记了
+                                if total_amount >1000:
+                                    break
+
+                                values = package.get(cat,{})
+                                values["quantity"] = int(values.get("quantity", "0")) + int(float(orderdetail.product_quantity))
+                                values["amount"] = int(values.get("amount", "0")) + int(float(orderdetail.product_quantity) * float(orderdetail.price))
+                                package[cat]=  values
+                else:
+                    print("暂不支持")
+                    continue
+
             invoiceinformation_list = []
             item_list = []
 

@@ -1,5 +1,5 @@
 from django.db import models
-from logistic.models import Package
+
 from fb.models import MyPage
 
 # Create your models here.
@@ -182,6 +182,23 @@ class ShopifyOptions(models.Model):
 
     def __str__(self):
         return self.name
+
+class Combination(models.Model):
+    shopifyproduct = models.ForeignKey(ShopifyProduct, related_name='product_combination', null=True,
+                                       on_delete=models.CASCADE, verbose_name="商品")
+    #product_no = models.CharField(u'product_no', default='', max_length=100, blank=True)
+    handle = models.CharField(u'handle', default='', max_length=256, null=True, blank=True)
+    sku = models.CharField(u'title', default='', max_length=100, null=True, blank=True)
+    quantity = models.IntegerField(u'数量', default=0, blank=True, null=True)
+
+
+    class Meta:
+        verbose_name = "组合商品sku"
+        verbose_name_plural = verbose_name
+
+
+    def __str__(self):
+        return self.sku
 
 '''
 class ShopifyOptionValues(models.Model):
