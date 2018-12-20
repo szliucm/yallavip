@@ -100,6 +100,7 @@ def sycn_ad_product():
 ######################################
 def post_creative_feed():
     import filetype
+    from shop.photo_mark import  photo_mark
 
     pages = MyPage.objects.filter(active=True)  # .values_list('page_no', flat=True)
     # page_nos = ["358078964734730"]   #for debug
@@ -123,6 +124,14 @@ def post_creative_feed():
         resource = str(fb.myresource.resource)
         local_resource = os.path.join(settings.MEDIA_ROOT, resource)
         kind = filetype.guess(local_resource)
+        product = ShopifyProduct.objects.filter(handle=fb.myresource.handle).first()
+        max_price = ShopifyVariant.objects.filter(product_no=product.product_no).aggregate(Max("price")).get(
+            "price__max")
+        if (max_price) is None:
+            print("取最大价格出错")
+            continue
+        price1 = int(max_price)
+        price2 = int(price1 * random.uniform(2, 3))
 
         feed_post = None
         if kind.mime.find("video")>=0:
@@ -159,12 +168,17 @@ def post_creative_feed():
             print("图片")
             destination_url = domain + os.path.join(settings.MEDIA_URL, resource)
             # 发图片post
+            if fb.myresource.resource_type == "RAW":
+                #素材需要打标，否则直接发
+                finale, final_url = photo_mark(destination_url, product, price1, price2, page, type="album")
 
+            else:
+                final_url = destination_url
 
             fields = [
             ]
             params = {
-                'url': destination_url,
+                'url': final_url,
                 'published': 'false',
             }
             photo_to_be_post = Page(page_id).create_photo(
