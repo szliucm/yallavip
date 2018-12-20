@@ -552,6 +552,5 @@ def post_photo_to_album(targer_page,album_no,product ):
                                                               }
                                                     )
 
-
     #print("new_photo saved ", obj, created)
     return  photo["id"]
