@@ -330,3 +330,14 @@ class MyProductCategoryAdmin(object):
     list_editable = []
     actions = []
 '''
+
+@xadmin.sites.register(MyFbProduct)
+class MyFbProduct(object):
+    list_display = [ "myproduct", "mypage", "obj_type", "myresource", "fb_id", "published", "publish_error", "published_time", ]
+    # 'sku_name','img',
+
+    search_fields = [ ]
+    list_filter = [ ]
+    list_editable = []
+    readonly_fields = ()
+    actions = []

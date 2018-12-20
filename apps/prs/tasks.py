@@ -10,7 +10,8 @@ import random
 
 from .models import *
 from shop.models import  Shop, ShopifyProduct, ShopifyVariant, ShopifyImage, ShopifyOptions
-
+from shop.models import ProductCategoryMypage
+from fb.models import MyPage
 from .shop_action import sync_shop
 from orders.models import Order
 
@@ -252,4 +253,45 @@ def creative_feed():
 
     post_creative_feed()
     return
+
+#####################################################################
+######把shopify产品库中的还未添加到fb产品库的产品按page对应的品类找出来并添加
+######################################################################
+@shared_task
+def product_shopify_to_fb():
+
+
+    #找出所有活跃的page
+    pages = MyPage.objects.filter(active=True)
+    n = 0
+    for page in pages:
+        #遍历page对应的品类
+        print("page is ",page)
+        cates = ProductCategoryMypage.objects.filter(mypage = page)
+        for cate in cates:
+
+            cate_code = cate.productcategory.code
+            album_name = cate.album_name
+
+            #根据品类找未添加到fb产品库的产品
+            print(" cate %s, album_name %s"%( cate_code, album_name))
+            products_to_add = ShopifyProduct.objects.filter(category_code = cate_code, myfb_product__isnull= True )
+            #products_to_add = ShopifyProduct.objects.filter(category_code=cate_code)
+            myfbproduct_list = []
+            for product_to_add in products_to_add:
+                n += 1
+                print("     %d is %s"%(n,products_to_add))
+
+                myfbproduct = MyFbProduct(
+                    myproduct= ShopifyProduct.objects.get(pk=product_to_add.pk ),
+                    mypage=MyPage.objects.get(pk=page.pk ),
+                    obj_type="PHOTO",
+                    album_name=album_name,
+                    published=False
+                )
+                myfbproduct_list.append(myfbproduct)
+
+            #MyFbProduct.objects.bulk_create(myfbproduct_list)
+
+
 

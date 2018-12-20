@@ -339,7 +339,7 @@ class ProductCategory(models.Model):
 
 class ProductCategoryMypage(models.Model):
     mypage = models.ForeignKey(MyPage, null=True, blank=True, verbose_name="主页", help_text="主页",
-                                        related_name="category_page",on_delete=models.CASCADE)
+                                        related_name="page_category",on_delete=models.CASCADE)
     productcategory = models.ForeignKey(ProductCategory, null=True, blank=True, verbose_name="产品类别", help_text="产品类别",
                                related_name="page_category", on_delete=models.CASCADE)
 

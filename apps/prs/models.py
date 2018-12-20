@@ -292,3 +292,34 @@ class MyProductResources(models.Model):
     def __str__(self):
         return self.name
 
+class MyFbProduct(models.Model):
+    OBJ_TYPE = (
+        ("PHOTO", "相册"),
+        ("FEED", "帖子"),
+        ("AD", "广告"),
+        ("GROUP", "社群"),
+
+    )
+    myproduct = models.ForeignKey('shop.ShopifyProduct', null=True, blank=True, verbose_name="产品",
+                                related_name="myfb_product", on_delete=models.DO_NOTHING)
+    mypage = models.ForeignKey('fb.MyPage', null=True, blank=True, verbose_name="主页",
+                                  related_name="myfb_page", on_delete=models.DO_NOTHING)
+    obj_type = models.CharField(choices=OBJ_TYPE,default='PHOTO',max_length=30, null=True, blank=True, verbose_name="接触点类型")
+
+    myresource = models.ForeignKey('MyProductResources', null=True, blank=True, verbose_name="创意",
+                             related_name="myfb_resource", on_delete=models.DO_NOTHING)
+
+    fb_id = models.CharField(default='',max_length=100, null=True, blank=True, verbose_name="接触点代码")
+    album_name = models.CharField(default='', max_length=100, null=True, blank=True, verbose_name="相册")
+
+    published = models.BooleanField(default=False, verbose_name="发布状态")
+    publish_error = models.CharField(default='',max_length=100, null=True, blank=True, verbose_name="发布错误")
+    published_time = models.DateTimeField(null=True, blank=True, verbose_name="发布时间")
+
+    class Meta:
+        verbose_name = "FB接触点(新)"
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+
+        return  str(self.pk)
