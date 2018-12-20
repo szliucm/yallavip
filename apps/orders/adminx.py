@@ -232,7 +232,7 @@ class OrderAdmin(object):
                             if product:
                                 cat = product.cate_1 + ' ' + product.cate_2
 
-                                if cat:
+                                if len(cat)>0:
                                     total_amount = total_amount + int(
                                         combination.quantity * float(variant.price))
                                     # 超过1000 就不登记了
@@ -266,7 +266,7 @@ class OrderAdmin(object):
                         if product:
                             cat = product.cate_1 +' ' + product.cate_2
 
-                            if cat:
+                            if len(cat) > 0:
                                 total_amount = total_amount + int(float(orderdetail.product_quantity) * float(orderdetail.price))
                                 #超过1000 就不登记了
                                 if total_amount >1000:
