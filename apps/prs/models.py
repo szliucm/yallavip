@@ -310,6 +310,7 @@ class MyFbProduct(models.Model):
                              related_name="myfb_resource", on_delete=models.DO_NOTHING)
 
     fb_id = models.CharField(default='',max_length=100, null=True, blank=True, verbose_name="接触点代码")
+    cate_code = models.CharField(default='', max_length=100, null=True, blank=True, verbose_name="品类代码")
     album_name = models.CharField(default='', max_length=100, null=True, blank=True, verbose_name="相册")
 
     published = models.BooleanField(default=False, verbose_name="发布状态")
