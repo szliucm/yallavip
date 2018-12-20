@@ -269,14 +269,16 @@ def product_shopify_to_fb():
         print("page is ",page)
         cates = ProductCategoryMypage.objects.filter(mypage = page)
         for cate in cates:
-
-            cate_code = cate.productcategory.code,
-            album_name = cate.album_name,
-
+            cate_code = cate.productcategory.code
+            album_name = cate.album_name
+            print(cate_code)
             #根据品类找未添加到fb产品库的产品
 
             products_to_add = ShopifyProduct.objects.filter(category_code = cate_code, myfb_product__isnull= True )
-            #products_to_add = ShopifyProduct.objects.filter(category_code=cate_code)
+            #products_to_add = ShopifyProduct.objects.filter(category_code = cate_code)
+            print("products_to_add", products_to_add)
+            #print("products_to_add query", products_to_add.query)
+
             myfbproduct_list = []
             for product_to_add in products_to_add:
                 n += 1
