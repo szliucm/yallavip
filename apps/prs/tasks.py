@@ -311,7 +311,7 @@ def post_to_album():
     print(mypages)
     for mypage in mypages:
 
-        print("当前处理主页", mypage_pk)
+        print("当前处理主页", mypage, mypage.pk)
 
         # 主页已有的相册
         album_dict = {}
