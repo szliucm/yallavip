@@ -276,7 +276,7 @@ class OrderAdmin(object):
                                 values["quantity"] = int(values.get("quantity", "0")) + int(float(orderdetail.product_quantity))
                                 values["amount"] = int(values.get("amount", "0")) + int(float(orderdetail.product_quantity) * float(orderdetail.price))
                                 package[cat]=  values
-                                print("product", product, cat, values)
+                                print("product", product, cat, values, len(cat), type(cat))
                 else:
                     print("暂不支持")
                     continue
