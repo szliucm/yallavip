@@ -311,7 +311,7 @@ def post_to_album():
     print(mypages)
     for mypage in mypages:
 
-        print("当前处理主页", mypage)
+        print("当前处理主页", mypage_pk)
 
         # 主页已有的相册
         album_dict = {}
@@ -320,7 +320,7 @@ def post_to_album():
         for album in albums:
             album_dict[album.name] = album.album_no
 
-        print("当前主页已有相册", album_dict)
+        #print("当前主页已有相册", album_dict)
 
         albums = MyFbProduct.objects.filter(mypage__pk=mypage.pk, published=False) \
             .values_list('album_name').annotate(product_count=Count('id')).order_by('-product_count')
@@ -359,7 +359,7 @@ def post_to_album():
 
             print("target_album %s" % (album_list))
 
-        continue
+        break
 
         # 发到指定相册
         n = 0
