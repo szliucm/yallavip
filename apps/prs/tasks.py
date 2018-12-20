@@ -320,7 +320,7 @@ def post_to_album():
         for album in albums:
             album_dict[album.name] = album.album_no
 
-        categories = mypage.page_category.filter(active=True)
+        categories = ProductCategoryMypage.objects.filter(mypage__pk=mypage.pk)
         if categories.count() ==0:
             print("主页没有对应的品类")
 
@@ -351,9 +351,11 @@ def post_to_album():
             album_list = []
             album_list.append(category_album)
 
-            target_album = create_new_album(mypage.page_no, album_list)[0]
+            #target_album = create_new_album(mypage.page_no, album_list)[0]
 
             #print("target_album %s" % (target_album))
+
+        continue
 
         # 发到指定相册
         n = 0
