@@ -323,6 +323,7 @@ def post_to_album():
         categories = mypage.page_category.filter(active=True)
         if categories.count() ==0:
             print("主页没有对应的品类")
+
             continue
 
         for i in range(categories.count()):
