@@ -329,11 +329,14 @@ def post_to_album():
         for i in range(categories.count()):
             category = random.choice(categories)
 
+
             products = MyFbProduct.objects.filter(mypage__pk = mypage.pk, cate_code= category.productcategory.code, published=False)
 
             if products.count() == 0:
+                print(category, "has no product")
                 continue
             else:
+                print("处理这个品类 ", category)
                 break
 
         if products.count() == 0:
