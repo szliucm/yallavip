@@ -2,7 +2,7 @@
 from __future__ import absolute_import, unicode_literals
 import numpy as np, re
 from celery import shared_task
-from django.db.models import Q
+from django.db.models import Q,Count
 import requests
 import json
 import random
