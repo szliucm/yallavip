@@ -6,6 +6,7 @@ from django.db.models import Q
 import requests
 import json
 import random
+import datetime
 
 
 from .models import *
@@ -14,6 +15,9 @@ from shop.models import ProductCategoryMypage
 from fb.models import MyPage
 from .shop_action import sync_shop
 from orders.models import Order
+
+
+
 
 
 #更新ali产品数据，把vendor和产品信息连接起来
@@ -274,7 +278,7 @@ def product_shopify_to_fb():
             print(cate_code)
             #根据品类找未添加到fb产品库的产品
 
-            products_to_add = ShopifyProduct.objects.filter(category_code = cate_code, myfb_product__isnull= True )
+            products_to_add = ShopifyProduct.objects.filter(category_code = cate_code,  handle__startswith='a',myfb_product__isnull= True )
             #products_to_add = ShopifyProduct.objects.filter(category_code = cate_code)
             print("products_to_add", products_to_add)
             #print("products_to_add query", products_to_add.query)
@@ -296,5 +300,83 @@ def product_shopify_to_fb():
 
             MyFbProduct.objects.bulk_create(myfbproduct_list)
 
+#发布产品到Facebook的album
+@shared_task
+def post_to_album():
+    from .fb_action import  create_new_album, post_photo_to_album
+    from fb.models import MyAlbum
 
+    #选择所有可用的page
+    mypages = MyPage.objects.filter(active=True)
+    print(mypages)
+    for mypage in mypages:
+
+        print("当前处理主页", mypage)
+
+        # 主页已有的相册
+        album_dict = {}
+        albums = MyAlbum.objects.filter(page_no=mypage.page_no,active=True)
+
+        for album in albums:
+            album_dict[album.name] = album.album_no
+
+        categories = mypage.page_category.filter(active=True)
+        if categories.count() ==0:
+            print("主页没有对应的品类")
+            continue
+
+        for i in range(categories.count()):
+            category = random.choice(categories)
+
+            products = MyFbProduct.objects.filter(mypage__pk = mypage.pk, cate_code= category.productcategory.code, published=False)
+
+            if products.count() == 0:
+                continue
+            else:
+                break
+
+        if products.count() == 0:
+            print("没有新产品了")
+            continue
+
+        # 这个品类是否已经建了相册
+        category_album = category.album_name
+        target_album = album_dict.get(category_album)
+
+
+
+        if not target_album :
+            #print("此类目还没有相册，新建一个")
+            album_list = []
+            album_list.append(category_album)
+
+            target_album = create_new_album(mypage.page_no, album_list)[0]
+
+            #print("target_album %s" % (target_album))
+
+        # 发到指定相册
+        n = 0
+        for product in products:
+            posted = post_photo_to_album(mypage, target_album, product)
+
+            if posted:
+                obj, created = MyFbProduct.objects.filter(myproduct__pk=product.pk).update(
+                    fb_id = posted,
+                    published = True,
+                    published_time = datetime.datetime.utcnow()
+                )
+                #print("更新page_类目记录 %s %s %s" % (mypage, category.productcategory, product.product_no))
+                #print("created is ", created)
+                #print("obj is ", obj)
+                n += 1
+                if n>5:
+                    break
+            else:
+                obj, created = MyFbProduct.objects.filter(myproduct__pk=product.pk).update(
+                    published=False,
+                    publish_error="发布失败",
+                    published_time=datetime.datetime.utcnow()
+                )
+
+    return
 

@@ -133,7 +133,7 @@ def post_photo_to_album(targer_page,album_no,product ):
     #print("args is  %s %s %s"%(page_no,album_no , product.handle ))
     if myphotos:
         print("photo exist")
-        return 0
+        return False
     else:
         print("now we need to create new photos for %s"%(product.handle))
 
@@ -146,7 +146,7 @@ def post_photo_to_album(targer_page,album_no,product ):
     if not ori_images :
 
         print("no image %s"%(product.product_no))
-        return 0
+        return False
 
     ori_image = random.choice(ori_images)
 
@@ -216,7 +216,7 @@ def post_photo_to_album(targer_page,album_no,product ):
                                                     )
 
     #print("new_photo saved ", obj, created)
-    return  1
+    return  True
 
 
 
