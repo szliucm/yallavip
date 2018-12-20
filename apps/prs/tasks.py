@@ -329,7 +329,7 @@ def post_to_album():
 
         for i in range(categories.count()):
             category = random.choice(categories)
-            print("try category", category)
+            print("try category", category.productcategory.code)
 
             products = MyFbProduct.objects.filter(mypage__pk = mypage.pk, cate_code= category.productcategory.code, published=False)
 
