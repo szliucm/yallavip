@@ -334,6 +334,7 @@ class MyProductCategoryAdmin(object):
 
 @xadmin.sites.register(MyFbProduct)
 class MyFbProduct(object):
+
     list_display = [ "myproduct", "mypage", "cate_code","obj_type", "fb_id", "published", "publish_error", "published_time", ]
     # 'sku_name','img',
 
