@@ -427,10 +427,10 @@ def sync_album_fbproduct():
         fbproducts = MyFbProduct.objects.filter(mypage__pk = mypage.pk,published=False)
         for fbproduct in fbproducts:
             photos = MyPhoto.objects.filter(page_no=mypage.page_no,name__icontains=fbproduct.myproduct.handle)
-            if photos.count >0:
+            if photos.count() >0:
                 MyFbProduct.objects.filter(mypage__pk=mypage.pk, myproduct__pk = fbproduct.myproduct.pk),update(
                                 published=True,
                                 fb_id = photos.fiirst().photo_no,
-                                publish_error=photos.count,
+                                publish_error=photos.count(),
                                 published_time=photos.fiirst().created_time,
                 )
