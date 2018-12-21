@@ -6,7 +6,7 @@ from django.db.models import Q
 import requests
 import json
 import random
-import datetime
+from datetime import datetime
 
 
 from .models import *
