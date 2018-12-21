@@ -405,59 +405,59 @@ def get_ali_product(offer_id,max_id,tags):
                 variants_list.append(variant_item)
                 position += 1
             old_image_no += 1
-        else:
-            for option2 in option2_list:
-                # 根据规格-图片地址 字典 找到图片地址
-                # 根据图片地址找到shopify 的图片id
-                print("option2", option2)
+    else:
+        for option2 in option2_list:
+            # 根据规格-图片地址 字典 找到图片地址
+            # 根据图片地址找到shopify 的图片id
+            print("option2", option2)
 
-                option2_img = img_dict[option2]
-                print("img_dict", img_dict)
-                print("image_dict", image_dict)
+            option2_img = img_dict[option2]
+            print("img_dict", img_dict)
+            print("image_dict", image_dict)
 
-                print("option1_img", option2_img)
+            print("option1_img", option2_img)
 
-                new_image_no = image_dict[option2_img]
+            new_image_no = image_dict[option2_img]
 
-                sku = handle_new
-                option1 = option2
-                option2 = None
-                option3 = None
+            sku = handle_new
+            option1 = option2
+            option2 = None
+            option3 = None
 
-                if option1:
-                    sku = sku + "-" + option1.replace("&", '').replace('-', '').replace('.', '').replace(' ', '')
-                    if option2:
-                        sku = sku + "_" + option2.replace("&", '').replace('-', '').replace('.', '').replace(' ', '')
-                        if option3:
-                            sku = sku + "_" + option3.replace("&", '').replace('-', '').replace('.', '').replace(' ',
-                                                                                                                 '')
+            if option1:
+                sku = sku + "-" + option1.replace("&", '').replace('-', '').replace('.', '').replace(' ', '')
+                if option2:
+                    sku = sku + "_" + option2.replace("&", '').replace('-', '').replace('.', '').replace(' ', '')
+                    if option3:
+                        sku = sku + "_" + option3.replace("&", '').replace('-', '').replace('.', '').replace(' ',
+                                                                                                             '')
 
-                variant_item = {
-                    "option1": option1,
-                    "option2": option2,
-                    "option3": option3,
-                    "price": int(float(price_dict[option2]) * 2.8),
-                    "compare_at_price": int(float(price_dict[option2]) * 2.8 * random.uniform(2, 3)),
-                    "sku": sku,
-                    "position": position,
-                    "image_id": new_image_no,
-                    "grams": 0,
-                    "title": sku,
-                    "taxable": "true",
-                    "inventory_management": "shopify",
-                    "fulfillment_service": "manual",
-                    "inventory_policy": "continue",
+            variant_item = {
+                "option1": option1,
+                "option2": option2,
+                "option3": option3,
+                "price": int(float(price_dict[option2]) * 2.8),
+                "compare_at_price": int(float(price_dict[option2]) * 2.8 * random.uniform(2, 3)),
+                "sku": sku,
+                "position": position,
+                "image_id": new_image_no,
+                "grams": 0,
+                "title": sku,
+                "taxable": "true",
+                "inventory_management": "shopify",
+                "fulfillment_service": "manual",
+                "inventory_policy": "continue",
 
-                    "inventory_quantity": 10000,
-                    "requires_shipping": "true",
-                    "weight": 0.5,
-                    "weight_unit": "kg",
+                "inventory_quantity": 10000,
+                "requires_shipping": "true",
+                "weight": 0.5,
+                "weight_unit": "kg",
 
-                }
-                # print("variant_item", variant_item)
-                variants_list.append(variant_item)
-                position += 1
-            old_image_no += 1
+            }
+            # print("variant_item", variant_item)
+            variants_list.append(variant_item)
+            position += 1
+        old_image_no += 1
 
     posted = post_product_variant(shop_url, new_product.get("id"), variants_list, option_list)
 
