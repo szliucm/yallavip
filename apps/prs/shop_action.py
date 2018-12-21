@@ -112,6 +112,9 @@ def post_product_main(shop_url, handle_new, product, imgs_list):
         return  None
 
 #    data = json.loads(r.text)
+    print("r is ", r)
+    print("r.text is ", r.text)
+    
     data = demjson.decode(r.text)
     new_product = data.get("product")
     if new_product is None:
