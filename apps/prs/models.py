@@ -317,7 +317,7 @@ class MyFbProduct(models.Model):
     album_name = models.CharField(default='', max_length=100, null=True, blank=True, verbose_name="相册")
 
     published = models.BooleanField(default=False, verbose_name="发布状态")
-    publish_error = models.CharField(default='',max_length=100, null=True, blank=True, verbose_name="发布错误")
+    publish_error = models.CharField(default='',max_length=100, null=True, blank=True, verbose_name="发布错误(或图片数量)")
     published_time = models.DateTimeField(null=True, blank=True, verbose_name="发布时间")
 
     class Meta:

@@ -801,7 +801,7 @@ def post_ali_direct():
     print("max_id ", max_id)
 
     n = 1
-    aliproducts = MyProductAli.objects.filter(posted_mainshop=False)
+    aliproducts = MyProductAli.objects.filter(posted_mainshop=False,active=True )
 
     for aliproduct in aliproducts:
         vendor_no = aliproduct.url.partition(".html")[0].rpartition("/")[2]
