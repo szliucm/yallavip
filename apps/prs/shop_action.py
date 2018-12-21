@@ -83,6 +83,8 @@ def sync_shop(shop, max_product_no =None):
 
 #创建产品主体
 def post_product_main(shop_url, handle_new, product, imgs_list):
+    import demjson
+
     params = {
             "product": {
                 "handle": handle_new,
@@ -109,7 +111,8 @@ def post_product_main(shop_url, handle_new, product, imgs_list):
     if r.text is None:
         return  None
 
-    data = json.loads(r.text)
+#    data = json.loads(r.text)
+    data = demjson.decode(r.text)
     new_product = data.get("product")
     if new_product is None:
         print("post product error data is ", data)
