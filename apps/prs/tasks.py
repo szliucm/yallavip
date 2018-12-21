@@ -411,3 +411,26 @@ def post_to_album():
 
     return
 
+
+#发布产品到Facebook的album
+@shared_task
+def sync_album_fbproduct():
+    from fb.models import MyPhoto
+    from django.utils import timezone as datetime
+
+    #选择所有可用的page
+    mypages = MyPage.objects.filter(active=True)
+    print(mypages)
+    for mypage in mypages:
+
+        print("当前处理主页", mypage, mypage.pk)
+        fbproducts = MyFbProduct.objects.filter(mypage__pk = mypage.pk,published=False)
+        for fbproduct in fbproducts:
+            photos = MyPhoto.objects.filter(page_no=mypage.page_no,name__icontains=fbproduct.myproduct.handle)
+            if photos.count >0:
+                MyFbProduct.objects.filter(mypage__pk=mypage.pk, myproduct__pk = fbproduct.myproduct.pk),update(
+                                published=True,
+                                fb_id = photos.fiirst().photo_no,
+                                publish_error=photos.count,
+                                published_time=photos.fiirst().created_time,
+                )
