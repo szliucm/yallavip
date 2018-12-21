@@ -2,7 +2,7 @@
 from __future__ import absolute_import, unicode_literals
 import numpy as np, re
 from celery import shared_task
-from django.db.models import Q
+from django.db.models import Q,Count
 import requests
 import json
 import random
@@ -311,7 +311,7 @@ def post_to_album():
     print(mypages)
     for mypage in mypages:
 
-        print("当前处理主页", mypage)
+        print("当前处理主页", mypage, mypage.pk)
 
         # 主页已有的相册
         album_dict = {}
@@ -320,45 +320,59 @@ def post_to_album():
         for album in albums:
             album_dict[album.name] = album.album_no
 
-        categories = mypage.page_category.filter(active=True)
-        if categories.count() ==0:
-            print("主页没有对应的品类")
 
-            continue
+        #print("当前主页已有相册", album_dict)
 
-        for i in range(categories.count()):
-            category = random.choice(categories)
+        albums = MyFbProduct.objects.filter(mypage__pk=mypage.pk, published=False) \
+            .values_list('album_name').annotate(product_count=Count('id')).order_by('-product_count')
 
-            products = MyFbProduct.objects.filter(mypage__pk = mypage.pk, cate_code= category.productcategory.code, published=False)
+        print("当前主页待处理产品相册", albums)
 
-            if products.count() == 0:
-                continue
+
+        album_list =[]
+        for album in albums:
+            if album[1]>0:
+                album_list.append(album[0])
             else:
                 break
 
-        if products.count() == 0:
-            print("没有新产品了")
+        print("当前主页可处理产品相册", album_list)
+
+        if len(album_list) == 0:
+            print("没有相册需要处理了")
             continue
 
-        # 这个品类是否已经建了相册
-        category_album = category.album_name
-        target_album = album_dict.get(category_album)
+
+        album_name = random.choice(album_list)
+        print("这次要处理的相册", album_name)
+        # 是否已经建了相册
+
+        target_album_no = album_dict.get(album_name)
 
 
 
-        if not target_album :
-            #print("此类目还没有相册，新建一个")
+        if not target_album_no :
+            print("此相册还没有创建，新建一个")
             album_list = []
-            album_list.append(category_album)
+            album_list.append(album_name)
 
-            target_album = create_new_album(mypage.page_no, album_list)[0]
+            target_albums = create_new_album(mypage.page_no, album_list)
 
-            #print("target_album %s" % (target_album))
+            if len(target_albums)==0:
+                print("创建相册失败")
+                continue
+            else:
+                target_album_no = target_albums[0]
+
+            print("target_album %s" % (album_list))
+
+
 
         # 发到指定相册
+        products =MyFbProduct.objects.filter(mypage__pk=mypage.pk, published=False, album_name =album_name)#.order_by(-myproduct__created_time)
         n = 0
         for product in products:
-            posted = post_photo_to_album(mypage, target_album, product)
+            posted = post_photo_to_album(mypage, target_album_no, product.myproduct)
 
             if posted:
                 obj, created = MyFbProduct.objects.filter(myproduct__pk=product.pk).update(

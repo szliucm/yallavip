@@ -440,9 +440,11 @@ def create_new_album(page_no , new_albums ):
                                 params=params,
                             )
         #插入到待返回的相册列表中
-        new_album_list.append(album.get("id"))
-        #保存到数据库中
-        obj, created = MyAlbum.objects.update_or_create(album_no=album["id"],
+        if album:
+
+            new_album_list.append(album.get("id"))
+            #保存到数据库中
+            obj, created = MyAlbum.objects.update_or_create(album_no=album["id"],
                                                         defaults={'page_no': page_no,
                                                                   'created_time': album["created_time"].split('+')[0],
                                                                   'updated_time': album["updated_time"].split('+')[0],
@@ -548,11 +550,6 @@ def post_photo_to_album(targer_page,album_no,product ):
                                                                   "total_count"]
 
                                                               }
-                                                    )
-    obj, created = ShopifyProduct.objects.filter(product_no=product.product_no).update(
-
-                                                        listing_status=True,
-
                                                     )
 
     #print("new_photo saved ", obj, created)
