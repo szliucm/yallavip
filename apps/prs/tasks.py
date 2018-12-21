@@ -376,7 +376,9 @@ def post_to_album():
         n = 0
         for product in products:
             posted = post_photo_to_album(mypage, target_album_no, product.myproduct)
+            print("###########################################")
             print("posted , published_time : " , posted, published_time)
+
             if posted:
                 obj, created = MyFbProduct.objects.filter(myproduct__pk=product.pk).update(
                     fb_id = posted,
