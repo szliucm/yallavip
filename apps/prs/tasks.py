@@ -434,5 +434,5 @@ def sync_album_fbproduct():
                                 published=True,
                                 fb_id = photo.photo_no,
                                 publish_error=photos.count(),
-                                published_time=photos.created_time,
+                                published_time=photo.created_time,
                 )
