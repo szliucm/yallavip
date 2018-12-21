@@ -391,19 +391,19 @@ def post_to_album():
 
 
             if posted:
-                MyFbProduct.objects.filter(mypage__pk=mypage.pk ,myproduct__pk=product.pk).update(
+                MyFbProduct.objects.filter(mypage__pk=mypage.pk ,myproduct__pk=product.myproduct.pk).update(
                     fb_id = posted,
                     published = True,
                     published_time = datetime.now()
                 )
-                print("更新page_类目记录 page_pk %s  product_pk %s   photo_id   %s" % (mypage.pk, product.pk, posted))
+                print("更新page_类目记录 page_pk %s  product_pk %s   photo_id   %s" % (mypage.pk, product.myproduct.pk, posted))
                 #print("created is ", created)
                 #print("obj is ", obj)
                 n += 1
                 if n>5:
                     break
             else:
-                MyFbProduct.objects.filter(myproduct__pk=product.pk).update(
+                MyFbProduct.objects.filter(mypage__pk=mypage.pk ,myproduct__pk=product.myproduct.pk).update(
                     published=False,
                     publish_error="发布失败",
                     published_time=datetime.now()
