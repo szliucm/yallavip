@@ -355,7 +355,7 @@ def get_ali_product(offer_id,max_id,tags):
                 #根据图片地址找到shopify 的图片id
                 print("option1", option1)
 
-                option1_img = img_dict[option1]
+                option1_img = img_dict.get(option1)
                 print("img_dict",img_dict)
                 print("image_dict", image_dict)
 
@@ -363,7 +363,7 @@ def get_ali_product(offer_id,max_id,tags):
 
 
 
-                new_image_no = image_dict[option1_img]
+                new_image_no = image_dict.get(option1_img)
 
 
                 sku = handle_new
@@ -411,13 +411,13 @@ def get_ali_product(offer_id,max_id,tags):
             # 根据图片地址找到shopify 的图片id
             print("option2", option2)
 
-            option2_img = img_dict[option2]
+            option2_img = img_dict.get(option2)
             print("img_dict", img_dict)
             print("image_dict", image_dict)
 
             print("option1_img", option2_img)
 
-            new_image_no = image_dict[option2_img]
+            new_image_no = image_dict.get(option2_img)
 
             sku = handle_new
             option1 = option2
