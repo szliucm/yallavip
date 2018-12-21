@@ -306,6 +306,9 @@ def post_to_album():
     from .fb_action import  create_new_album, post_photo_to_album
     from fb.models import MyAlbum
 
+    published_time = datetime.utcnow()
+    return
+
     #选择所有可用的page
     mypages = MyPage.objects.filter(active=True)
     print(mypages)
