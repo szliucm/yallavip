@@ -337,7 +337,7 @@ class MyFbProduct(object):
     list_display = [ "myproduct", "mypage", "cate_code","obj_type", "fb_id", "published", "publish_error", "published_time", ]
     # 'sku_name','img',
 
-    search_fields = ["cate_code", ]
+    search_fields = ["mypage","cate_code","published", "published_time","publish_error",]
     list_filter = [ "mypage", ]
     list_editable = []
     readonly_fields = ()
