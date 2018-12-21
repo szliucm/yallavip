@@ -282,7 +282,12 @@ def product_shopify_to_fb():
             #products_to_add = ShopifyProduct.objects.filter(category_code = cate_code,
             #                                                handle__startswith='a',myfb_product__isnull= True ,)
 
-            products_to_add = ShopifyProduct.objects.raw('SELECT * FROM shop_shopifyproduct  A WHERE  id  NOT  IN  ( SELECT  B.myproduct_id FROM prs_myfbproduct B where mypage_id=%s)',[page.pk])
+             #SELECT * FROM shop_shopifyproduct  A WHERE  category_code = "WOMEN_Bags_Handbags" and handle like 'a%' and id  NOT  IN  ( SELECT  B.myproduct_id FROM prs_myfbproduct B where mypage_id=14) order by created_at desc
+
+            handle_like = 'a%'
+            products_to_add = ShopifyProduct.objects.raw('SELECT * FROM shop_shopifyproduct  A WHERE '
+                                                         'category_code = %s and handle like %s '  
+                                                         'and id  NOT  IN  ( SELECT  B.myproduct_id FROM prs_myfbproduct B where mypage_id=%s) order by published_at desc',[cate_code,handle_like,page.pk])
 
             #products_to_add = ShopifyProduct.objects.filter(category_code = cate_code)
             print("products_to_add", products_to_add)
