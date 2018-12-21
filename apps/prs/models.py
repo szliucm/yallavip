@@ -207,6 +207,7 @@ class MyProductFb(models.Model):
 
     published = models.BooleanField(default=False, verbose_name="发布状态")
     published_time = models.DateTimeField(null=True, blank=True, verbose_name="发布时间")
+    publish_error = models.CharField(default='', max_length=100, null=True, blank=True, verbose_name="发布错误")
 
     def product_fb_no(self):  # 计算字段要显示在修改页面中只能定义在只读字段中(否则不显示):readonly_fields = ('sc',)
 
