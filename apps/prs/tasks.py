@@ -279,7 +279,11 @@ def product_shopify_to_fb():
             print(cate_code)
             #根据品类找未添加到fb产品库的产品
 
-            products_to_add = ShopifyProduct.objects.filter(category_code = cate_code,  handle__startswith='a',myfb_product__isnull= True )
+            #products_to_add = ShopifyProduct.objects.filter(category_code = cate_code,
+            #                                                handle__startswith='a',myfb_product__isnull= True ,)
+
+            products_to_add = ShopifyProduct.objects.raw('SELECT * FROM shop_shopifyproduct  A WHERE  id  NOT  IN  ( SELECT  B.myproduct_id FROM prs_myfbproduct B where mypage_id=%s)',[page.pk])
+
             #products_to_add = ShopifyProduct.objects.filter(category_code = cate_code)
             print("products_to_add", products_to_add)
             #print("products_to_add query", products_to_add.query)
