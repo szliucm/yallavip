@@ -272,7 +272,7 @@ def product_shopify_to_fb():
     for page in pages:
         #遍历page对应的品类
         print("page is ",page)
-        cates = ProductCategoryMypage.objects.filter(mypage = page)
+        cates = ProductCategoryMypage.objects.filter(mypage__pk = page.pk)
         for cate in cates:
             cate_code = cate.productcategory.code
             album_name = cate.album_name
@@ -383,7 +383,7 @@ def post_to_album():
                 MyFbProduct.objects.filter(myproduct__pk=product.pk).update(
                     fb_id = posted,
                     published = True,
-                    published_time = datetime.utcnow()
+                    published_time = datetime.cnow()
                 )
                 #print("更新page_类目记录 %s %s %s" % (mypage, category.productcategory, product.product_no))
                 #print("created is ", created)
@@ -395,7 +395,7 @@ def post_to_album():
                 MyFbProduct.objects.filter(myproduct__pk=product.pk).update(
                     published=False,
                     publish_error="发布失败",
-                    published_time=datetime.utcnow()
+                    published_time=datetime.cnow()
                 )
 
     return
