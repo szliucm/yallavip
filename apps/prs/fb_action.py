@@ -7,7 +7,7 @@ from .video import logo_video
 from django.db.models import Max
 from django.db.models import Q
 import random
-#from datetime import datetime
+from django.utils import timezone as datetime
 
 from django.utils.safestring import mark_safe
 from facebook_business.api import FacebookAdsApi

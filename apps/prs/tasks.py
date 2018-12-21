@@ -392,7 +392,7 @@ def post_to_album():
                 MyFbProduct.objects.filter(myproduct__pk=product.pk).update(
                     fb_id = posted,
                     published = True,
-                    published_time = datetime.cnow()
+                    published_time = datetime.now()
                 )
                 #print("更新page_类目记录 %s %s %s" % (mypage, category.productcategory, product.product_no))
                 #print("created is ", created)
@@ -404,7 +404,7 @@ def post_to_album():
                 MyFbProduct.objects.filter(myproduct__pk=product.pk).update(
                     published=False,
                     publish_error="发布失败",
-                    published_time=datetime.cnow()
+                    published_time=datetime.now()
                 )
 
     return
