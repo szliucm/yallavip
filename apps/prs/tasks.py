@@ -6,7 +6,7 @@ from django.db.models import Q,Count
 import requests
 import json
 import random
-from datetime import datetime
+
 
 
 from .models import *
@@ -378,7 +378,7 @@ def post_to_album():
                 obj, created = MyFbProduct.objects.filter(myproduct__pk=product.pk).update(
                     fb_id = posted,
                     published = True,
-                    published_time = datetime.datetime.utcnow()
+                    published_time = datetime.utcnow()
                 )
                 #print("更新page_类目记录 %s %s %s" % (mypage, category.productcategory, product.product_no))
                 #print("created is ", created)
@@ -390,7 +390,7 @@ def post_to_album():
                 obj, created = MyFbProduct.objects.filter(myproduct__pk=product.pk).update(
                     published=False,
                     publish_error="发布失败",
-                    published_time=datetime.datetime.utcnow()
+                    published_time=datetime.utcnow()
                 )
 
     return
