@@ -315,6 +315,7 @@ def product_shopify_to_fb():
 def post_to_album():
     from .fb_action import  create_new_album, post_photo_to_album
     from fb.models import MyAlbum
+    from django.utils import timezone as datetime
 
 
 
@@ -344,8 +345,9 @@ def post_to_album():
 
         album_list =[]
         for album in albums:
-            if album[1]>0:
-                album_list.append(album[0])
+            if album[1]>0 :
+                if len(album[0])>3:
+                    album_list.append(album[0])
             else:
                 break
 
