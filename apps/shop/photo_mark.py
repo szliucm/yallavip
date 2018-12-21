@@ -230,6 +230,47 @@ def photo_mark(ori_image,  product, price1, price2, targer_page,  type="album" )
 
     return  destination, destination_url
 
+def photo_mark_url(ori_image_url,  product, price1, price2, targer_page,  type="album" ):
+    # 获取远程图片
+    from datetime import  datetime
+
+    image = get_remote_image(ori_image_url)
+
+    if not image:
+        return  False
+
+    # 对图片进行处理
+    ################
+    logo = targer_page.logo
+    promote = targer_page.promote
+    price = targer_page.price
+    print("logo %s promote %s price %s "%(logo,promote,price   ))
+
+    handle = product.handle
+
+
+
+
+
+    image = deal_image(image, logo=logo, handle=handle, price=price, promote=promote,  price1=price1,
+                       price2=price2, type="album")
+
+    #################
+
+    # 处理完的图片保存到本地
+
+    image_filename = handle + '_' + str(datetime.now()) + '_'+ targer_page.page + '.jpg'
+    image_filename = image_filename.replace(' ', '')
+    destination = os.path.join(settings.MEDIA_ROOT, "product/", image_filename)
+
+    print("destination", destination)
+
+    image.save(destination,'JPEG',quality = 95)
+
+    destination_url = domain + os.path.join(settings.MEDIA_URL, "product/", image_filename)
+
+    return  destination, destination_url
+
 def price_for_video(price, price1,price2,destination):
     # 准备画布
     mark = Image.open(price)

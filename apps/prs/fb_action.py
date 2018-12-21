@@ -105,7 +105,7 @@ def sycn_ad_product():
 ######################################
 def post_creative_feed():
     import filetype
-    from shop.photo_mark import  photo_mark
+    from shop.photo_mark import  photo_mark_url
 
     pages = MyPage.objects.filter(active=True)  # .values_list('page_no', flat=True)
     # page_nos = ["358078964734730"]   #for debug
@@ -175,7 +175,7 @@ def post_creative_feed():
             # 发图片post
             if fb.myresource.resource_type == "RAW":
                 #素材需要打标，否则直接发
-                finale, final_url = photo_mark(destination_url, product, price1, price2, page, type="album")
+                finale, final_url = photo_mark_url(destination_url, product, price1, price2, page, type="album")
 
             else:
                 final_url = destination_url
