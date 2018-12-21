@@ -130,6 +130,11 @@ def post_creative_feed():
         local_resource = os.path.join(settings.MEDIA_ROOT, resource)
         kind = filetype.guess(local_resource)
         product = ShopifyProduct.objects.filter(handle=fb.myresource.handle).first()
+        if product is None:
+            print("找不到handle")
+            MyProductFb.objects.filter(pk=fb.pk).update(publish_error="找不到handle对应的产品")
+            continue
+
         max_price = ShopifyVariant.objects.filter(product_no=product.product_no).aggregate(Max("price")).get(
             "price__max")
         if (max_price) is None:
