@@ -7,7 +7,7 @@ from .video import logo_video
 from django.db.models import Max
 from django.db.models import Q
 import random
-from datetime import datetime
+#from datetime import datetime
 
 from django.utils.safestring import mark_safe
 from facebook_business.api import FacebookAdsApi
@@ -379,7 +379,7 @@ from facebook_business.adobjects.adsinsights import AdsInsights
 import  random
 
 import time
-import datetime
+#import datetime
 
 from shop.photo_mark import  photo_mark
 
