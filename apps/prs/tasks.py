@@ -306,7 +306,7 @@ def post_to_album():
     from .fb_action import  create_new_album, post_photo_to_album
     from fb.models import MyAlbum
 
-    published_time = datetime.utcnow()
+
 
 
     #选择所有可用的page
@@ -376,14 +376,13 @@ def post_to_album():
         n = 0
         for product in products:
             posted = post_photo_to_album(mypage, target_album_no, product.myproduct)
-            print("###########################################")
-            print("posted , published_time : " , posted, published_time)
+
 
             if posted:
-                obj, created = MyFbProduct.objects.filter(myproduct__pk=product.pk).update(
+                MyFbProduct.objects.filter(myproduct__pk=product.pk).update(
                     fb_id = posted,
                     published = True,
-                    published_time = published_time
+                    published_time = datetime.utcnow()
                 )
                 #print("更新page_类目记录 %s %s %s" % (mypage, category.productcategory, product.product_no))
                 #print("created is ", created)
@@ -392,10 +391,10 @@ def post_to_album():
                 if n>5:
                     break
             else:
-                obj, created = MyFbProduct.objects.filter(myproduct__pk=product.pk).update(
+                MyFbProduct.objects.filter(myproduct__pk=product.pk).update(
                     published=False,
                     publish_error="发布失败",
-                    published_time=published_time
+                    published_time=datetime.utcnow()
                 )
 
     return
