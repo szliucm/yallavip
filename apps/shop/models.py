@@ -170,6 +170,7 @@ class ShopifyImage(models.Model):
 class ShopifyOptions(models.Model):
     shopifyproduct = models.ForeignKey(ShopifyProduct, related_name='product_options', null=True,
                                        on_delete=models.CASCADE, verbose_name="商品")
+    option_no = models.CharField(u'option_no', default='', max_length=100, blank=True)
     product_no = models.CharField(u'product_no', default='', max_length=100, blank=True)
 
     name = models.CharField(u'option_no', default='', max_length=100, blank=True)

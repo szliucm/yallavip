@@ -196,7 +196,7 @@ def photo_mark(ori_image,  product, price1, price2, targer_page,  type="album" )
     image = get_remote_image(ori_image.src)
 
     if not image:
-        return  False
+        return  None,None
 
     # 对图片进行处理
     ################
@@ -237,7 +237,7 @@ def photo_mark_url(ori_image_url,  product, price1, price2, targer_page,  type="
     image = get_remote_image(ori_image_url)
 
     if not image:
-        return  False
+        return  None,None
 
     # 对图片进行处理
     ################

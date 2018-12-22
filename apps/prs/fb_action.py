@@ -480,7 +480,7 @@ def post_photo_to_album(targer_page,album_no,product ):
     #print("args is  %s %s %s"%(page_no,album_no , product.handle ))
     if myphotos:
         print("photo exist")
-        return False
+        return None
     else:
         print("now we need to create new photos for %s"%(product.handle))
 
@@ -493,7 +493,7 @@ def post_photo_to_album(targer_page,album_no,product ):
     if not ori_images :
 
         print("no image %s"%(product.product_no))
-        return False
+        return None
 
     ori_image = random.choice(ori_images)
 
@@ -516,7 +516,7 @@ def post_photo_to_album(targer_page,album_no,product ):
     image, iamge_url = photo_mark(ori_image ,product,str(price1), str(price2),  targer_page, type="album" )
     if not image:
         print("打水印失败")
-        return False
+        return None
 
     #print("after photo mark", iamge_url)
 

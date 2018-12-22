@@ -83,7 +83,7 @@ def sync_shop(shop, max_product_no =None):
 
 #创建产品主体
 def post_product_main(shop_url, handle_new, product, imgs_list):
-    import demjson
+    #import demjson
 
     params = {
             "product": {
@@ -111,11 +111,11 @@ def post_product_main(shop_url, handle_new, product, imgs_list):
     if r.text is None:
         return  None
 
-#    data = json.loads(r.text)
-    print("r is ", r)
-    print("r.text is ", r.text)
+    data = json.loads(r.text)
+    #print("r is ", r)
+    #print("r.text is ", r.text)
 
-    data = demjson.decode(r.text)
+    #data = demjson.decode(r.text)
     new_product = data.get("product")
     if new_product is None:
         print("post product error data is ", data)
@@ -319,9 +319,11 @@ def post_new_product(shop_obj, product, handle_new ):
     return new_product
 
 #################################
-#####插入shopify产品记录到系统数据库
+#####批量插入shopify产品记录到系统数据库
 ################################
 def insert_product(shop_name, products):
+
+
     for j in range(len(products)):
         product_list = []
         variant_list = []
@@ -330,8 +332,7 @@ def insert_product(shop_name, products):
 
         row = products[j]
 
-        if j == 1:
-            print("row is ", row)
+
 
         product = ShopifyProduct(
             shop_name=shop_name,
@@ -425,6 +426,127 @@ def insert_product(shop_name, products):
         ShopifyImage.objects.bulk_create(image_list)
         ShopifyOptions.objects.bulk_create(option_list)
         ShopifyProduct.objects.bulk_create(product_list)
+
+
+#################################
+#####更新或创建shopify产品记录到系统数据库
+#####传入参数是shopify返回的产品json结构
+################################
+def update_or_create_product(shop_name, products):
+    from django.forms.models import model_to_dict
+
+    for j in range(len(products)):
+
+        row = products[j]
+
+        product = ShopifyProduct(
+            shop_name=shop_name,
+            product_no=row["id"],
+            handle=row["handle"],
+            body_html=row["body_html"],
+            title=row["title"],
+            created_at=row["created_at"],
+
+            updated_at=row["updated_at"],
+            tags=row["tags"],
+            vendor=row["vendor"],
+            product_type=row["product_type"],
+
+        )
+        ShopifyProduct.objects.update_or_create(
+            product_no=product.product_no,
+            defaults=product,
+
+            )
+
+        try:
+
+            for k in range(len(row["variants"])):
+                variant_row = row["variants"][k]
+
+                variant = ShopifyVariant(
+                    variant_no=variant_row["id"],
+                    product_no=variant_row["product_id"],
+                    created_at=variant_row["created_at"],
+                    updated_at=variant_row["updated_at"],
+                    sku=variant_row["sku"],
+                    image_no=variant_row["image_id"],
+                    title=variant_row["title"],
+                    price=variant_row["price"],
+                    option1=variant_row["option1"],
+                    option2=variant_row["option2"],
+                    option3=variant_row["option3"],
+
+                )
+                ShopifyVariant.objects.update_or_create(
+                    variant_no=variant.variant_no,
+                    defaults=variant,
+
+                )
+
+
+        except KeyError:
+            print("no variant ".format(row.shop_name))
+            break
+
+        try:
+
+            for m in range(len(row["images"])):
+                image_row = row["images"][m]
+
+                image = ShopifyImage(
+                    image_no=image_row["id"],
+                    product_no=image_row["product_id"],
+                    created_at=image_row["created_at"],
+                    updated_at=image_row["updated_at"],
+                    position=image_row["position"],
+                    width=image_row["width"],
+                    height=image_row["height"],
+                    src=image_row["src"],
+                    # variant_ids
+
+                )
+                ShopifyImage.objects.update_or_create(
+                    image_no=image.image_no,
+                    defaults=image,
+
+                )
+
+                # print(" variant_list  is ", variant_list)
+        except KeyError:
+            print("no image ".format(row.shop_name))
+            break
+
+        try:
+
+            for n in range(len(row["options"])):
+                option_row = row["options"][n]
+                values = ','.join(option_row["values"])
+
+                # print(" %s length of values %s "%(option_row["product_id"], len(values)))
+
+                option = ShopifyOptions(
+                    option_no = option_row["id"],
+                    product_no=option_row["product_id"],
+                    name=option_row["name"],
+
+                    values=values
+                )
+
+                ShopifyOptions.objects.update_or_create(
+                    option_no=option.option_no,
+                    defaults=option,
+
+                )
+                # print(" variant_list  is ", variant_list)
+        except KeyError:
+            print("no option ".format(row.shop_name))
+            break
+
+        # print(product_list)
+
+
+
 
 
 

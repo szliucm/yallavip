@@ -437,3 +437,52 @@ def sync_album_fbproduct():
                                 publish_error=photos.count(),
                                 published_time=photo.created_time,
                 )
+
+#发布ali产品到shopify
+@shared_task
+def post_ali_shopify():
+    from .shop_action import create_body,create_variant
+    dest_shop = "yallasale-com"
+    # ori_shop = "yallavip-saudi"
+
+    # sync_shop(ori_shop)
+    sync_shop(dest_shop)
+    shop_obj = Shop.objects.get(shop_name=dest_shop)
+    max_id = shop_obj.max_id
+
+    print("max_id ", max_id)
+
+    n = 1
+    aliproducts = AliProduct.objects.filter(published=False)
+    for aliproduct in aliproducts:
+        vendor_no = aliproduct.offer_id
+        print("vendor_no", vendor_no)
+
+        dest_product = ShopifyProduct.objects.filter(shop_name=dest_shop, vendor=vendor_no).first()
+
+        if dest_product:
+            print("这个产品已经发布过了！！！！", vendor_no)
+            AliProduct.objects.filter(pk=aliproduct.pk).update(published=True, handle=dest_product.handle,
+                                                                 product_no=dest_product.product_no,published_time=datetime.now())
+
+            continue
+
+        shopifyproduct = create_body(aliproduct, max_id+n)
+        if shopifyproduct is not None:
+            posted = create_variant(aliproduct, shopifyproduct)
+            if posted is not None:
+                print("创建新产品成功")
+                AliProduct.objects.filter(pk=aliproduct.pk).update(published=True, handle=dest_product.handle,
+                                                                 product_no=dest_product.product_no,published_time=datetime.now())
+            else:
+                print("创建新产品变体失败")
+                AliProduct.objects.filter(pk=aliproduct.pk).update(publish_error="创建新产品变体失败",
+                                                                   published_time=datetime.now())
+                continue
+
+        else:
+            print("创建新产品失败")
+            AliProduct.objects.filter(pk=aliproduct.pk).update(publish_error="创建新产品失败",published_time=datetime.now())
+            continue
+
+

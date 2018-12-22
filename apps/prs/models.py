@@ -327,3 +327,28 @@ class MyFbProduct(models.Model):
     def __str__(self):
 
         return  str(self.pk)
+
+class AliProduct(models.Model):
+    offer_id = models.CharField(default='',max_length=300, null=True, blank=True, verbose_name="编号")
+    title = models.CharField(default='',max_length=300, null=True, blank=True, verbose_name="标题")
+    cate_code =  models.CharField(default='',max_length=300, null=True, blank=True, verbose_name="品类")
+
+    images = models.TextField(default='', null=True, blank=True, verbose_name="图片")
+    options = models.TextField(default='', null=True, blank=True, verbose_name="属性")
+    image_dict = models.TextField(default='', null=True, blank=True, verbose_name="图片字典")
+    price_dict = models.TextField(default='', null=True, blank=True, verbose_name="价格字典")
+    #variants = models.TextField(default='', null=True, blank=True, verbose_name="变体")
+
+    product_no = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="product_no")
+    handle = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="货号")
+    published = models.BooleanField(default=False, verbose_name="发布状态")
+    publish_error = models.CharField(default='', max_length=100, null=True, blank=True, verbose_name="发布错误(或图片数量)")
+    published_time = models.DateTimeField(null=True, blank=True, verbose_name="发布时间")
+
+    class Meta:
+        verbose_name = "ali产品信息"
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+
+        return  str(self.pk)
