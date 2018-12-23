@@ -27,7 +27,7 @@ def baidu_translate(content,fromLang ='zh',toLang='en'):
     secretKey = 's6Kv6Lq3zyqz2YzqXMlC'
     httpClient = None
     myurl = '/api/trans/vip/translate'
-    q = content
+    q = str(content)
     #fromLang = 'zh'  # 源语言
     #toLang = 'en'  # 翻译后的语言
     salt = random.randint(32768, 65536)
