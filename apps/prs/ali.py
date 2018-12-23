@@ -50,11 +50,14 @@ def request(url):
     r = r.get(url, headers=header(), allow_redirects=False)
     return r
 
+from .fanyi import  baidu_translate
 def fanyi(data):
-    return requests.post('https://fanyi.baidu.com/transapi', data={"query": data, 'from': 'zh', 'to': 'en'}).json()['data'][0]['dst']
+    return baidu_translate(data,"zh","en")
+    #return requests.post('https://fanyi.baidu.com/transapi', data={"query": data, 'from': 'zh', 'to': 'en'}).json()['data'][0]['dst']
 
 def fanyi_en(data):
-    return requests.post('https://fanyi.baidu.com/transapi', data={"query": data, 'from': 'en', 'to': 'zh'}).json()['data'][0]['dst']
+    return baidu_translate(data,"en","zh")
+    #return requests.post('https://fanyi.baidu.com/transapi', data={"query": data, 'from': 'en', 'to': 'zh'}).json()['data'][0]['dst']
 def ali_list(html):
     '''
     import http.client
