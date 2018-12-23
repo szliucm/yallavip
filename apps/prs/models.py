@@ -68,11 +68,11 @@ class MyProductAli(models.Model):
 
     url = models.CharField(default='',max_length=300, null=True, blank=True, verbose_name="1688链接")
 
-    listing = models.BooleanField(default=False, verbose_name="已上架")
+    listing = models.BooleanField(default=False, verbose_name="获取1688产品信息")
     posted_mainshop = models.BooleanField(default=False, verbose_name="上架到主站")
     product_no = models.CharField(default='',max_length=300, null=True, blank=True, verbose_name="product_no")
     handle = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="货号")
-    post_error = models.BooleanField(default=False, verbose_name="发布到主站失败")
+    post_error = models.BooleanField(default=False, verbose_name="错误信息")
 
 
     active  = models.BooleanField(default=True, verbose_name="可用")

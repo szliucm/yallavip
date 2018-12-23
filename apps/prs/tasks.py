@@ -496,8 +496,11 @@ def get_ali_list():
     for aliproduct in aliproducts:
         offer_id = aliproduct.url.partition(".html")[0].rpartition("/")[2]
         cate_code = aliproduct.myproductcate.code
-        get_ali_product_info(offer_id, cate_code)
-        MyProductAli.objects.filter(pk=aliproduct.pk).update(posted_mainshop=True)
+        message,status=get_ali_product_info(offer_id, cate_code)
+        if status:
+            MyProductAli.objects.filter(pk=aliproduct.pk).update(posted_mainshop=True)
+        else:
+            MyProductAli.objects.filter(pk=aliproduct.pk).update(post_error=message)
 
 
 

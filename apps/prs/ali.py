@@ -142,7 +142,7 @@ def get_ali_product_info(offer_id,cate_code):
         title = fanyi(title_ori)
     else:
         print("title is empty")
-        return False
+        return "title is empty",False
 
     # 取主图
     #imgs_list = []
@@ -333,6 +333,7 @@ def get_ali_product_info(offer_id,cate_code):
 
         }
     )
+    return "", True
 
 
 
@@ -1094,6 +1095,14 @@ def crawle(key,page):
             get_more_page(key,page)
 
 def get_ali_list(url):
+    chrome_options = Options()
+    chrome_options.add_argument('--headless')  # 16年之后，chrome给出的解决办法，抢了PhantomJS饭碗
+    chrome_options.add_argument('--disable-gpu')
+    chrome_options.add_argument('--no-sandbox')  # root用户不加这条会无法运行
+
+    browser = webdriver.Chrome(options=chrome_options)
+    wait = WebDriverWait(browser, 15)
+
     print("url is ", url)
 
     browser.get(url=url)
@@ -1136,8 +1145,9 @@ def get_ali_list(url):
         print('*'*30,'超时加载','*'*30,'\n\n\n')
 
     print("获取产品数据")
-
-    return  ali_list(browser.page_source)
+    print(type(browser.page_source),browser.page_source)
+    return
+    #return  ali_list(browser.page_source)
     '''
     if page>1:
         for page in range(2,page+1):
@@ -1322,12 +1332,15 @@ def create_variant(aliproduct, shopifyproduct):
             for option2 in option_list[1].get("values"):
                 # 根据规格-图片地址 字典 找到ali_image_no
                 #根据ali_iamge_no 找到shopify image_no
-                ali_image_no = ali_image_dict.get(option1)
-                print("option image_no", option1, ali_image_no)
-                if ali_image_no < len(shopify_images):
-                    shopify_image_no = shopify_images[ali_image_no].get("id")
-                else:
+                ali_image_no = ali_image_dict.get(option1,None)
+                if aliproduct is None:
                     shopify_image_no = None
+                else:
+                    print("option image_no", option1, ali_image_no)
+                    if ali_image_no < len(shopify_images):
+                        shopify_image_no = shopify_images[ali_image_no].get("id")
+                    else:
+                        shopify_image_no = None
 
 
                 sku = shopifyproduct.get("handle")
@@ -1379,11 +1392,14 @@ def create_variant(aliproduct, shopifyproduct):
             # 根据规格-图片地址 字典 找到ali_image_no
             # 根据ali_iamge_no 找到shopify image_no
             ali_image_no = ali_image_dict.get(option1)
-            print("option image_no", option1, ali_image_no)
-            if ali_image_no < len(shopify_images) :
-                shopify_image_no = shopify_images[ali_image_no].get("id")
-            else:
+            if aliproduct is None:
                 shopify_image_no = None
+            else:
+                print("option image_no", option1, ali_image_no)
+                if ali_image_no < len(shopify_images) :
+                    shopify_image_no = shopify_images[ali_image_no].get("id")
+                else:
+                    shopify_image_no = None
 
             sku = sku = shopifyproduct.get("handle")
             #option1 = option1
