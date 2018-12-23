@@ -316,7 +316,11 @@ def get_ali_product_info(offer_id,cate_code):
     option_list.append(option)
     print("option_list \n", option_list)
 
-
+    #找到最大价格
+    maxprice = 0
+    for price in price_dict.values():
+        if price>maxprice:
+            maxprice = price
 
     AliProduct.objects.update_or_create(
         offer_id= offer_id,
@@ -327,6 +331,7 @@ def get_ali_product_info(offer_id,cate_code):
             'options': json.dumps(option_list),
             'image_dict': json.dumps(img_dict),
             'price_dict': json.dumps(price_dict),
+            "maxprice":maxprice,
             'price_rate' : random.uniform(3, 4),
             "created" : True,
             "created_error": "",

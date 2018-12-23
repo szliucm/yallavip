@@ -508,7 +508,7 @@ def get_ali_list():
 def ali_cate_get_list():
     from .chrome import get_ali_list
     from shop.models import ProductCategory
-    cates = ProductCategory.objects.filter(ali_list_link__isnull=False)
+    cates = ProductCategory.objects.filter(~Q(ali_list_link=""),ali_list_link__isnull=False,)
 
     print("beging to scan  cate")
     for cate in cates:
@@ -540,9 +540,7 @@ def ali_list_get_info():
         offer_id = aliproduct.offer_id
         cate_code = aliproduct.cate_code
         message,status=get_ali_product_info(offer_id, cate_code)
-        if status:
-            AliProduct.objects.filter(pk=aliproduct.pk).update(created=True,created_time=datetime.now())
-        else:
+        if status is False:
             AliProduct.objects.filter(pk=aliproduct.pk).update(created_error=message)
 
 
