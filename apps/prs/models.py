@@ -330,9 +330,9 @@ class MyFbProduct(models.Model):
 
 class AliProduct(models.Model):
     offer_id = models.CharField(default='',max_length=300, null=True, blank=True, verbose_name="编号")
-    title = models.CharField(default='',max_length=300, null=True, blank=True, verbose_name="标题")
-    cate_code =  models.CharField(default='',max_length=300, null=True, blank=True, verbose_name="品类")
+    cate_code = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="品类")
 
+    title = models.CharField(default='',max_length=300, null=True, blank=True, verbose_name="标题")
     images = models.TextField(default='', null=True, blank=True, verbose_name="图片")
     options = models.TextField(default='', null=True, blank=True, verbose_name="属性")
     image_dict = models.TextField(default='', null=True, blank=True, verbose_name="图片字典")
@@ -341,7 +341,9 @@ class AliProduct(models.Model):
 
     product_no = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="product_no")
     handle = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="货号")
-    price_rate = models.FloatField(u'价格系数', default=0, blank=True, null=True)
+    maxprice = models.IntegerField(u'价格基数', default=0, blank=True, null=True)
+    price_rate = models.DecimalField(u'价格系数',max_digits=2,decimal_places=1,default=0,)
+
     created = models.BooleanField(default=False, verbose_name="创建状态")
     created_error = models.CharField(default='', max_length=100, null=True, blank=True, verbose_name="创建错误(或图片数量)")
     created_time = models.DateTimeField(null=True, blank=True, verbose_name="创建时间")

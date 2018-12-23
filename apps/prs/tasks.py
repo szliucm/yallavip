@@ -316,7 +316,7 @@ def product_shopify_to_fb():
 def post_to_album():
     from .fb_action import  create_new_album, post_photo_to_album
     from fb.models import MyAlbum
-    from django.utils import timezone as datetime
+
 
 
 
@@ -417,7 +417,7 @@ def post_to_album():
 @shared_task
 def sync_album_fbproduct():
     from fb.models import MyPhoto
-    from django.utils import timezone as datetime
+
 
     #选择所有可用的page
     mypages = MyPage.objects.filter(active=True)
@@ -442,7 +442,7 @@ def sync_album_fbproduct():
 @shared_task
 def post_ali_shopify():
     from .ali import create_body,create_variant
-    from django.utils import timezone as datetime
+
     dest_shop = "yallasale-com"
     # ori_shop = "yallavip-saudi"
 
@@ -501,6 +501,61 @@ def get_ali_list():
             MyProductAli.objects.filter(pk=aliproduct.pk).update(posted_mainshop=True)
         else:
             MyProductAli.objects.filter(pk=aliproduct.pk).update(post_error=message)
+
+
+#1.根据类目抓取1688产品列表(offerid,cate_code)
+@shared_task
+def ali_cate_get_list():
+    from .chrome import get_ali_list
+    from shop.models import ProductCategory
+    cates = ProductCategory.objects.filter(ali_list_link__isnull=False)
+
+    print("beging to scan  cate")
+    for cate in cates:
+
+        url = cate.ali_list_link
+        print("url is ", url)
+        if url is None or len(url) < 10:
+            continue
+        vendor_list = get_ali_list(url)
+
+        for vendor_no in vendor_list:
+            AliProduct.objects.update_or_create(
+                offer_id=vendor_no,
+                defaults={
+                    "cate_code": cate.code
+                }
+            )
+    return
+
+#2,根据1688产品列表抓取产品详细信息（标题，规格，图片，价格）
+@shared_task
+def ali_list_get_info():
+    from .ali import get_ali_product_info
+
+    aliproducts = AliProduct.objects.filter(created=False)
+    print("一共有%d 个1688产品信息待抓取"%(aliproducts.count()))
+
+    for aliproduct in aliproducts:
+        offer_id = aliproduct.offer_id
+        cate_code = aliproduct.cate_code
+        message,status=get_ali_product_info(offer_id, cate_code)
+        if status:
+            AliProduct.objects.filter(pk=aliproduct.pk).update(created=True,created_time=datetime.now())
+        else:
+            AliProduct.objects.filter(pk=aliproduct.pk).update(created_error=message)
+
+
+
+#3,将1688产品详细信息发布到shopfiy店铺
+#4,将shopify产品发布到相册
+#5,爆款生成动图发布到feed
+#6,创意发布到feed
+#7,
+
+
+
+
 
 
 

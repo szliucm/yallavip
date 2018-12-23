@@ -15,6 +15,7 @@ chrome_options.add_argument('--no-sandbox')  # root用户不加这条会无法�
 chrome_options.add_argument('blink-settings=imagesEnabled=false')
 
 
+
 browser = webdriver.Chrome(options=chrome_options)
 wait = WebDriverWait(browser, 15)
 

@@ -1,4 +1,4 @@
-import json,time,datetime,requests,random
+import json,time,requests,random
 #import pymysql,re
 from prettytable import PrettyTable
 from bs4 import BeautifulSoup
@@ -6,6 +6,7 @@ from multiprocessing import Process
 import  re
 import requests
 from lxml import etree
+from django.utils import timezone as datetime
 
 
 
@@ -1333,7 +1334,7 @@ def create_variant(aliproduct, shopifyproduct):
                 # 根据规格-图片地址 字典 找到ali_image_no
                 #根据ali_iamge_no 找到shopify image_no
                 ali_image_no = ali_image_dict.get(option1,None)
-                if aliproduct is None:
+                if ali_image_no is None:
                     shopify_image_no = None
                 else:
                     print("option image_no", option1, ali_image_no)
@@ -1392,7 +1393,7 @@ def create_variant(aliproduct, shopifyproduct):
             # 根据规格-图片地址 字典 找到ali_image_no
             # 根据ali_iamge_no 找到shopify image_no
             ali_image_no = ali_image_dict.get(option1)
-            if aliproduct is None:
+            if ali_image_no is None:
                 shopify_image_no = None
             else:
                 print("option image_no", option1, ali_image_no)

@@ -346,12 +346,16 @@ class MyFbProductAdmin(object):
 
 @xadmin.sites.register(AliProduct)
 class AliProductAdmin(object):
+    def price_try(self, obj):
+        return obj.maxprice * obj.price_rate
 
-    list_display = [ "offer_id", "handle","price_rate" ,"title", "cate_code","created","published", ]
+    price_try.short_description = "价格试算"
+
+    list_display = [ "offer_id", "handle","maxprice","price_rate" ,"title", "cate_code","created","published", ]
     # 'sku_name','img',
 
     search_fields = ["offer_id","handle"]
     list_filter = ["created","published",]
-    list_editable = []
+    list_editable = ["price_rate",]
     readonly_fields = ()
     actions = []
