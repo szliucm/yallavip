@@ -319,8 +319,8 @@ def get_ali_product_info(offer_id,cate_code):
     #找到最大价格
     maxprice = 0
     for price in price_dict.values():
-        if price>maxprice:
-            maxprice = price
+        if float(price)>maxprice:
+            maxprice = float(price)
 
     AliProduct.objects.update_or_create(
         offer_id= offer_id,
