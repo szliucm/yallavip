@@ -453,7 +453,7 @@ def post_ali_shopify():
 
     print("max_id ", max_id)
 
-    n = 1
+    n = 0
     aliproducts = AliProduct.objects.filter(published=False)
     for aliproduct in aliproducts:
         vendor_no = aliproduct.offer_id
@@ -467,7 +467,7 @@ def post_ali_shopify():
                                                                  product_no=dest_product.product_no,published_time=datetime.now())
 
             continue
-
+        n += 1
         shopifyproduct = create_body(aliproduct, max_id+n)
         if shopifyproduct is not None:
             posted = create_variant(aliproduct, shopifyproduct)
@@ -491,11 +491,13 @@ def post_ali_shopify():
 def get_ali_list():
     from .ali import get_ali_product_info
     aliproducts = MyProductAli.objects.filter(posted_mainshop=False, active=True)
+    print("一共有%d 个1688链接待处理"%(aliproducts.count()))
 
     for aliproduct in aliproducts:
         offer_id = aliproduct.url.partition(".html")[0].rpartition("/")[2]
         cate_code = aliproduct.myproductcate.code
         get_ali_product_info(offer_id, cate_code)
+        MyProductAli.objects.filter(pk=aliproduct.pk).update(posted_mainshop=True)
 
 
 

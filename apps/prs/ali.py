@@ -248,7 +248,7 @@ def get_ali_product_info(offer_id,cate_code):
     option2_content = div_sku.xpath('.//tr')
     # print("option2_content *****************", etree.tostring(option2_content))
     for div in option2_content:
-        print("type  div", type(div), etree.tostring(div))
+        #print("type  div", type(div), etree.tostring(div))
         # 有两种情况，一种是名字含图片(not leading )，一种是不含图片的(有leading)
         option2_img = None
         if leading:
@@ -720,7 +720,7 @@ def list_ali_product(offer_id,  max_id, shop_obj):
     divs = htmlEmt.xpath('//ul[@class="nav nav-tabs fd-clr"]/li/@data-imgs')
     image_no = 0
     for div in divs:
-        print("type  div", type(div), div)
+        #print("type  div", type(div), div)
         imgs = json.loads(div)
         image = {
             "src": imgs["original"],
@@ -1343,7 +1343,7 @@ def create_variant(aliproduct, shopifyproduct):
                             sku = sku + "_" + option3.replace("&", '').replace('-', '').replace('.', '').replace(' ',
                                                                                                                  '')
 
-                price = float(ali_price_dict.get(option2)) * price_rate
+                price = float(ali_price_dict.get(option2,0)) * price_rate
                 if price == 0:
                     print("没有价格")
                     continue
@@ -1389,7 +1389,7 @@ def create_variant(aliproduct, shopifyproduct):
             #option1 = option1
             option2 = None
             option3 = None
-            price = float(ali_price_dict.get(option1)) * price_rate
+            price = float(ali_price_dict.get(option1,0)) * price_rate
             if price == 0:
                 print("没有价格")
                 continue
