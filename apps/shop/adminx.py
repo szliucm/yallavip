@@ -637,7 +637,7 @@ class ShopifyProductAdmin(object):
     list_display = ['shop_name', 'product_no','listing_status','supply_status', 'handle','category_code', 'created_at', "updated_at", "listed", "title"]
     # 'sku_name','img',
 
-    search_fields = ["handle", "product_no"]
+    search_fields = ["handle", "product_no","vendor",]
     list_filter = ['shop_name', 'listed', "created_at", "tags","category_code"]
     list_editable = ['listing_status','supply_status',]
     actions = [ "download_product", "delete_product","update_cate",]#"list_product"]

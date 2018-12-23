@@ -333,13 +333,25 @@ class MyProductCategoryAdmin(object):
 
 
 @xadmin.sites.register(MyFbProduct)
-class MyFbProduct(object):
+class MyFbProductAdmin(object):
 
     list_display = [ "myproduct", "mypage", "cate_code","obj_type", "fb_id", "published", "publish_error", "published_time", ]
     # 'sku_name','img',
 
     search_fields = ["mypage","myproduct"]
     list_filter = ["mypage","cate_code","published", "published_time","publish_error",]
+    list_editable = []
+    readonly_fields = ()
+    actions = []
+
+@xadmin.sites.register(AliProduct)
+class AliProductAdmin(object):
+
+    list_display = [ "offer_id", "handle","price_rate" ,"title", "cate_code","created","published", ]
+    # 'sku_name','img',
+
+    search_fields = ["offer_id","handle"]
+    list_filter = ["created","published",]
     list_editable = []
     readonly_fields = ()
     actions = []

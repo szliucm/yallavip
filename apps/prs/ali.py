@@ -117,6 +117,7 @@ def ali_list(html):
 #获取1688产品信息
 def get_ali_product_info(offer_id,cate_code):
     from .models import AliProduct
+    from django.utils import timezone as datetime
 
     product = AliProduct()
     product.offer_id = offer_id
@@ -144,7 +145,8 @@ def get_ali_product_info(offer_id,cate_code):
         return False
 
     # 取主图
-    imgs_list = []
+    #imgs_list = []
+    images_list = []
     image_no = 0
 
     divs = htmlEmt.xpath('//ul[@class="nav nav-tabs fd-clr"]/li/@data-imgs')
@@ -153,12 +155,17 @@ def get_ali_product_info(offer_id,cate_code):
         # print("type  div", type(div), div)
         imgs = json.loads(div)
         if imgs:
+            '''
             image = {
                 "src": imgs["original"],
                 "image_no": image_no
             }
             imgs_list.append(image)
+            
             image_no += 1
+            '''
+            images_list.append(imgs["original"])
+
 
     option_list = []
 
@@ -189,6 +196,10 @@ def get_ali_product_info(offer_id,cate_code):
             else:
                 continue
 
+            if option1_name_en in option_list:
+                option1_name_en = option1_name_en + "_" + str(len(option_list))
+            option1_list.append(option1_name_en)
+
             data_imgs = div.attrib.get('data-imgs')
             if data_imgs:
                 data_imgs = json.loads(data_imgs)
@@ -196,21 +207,28 @@ def get_ali_product_info(offer_id,cate_code):
                 print("image is ", option1_img)
 
                 # 规格图片如果不在主图里，也插进列表
-                if option1_img not in imgs_list:
+                if option1_img not in images_list:
+                    images_list.append(option1_img)
+                    '''
                     image = {
                         "src": option1_img,
                         "image_no": image_no
                     }
                     imgs_list.append(image)
+                    option_image_no = image_no
                     image_no += 1
-
+                else:
+                    option_image_no = images_list.index(option1_img)
+                '''
                 # 规格-图片地址 字典
-                img_dict[option1_name_en] = option1_img
+                img_dict[option1_name_en] = images_list.index(option1_img)
+
+
             else:
                 option1_img = None
                 print("no data image")
 
-            option1_list.append(option1_name_en)
+
 
         option = {
             "name": fanyi(option1),
@@ -238,6 +256,8 @@ def get_ali_product_info(offer_id,cate_code):
             option2_img = None
         else:
             option2_name = div.find('.//td[@class="name"]/span').attrib.get('title')
+
+
             option2_imgs = div.find('.//td[@class="name"]/span').attrib.get('data-imgs')
             if option2_imgs:
                 data_imgs = json.loads(option2_imgs)
@@ -245,14 +265,18 @@ def get_ali_product_info(offer_id,cate_code):
                 print("image is ", option2_img)
 
                 # 规格图片如果不在主图里，也插进列表
-                if option2_img not in imgs_list:
+                if option2_img not in images_list:
+                    images_list.append(option2_img)
+                    '''
                     image = {
                         "src": option2_img,
                         "image_no": image_no
                     }
                     imgs_list.append(image)
                     image_no += 1
+                    '''
 
+        #不管有没有leading，都有名字要处理，但是只有无leading的，才有规格图片字典
         if option2_name:
             if option2_name.isdigit():
                 option2_name_en = option2_name
@@ -262,9 +286,15 @@ def get_ali_product_info(offer_id,cate_code):
             print("没有规格")
             continue
 
+        print("###############", option2_name_en, option2_list)
+        if option2_name_en in option2_list:
+            option2_name_en = option2_name_en + "_" + str(len(option2_list))
+
+        option2_list.append(option2_name_en)
+
         # 规格-图片地址 字典
         if option2_img is not None:
-            img_dict[option2_name_en] = option2_img
+            img_dict[option2_name_en] = images_list.index(option2_img)
 
         price = div.find('.//td[@class="price"]/span/em').text
         count = div.find('.//td[@class="count"]/span/em[1]').text
@@ -273,7 +303,7 @@ def get_ali_product_info(offer_id,cate_code):
             print("没有库存")
             continue
 
-        option2_list.append(option2_name_en)
+
         price_dict[option2_name_en] = price
 
     option = {
@@ -292,10 +322,15 @@ def get_ali_product_info(offer_id,cate_code):
         defaults={
             'title' : title,
             'cate_code': cate_code,
-            'images': json.dumps(imgs_list),
+            'images': json.dumps(images_list),
             'options': json.dumps(option_list),
             'image_dict': json.dumps(img_dict),
             'price_dict': json.dumps(price_dict),
+            'price_rate' : random.uniform(3, 4),
+            "created" : True,
+            "created_error": "",
+            "created_time": datetime.now()
+
         }
     )
 
@@ -998,6 +1033,7 @@ from selenium.webdriver.common.by import By
 
 
 import time
+'''
 chrome_options = Options()
 chrome_options.add_argument('--headless')  # 16年之后，chrome给出的解决办法，抢了PhantomJS饭碗
 chrome_options.add_argument('--disable-gpu')
@@ -1005,7 +1041,7 @@ chrome_options.add_argument('--no-sandbox')  # root用户不加这条会无法�
 
 browser = webdriver.Chrome(options=chrome_options)
 wait=WebDriverWait(browser,15)
-
+'''
 def crawle(key,page):
     url='https://www.1688.com/'
     browser.get(url=url)
@@ -1165,7 +1201,7 @@ def create_body(aliproduct, max_id):
     ############可以发布主产品了
     #############################
     from shop.models import Shop, ShopifyProduct
-    from prs.shop_action import post_product_main,  insert_product
+    from prs.shop_action import post_product_main,   update_or_create_product
 
 
 
@@ -1176,6 +1212,17 @@ def create_body(aliproduct, max_id):
 
     handle_new = 'a' + str(max_id)
 
+    shopify_images = []
+    #image_no = 0
+
+    for image in json.loads(aliproduct.images):
+        image = {
+            "src": image,
+            #"image_no": image_no
+        }
+        shopify_images.append(image)
+        #image_no += 1
+
 
     params = {
         "product": {
@@ -1185,9 +1232,9 @@ def create_body(aliproduct, max_id):
             "vendor": aliproduct.offer_id,
             "product_type": "auto",
             "tags": aliproduct.cate_code.replace("_", ","),
-            "images": json.loads(aliproduct.images),
+            "images": shopify_images,
             # "variants": variants_list,
-            "options": json.loads(aliproduct.options),
+            #"options": json.loads(aliproduct.options),
         }
     }
     headers = {
@@ -1197,13 +1244,28 @@ def create_body(aliproduct, max_id):
     }
     # 初始化SDK
     # shop_obj = Shop.objects.get(shop_name=shop_name)
+
+
     url = shop_url + "/admin/products.json"
+
+
+    print("开始创建主体")
+    print(url, json.dumps(params))
+
+
 
     r = requests.post(url, headers=headers, data=json.dumps(params))
     if r.text is None:
         return None
-
-    data = json.loads(r.text)
+    try:
+        data = json.loads(r.text)
+        print("创建的新产品",r, data)
+    except:
+        print("创建产品主体失败")
+        print(url, json.dumps(params))
+        print(r)
+        print(r.text)
+        return None
     # print("r is ", r)
     # print("r.text is ", r.text)
 
@@ -1214,43 +1276,35 @@ def create_body(aliproduct, max_id):
         products = []
         products.append(new_product)
         # 插入到系统数据库
-        insert_product(shop_obj.shop_name, products)
-
+        #insert_product(shop_obj.shop_name, products)
+        update_or_create_product(shop_obj.shop_name, products)
         # 修改handle最大值
         Shop.objects.filter(shop_name=shop_obj.shop_name).update(max_id=max_id)
 
         print("产品主体发布成功！！！！")
-        print(type(new_product),  new_product.get("id"))
+        #print(type(new_product),  new_product)
         return new_product
 
     else:
 
         print("产品主体发布失败！！！！")
+        print(data)
         return None
 
 
 def create_variant(aliproduct, shopifyproduct):
-    from prs.shop_action import post_product_variant,insert_product
+    from prs.shop_action import post_product_variant,update_or_create_product
     from shop.models import Shop, ShopifyProduct
     #################################
     # 新创建的主图信息，创建变体需要
     #################################
-    image_dict = {}
-    imgs_list = json.loads(aliproduct.images),
-    new_images = shopifyproduct.images
 
-    print("new_images", new_images)
+    shopify_images = shopifyproduct.get("images")
 
-    for k in range(len(new_images)):
-        new_image_no = new_images[k]["id"]
 
-        if k <len(imgs_list):
-            ali_image_src = imgs_list[k]["src"]
-
-            # 原图片对应shopify的id
-            image_dict[ali_image_src] = new_image_no
-
-        # print("old image %s new image %s"%(old_image_no, new_image_no ))
+    #print("aliproduct", aliproduct)
+    #print("shopifyproduct", shopifyproduct)
+    print("shopify_images", shopify_images)
 
     ###################################
     # 创建变体
@@ -1260,23 +1314,23 @@ def create_variant(aliproduct, shopifyproduct):
     ali_price_dict = json.loads(aliproduct.price_dict)
     position = 0
     variants_list = []
+    price_rate = aliproduct.price_rate
+    price_compare_rate = random.uniform(2, 4)
     if len(option_list)==2 :
 
         for option1 in option_list[0].get("values"):
             for option2 in option_list[1].get("values"):
-                # 根据规格-图片地址 字典 找到图片地址
-                #根据图片地址找到shopify 的图片id
-                #print("option1", option1)
-
-                option1_img = ali_image_dict.get(option1)
-                #print("img_dict",img_dict)
-                #print("image_dict", image_dict)
-
-                #print("option1_img", option1_img)
-                new_image_no = image_dict.get(option1_img)
+                # 根据规格-图片地址 字典 找到ali_image_no
+                #根据ali_iamge_no 找到shopify image_no
+                ali_image_no = ali_image_dict.get(option1)
+                print("option image_no", option1, ali_image_no)
+                if ali_image_no < len(shopify_images):
+                    shopify_image_no = shopify_images[ali_image_no].get("id")
+                else:
+                    shopify_image_no = None
 
 
-                sku = shopifyproduct.handle
+                sku = shopifyproduct.get("handle")
                 #option1 = option1
                 #option2 = option2
                 option3 = None
@@ -1289,7 +1343,7 @@ def create_variant(aliproduct, shopifyproduct):
                             sku = sku + "_" + option3.replace("&", '').replace('-', '').replace('.', '').replace(' ',
                                                                                                                  '')
 
-                price = float(ali_price_dict.get("option1")) * random.uniform(3, 5)
+                price = float(ali_price_dict.get(option2)) * price_rate
                 if price == 0:
                     print("没有价格")
                     continue
@@ -1299,10 +1353,10 @@ def create_variant(aliproduct, shopifyproduct):
                     "option2": option2,
                     "option3": option3,
                     "price": int(price),
-                    "compare_at_price": int(price* random.uniform(2, 3)),
+                    "compare_at_price": int(price* price_compare_rate),
                     "sku": sku,
                     "position": position,
-                    "image_id": new_image_no,
+                    "image_id": shopify_image_no,
                     "grams": 0,
                     "title": sku,
                     "taxable": "true",
@@ -1322,23 +1376,20 @@ def create_variant(aliproduct, shopifyproduct):
 
     elif len(option_list)==1:
         for option1 in option_list[0].get("values"):
-            # 根据规格-图片地址 字典 找到图片地址
-            # 根据图片地址找到shopify 的图片id
-            print("option2", option1)
+            # 根据规格-图片地址 字典 找到ali_image_no
+            # 根据ali_iamge_no 找到shopify image_no
+            ali_image_no = ali_image_dict.get(option1)
+            print("option image_no", option1, ali_image_no)
+            if ali_image_no < len(shopify_images) :
+                shopify_image_no = shopify_images[ali_image_no].get("id")
+            else:
+                shopify_image_no = None
 
-            option1_img = ali_image_dict.get(option1)
-            #print("img_dict", img_dict)
-            #print("image_dict", image_dict)
-
-            #print("option1_img", option2_img)
-
-            new_image_no = image_dict.get(option1_img)
-
-            sku = sku = shopifyproduct.handle
+            sku = sku = shopifyproduct.get("handle")
             #option1 = option1
             option2 = None
             option3 = None
-            price = float(ali_price_dict.get("option1")) * random.uniform(3, 5)
+            price = float(ali_price_dict.get(option1)) * price_rate
             if price == 0:
                 print("没有价格")
                 continue
@@ -1355,11 +1406,11 @@ def create_variant(aliproduct, shopifyproduct):
                 "option1": option1,
                 "option2": option2,
                 "option3": option3,
-                "price": price,
-                "compare_at_price": int(price * random.uniform(2, 3)),
+                "price": int(price),
+                "compare_at_price": int(price * price_compare_rate),
                 "sku": sku,
                 "position": position,
-                "image_id": new_image_no,
+                "image_id": shopify_image_no,
                 "grams": 0,
                 "title": sku,
                 "taxable": "true",
@@ -1386,7 +1437,9 @@ def create_variant(aliproduct, shopifyproduct):
         products = []
         products.append(new_product)
         # 插入到系统数据库
-        insert_product(shop_obj.shop_name, products)
+        #insert_product(shop_obj.shop_name, products)
+        update_or_create_product(shop_obj.shop_name, products)
+
 
         print("产品变体发布成功！！！！")
         print(type(new_product),  new_product.get("id"))

@@ -441,7 +441,8 @@ def sync_album_fbproduct():
 #发布ali产品到shopify
 @shared_task
 def post_ali_shopify():
-    from .shop_action import create_body,create_variant
+    from .ali import create_body,create_variant
+    from django.utils import timezone as datetime
     dest_shop = "yallasale-com"
     # ori_shop = "yallavip-saudi"
 
@@ -472,8 +473,8 @@ def post_ali_shopify():
             posted = create_variant(aliproduct, shopifyproduct)
             if posted is not None:
                 print("创建新产品成功")
-                AliProduct.objects.filter(pk=aliproduct.pk).update(published=True, handle=dest_product.handle,
-                                                                 product_no=dest_product.product_no,published_time=datetime.now())
+                AliProduct.objects.filter(pk=aliproduct.pk).update(published=True, handle=posted.get("handle"),
+                                                                 product_no=posted.get("product_no"),published_time=datetime.now())
             else:
                 print("创建新产品变体失败")
                 AliProduct.objects.filter(pk=aliproduct.pk).update(publish_error="创建新产品变体失败",
@@ -484,5 +485,18 @@ def post_ali_shopify():
             print("创建新产品失败")
             AliProduct.objects.filter(pk=aliproduct.pk).update(publish_error="创建新产品失败",published_time=datetime.now())
             continue
+
+# 根据链接列表抓取1688数据
+@shared_task
+def get_ali_list():
+    from .ali import get_ali_product_info
+    aliproducts = MyProductAli.objects.filter(posted_mainshop=False, active=True)
+
+    for aliproduct in aliproducts:
+        offer_id = aliproduct.url.partition(".html")[0].rpartition("/")[2]
+        cate_code = aliproduct.myproductcate.code
+        get_ali_product_info(offer_id, cate_code)
+
+
 
 

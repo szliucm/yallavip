@@ -341,6 +341,12 @@ class AliProduct(models.Model):
 
     product_no = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="product_no")
     handle = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="货号")
+    price_rate = models.FloatField(u'价格系数', default=0, blank=True, null=True)
+    created = models.BooleanField(default=False, verbose_name="创建状态")
+    created_error = models.CharField(default='', max_length=100, null=True, blank=True, verbose_name="创建错误(或图片数量)")
+    created_time = models.DateTimeField(null=True, blank=True, verbose_name="创建时间")
+
+
     published = models.BooleanField(default=False, verbose_name="发布状态")
     publish_error = models.CharField(default='', max_length=100, null=True, blank=True, verbose_name="发布错误(或图片数量)")
     published_time = models.DateTimeField(null=True, blank=True, verbose_name="发布时间")

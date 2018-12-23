@@ -439,23 +439,22 @@ def update_or_create_product(shop_name, products):
 
         row = products[j]
 
-        product = ShopifyProduct(
-            shop_name=shop_name,
-            product_no=row["id"],
-            handle=row["handle"],
-            body_html=row["body_html"],
-            title=row["title"],
-            created_at=row["created_at"],
 
-            updated_at=row["updated_at"],
-            tags=row["tags"],
-            vendor=row["vendor"],
-            product_type=row["product_type"],
-
-        )
         ShopifyProduct.objects.update_or_create(
-            product_no=product.product_no,
-            defaults=product,
+            product_no=row["id"],
+            defaults={
+                "shop_name": shop_name,
+                "product_no": row["id"],
+                "handle" : row["handle"],
+                "body_html" : row["body_html"],
+                "title" : row["title"],
+                "created_at" : row["created_at"],
+
+                "updated_at" : row["updated_at"],
+                "tags" : row["tags"],
+                "vendor" : row["vendor"],
+                "product_type" : row["product_type"],
+            }
 
             )
 
@@ -464,23 +463,22 @@ def update_or_create_product(shop_name, products):
             for k in range(len(row["variants"])):
                 variant_row = row["variants"][k]
 
-                variant = ShopifyVariant(
-                    variant_no=variant_row["id"],
-                    product_no=variant_row["product_id"],
-                    created_at=variant_row["created_at"],
-                    updated_at=variant_row["updated_at"],
-                    sku=variant_row["sku"],
-                    image_no=variant_row["image_id"],
-                    title=variant_row["title"],
-                    price=variant_row["price"],
-                    option1=variant_row["option1"],
-                    option2=variant_row["option2"],
-                    option3=variant_row["option3"],
 
-                )
                 ShopifyVariant.objects.update_or_create(
-                    variant_no=variant.variant_no,
-                    defaults=variant,
+                    variant_no=variant_row["id"],
+                    defaults={
+
+                        "product_no": variant_row["product_id"],
+                        "created_at": variant_row["created_at"],
+                        "updated_at": variant_row["updated_at"],
+                        "sku": variant_row["sku"],
+                        "image_no": variant_row["image_id"],
+                        "title": variant_row["title"],
+                        "price": variant_row["price"],
+                        "option1": variant_row["option1"],
+                        "option2": variant_row["option2"],
+                        "option3": variant_row["option3"],
+                    },
 
                 )
 
@@ -494,21 +492,18 @@ def update_or_create_product(shop_name, products):
             for m in range(len(row["images"])):
                 image_row = row["images"][m]
 
-                image = ShopifyImage(
-                    image_no=image_row["id"],
-                    product_no=image_row["product_id"],
-                    created_at=image_row["created_at"],
-                    updated_at=image_row["updated_at"],
-                    position=image_row["position"],
-                    width=image_row["width"],
-                    height=image_row["height"],
-                    src=image_row["src"],
-                    # variant_ids
-
-                )
+                
                 ShopifyImage.objects.update_or_create(
-                    image_no=image.image_no,
-                    defaults=image,
+                    image_no=image_row["id"],
+                    defaults={
+                        "product_no": image_row["product_id"],
+                       "created_at": image_row["created_at"],
+                       "updated_at": image_row["updated_at"],
+                       "position": image_row["position"],
+                       "width": image_row["width"],
+                       "height": image_row["height"],
+                       "src": image_row["src"],
+                    }
 
                 )
 
@@ -525,17 +520,15 @@ def update_or_create_product(shop_name, products):
 
                 # print(" %s length of values %s "%(option_row["product_id"], len(values)))
 
-                option = ShopifyOptions(
-                    option_no = option_row["id"],
-                    product_no=option_row["product_id"],
-                    name=option_row["name"],
-
-                    values=values
-                )
 
                 ShopifyOptions.objects.update_or_create(
-                    option_no=option.option_no,
-                    defaults=option,
+                    option_no=option_row["id"],
+                    defaults={
+                        "product_no": option_row["product_id"],
+                        "name": option_row["name"],
+
+                        "values": values
+                    }
 
                 )
                 # print(" variant_list  is ", variant_list)
