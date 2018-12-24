@@ -5,8 +5,10 @@ from bs4 import BeautifulSoup
 from multiprocessing import Process
 import  re
 import requests
+from requests.exceptions import ProxyError, ConnectTimeout, SSLError, ReadTimeout, ConnectionError
 from lxml import etree
 from django.utils import timezone as datetime
+
 
 
 
