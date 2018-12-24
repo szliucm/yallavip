@@ -446,7 +446,7 @@ def post_to_shopify(aliproduct_pk, ):
     #shop_obj = Shop.objects.get(shop_name=dest_shop)
     #max_id = shop_obj.max_id + 1
 
-    shopifyproduct = create_body(aliproduct,0 )
+    shopifyproduct = create_body(aliproduct )
     if shopifyproduct is not None:
         posted = create_variant(aliproduct, shopifyproduct)
         if posted is not None:
