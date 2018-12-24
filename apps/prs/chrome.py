@@ -11,8 +11,10 @@ from lxml import etree
 
 
 def get_ali_list(url):
+    '''
+    url = 'https://www.1688.com/'
     print("url is ", url)
-
+    '''
     chrome_options = Options()
     chrome_options.add_argument('--headless')  # 16年之后，chrome给出的解决办法，抢了PhantomJS饭碗
     chrome_options.add_argument('--disable-gpu')
@@ -36,22 +38,40 @@ def get_ali_list(url):
     except:
         pass
 
-    #input=browser.find_element_by_id('alisearch-keywords')
-    #input.send_keys(key)
 
+
+    # 定位搜索框
+    #input=browser.find_element_by_id('alisearch-keywords')
+
+    #input = browser.find_element_by_class_name('sm-widget-input')
+    #input.send_keys(keywords)
+    # 定位搜索按钮
     #sea_button=browser.find_element_by_id('alisearch-submit')
     #sea_button.click()
+
     print("关掉可能弹出的页面")
     try:
         button_1=browser.find_element_by_class_name('s-overlay-close-l')
         button_1.click()
     except:
         pass
+
     try:
         button_deal=browser.find_elements_by_css_selector('.sm-widget-sort.fd-clr.s-widget-sortfilt li')[1]
         button_deal.click()
     except:
         pass
+
+    try:
+        button_deal=browser.find_elements_by_css_selector('.sm-widget-sort.fd-clr.s-widget-sortfilt li')[1]
+        button_deal.click()
+    except:
+        pass
+
+
+    html = browser.page_source
+    with open('ali.txt', 'w') as f:
+        f.write(html)
 
     try:
         print("向下滚屏")

@@ -11,6 +11,7 @@ from django.utils import timezone as datetime
 
 
 
+
 # 请求头
 '''
 def header(host, offer_id):
@@ -42,12 +43,23 @@ def header():
                'Cookie': cookie}
     return headers
 
+def get_proxies():
+    ips = open('proxies.txt', 'r').readlines()
+    ip = random.choice(ips)
+
+    #return {'https': ip.replace('\n', '')}
+    return {'https':'116.62.4.184:8118'}
+
+
 
 
 # 发出请求
-def request(url):
+def request(url,data=None):
+
     r = requests.session()
-    r = r.get(url, headers=header(), allow_redirects=False)
+    proxies = get_proxies()
+    print(proxies)
+    r = r.get(url, data=data,proxies=proxies, verify=False ,headers=header(), allow_redirects=False)
     return r
 
 from .fanyi import  baidu_translate
@@ -58,6 +70,45 @@ def fanyi(data):
 def fanyi_en(data):
     return baidu_translate(data,"en","zh")
     #return requests.post('https://fanyi.baidu.com/transapi', data={"query": data, 'from': 'en', 'to': 'zh'}).json()['data'][0]['dst']
+
+def get_cate_url(keywords):
+
+    from urllib import parse
+    values = {'keywords': keywords.encode("gb2312")}
+    data = parse.urlencode(values)
+    url = 'https://s.1688.com/selloffer/offer_search.htm?priceStart=5.0&descendOrder=true&sortType=va_rmdarkgmv30rt&uniqfield=userid&earseDirect=false&priceEnd=25.0&filt=y&netType=1,11&n=y&filt=y#sm-filtbar'+"&"+data
+    return  url
+
+    '''
+    import  urllib
+    data = urllib.quote(keywords)
+    url = 'https://s.1688.com/selloffer/offer_search.htm?priceStart=5.0&descendOrder=true&sortType=va_rmdarkgmv30rt&uniqfield=userid&earseDirect=false&priceEnd=25.0&filt=y&netType=1,11&n=y&filt=y#sm-filtbar'+'&keywords='+data
+    return  url
+    
+    html = request(url,data).content
+
+    #debug用
+    with open('ali.txt', 'wb') as f:
+        f.write(html)
+
+    f = open("ali.txt", "rb")
+
+    html = f.read()
+
+    htmlEmt = etree.HTML(html)
+
+    # 价格带分布
+    priceRegions = htmlEmt.xpath('//div[@ctype="priceRegion"]')
+    print("priceRegions *****************", etree.tostring(priceRegions))
+
+    for priceRegion in priceRegions:
+        priceRegion_content = json.loads(priceRegion)
+        print(priceRegion_content)
+    '''
+
+
+
+
 def ali_list(html):
     '''
     import http.client
@@ -325,7 +376,7 @@ def get_ali_product_info(offer_id,cate_code):
         count = div.find('.//td[@class="count"]/span/em[1]').text
 
         if not count or int(count) == 0:
-            print("没有库存")
+            print("没有库存", offer_id)
             continue
 
 
@@ -1141,7 +1192,7 @@ def crawle(key,page):
         for page in range(2,page+1):
             get_more_page(key,page)
 
-def get_ali_list(url):
+def get_ali_list(url ,data=None):
     chrome_options = Options()
     chrome_options.add_argument('--headless')  # 16年之后，chrome给出的解决办法，抢了PhantomJS饭碗
     chrome_options.add_argument('--disable-gpu')
@@ -1152,7 +1203,7 @@ def get_ali_list(url):
 
     print("url is ", url)
 
-    browser.get(url=url)
+    browser.get(url=url, data=data)
     print("页面打开了")
     try:
         button=browser.find_element_by_class_name('identity-cancel')

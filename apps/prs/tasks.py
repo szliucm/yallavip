@@ -357,17 +357,19 @@ def get_ali_list():
             MyProductAli.objects.filter(pk=aliproduct.pk).update(post_error=message)
 
 
-#1.根据类目抓取1688产品列表(offerid,cate_code)
+#1.根据类目关键词抓取1688产品列表(offerid,cate_code)
 @shared_task
 def ali_cate_get_list():
     from .chrome import get_ali_list
+    from .ali import get_cate_url
     from shop.models import ProductCategory
-    cates = ProductCategory.objects.filter(~Q(ali_list_link=""),ali_list_link__isnull=False,)
+    cates = ProductCategory.objects.filter(~Q(keywords=""),keywords__isnull=False )
 
     print("beging to scan  cate")
     for cate in cates:
 
-        url = cate.ali_list_link
+        url = get_cate_url(cate.keywords)
+
         print("url is ", url)
         if url is None or len(url) < 10:
             continue
