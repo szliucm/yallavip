@@ -411,7 +411,7 @@ def get_ali_product_info(offer_id,cate_code):
     AliProduct.objects.update_or_create(
         offer_id= offer_id,
         defaults={
-            'title' : title,
+            'title' : title.replacee("[","").replace("]",""),
             'cate_code': cate_code,
             'images': json.dumps(images_list),
             'options': json.dumps(option_list),
