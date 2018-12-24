@@ -45,11 +45,19 @@ def header():
     return headers
 
 def get_proxies():
-    ips = open('proxies.txt', 'r').readlines()
-    ip = random.choice(ips)
+    url = "http://webapi.http.zhimacangku.com/getip?num=1&type=1&pro=&city=0&yys=0&port=11&pack=37695&ts=0&ys=0&cs=0&lb=1&sb=0&pb=4&mr=1&regions="
+    r = requests.session()
+    res = r.get(url, headers=header(), allow_redirects=False)
+
+
+
+
+    ip = res.text.replace('\n', '')
+
+    print("res is", res, res.text)
 
     #return {'https': ip.replace('\n', '')}
-    return {'https':'116.62.4.184:8118'}
+    return {'https':ip}
 
 
 
@@ -58,10 +66,48 @@ def get_proxies():
 def request(url,data=None):
 
     r = requests.session()
-    proxies = get_proxies()
-    print(proxies)
-    r = r.get(url, data=data,proxies=proxies, verify=False ,headers=header(), allow_redirects=False)
-    return r
+    getted = False
+    while(not getted):
+        try:
+            proxies = get_proxies()
+            res = r.get(url, data=data,proxies=proxies, verify=False ,headers=header(), allow_redirects=False)
+            getted = True
+        except (ProxyError, ConnectTimeout, SSLError, ReadTimeout, ConnectionError):
+            print("代理错误")
+            continue
+
+
+
+    return res
+
+#用代理访问1688，测试代理是否可用
+def get_ali_page(url,data=None):
+    r = requests.session()
+    n = 0
+    while ( n < 20):
+        try:
+            proxies = get_proxies()
+            print("当前使用的代理是",proxies)
+            res = r.get(url, data=data, proxies=proxies, verify=False, headers=header(), allow_redirects=False)
+
+        except (ProxyError, ConnectTimeout, SSLError, ReadTimeout, ConnectionError):
+            print("代理错误")
+            n += 1
+            continue
+
+        htmlEmt = etree.HTML(res.content)
+
+        # 标题
+        title_ori = htmlEmt.xpath('//h1[@class="d-title"]/text()')
+        if title_ori:
+            return  htmlEmt
+        else:
+            print("页面被重定向", offer_id)
+            n += 1
+            continue
+
+    return  False
+
 
 from .fanyi import  baidu_translate
 def fanyi(data):
@@ -181,18 +227,9 @@ def get_ali_product_info(offer_id,cate_code):
     product.offer_id = offer_id
     product.cate_code = cate_code
 
-    html = request('https://detail.1688.com/offer/{}.html'.format(offer_id)).content
-    '''
-    #debug用
-    with open('ali.txt', 'wb') as f:
-        f.write(html)
 
-    f = open("ali.txt", "rb")
 
-    html = f.read()
-    '''
-
-    htmlEmt = etree.HTML(html)
+    htmlEmt = get_ali_page('https://detail.1688.com/offer/{}.html'.format(offer_id))
 
     # 标题
     title_ori = htmlEmt.xpath('//h1[@class="d-title"]/text()')

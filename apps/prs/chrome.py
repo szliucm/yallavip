@@ -161,5 +161,9 @@ def ali_list(html):
         #print("type  vendor",type(vendor), etree.tostring(vendor))
         offer_id = vendor.attrib.get('offerid')
         vendor_list.append(offer_id)
-        print("type  offer_id",type(offer_id), offer_id)
+
+        price_div = vendor.xpath('.//span[@class="sm-offer-priceNum sw-dpl-offer-priceNum"]')
+        price = price_div.attrib.get('title')
+
+        print("type  offer_id",type(offer_id), offer_id,price)
     return  vendor_list
