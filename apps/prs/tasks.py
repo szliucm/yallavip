@@ -412,50 +412,57 @@ def get_aliproduct(pk, offer_id,cate_code):
 #3,将1688产品详细信息发布到shopfiy店铺
 @shared_task
 def post_ali_shopify():
-    from .ali import create_body,create_variant
+
 
     dest_shop = "yallasale-com"
     # ori_shop = "yallavip-saudi"
 
     # sync_shop(ori_shop)
     sync_shop(dest_shop)
-    shop_obj = Shop.objects.get(shop_name=dest_shop)
-    max_id = shop_obj.max_id
 
-    print("max_id ", max_id)
-
-    n = 0
     aliproducts = AliProduct.objects.filter(published=False)
     for aliproduct in aliproducts:
-        vendor_no = aliproduct.offer_id
-        print("vendor_no", vendor_no)
+        post_to_shopify.delay(aliproduct)
 
-        dest_product = ShopifyProduct.objects.filter(shop_name=dest_shop, vendor=vendor_no).first()
+@task
+def post_to_shopify(aliproduct, ):
+    from .ali import create_body, create_variant
+    dest_shop = "yallasale-com"
 
-        if dest_product:
-            print("这个产品已经发布过了！！！！", vendor_no)
-            AliProduct.objects.filter(pk=aliproduct.pk).update(published=True, handle=dest_product.handle,
-                                                                 product_no=dest_product.product_no,published_time=datetime.now())
+    vendor_no = aliproduct.offer_id
+    print("vendor_no", vendor_no)
 
-            continue
-        n += 1
-        shopifyproduct = create_body(aliproduct, max_id+n)
-        if shopifyproduct is not None:
-            posted = create_variant(aliproduct, shopifyproduct)
-            if posted is not None:
-                print("创建新产品成功")
-                AliProduct.objects.filter(pk=aliproduct.pk).update(published=True, handle=posted.get("handle"),
-                                                                 product_no=posted.get("product_no"),published_time=datetime.now())
-            else:
-                print("创建新产品变体失败")
-                AliProduct.objects.filter(pk=aliproduct.pk).update(publish_error="创建新产品变体失败",
-                                                                   published_time=datetime.now())
-                continue
+    dest_product = ShopifyProduct.objects.filter(shop_name=dest_shop, vendor=vendor_no).first()
 
+    if dest_product:
+        print("这个产品已经发布过了！！！！", vendor_no)
+        AliProduct.objects.filter(pk=aliproduct.pk).update(published=True, handle=dest_product.handle,
+                                                           product_no=dest_product.product_no,
+                                                           published_time=datetime.now())
+
+        return
+    shop_obj = Shop.objects.get(shop_name=dest_shop)
+    max_id = shop_obj.max_id + 1
+
+    shopifyproduct = create_body(aliproduct, max_id )
+    if shopifyproduct is not None:
+        posted = create_variant(aliproduct, shopifyproduct)
+        if posted is not None:
+            print("创建新产品成功")
+            AliProduct.objects.filter(pk=aliproduct.pk).update(published=True, handle=posted.get("handle"),
+                                                               product_no=posted.get("product_no"),
+                                                               published_time=datetime.now())
         else:
-            print("创建新产品失败")
-            AliProduct.objects.filter(pk=aliproduct.pk).update(publish_error="创建新产品失败",published_time=datetime.now())
-            continue
+            print("创建新产品变体失败")
+            AliProduct.objects.filter(pk=aliproduct.pk).update(publish_error="创建新产品变体失败",
+                                                               published_time=datetime.now())
+            return
+
+    else:
+        print("创建新产品失败")
+        AliProduct.objects.filter(pk=aliproduct.pk).update(publish_error="创建新产品失败", published_time=datetime.now())
+        return
+
 
 #####################################################################
 #4,0 把shopify产品库中的还未添加到fb产品库的产品按page对应的品类找出来并添加
