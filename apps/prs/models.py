@@ -343,7 +343,7 @@ class AliProduct(models.Model):
     product_no = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="product_no")
     handle = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="货号")
     maxprice = models.IntegerField(u'价格(人民币)', default=0, blank=True, null=True)
-    price_rate = models.DecimalField(u'价格系数',max_digits=2,decimal_places=1,default=0,)
+    price_rate = models.FloatField(u'价格系数',default=0,)
 
     created = models.BooleanField(default=False, verbose_name="创建状态")
     created_error = models.CharField(default='', max_length=100, null=True, blank=True, verbose_name="创建错误(或图片数量)")

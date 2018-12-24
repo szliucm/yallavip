@@ -7,7 +7,7 @@ import  re
 import requests
 from lxml import etree
 from django.utils import timezone as datetime
-from decimal import Decimal
+
 
 
 
@@ -405,8 +405,8 @@ def get_ali_product_info(offer_id,cate_code):
     #找到最大价格
     maxprice = 0
     for price in price_dict.values():
-        if Decimal(price)>maxprice:
-            maxprice = Decimal(price)
+        if float(price)>maxprice:
+            maxprice = float(price)
 
     AliProduct.objects.update_or_create(
         offer_id= offer_id,
@@ -1455,7 +1455,7 @@ def create_variant(aliproduct, shopifyproduct):
                             sku = sku + "_" + option3.replace("&", '').replace('-', '').replace('.', '').replace(' ',
                                                                                                                  '')
 
-                price = Decimal(ali_price_dict.get(option2,0)) * price_rate
+                price = float(ali_price_dict.get(option2,0)) * price_rate
                 if price == 0:
                     print("没有价格")
                     continue
@@ -1504,7 +1504,7 @@ def create_variant(aliproduct, shopifyproduct):
             #option1 = option1
             option2 = None
             option3 = None
-            price = Decimal(ali_price_dict.get(option1,0)) * price_rate
+            price = float(ali_price_dict.get(option1,0)) * price_rate
             if price == 0:
                 print("没有价格")
                 continue
