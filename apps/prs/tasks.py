@@ -401,7 +401,9 @@ def ali_list_get_info():
 @task
 def get_aliproduct(pk, offer_id,cate_code):
     from .ali import get_ali_product_info
+    import time
 
+    time.sleep(random.uniform(60,120))
     message, status = get_ali_product_info(offer_id, cate_code)
     if status is False:
         AliProduct.objects.filter(pk=pk).update(created_error=message)

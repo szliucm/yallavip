@@ -34,21 +34,23 @@ def header(host, offer_id):
     return headers
 '''
 def header():
-    agents = [
-        "User-Agent:Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_8; en-us) AppleWebKit/534.50 (KHTML, like Gecko) Version/5.1 Safari/534.50",
-        "User-Agent:Mozilla/5.0 (Windows; U; Windows NT 6.1; en-us) AppleWebKit/534.50 (KHTML, like Gecko) Version/5.1 Safari/534.50"
-    ]
+    agents = ['Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0;',
+              'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.6; rv,2.0.1) Gecko/20100101 Firefox/4.0.1',
+              'Opera/9.80 (Macintosh; Intel Mac OS X 10.6.8; U; en) Presto/2.8.131 Version/11.11',
+              'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_0) AppleWebKit/535.11 (KHTML, like Gecko) Chrome/17.0.963.56 Safari/535.11',
+              'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; 360SE)']
+
 
     cookie = open('cookie.txt', 'r').readlines()[0].replace('\n', '').replace(' ', '')
 
     headers = {
                'Connection': 'keep-alive',
                'User-Agent': random.choice(agents),
-
+               'Referer': 'https://s.1688.com/selloffer/offer_search.htm?priceStart=5.0&descendOrder=true&sortType=va_rmdarkgmv30rt&uniqfield=userid&keywords=%C5%AE%D0%AC&earseDirect=false&priceEnd=25.0&filt=y&netType=1%2C11&n=y&filt=y',
                'Accept-Encoding': 'gzip, deflate, br',
                'Accept-Language': 'zh-CN,zh;q=0.9',
-    }
-         #      'Cookie': cookie}
+
+               'Cookie': cookie}
     return headers
 
 def get_proxies():
@@ -62,8 +64,8 @@ def get_proxies():
 
     #print("res is", res, res.text)
 
-    #return {'https': ip.replace('\n', '')}
-    return {'http':ip}
+    return {'http': "119.101.116.13:9999"}
+    #return {'http':ip}
 
 
 
@@ -97,9 +99,10 @@ def get_ali_page(offer_id):
     url = ('https://detail.1688.com/offer/{}.html'.format(offer_id))
     while ( n < 20):
         try:
-            proxies = get_proxies()
-            print("当前使用的代理是",proxies)
-            res = r.get(url,  proxies=proxies, verify=False, headers=header(), allow_redirects=False)
+            #proxies = get_proxies()
+            #print("当前使用的代理是",proxies)
+            #proxies= None
+            res = r.get(url,    headers=header(), allow_redirects=False) #,proxies=proxies,verify=False,
             if res.status_code == 200:
                 return  res.content
             else:
@@ -107,7 +110,7 @@ def get_ali_page(offer_id):
                 print(res, res.status_code, res.headers['Location'])
                 n += 1
                 time.sleep(1)
-                continue
+                return None
 
         except Exception as e:  #(ProxyError, ConnectTimeout, SSLError, ReadTimeout, ConnectionError):
             print("代理错误")
@@ -128,7 +131,7 @@ def get_ali_page(offer_id):
 
 from .fanyi import  baidu_translate
 def fanyi(data):
-    res =  baidu_translate(data,"zh","en").replace("['","").replace("']","")
+    res =  baidu_translate(data,"zh","en")#.replace("['","").replace("']","")
     return res
     #return requests.post('https://fanyi.baidu.com/transapi', data={"query": data, 'from': 'zh', 'to': 'en'}).json()['data'][0]['dst']
 
@@ -251,7 +254,7 @@ def get_ali_product_info(offer_id,cate_code):
     htmlEmt = etree.HTML(res)
 
     # 标题
-    title_ori = htmlEmt.xpath('//h1[@class="d-title"]/string()')
+    title_ori = htmlEmt.xpath('//h1[@class="d-title"]/text()')[0]
     if title_ori:
         print(type(title_ori), title_ori)
         title = fanyi(title_ori)
