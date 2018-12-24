@@ -122,6 +122,7 @@ def ali_list(html):
 def get_ali_product_info(offer_id,cate_code):
     from .models import AliProduct
     from django.utils import timezone as datetime
+    print("开始抓取1688产品信息 ", offer_id)
 
     product = AliProduct()
     product.offer_id = offer_id
@@ -172,9 +173,11 @@ def get_ali_product_info(offer_id,cate_code):
 
 
     option_list = []
+    option_zh_list = []
 
     # 取leading
     option1_list = []
+    option1_zh_list = []
     img_dict = {}
     div_leadings = htmlEmt.xpath('//div[@class="obj-leading"]')
     # 有两种情况，有leading 和没有leading
@@ -196,19 +199,20 @@ def get_ali_product_info(offer_id,cate_code):
                 data_name = json.loads(data_name_div)
                 option1_name_zh = data_name["name"]
                 option1_name_en = fanyi(option1_name_zh)
-                print("option1_name is ", option1_name_zh, option1_name_en)
+                #print("option1_name is ", option1_name_zh, option1_name_en)
             else:
                 continue
 
             if option1_name_en in option_list:
                 option1_name_en = option1_name_en + "_" + str(len(option_list))
             option1_list.append(option1_name_en)
+            option1_zh_list.append(option1_name_zh)
 
             data_imgs = div.attrib.get('data-imgs')
             if data_imgs:
                 data_imgs = json.loads(data_imgs)
                 option1_img = data_imgs["original"]
-                print("image is ", option1_img)
+                #print("image is ", option1_img)
 
                 # 规格图片如果不在主图里，也插进列表
                 if option1_img not in images_list:
@@ -240,13 +244,29 @@ def get_ali_product_info(offer_id,cate_code):
         }
         # 插入规格
         option_list.append(option)
-        print("option1 \n", option_list)
+        #print("option1 \n", option_list)
+
+        ################插入中文版，便于理解
+        option_zh = {
+            "name": option1,
+            "values": option1_zh_list
+        }
+        # 插入规格
+        option_zh_list.append(option_zh)
+        #print("option1 \n", option_list)
 
     # 取sku
     option2_list = []
+    option2_zh_list = []
     price_dict = {}
 
-    div_sku = htmlEmt.xpath('//div[@class="obj-sku"]')[0]
+    div_sku = htmlEmt.xpath('//div[@class="obj-sku"]')
+    if div_sku is not None:
+        div_sku = div_sku[0]
+    else:
+        print("obj-sku is empty")
+        return "obj-sku is empty", False
+
     option2 = div_sku.find('.//div[@class="obj-header"]/span').text
 
     option2_content = div_sku.xpath('.//tr')
@@ -266,7 +286,7 @@ def get_ali_product_info(offer_id,cate_code):
             if option2_imgs:
                 data_imgs = json.loads(option2_imgs)
                 option2_img = data_imgs["original"]
-                print("image is ", option2_img)
+                #print("image is ", option2_img)
 
                 # 规格图片如果不在主图里，也插进列表
                 if option2_img not in images_list:
@@ -290,11 +310,12 @@ def get_ali_product_info(offer_id,cate_code):
             print("没有规格")
             continue
 
-        print("###############", option2_name_en, option2_list)
+        #print("###############", option2_name_en, option2_list)
         if option2_name_en in option2_list:
             option2_name_en = option2_name_en + "_" + str(len(option2_list))
 
         option2_list.append(option2_name_en)
+        option2_zh_list.append(option2_name)
 
         # 规格-图片地址 字典
         if option2_img is not None:
@@ -317,7 +338,17 @@ def get_ali_product_info(offer_id,cate_code):
 
     # 插入规格
     option_list.append(option)
-    print("option_list \n", option_list)
+    #print("option_list \n", option_list)
+
+    #######中文版
+    option_zh = {
+        "name": option2,
+        "values": option2_zh_list
+    }
+
+    # 插入规格
+    option_zh_list.append(option_zh)
+    #print("option_list \n", option_zh_list)
 
     #找到最大价格
     maxprice = 0
@@ -332,6 +363,7 @@ def get_ali_product_info(offer_id,cate_code):
             'cate_code': cate_code,
             'images': json.dumps(images_list),
             'options': json.dumps(option_list),
+            'options_zh': json.dumps(option_zh_list),
             'image_dict': json.dumps(img_dict),
             'price_dict': json.dumps(price_dict),
             "maxprice":maxprice,

@@ -335,13 +335,14 @@ class AliProduct(models.Model):
     title = models.CharField(default='',max_length=300, null=True, blank=True, verbose_name="标题")
     images = models.TextField(default='', null=True, blank=True, verbose_name="图片")
     options = models.TextField(default='', null=True, blank=True, verbose_name="属性")
+    options_zh = models.TextField(default='', null=True, blank=True, verbose_name="中文属性")
     image_dict = models.TextField(default='', null=True, blank=True, verbose_name="图片字典")
     price_dict = models.TextField(default='', null=True, blank=True, verbose_name="价格字典")
     #variants = models.TextField(default='', null=True, blank=True, verbose_name="变体")
 
     product_no = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="product_no")
     handle = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="货号")
-    maxprice = models.IntegerField(u'价格基数', default=0, blank=True, null=True)
+    maxprice = models.IntegerField(u'价格(人民币)', default=0, blank=True, null=True)
     price_rate = models.DecimalField(u'价格系数',max_digits=2,decimal_places=1,default=0,)
 
     created = models.BooleanField(default=False, verbose_name="创建状态")

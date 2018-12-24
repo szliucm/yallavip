@@ -349,9 +349,9 @@ class AliProductAdmin(object):
     def price_try(self, obj):
         return obj.maxprice * obj.price_rate
 
-    price_try.short_description = "价格试算"
+    price_try.short_description = "价格(SAR)"
 
-    list_display = [ "offer_id", "handle","maxprice","price_rate" ,"title", "cate_code","created","published", ]
+    list_display = [ "offer_id", "handle","maxprice","price_rate" ,"price_try","title", "cate_code","created","published", ]
     # 'sku_name','img',
 
     search_fields = ["offer_id","handle"]

@@ -311,6 +311,195 @@ def product_shopify_to_fb():
 
             MyFbProduct.objects.bulk_create(myfbproduct_list)
 
+
+
+
+#发布产品到Facebook的album
+@shared_task
+def sync_album_fbproduct():
+    from fb.models import MyPhoto
+
+
+    #选择所有可用的page
+    mypages = MyPage.objects.filter(active=True)
+    print(mypages)
+    for mypage in mypages:
+
+        print("当前处理主页", mypage, mypage.pk)
+        fbproducts = MyFbProduct.objects.filter(mypage__pk = mypage.pk,published=False)
+        for fbproduct in fbproducts:
+            photos = MyPhoto.objects.filter(page_no=mypage.page_no,name__icontains=fbproduct.myproduct.handle)
+            print("处理 %s   %d  ", fbproduct.myproduct.handle,photos.count() )
+            if photos.count() >0:
+                photo = photos.first()
+                MyFbProduct.objects.filter(mypage__pk=mypage.pk, myproduct__pk = fbproduct.myproduct.pk).update(
+                                published=True,
+                                fb_id = photo.photo_no,
+                                publish_error=photos.count(),
+                                published_time=photo.created_time,
+                )
+
+
+# 根据链接列表抓取1688数据
+@shared_task
+def get_ali_list():
+    from .ali import get_ali_product_info
+    aliproducts = MyProductAli.objects.filter(posted_mainshop=False, active=True)
+    print("一共有%d 个1688链接待处理"%(aliproducts.count()))
+
+    for aliproduct in aliproducts:
+        offer_id = aliproduct.url.partition(".html")[0].rpartition("/")[2]
+        cate_code = aliproduct.myproductcate.code
+        message,status=get_ali_product_info(offer_id, cate_code)
+        if status:
+            MyProductAli.objects.filter(pk=aliproduct.pk).update(posted_mainshop=True)
+        else:
+            MyProductAli.objects.filter(pk=aliproduct.pk).update(post_error=message)
+
+
+#1.根据类目抓取1688产品列表(offerid,cate_code)
+@shared_task
+def ali_cate_get_list():
+    from .chrome import get_ali_list
+    from shop.models import ProductCategory
+    cates = ProductCategory.objects.filter(~Q(ali_list_link=""),ali_list_link__isnull=False,)
+
+    print("beging to scan  cate")
+    for cate in cates:
+
+        url = cate.ali_list_link
+        print("url is ", url)
+        if url is None or len(url) < 10:
+            continue
+        vendor_list = get_ali_list(url)
+
+        for vendor_no in vendor_list:
+            AliProduct.objects.update_or_create(
+                offer_id=vendor_no,
+                defaults={
+                    "cate_code": cate.code
+                }
+            )
+    return
+
+#2,根据1688产品列表抓取产品详细信息（标题，规格，图片，价格）
+@shared_task
+def ali_list_get_info():
+    from .ali import get_ali_product_info
+
+    aliproducts = AliProduct.objects.filter(created=False)
+    print("一共有%d 个1688产品信息待抓取"%(aliproducts.count()))
+
+    for aliproduct in aliproducts:
+        offer_id = aliproduct.offer_id
+        cate_code = aliproduct.cate_code
+        message,status=get_ali_product_info(offer_id, cate_code)
+        if status is False:
+            AliProduct.objects.filter(pk=aliproduct.pk).update(created_error=message)
+
+
+
+#3,将1688产品详细信息发布到shopfiy店铺
+@shared_task
+def post_ali_shopify():
+    from .ali import create_body,create_variant
+
+    dest_shop = "yallasale-com"
+    # ori_shop = "yallavip-saudi"
+
+    # sync_shop(ori_shop)
+    sync_shop(dest_shop)
+    shop_obj = Shop.objects.get(shop_name=dest_shop)
+    max_id = shop_obj.max_id
+
+    print("max_id ", max_id)
+
+    n = 0
+    aliproducts = AliProduct.objects.filter(published=False)
+    for aliproduct in aliproducts:
+        vendor_no = aliproduct.offer_id
+        print("vendor_no", vendor_no)
+
+        dest_product = ShopifyProduct.objects.filter(shop_name=dest_shop, vendor=vendor_no).first()
+
+        if dest_product:
+            print("这个产品已经发布过了！！！！", vendor_no)
+            AliProduct.objects.filter(pk=aliproduct.pk).update(published=True, handle=dest_product.handle,
+                                                                 product_no=dest_product.product_no,published_time=datetime.now())
+
+            continue
+        n += 1
+        shopifyproduct = create_body(aliproduct, max_id+n)
+        if shopifyproduct is not None:
+            posted = create_variant(aliproduct, shopifyproduct)
+            if posted is not None:
+                print("创建新产品成功")
+                AliProduct.objects.filter(pk=aliproduct.pk).update(published=True, handle=posted.get("handle"),
+                                                                 product_no=posted.get("product_no"),published_time=datetime.now())
+            else:
+                print("创建新产品变体失败")
+                AliProduct.objects.filter(pk=aliproduct.pk).update(publish_error="创建新产品变体失败",
+                                                                   published_time=datetime.now())
+                continue
+
+        else:
+            print("创建新产品失败")
+            AliProduct.objects.filter(pk=aliproduct.pk).update(publish_error="创建新产品失败",published_time=datetime.now())
+            continue
+
+#####################################################################
+#4,0 把shopify产品库中的还未添加到fb产品库的产品按page对应的品类找出来并添加
+#######准备工作，每次从1688上新到shopify后调用一次即可
+######################################################################
+@shared_task
+def product_shopify_to_fb():
+
+
+    #找出所有活跃的page
+    pages = MyPage.objects.filter(active=True)
+    n = 0
+    for page in pages:
+        #遍历page对应的品类
+        print("page is ",page)
+        cates = ProductCategoryMypage.objects.filter(mypage__pk = page.pk)
+        for cate in cates:
+            cate_code = cate.productcategory.code
+            album_name = cate.album_name
+            print(cate_code)
+            #根据品类找未添加到fb产品库的产品
+
+            #products_to_add = ShopifyProduct.objects.filter(category_code = cate_code,
+            #                                                handle__startswith='a',myfb_product__isnull= True ,)
+
+             #SELECT * FROM shop_shopifyproduct  A WHERE  category_code = "WOMEN_Bags_Handbags" and handle like 'a%' and id  NOT  IN  ( SELECT  B.myproduct_id FROM prs_myfbproduct B where mypage_id=14) order by created_at desc
+
+            handle_like = 'a%'
+            products_to_add = ShopifyProduct.objects.raw('SELECT * FROM shop_shopifyproduct  A WHERE '
+                                                         'category_code = %s and handle like %s '  
+                                                         'and id  NOT  IN  ( SELECT  B.myproduct_id FROM prs_myfbproduct B where mypage_id=%s) order by published_at ',[cate_code,handle_like,page.pk])
+
+            #products_to_add = ShopifyProduct.objects.filter(category_code = cate_code)
+            print("products_to_add", products_to_add)
+            #print("products_to_add query", products_to_add.query)
+
+            myfbproduct_list = []
+            for product_to_add in products_to_add:
+                n += 1
+                print("     %d is %s"%(n,product_to_add))
+
+                myfbproduct = MyFbProduct(
+                    myproduct= ShopifyProduct.objects.get(pk=product_to_add.pk ),
+                    mypage=MyPage.objects.get(pk=page.pk ),
+                    obj_type="PHOTO",
+                    cate_code=cate_code,
+                    album_name=album_name,
+
+                )
+                myfbproduct_list.append(myfbproduct)
+
+            MyFbProduct.objects.bulk_create(myfbproduct_list)
+
+#4,1 将shopify产品发布到相册
 #发布产品到Facebook的album
 @shared_task
 def post_to_album():
@@ -412,143 +601,31 @@ def post_to_album():
 
     return
 
-
-#发布产品到Facebook的album
+#5,爆款生成动图发布到feed
+############################
+#
+#随机选有动销的产品动图到活跃的page
+#
+############################
 @shared_task
-def sync_album_fbproduct():
-    from fb.models import MyPhoto
+def product_feed():
+    from .fb_action import post_product_feed
 
+    post_product_feed()
 
-    #选择所有可用的page
-    mypages = MyPage.objects.filter(active=True)
-    print(mypages)
-    for mypage in mypages:
-
-        print("当前处理主页", mypage, mypage.pk)
-        fbproducts = MyFbProduct.objects.filter(mypage__pk = mypage.pk,published=False)
-        for fbproduct in fbproducts:
-            photos = MyPhoto.objects.filter(page_no=mypage.page_no,name__icontains=fbproduct.myproduct.handle)
-            print("处理 %s   %d  ", fbproduct.myproduct.handle,photos.count() )
-            if photos.count() >0:
-                photo = photos.first()
-                MyFbProduct.objects.filter(mypage__pk=mypage.pk, myproduct__pk = fbproduct.myproduct.pk).update(
-                                published=True,
-                                fb_id = photo.photo_no,
-                                publish_error=photos.count(),
-                                published_time=photo.created_time,
-                )
-
-#发布ali产品到shopify
-@shared_task
-def post_ali_shopify():
-    from .ali import create_body,create_variant
-
-    dest_shop = "yallasale-com"
-    # ori_shop = "yallavip-saudi"
-
-    # sync_shop(ori_shop)
-    sync_shop(dest_shop)
-    shop_obj = Shop.objects.get(shop_name=dest_shop)
-    max_id = shop_obj.max_id
-
-    print("max_id ", max_id)
-
-    n = 0
-    aliproducts = AliProduct.objects.filter(published=False)
-    for aliproduct in aliproducts:
-        vendor_no = aliproduct.offer_id
-        print("vendor_no", vendor_no)
-
-        dest_product = ShopifyProduct.objects.filter(shop_name=dest_shop, vendor=vendor_no).first()
-
-        if dest_product:
-            print("这个产品已经发布过了！！！！", vendor_no)
-            AliProduct.objects.filter(pk=aliproduct.pk).update(published=True, handle=dest_product.handle,
-                                                                 product_no=dest_product.product_no,published_time=datetime.now())
-
-            continue
-        n += 1
-        shopifyproduct = create_body(aliproduct, max_id+n)
-        if shopifyproduct is not None:
-            posted = create_variant(aliproduct, shopifyproduct)
-            if posted is not None:
-                print("创建新产品成功")
-                AliProduct.objects.filter(pk=aliproduct.pk).update(published=True, handle=posted.get("handle"),
-                                                                 product_no=posted.get("product_no"),published_time=datetime.now())
-            else:
-                print("创建新产品变体失败")
-                AliProduct.objects.filter(pk=aliproduct.pk).update(publish_error="创建新产品变体失败",
-                                                                   published_time=datetime.now())
-                continue
-
-        else:
-            print("创建新产品失败")
-            AliProduct.objects.filter(pk=aliproduct.pk).update(publish_error="创建新产品失败",published_time=datetime.now())
-            continue
-
-# 根据链接列表抓取1688数据
-@shared_task
-def get_ali_list():
-    from .ali import get_ali_product_info
-    aliproducts = MyProductAli.objects.filter(posted_mainshop=False, active=True)
-    print("一共有%d 个1688链接待处理"%(aliproducts.count()))
-
-    for aliproduct in aliproducts:
-        offer_id = aliproduct.url.partition(".html")[0].rpartition("/")[2]
-        cate_code = aliproduct.myproductcate.code
-        message,status=get_ali_product_info(offer_id, cate_code)
-        if status:
-            MyProductAli.objects.filter(pk=aliproduct.pk).update(posted_mainshop=True)
-        else:
-            MyProductAli.objects.filter(pk=aliproduct.pk).update(post_error=message)
-
-
-#1.根据类目抓取1688产品列表(offerid,cate_code)
-@shared_task
-def ali_cate_get_list():
-    from .chrome import get_ali_list
-    from shop.models import ProductCategory
-    cates = ProductCategory.objects.filter(~Q(ali_list_link=""),ali_list_link__isnull=False,)
-
-    print("beging to scan  cate")
-    for cate in cates:
-
-        url = cate.ali_list_link
-        print("url is ", url)
-        if url is None or len(url) < 10:
-            continue
-        vendor_list = get_ali_list(url)
-
-        for vendor_no in vendor_list:
-            AliProduct.objects.update_or_create(
-                offer_id=vendor_no,
-                defaults={
-                    "cate_code": cate.code
-                }
-            )
     return
 
-#2,根据1688产品列表抓取产品详细信息（标题，规格，图片，价格）
-@shared_task
-def ali_list_get_info():
-    from .ali import get_ali_product_info
 
-    aliproducts = AliProduct.objects.filter(created=False)
-    print("一共有%d 个1688产品信息待抓取"%(aliproducts.count()))
-
-    for aliproduct in aliproducts:
-        offer_id = aliproduct.offer_id
-        cate_code = aliproduct.cate_code
-        message,status=get_ali_product_info(offer_id, cate_code)
-        if status is False:
-            AliProduct.objects.filter(pk=aliproduct.pk).update(created_error=message)
-
-
-
-#3,将1688产品详细信息发布到shopfiy店铺
-#4,将shopify产品发布到相册
-#5,爆款生成动图发布到feed
 #6,创意发布到feed
+#####################################
+#########把创意发到feed
+######################################
+@shared_task
+def creative_feed():
+    from .fb_action import post_creative_feed
+
+    post_creative_feed()
+    return
 #7,
 
 
