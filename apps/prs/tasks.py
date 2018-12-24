@@ -494,7 +494,7 @@ def product_shopify_to_fb():
 
              #SELECT * FROM shop_shopifyproduct  A WHERE  category_code = "WOMEN_Bags_Handbags" and handle like 'a%' and id  NOT  IN  ( SELECT  B.myproduct_id FROM prs_myfbproduct B where mypage_id=14) order by created_at desc
 
-            handle_like = 'a%'
+            handle_like = 'b%'
             products_to_add = ShopifyProduct.objects.raw('SELECT * FROM shop_shopifyproduct  A WHERE '
                                                          'category_code = %s and handle like %s '  
                                                          'and id  NOT  IN  ( SELECT  B.myproduct_id FROM prs_myfbproduct B where mypage_id=%s) order by published_at ',[cate_code,handle_like,page.pk])
@@ -595,7 +595,7 @@ def post_to_album():
 
 
         # 发到指定相册
-        products =MyFbProduct.objects.filter(mypage__pk=mypage.pk, published=False, album_name =album_name).order_by("-id")
+        products =MyFbProduct.objects.filter(mypage__pk=mypage.pk, published=False, album_name =album_name,myproduct__handle__startswith='b').order_by("-id")
         n = 0
         for product in products:
             posted = post_photo_to_album(mypage, target_album_no, product.myproduct)
