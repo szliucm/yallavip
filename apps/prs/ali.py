@@ -1304,7 +1304,7 @@ def get_products():
     print('一共%d条数据'%index)
 
 
-def create_body(aliproduct, max_id):
+def create_body(aliproduct):
  ################################
     ##############################
     ############可以发布主产品了
@@ -1319,7 +1319,7 @@ def create_body(aliproduct, max_id):
 
     shop_url = "https://%s:%s@%s.myshopify.com" % (shop_obj.apikey, shop_obj.password, shop_obj.shop_name)
 
-    handle_new = 'a' + str(max_id)
+    handle_new = 'b' + str(aliproduct.pk).zfill(4)
 
     shopify_images = []
     #image_no = 0
@@ -1388,7 +1388,7 @@ def create_body(aliproduct, max_id):
         #insert_product(shop_obj.shop_name, products)
         update_or_create_product(shop_obj.shop_name, products)
         # 修改handle最大值
-        Shop.objects.filter(shop_name=shop_obj.shop_name).update(max_id=max_id)
+        #Shop.objects.filter(shop_name=shop_obj.shop_name).update(max_id=max_id)
 
         print("产品主体发布成功！！！！")
         #print(type(new_product),  new_product)

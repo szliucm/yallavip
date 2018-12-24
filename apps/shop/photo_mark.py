@@ -232,7 +232,7 @@ def photo_mark(ori_image,  product, price1, price2, targer_page,  type="album" )
 
 def photo_mark_url(ori_image_url,  product, price1, price2, targer_page,  type="album" ):
     # 获取远程图片
-    from datetime import  datetime
+    from django.utils import timezone as datetime
 
     image = get_remote_image(ori_image_url)
 

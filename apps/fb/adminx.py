@@ -5,7 +5,7 @@ __author__ = 'bobby'
 import requests
 import json
 import time
-import datetime
+from django.utils import timezone as datetime
 import  re
 
 import xadmin

@@ -10,7 +10,7 @@ from conversations.models import Conversation
 from django.db import models
 from yunpian_python_sdk.model import constant as YC
 from yunpian_python_sdk.ypclient import YunpianClient
-from datetime import datetime
+from django.utils import timezone as datetime
 import urllib
 import random
 from django.db.models import Q
