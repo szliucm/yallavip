@@ -438,6 +438,18 @@ def update_or_create_product(shop_name, products):
     for j in range(len(products)):
 
         row = products[j]
+        cate_1 = ""
+        cate_2 = ""
+        cate_3 = ""
+
+        cates = row["tags"].split(" ")
+        if len(cates) >2:
+            cate_3 = cates[2]
+        elif len(cates) >1:
+            cate_2 = cates[1]
+        elif len(cates) > 0:
+            cate_1 = cates[0]
+
 
 
         ShopifyProduct.objects.update_or_create(
@@ -454,6 +466,12 @@ def update_or_create_product(shop_name, products):
                 "tags" : row["tags"],
                 "vendor" : row["vendor"],
                 "product_type" : row["product_type"],
+                "category_code": row["tags"].replace(",", "_"),
+                "cate_1": cate_1,
+                "cate_2" : cate_2,
+                "cate_3": cate_3,
+
+
             }
 
             )
