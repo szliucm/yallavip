@@ -421,6 +421,7 @@ def post_ali_shopify():
     sync_shop(dest_shop)
 
     aliproducts = AliProduct.objects.filter(published=False)
+    print("一共有%d 个1688产品信息待发布" % (aliproducts.count()))
     for aliproduct in aliproducts:
         post_to_shopify.delay(aliproduct.pk)
 

@@ -65,7 +65,8 @@ def request(url,data=None):
 
 from .fanyi import  baidu_translate
 def fanyi(data):
-    return baidu_translate(data,"zh","en")
+
+    return baidu_translate(data,"zh","en").replacee("['","").replace("']","")
     #return requests.post('https://fanyi.baidu.com/transapi', data={"query": data, 'from': 'zh', 'to': 'en'}).json()['data'][0]['dst']
 
 def fanyi_en(data):
@@ -411,7 +412,7 @@ def get_ali_product_info(offer_id,cate_code):
     AliProduct.objects.update_or_create(
         offer_id= offer_id,
         defaults={
-            'title' : title.replacee("[","").replace("]",""),
+            'title' : title,
             'cate_code': cate_code,
             'images': json.dumps(images_list),
             'options': json.dumps(option_list),
@@ -1413,7 +1414,7 @@ def create_variant(aliproduct, shopifyproduct):
 
     #print("aliproduct", aliproduct)
     #print("shopifyproduct", shopifyproduct)
-    print("shopify_images", shopify_images)
+    #print("shopify_images", shopify_images)
 
     ###################################
     # 创建变体
@@ -1435,7 +1436,7 @@ def create_variant(aliproduct, shopifyproduct):
                 if ali_image_no is None:
                     shopify_image_no = None
                 else:
-                    print("option image_no", option1, ali_image_no)
+                    #print("option image_no", option1, ali_image_no)
                     if ali_image_no < len(shopify_images):
                         shopify_image_no = shopify_images[ali_image_no].get("id")
                     else:
@@ -1494,7 +1495,7 @@ def create_variant(aliproduct, shopifyproduct):
             if ali_image_no is None:
                 shopify_image_no = None
             else:
-                print("option image_no", option1, ali_image_no)
+                #print("option image_no", option1, ali_image_no)
                 if ali_image_no < len(shopify_images) :
                     shopify_image_no = shopify_images[ali_image_no].get("id")
                 else:
