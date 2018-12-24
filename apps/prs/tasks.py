@@ -427,6 +427,7 @@ def post_ali_shopify():
 @task
 def post_to_shopify(aliproduct_pk, ):
     from .ali import create_body, create_variant
+    from django.utils import timezone as datetime
     dest_shop = "yallasale-com"
 
     aliproduct = AliProduct.objects.get(pk=aliproduct_pk)
