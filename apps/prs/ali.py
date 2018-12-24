@@ -34,32 +34,36 @@ def header(host, offer_id):
     return headers
 '''
 def header():
+    agents = [
+        "User-Agent:Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_8; en-us) AppleWebKit/534.50 (KHTML, like Gecko) Version/5.1 Safari/534.50",
+        "User-Agent:Mozilla/5.0 (Windows; U; Windows NT 6.1; en-us) AppleWebKit/534.50 (KHTML, like Gecko) Version/5.1 Safari/534.50"
+    ]
 
-    cookie = open('cookie.txt', 'r').readlines()[1].replace('\n', '').replace(' ', '')
+    cookie = open('cookie.txt', 'r').readlines()[0].replace('\n', '').replace(' ', '')
 
     headers = {
                'Connection': 'keep-alive',
-               'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36',
+               'User-Agent': random.choice(agents),
 
                'Accept-Encoding': 'gzip, deflate, br',
                'Accept-Language': 'zh-CN,zh;q=0.9',
-               'Cookie': cookie}
+    }
+         #      'Cookie': cookie}
     return headers
 
 def get_proxies():
-    url = "http://webapi.http.zhimacangku.com/getip?num=1&type=1&pro=&city=0&yys=0&port=11&pack=37695&ts=0&ys=0&cs=0&lb=1&sb=0&pb=4&mr=1&regions="
+    #return  {'http':'49.70.223.4:3217'}
+
+    url = "http://webapi.http.zhimacangku.com/getip?num=1&type=1&pro=&city=0&yys=0&port=1&pack=36732&ts=0&ys=0&cs=0&lb=1&sb=0&pb=4&mr=1&regions="
     r = requests.session()
     res = r.get(url, headers=header(), allow_redirects=False)
 
+    ip = res.text.replace('\r\n', '')
 
-
-
-    ip = res.text.replace('\n', '')
-
-    print("res is", res, res.text)
+    #print("res is", res, res.text)
 
     #return {'https': ip.replace('\n', '')}
-    return {'https':ip}
+    return {'http':ip}
 
 
 
@@ -72,7 +76,7 @@ def request(url,data=None):
     while(not getted):
         try:
             proxies = get_proxies()
-            res = r.get(url, data=data,proxies=proxies, verify=False ,headers=header(), allow_redirects=False)
+            res = r.get(url, data=data, proxies=proxies,verify=False ,headers=header(), allow_redirects=False) #
             getted = True
         except (ProxyError, ConnectTimeout, SSLError, ReadTimeout, ConnectionError):
             print("代理错误")
@@ -83,38 +87,49 @@ def request(url,data=None):
     return res
 
 #用代理访问1688，测试代理是否可用
-def get_ali_page(url,data=None):
+def get_ali_page(offer_id):
+    import time
+    import traceback
+    from requests.packages import urllib3
+    urllib3.disable_warnings()
     r = requests.session()
     n = 0
+    url = ('https://detail.1688.com/offer/{}.html'.format(offer_id))
     while ( n < 20):
         try:
             proxies = get_proxies()
             print("当前使用的代理是",proxies)
-            res = r.get(url, data=data, proxies=proxies, verify=False, headers=header(), allow_redirects=False)
+            res = r.get(url,  proxies=proxies, verify=False, headers=header(), allow_redirects=False)
+            if res.status_code == 200:
+                return  res.content
+            else:
 
-        except (ProxyError, ConnectTimeout, SSLError, ReadTimeout, ConnectionError):
+                print(res, res.status_code, res.headers['Location'])
+                n += 1
+                time.sleep(1)
+                continue
+
+        except Exception as e:  #(ProxyError, ConnectTimeout, SSLError, ReadTimeout, ConnectionError):
             print("代理错误")
+            print('str(Exception):\t', str(Exception))
+            print("str(e)", str(e))
+            print("repr(e)", repr(e))
+            print("traceback.print_exc()", traceback.print_exc())
+            print("traceback.format_exc()", traceback.format_exc())
+
+            time.sleep(1)
             n += 1
             continue
 
-        htmlEmt = etree.HTML(res.content)
 
-        # 标题
-        title_ori = htmlEmt.xpath('//h1[@class="d-title"]/text()')
-        if title_ori:
-            return  htmlEmt
-        else:
-            print("页面被重定向", offer_id)
-            n += 1
-            continue
 
-    return  False
+    return  None
 
 
 from .fanyi import  baidu_translate
 def fanyi(data):
-
-    return baidu_translate(data,"zh","en").replacee("['","").replace("']","")
+    res =  baidu_translate(data,"zh","en").replace("['","").replace("']","")
+    return res
     #return requests.post('https://fanyi.baidu.com/transapi', data={"query": data, 'from': 'zh', 'to': 'en'}).json()['data'][0]['dst']
 
 def fanyi_en(data):
@@ -229,14 +244,18 @@ def get_ali_product_info(offer_id,cate_code):
     product.offer_id = offer_id
     product.cate_code = cate_code
 
+    res = get_ali_page(offer_id)
+    if res is None:
+        return "获取页面失败", False
 
-
-    htmlEmt = get_ali_page('https://detail.1688.com/offer/{}.html'.format(offer_id))
+    htmlEmt = etree.HTML(res)
 
     # 标题
-    title_ori = htmlEmt.xpath('//h1[@class="d-title"]/text()')
+    title_ori = htmlEmt.xpath('//h1[@class="d-title"]/string()')
     if title_ori:
+        print(type(title_ori), title_ori)
         title = fanyi(title_ori)
+
     else:
         print("title is empty",offer_id)
         return "title is empty",False
