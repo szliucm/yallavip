@@ -173,7 +173,7 @@ def ali_list(html):
 #获取1688产品信息
 def get_ali_product_info(offer_id,cate_code):
     from .models import AliProduct
-    from django.utils import timezone as datetime
+
     print("开始抓取1688产品信息 ", offer_id)
 
     product = AliProduct()
