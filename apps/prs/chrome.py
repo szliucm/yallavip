@@ -3,27 +3,31 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.service import Service
 import time
 
 from lxml import etree
 
-chrome_options = Options()
-chrome_options.add_argument('--headless')  # 16年之后，chrome给出的解决办法，抢了PhantomJS饭碗
-chrome_options.add_argument('--disable-gpu')
-chrome_options.add_argument('--disable-dev-shm-usage')
-chrome_options.add_argument('--no-sandbox')  # root用户不加这条会无法运行
-chrome_options.add_argument('blink-settings=imagesEnabled=false')
 
-
-
-browser = webdriver.Chrome(options=chrome_options)
-wait = WebDriverWait(browser, 15)
 
 def get_ali_list(url):
-
-
     print("url is ", url)
 
+    chrome_options = Options()
+    chrome_options.add_argument('--headless')  # 16年之后，chrome给出的解决办法，抢了PhantomJS饭碗
+    chrome_options.add_argument('--disable-gpu')
+    chrome_options.add_argument('--disable-dev-shm-usage')
+    chrome_options.add_argument('--no-sandbox')  # root用户不加这条会无法运行
+    chrome_options.add_argument('blink-settings=imagesEnabled=false')
+
+    c_service = Service('/usr/bin/chromedriver')
+    c_service.command_line_args()
+    c_service.start()
+
+    browser = webdriver.Chrome(options=chrome_options)
+    wait = WebDriverWait(browser, 60)
+
+    print("准备打开页面")
     browser.get(url=url)
     print("页面打开了")
     try:
@@ -48,14 +52,18 @@ def get_ali_list(url):
         button_deal.click()
     except:
         pass
-    print("向下滚屏")
+
     try:
+        print("向下滚屏")
         browser.execute_script('window.scrollTo(0, document.body.scrollHeight)')
         time.sleep(3)
+        print("向下滚屏")
         browser.execute_script('window.scrollTo(0, document.body.scrollHeight)')
         time.sleep(3)
+        print("向下滚屏")
         browser.execute_script('window.scrollTo(0, document.body.scrollHeight)')
         time.sleep(3)
+        print("向下滚屏")
         browser.execute_script('window.scrollTo(0, document.body.scrollHeight)')
         time.sleep(3)
 
@@ -66,7 +74,10 @@ def get_ali_list(url):
     print("获取产品数据")
     #print(type(browser.page_source),browser.page_source)
     #return
-    return  ali_list(browser.page_source)
+    html = browser.page_source
+    browser.quit()
+    c_service.stop()
+    return  ali_list(html)
     '''
     if page>1:
         for page in range(2,page+1):

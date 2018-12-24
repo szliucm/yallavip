@@ -146,7 +146,7 @@ def get_ali_product_info(offer_id,cate_code):
     if title_ori:
         title = fanyi(title_ori)
     else:
-        print("title is empty")
+        print("title is empty",offer_id)
         return "title is empty",False
 
     # 取主图
@@ -407,10 +407,16 @@ def get_ali_product(offer_id,max_id,tags):
 
     # 标题
     title_ori = htmlEmt.xpath('//h1[@class="d-title"]/text()')
+
     if title_ori:
         product.title = fanyi(title_ori)
     else:
-        print("title is empty")
+        print("tile ###############")
+        result = etree.tostring(htmlEmt)
+        # utf-8 格式输出
+        print(result.decode("utf-8"))
+        print(type(title_ori),title_ori )
+        print("title is empty", offer_id)
         return False
 
 
@@ -776,7 +782,7 @@ def list_ali_product(offer_id,  max_id, shop_obj):
     if title_ori:
         product.title = fanyi(title_ori)
     else:
-        print("title is empty")
+        print(" title is empty",offer_id)
         return False
 
 
