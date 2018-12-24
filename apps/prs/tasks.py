@@ -422,12 +422,14 @@ def post_ali_shopify():
 
     aliproducts = AliProduct.objects.filter(published=False)
     for aliproduct in aliproducts:
-        post_to_shopify.delay(aliproduct)
+        post_to_shopify.delay(aliproduct.pk)
 
 @task
-def post_to_shopify(aliproduct, ):
+def post_to_shopify(aliproduct_pk, ):
     from .ali import create_body, create_variant
     dest_shop = "yallasale-com"
+
+    aliproduct = AliProduct.objects.get(pk=aliproduct_pk)
 
     vendor_no = aliproduct.offer_id
     print("vendor_no", vendor_no)
