@@ -1,7 +1,7 @@
 # Create your tasks here
 from __future__ import absolute_import, unicode_literals
 import numpy as np, re
-from celery import shared_task
+from celery import shared_task,task
 from django.db.models import Q,Count
 import requests
 import json
@@ -385,7 +385,7 @@ def ali_cate_get_list():
 #2,根据1688产品列表抓取产品详细信息（标题，规格，图片，价格）
 @shared_task
 def ali_list_get_info():
-    from .ali import get_ali_product_info
+
 
     aliproducts = AliProduct.objects.filter(created=False)
     print("一共有%d 个1688产品信息待抓取"%(aliproducts.count()))
@@ -393,9 +393,17 @@ def ali_list_get_info():
     for aliproduct in aliproducts:
         offer_id = aliproduct.offer_id
         cate_code = aliproduct.cate_code
-        message,status=get_ali_product_info(offer_id, cate_code)
-        if status is False:
-            AliProduct.objects.filter(pk=aliproduct.pk).update(created_error=message)
+        get_aliproduct.delay(aliproduct.pk, offer_id,cate_code)
+
+
+@task
+def get_aliproduct(pk, offer_id,cate_code):
+    from .ali import get_ali_product_info
+
+    message, status = get_ali_product_info(offer_id, cate_code)
+    if status is False:
+        AliProduct.objects.filter(pk=pk).update(created_error=message)
+
 
 
 
