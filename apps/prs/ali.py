@@ -137,10 +137,10 @@ def get_ali_page(offer_id):
             else:
 
                 print(res, res.status_code, res.headers['Location'])
-                Proxy.objects.filter(ip=proxy).update(active=False)
+                #Proxy.objects.filter(ip=proxy).update(active=False)
 
                 n += 1
-                time.sleep(2)
+                time.sleep(120)
                 continue
                 #return None
 
