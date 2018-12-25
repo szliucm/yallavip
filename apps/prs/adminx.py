@@ -335,11 +335,45 @@ class MyProductCategoryAdmin(object):
 
 @xadmin.sites.register(MyFbProduct)
 class MyFbProductAdmin(object):
+    def show_image(self, obj):
 
-    list_display = [ "myproduct", "mypage", "cate_code","obj_type", "fb_id", "published", "publish_error", "published_time", ]
+        try:
+
+            aliproduct = AliProduct.objects.get(offer_id = obj.myproduct.vendor)
+
+            if aliproduct:
+
+                images = json.loads(aliproduct.images)
+                if images and len(images) > 0:
+                    image = images[0]
+                else:
+                    image = 'http://admin.yallavip.com/media/material/sale-12_sH6nsyI.png'
+            else:
+                image = 'http://admin.yallavip.com/media/material/sale-11_iGr0k4Q.png'
+
+
+
+        except Exception as e:
+            image = 'http://admin.yallavip.com/media/material/sale-7_WqFydd8.png'
+
+        print("########")
+        print(obj.myproduct.handle)
+        print(image)
+
+        img = mark_safe(
+            '<a href="%s" target="view_window"><img src="%s" width="100px"></a>' % (
+                "https://www.yallavip.com/products/" + obj.myproduct.handle,
+                image
+            ))
+
+        return img
+
+    show_image.short_description = "产品图片"
+
+    list_display = [ "myproduct","show_image", "mypage", "cate_code","obj_type", "fb_id", "published", "publish_error", "published_time", ]
     # 'sku_name','img',
 
-    search_fields = ["mypage","myproduct"]
+    search_fields = ["myproduct__handle"]
     list_filter = ["mypage","cate_code","published", "published_time","publish_error",]
     list_editable = []
     readonly_fields = ()
@@ -356,7 +390,7 @@ class AliProductAdmin(object):
 
         try:
             #img = mark_safe('<img src="%s" width="100px" />' % (obj.logo.url,))
-            print("https://detail.1688.com/offer/%s.html"%(obj.offer_id))
+
             images = json.loads(obj.images)
             if images and len(images)>0:
                 image = images[0]
