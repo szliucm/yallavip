@@ -536,6 +536,8 @@ def post_newproduct_album():
         for album in albums:
             album_dict[album.name] = album.album_no
 
+        print("主页已有相册", album_dict)
+
 
         #print("当前主页已有相册", album_dict)
 
@@ -598,7 +600,7 @@ def post_newproduct_album():
                     published = True,
                     published_time = datetime.now()
                 )
-                print("更新page_类目记录 page_pk %s  product_pk %s   photo_id   %s" % (mypage.pk, product.myproduct.pk, posted))
+                print("发布新产品到相册成功 page_pk %s  product_pk %s   photo_id   %s" % (mypage.pk, product.myproduct.pk, posted))
                 #print("created is ", created)
                 #print("obj is ", obj)
                 n += 1
