@@ -589,6 +589,7 @@ def post_newproduct_album():
 
         # 发到指定相册
         products =MyFbProduct.objects.filter(mypage__pk=mypage.pk, published=False, album_name =album_name,myproduct__handle__startswith='b').order_by("-id")
+        print("###############这次需要发的产品", products.count(), products.query)
         n = 0
         for product in products:
             posted = post_photo_to_album(mypage, target_album_no, product.myproduct)
