@@ -395,7 +395,7 @@ def ali_list_get_info():
     for aliproduct in aliproducts:
         offer_id = aliproduct.offer_id
         cate_code = aliproduct.cate_code
-        get_aliproduct.delay(aliproduct.pk, offer_id,cate_code)
+        get_aliproduct.apply_async((aliproduct.pk, offer_id,cate_code),queue="ali")
 
 
 @task
