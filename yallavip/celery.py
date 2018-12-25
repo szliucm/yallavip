@@ -13,7 +13,11 @@ app = Celery('yallavip',
 app.conf.broker_url = 'redis://localhost:6379/0'
 app.conf.result_backend = 'redis://localhost:6379/0'
 app.conf.timezone = 'Asia/Riyadh'
-
+app.conf.update(
+    task_routes = {
+        'prs.tasks。sync_album_fbproduct': {'queue': 'fb'},
+    },
+)
 
 
 

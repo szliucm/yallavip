@@ -304,6 +304,8 @@ class MyFbProduct(models.Model):
     )
     myproduct = models.ForeignKey('shop.ShopifyProduct', null=True, blank=True, verbose_name="产品",
                                 related_name="myfb_product", on_delete=models.SET_NULL)
+    myaliproduct = models.ForeignKey('AliProduct', null=True, blank=True, verbose_name="1688产品",
+                                  related_name="myfb_aliproduct", on_delete=models.SET_NULL)
     mypage = models.ForeignKey('fb.MyPage', null=True, blank=True, verbose_name="主页",
                                   related_name="myfb_page", on_delete=models.SET_NULL)
     obj_type = models.CharField(choices=OBJ_TYPE,default='PHOTO',max_length=30, null=True, blank=True, verbose_name="接触点类型")
@@ -326,7 +328,7 @@ class MyFbProduct(models.Model):
 
     def __str__(self):
 
-        return  str(self.pk)
+        return  self.myaliproduct.handle
 
 class AliProduct(models.Model):
     offer_id = models.CharField(default='',max_length=300, null=True, blank=True, verbose_name="编号")
@@ -360,7 +362,7 @@ class AliProduct(models.Model):
 
     def __str__(self):
 
-        return  str(self.pk)
+        return  self.offer_id
 
 class Proxy(models.Model):
     ip = models.CharField(default='',max_length=300, null=True, blank=True, verbose_name="ip")

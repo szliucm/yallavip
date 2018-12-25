@@ -339,11 +339,12 @@ class MyFbProductAdmin(object):
 
         try:
 
-            aliproduct = AliProduct.objects.get(offer_id = obj.myproduct.vendor)
+            aliproduct = obj.myaliproduct
 
             if aliproduct:
 
                 images = json.loads(aliproduct.images)
+
                 if images and len(images) > 0:
                     image = images[0]
                 else:
@@ -357,12 +358,13 @@ class MyFbProductAdmin(object):
             image = 'http://admin.yallavip.com/media/material/sale-7_WqFydd8.png'
 
         print("########")
-        print(obj.myproduct.handle)
         print(image)
+        print(obj.myaliproduct.handle)
+
 
         img = mark_safe(
             '<a href="%s" target="view_window"><img src="%s" width="100px"></a>' % (
-                "https://www.yallavip.com/products/" + obj.myproduct.handle,
+                "https://www.yallavip.com/products/" + obj.myaliproduct.handle,
                 image
             ))
 
@@ -370,10 +372,10 @@ class MyFbProductAdmin(object):
 
     show_image.short_description = "产品图片"
 
-    list_display = [ "myproduct","show_image", "mypage", "cate_code","obj_type", "fb_id", "published", "publish_error", "published_time", ]
+    list_display = [ "myaliproduct","show_image", "mypage", "cate_code","obj_type", "fb_id", "published", "publish_error", "published_time", ]
     # 'sku_name','img',
 
-    search_fields = ["myproduct__handle"]
+    search_fields = ["myaliproduct__handle","myaliproduct__offer_id"]
     list_filter = ["mypage","cate_code","published", "published_time","publish_error",]
     list_editable = []
     readonly_fields = ()
