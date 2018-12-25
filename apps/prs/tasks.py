@@ -495,6 +495,7 @@ def prepare_newproduct_album():
 
                 myfbproduct = MyFbProduct(
                     myaliproduct=AliProduct.objects.get(pk=product_to_add.pk),
+                    myproduct=ShopifyProduct.objects.filter(vendor=product_to_add.offer_id).first(),
                     mypage=MyPage.objects.get(pk=page.pk),
                     obj_type="PHOTO",
                     cate_code = cate_code,
@@ -549,7 +550,7 @@ def post_newproduct_album():
 
         album_list =[]
         for album in albums:
-            if album[1]>0 :
+            if album[1]>5 :
                 if len(album[0])>3:
                     album_list.append(album[0])
             else:
@@ -592,8 +593,8 @@ def post_newproduct_album():
         print("###############这次需要发的产品", products.count(), products.query)
         n = 0
         for product in products:
-            myproduct= ShopifyProduct.objects.filter(vendor=product.myaliproduct.offer_id).first()
-            posted = post_photo_to_album(mypage, target_album_no, myproduct)
+
+            posted = post_photo_to_album(mypage, target_album_no, product.myproduct)
 
 
             if posted:
