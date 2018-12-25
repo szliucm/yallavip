@@ -110,9 +110,9 @@ class ShopifyVariant(models.Model):
 
     inventory_policy = models.CharField(u'inventory_policy', default='', max_length=200, blank=True)
     inventory_quantity = models.CharField(u'inventory_quantity', default='', max_length=500, blank=True)
-    option1 = models.CharField(u'option1', default='', max_length=100, null=True,blank=True)
-    option2 = models.CharField(u'option2', default='', max_length=100, null=True,blank=True)
-    option3 = models.CharField(u'option3', default='', max_length=100, null=True,blank=True)
+    option1 = models.CharField(u'option1', default='', max_length=500, null=True,blank=True)
+    option2 = models.CharField(u'option2', default='', max_length=500, null=True,blank=True)
+    option3 = models.CharField(u'option3', default='', max_length=500, null=True,blank=True)
     position = models.IntegerField(u'position', default=0, blank=True, null=True)
     price = models.DecimalField(u'price', max_digits = 10,decimal_places=2, default='', blank=True, null=True)
 
