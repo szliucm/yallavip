@@ -50,13 +50,14 @@ def header():
                'Accept-Encoding': 'gzip, deflate, br',
                'Accept-Language': 'zh-CN,zh;q=0.9',
 
-               'Cookie': cookie}
+               #'Cookie': cookie
+    }
     return headers
 
 def get_proxies():
     #return  {'http':'49.70.223.4:3217'}
 
-    url = "http://webapi.http.zhimacangku.com/getip?num=1&type=1&pro=&city=0&yys=0&port=1&pack=36732&ts=0&ys=0&cs=0&lb=1&sb=0&pb=4&mr=1&regions="
+    url = "http://webapi.http.zhimacangku.com/getip?num=1&type=1&pro=&city=0&yys=0&port=11&pack=36732&ts=0&ys=0&cs=0&lb=1&sb=0&pb=4&mr=1&regions="
     r = requests.session()
     res = r.get(url, headers=header(), allow_redirects=False)
 
@@ -64,8 +65,8 @@ def get_proxies():
 
     #print("res is", res, res.text)
 
-    return {'http': "119.101.116.13:9999"}
-    #return {'http':ip}
+    #return {'http': "119.101.116.13:9999"}
+    return {'https':ip}
 
 
 
@@ -99,18 +100,20 @@ def get_ali_page(offer_id):
     url = ('https://detail.1688.com/offer/{}.html'.format(offer_id))
     while ( n < 20):
         try:
-            #proxies = get_proxies()
-            #print("当前使用的代理是",proxies)
+            proxies = get_proxies()
+            print("当前使用的代理是",proxies)
             #proxies= None
-            res = r.get(url,    headers=header(), allow_redirects=False) #,proxies=proxies,verify=False,
+            res = r.get(url,    headers=header(), allow_redirects=False,proxies=proxies,verify=False,) #
             if res.status_code == 200:
+                print(res, res.status_code)
                 return  res.content
             else:
 
                 print(res, res.status_code, res.headers['Location'])
                 n += 1
-                time.sleep(1)
-                return None
+                time.sleep(2)
+                continue
+                #return None
 
         except Exception as e:  #(ProxyError, ConnectTimeout, SSLError, ReadTimeout, ConnectionError):
             print("代理错误")
@@ -254,9 +257,11 @@ def get_ali_product_info(offer_id,cate_code):
     htmlEmt = etree.HTML(res)
 
     # 标题
-    title_ori = htmlEmt.xpath('//h1[@class="d-title"]/text()')[0]
+    title_ori = htmlEmt.xpath('//h1[@class="d-title"]/text()')
     if title_ori:
+
         print(type(title_ori), title_ori)
+        title_ori = title_ori[0]
         title = fanyi(title_ori)
 
     else:
@@ -375,94 +380,97 @@ def get_ali_product_info(offer_id,cate_code):
     price_dict = {}
 
     div_sku = htmlEmt.xpath('//div[@class="obj-sku"]')
-    if div_sku is not None:
+    if div_sku :
+        print(div_sku,"\n\n")
         div_sku = div_sku[0]
+
+
+        option2 = div_sku.find('.//div[@class="obj-header"]/span').text
+
+        option2_content = div_sku.xpath('.//tr')
+        # print("option2_content *****************", etree.tostring(option2_content))
+        for div in option2_content:
+            #print("type  div", type(div), etree.tostring(div))
+            # 有两种情况，一种是名字含图片(not leading )，一种是不含图片的(有leading)
+            option2_img = None
+            if leading:
+                option2_name = div.find('.//td[@class="name"]/span').text
+                option2_img = None
+            else:
+                option2_name = div.find('.//td[@class="name"]/span').attrib.get('title')
+
+
+                option2_imgs = div.find('.//td[@class="name"]/span').attrib.get('data-imgs')
+                if option2_imgs:
+                    data_imgs = json.loads(option2_imgs)
+                    option2_img = data_imgs["original"]
+                    #print("image is ", option2_img)
+
+                    # 规格图片如果不在主图里，也插进列表
+                    if option2_img not in images_list:
+                        images_list.append(option2_img)
+                        '''
+                        image = {
+                            "src": option2_img,
+                            "image_no": image_no
+                        }
+                        imgs_list.append(image)
+                        image_no += 1
+                        '''
+
+            #不管有没有leading，都有名字要处理，但是只有无leading的，才有规格图片字典
+            if option2_name:
+                if option2_name.isdigit():
+                    option2_name_en = option2_name
+                else:
+                    option2_name_en = fanyi(option2_name)
+            else:
+                print("没有规格")
+                continue
+
+            #print("###############", option2_name_en, option2_list)
+            if option2_name_en in option2_list:
+                option2_name_en = option2_name_en + "_" + str(len(option2_list))
+
+            option2_list.append(option2_name_en)
+            option2_zh_list.append(option2_name)
+
+            # 规格-图片地址 字典
+            if option2_img is not None:
+                img_dict[option2_name_en] = images_list.index(option2_img)
+
+            price = div.find('.//td[@class="price"]/span/em').text
+            count = div.find('.//td[@class="count"]/span/em[1]').text
+
+            if not count or int(count) == 0:
+                print("没有库存", offer_id)
+                continue
+
+
+            price_dict[option2_name_en] = price
+
+        option = {
+            "name": fanyi(option2),
+            "values": option2_list
+        }
+
+        # 插入规格
+        option_list.append(option)
+        #print("option_list \n", option_list)
+
+        #######中文版
+        option_zh = {
+            "name": option2,
+            "values": option2_zh_list
+        }
+
+        # 插入规格
+        option_zh_list.append(option_zh)
+        #print("option_list \n", option_zh_list)
     else:
         print("obj-sku is empty")
-        return "obj-sku is empty", False
+        #return "obj-sku is empty", False
 
-    option2 = div_sku.find('.//div[@class="obj-header"]/span').text
-
-    option2_content = div_sku.xpath('.//tr')
-    # print("option2_content *****************", etree.tostring(option2_content))
-    for div in option2_content:
-        #print("type  div", type(div), etree.tostring(div))
-        # 有两种情况，一种是名字含图片(not leading )，一种是不含图片的(有leading)
-        option2_img = None
-        if leading:
-            option2_name = div.find('.//td[@class="name"]/span').text
-            option2_img = None
-        else:
-            option2_name = div.find('.//td[@class="name"]/span').attrib.get('title')
-
-
-            option2_imgs = div.find('.//td[@class="name"]/span').attrib.get('data-imgs')
-            if option2_imgs:
-                data_imgs = json.loads(option2_imgs)
-                option2_img = data_imgs["original"]
-                #print("image is ", option2_img)
-
-                # 规格图片如果不在主图里，也插进列表
-                if option2_img not in images_list:
-                    images_list.append(option2_img)
-                    '''
-                    image = {
-                        "src": option2_img,
-                        "image_no": image_no
-                    }
-                    imgs_list.append(image)
-                    image_no += 1
-                    '''
-
-        #不管有没有leading，都有名字要处理，但是只有无leading的，才有规格图片字典
-        if option2_name:
-            if option2_name.isdigit():
-                option2_name_en = option2_name
-            else:
-                option2_name_en = fanyi(option2_name)
-        else:
-            print("没有规格")
-            continue
-
-        #print("###############", option2_name_en, option2_list)
-        if option2_name_en in option2_list:
-            option2_name_en = option2_name_en + "_" + str(len(option2_list))
-
-        option2_list.append(option2_name_en)
-        option2_zh_list.append(option2_name)
-
-        # 规格-图片地址 字典
-        if option2_img is not None:
-            img_dict[option2_name_en] = images_list.index(option2_img)
-
-        price = div.find('.//td[@class="price"]/span/em').text
-        count = div.find('.//td[@class="count"]/span/em[1]').text
-
-        if not count or int(count) == 0:
-            print("没有库存", offer_id)
-            continue
-
-
-        price_dict[option2_name_en] = price
-
-    option = {
-        "name": fanyi(option2),
-        "values": option2_list
-    }
-
-    # 插入规格
-    option_list.append(option)
-    #print("option_list \n", option_list)
-
-    #######中文版
-    option_zh = {
-        "name": option2,
-        "values": option2_zh_list
-    }
-
-    # 插入规格
-    option_zh_list.append(option_zh)
-    #print("option_list \n", option_zh_list)
 
     #找到最大价格
     maxprice = 0
