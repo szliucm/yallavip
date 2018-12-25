@@ -601,7 +601,8 @@ def post_newproduct_album():
 
 
             if posted:
-                MyFbProduct.objects.filter(mypage__pk=mypage.pk ,myproduct__pk=product.myproduct.pk).update(
+                MyFbProduct.objects.filter(mypage__pk=mypage.pk ,myaliproduct__pk=product.myaliproduct.pk).update(
+                    myproduct= myproduct,
                     fb_id = posted,
                     published = True,
                     published_time = datetime.now()
