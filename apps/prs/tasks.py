@@ -607,14 +607,15 @@ def post_newproduct_album():
                     published = True,
                     published_time = datetime.now()
                 )
-                print("发布新产品到相册成功 page_pk %s  product_pk %s   photo_id   %s" % (mypage.pk, product.myproduct.pk, posted))
+                print("发布新产品到相册成功 page_pk %s  product_pk %s   photo_id   %s" % (mypage.pk, myproduct.pk, posted))
                 #print("created is ", created)
                 #print("obj is ", obj)
                 n += 1
                 if n>5:
                     break
             else:
-                MyFbProduct.objects.filter(mypage__pk=mypage.pk ,myproduct__pk=product.myproduct.pk).update(
+                MyFbProduct.objects.filter(mypage__pk=mypage.pk ,myaliproduct__pk=product.myaliproduct.pk).update(
+                    myproduct=myproduct,
                     published=False,
                     publish_error="发布失败",
                     published_time=datetime.now()
