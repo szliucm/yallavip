@@ -59,7 +59,7 @@ from .models import Proxy
 def new_proxies():
     #return  {'http':'49.70.223.4:3217'}
 
-    url = "http://webapi.http.zhimacangku.com/getip?num=3&type=1&pro=&city=0&yys=0&port=11&pack=37695&ts=0&ys=0&cs=0&lb=5&sb=0&pb=4&mr=1&regions="
+    url = "http://webapi.http.zhimacangku.com/getip?num=1&type=1&pro=&city=0&yys=0&port=11&pack=37695&ts=0&ys=0&cs=0&lb=5&sb=0&pb=4&mr=1&regions="
     r = requests.session()
     res = r.get(url, headers=header(), allow_redirects=False)
 
@@ -124,12 +124,12 @@ def get_ali_page(offer_id):
     url = ('https://detail.1688.com/offer/{}.html'.format(offer_id))
     while ( n < 20):
         try:
-            '''
+
             proxy = get_proxies()
             proxies = {'https': proxy}
             print("当前使用的代理是",proxies)
             #proxies= None
-            '''
+
             res = r.get(url,    headers=header(), allow_redirects=False) #,proxies=proxies,verify=False,
             if res.status_code == 200:
                 print(res, res.status_code)
@@ -137,10 +137,10 @@ def get_ali_page(offer_id):
             else:
 
                 print(res, res.status_code, res.headers['Location'])
-                #Proxy.objects.filter(ip=proxy).update(active=False)
+                Proxy.objects.filter(ip=proxy).update(active=False)
 
                 n += 1
-                time.sleep(120)
+                time.sleep(10)
                 continue
                 #return None
 
