@@ -646,7 +646,7 @@ class ShopifyProductAdmin(object):
 
     def download_product(self, request, queryset):
         # 定义actions函数
-
+        products = []
         for product in queryset:
             shop_obj = Shop.objects.get(shop_name=product.shop_name)
             product_no = product.product_no
@@ -671,9 +671,10 @@ class ShopifyProductAdmin(object):
             r = requests.get(url, params)
             product = json.loads(r.text)["product"]
 
-            products =[]
+
             products.append(product)
-            insert_product(shop_obj.shop_name, products)
+
+        insert_product(shop_obj.shop_name, products)
 
 
 
