@@ -592,7 +592,8 @@ def post_newproduct_album():
         print("###############这次需要发的产品", products.count(), products.query)
         n = 0
         for product in products:
-            posted = post_photo_to_album(mypage, target_album_no, product.myproduct)
+            myproduct= ShopifyProduct.objects.filter(vendor=product.myaliproduct.offer_id).first()
+            posted = post_photo_to_album(mypage, target_album_no, myproduct)
 
 
             if posted:
