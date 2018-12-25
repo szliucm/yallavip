@@ -66,12 +66,13 @@ def new_proxies():
     ips = res.text.split('\t')
 
     for ip in ips:
-        Proxy.objects.update_or_create(
-            ip = ip,
-            default ={
-                "active": True,
+        if len(ip)>4:
+            Proxy.objects.update_or_create(
+                ip = ip,
+                defaults ={
+                    "active": True,
 
-            }
+                }
     )
 
     #print("res is", res, res.text)
@@ -130,7 +131,7 @@ def get_ali_page(offer_id):
             print("当前使用的代理是",proxies)
             #proxies= None
 
-            res = r.get(url,    headers=header(), allow_redirects=False) #,proxies=proxies,verify=False,
+            res = r.get(url,    headers=header(), allow_redirects=False,proxies=proxies,verify=False,) #
             if res.status_code == 200:
                 print(res, res.status_code)
                 return  res.content
@@ -140,7 +141,7 @@ def get_ali_page(offer_id):
                 Proxy.objects.filter(ip=proxy).update(active=False)
 
                 n += 1
-                time.sleep(10)
+                time.sleep(1)
                 continue
                 #return None
 
