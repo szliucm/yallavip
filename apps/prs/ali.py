@@ -152,7 +152,7 @@ def get_ali_page(offer_id):
             print("repr(e)", repr(e))
             print("traceback.print_exc()", traceback.print_exc())
             print("traceback.format_exc()", traceback.format_exc())
-
+            Proxy.objects.filter(ip=proxy).update(active=False)
             time.sleep(1)
             n += 1
             continue
