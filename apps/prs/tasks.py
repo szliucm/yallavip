@@ -593,7 +593,7 @@ def post_newproduct_album():
         print("###############这次需要发的产品", products.count(), products.query)
         n = 0
         for product in products:
-            myproduct = ShopifyProduct.objects.filter(vendor= product.myaliproduct.offer_id)
+            myproduct = ShopifyProduct.objects.filter(vendor= product.myaliproduct.offer_id).first()
             print("product", product, myproduct)
 
 
