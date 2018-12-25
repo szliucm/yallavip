@@ -541,7 +541,7 @@ def post_newproduct_album():
 
         #print("当前主页已有相册", album_dict)
 
-        albums = MyFbProduct.objects.filter(mypage__pk=mypage.pk, published=False) \
+        albums = MyFbProduct.objects.filter(mypage__pk=mypage.pk, published=False,myproduct__handle__startswith='b') \
             .values_list('album_name').annotate(product_count=Count('id')).order_by('-product_count')
 
         print("当前主页待处理产品相册", albums)
@@ -588,7 +588,7 @@ def post_newproduct_album():
 
 
         # 发到指定相册
-        products =MyFbProduct.objects.filter(mypage__pk=mypage.pk, published=False, album_name =album_name,myproduct__handle__startswith='b').order_by("-id")
+        products =MyFbProduct.objects.filter(mypage__pk=mypage.pk, published=False, album_name =album_name,myaliproduct__handle__startswith='b').order_by("-id")
         print("###############这次需要发的产品", products.count(), products.query)
         n = 0
         for product in products:
