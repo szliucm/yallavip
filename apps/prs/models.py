@@ -361,3 +361,14 @@ class AliProduct(models.Model):
     def __str__(self):
 
         return  str(self.pk)
+
+class Proxy(models.Model):
+    ip = models.CharField(default='',max_length=300, null=True, blank=True, verbose_name="ip")
+    active = models.BooleanField(default=False,null=True, blank=True,verbose_name="有效性")
+
+    class Meta:
+        verbose_name = "代理服务器"
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return str(self.ip)

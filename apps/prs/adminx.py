@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 __author__ = 'Aaron'
 
+import  json
 import xadmin
 from import_export import resources, fields
 from django.db.models import Count
@@ -347,11 +348,32 @@ class MyFbProductAdmin(object):
 @xadmin.sites.register(AliProduct)
 class AliProductAdmin(object):
     def price_try(self, obj):
-        return obj.maxprice * obj.price_rate
+        return int(obj.maxprice * obj.price_rate)
 
     price_try.short_description = "价格(SAR)"
 
-    list_display = [ "offer_id", "handle","maxprice","price_rate" ,"price_try","title", "cate_code","created","published", ]
+    def show_image(self, obj):
+
+        try:
+            #img = mark_safe('<img src="%s" width="100px" />' % (obj.logo.url,))
+            print("https://detail.1688.com/offer/%s.html"%(obj.offer_id))
+            images = json.loads(obj.images)
+            if images and len(images)>0:
+                image = images[0]
+
+            img = mark_safe(
+                '<a href="%s" target="view_window"><img src="%s" width="100px"></a>' % (
+                    "https://detail.1688.com/offer/%s.html"%(obj.offer_id),
+                    image
+                    ))
+
+        except Exception as e:
+            img = ''
+        return img
+
+    show_image.short_description = "产品图片"
+
+    list_display = [ "offer_id", "show_image","handle","maxprice","price_rate" ,"price_try","title", "cate_code","created","published", ]
     # 'sku_name','img',
 
     search_fields = ["offer_id","handle"]
