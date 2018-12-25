@@ -541,7 +541,7 @@ def post_newproduct_album():
 
         #print("当前主页已有相册", album_dict)
 
-        albums = MyFbProduct.objects.filter(mypage__pk=mypage.pk, published=False,myproduct__handle__startswith='b') \
+        albums = MyFbProduct.objects.filter(mypage__pk=mypage.pk, published=False,myaliproduct__handle__startswith='b') \
             .values_list('album_name').annotate(product_count=Count('id')).order_by('-product_count')
 
         print("当前主页待处理产品相册", albums)
