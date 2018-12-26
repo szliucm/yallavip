@@ -50,7 +50,7 @@ def header():
                'Accept-Encoding': 'gzip, deflate, br',
                'Accept-Language': 'zh-CN,zh;q=0.9',
 
-               #'Cookie': cookie
+               'Cookie': cookie
     }
     return headers
 
@@ -79,6 +79,45 @@ def new_proxies():
 
     #return {'http': "119.101.116.13:9999"}
     return
+
+def get_proxies_xici():
+    from bs4 import BeautifulSoup
+    import urllib
+    import requests
+    import socket
+    import traceback
+    import sys
+    import lxml
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36'
+    }
+
+    proxies = []
+    for i in range(1, 66):
+        try:
+            url = 'http://www.xicidaili.com/nn/' + str(i)
+            # url = 'http://www.xicidaili.com/nn/66'
+            req = requests.get(url, headers=headers)
+            soup = BeautifulSoup(req.text, 'lxml')
+            print(soup)
+            print(i)
+            ips = soup.findAll('tr')
+            for x in range(1, len(ips)):
+                ip = ips[x]
+                tds = ip.findAll("td")
+                ip_temp = tds[1].contents[0] + ":" + tds[2].contents[0]
+                proxy = Proxy(
+                    ip = ip_temp,
+                    active= True
+                )
+                print(proxy)
+                proxies.append(proxy)
+        except:
+            continue
+        Proxy.objects.bulk_create(proxies)
+    return proxies
+
+
 
 def get_proxies():
 
@@ -126,27 +165,29 @@ def get_ali_page(offer_id):
     while ( n < 20):
         try:
 
-            proxy = get_proxies()
-            proxies = {'https': proxy}
-            print("当前使用的代理是",proxies)
+            #proxy = get_proxies()
+            #proxies = {'https': proxy}
+            #print("当前使用的代理是",proxies)
             #proxies= None
 
-            res = r.get(url,    headers=header(), allow_redirects=False,proxies=proxies,verify=False,) #
+            res = r.get(url,    headers=header(), allow_redirects=False)#,proxies=proxies,verify=False,)
             if res.status_code == 200:
                 print(res, res.status_code)
                 return  res.content
             else:
 
                 print(res, res.status_code, res.headers['Location'])
-                Proxy.objects.filter(ip=proxy).update(active=False)
-
+                #Proxy.objects.filter(ip=proxy).update(active=False)
+                '''
                 n += 1
                 time.sleep(1)
                 continue
-                #return None
+                '''
+                return None
 
         except Exception as e:  #(ProxyError, ConnectTimeout, SSLError, ReadTimeout, ConnectionError):
             print("代理错误")
+            '''
             print('str(Exception):\t', str(Exception))
             print("str(e)", str(e))
             print("repr(e)", repr(e))
@@ -156,6 +197,7 @@ def get_ali_page(offer_id):
             time.sleep(1)
             n += 1
             continue
+            '''
 
 
 
