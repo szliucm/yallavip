@@ -399,7 +399,7 @@ def get_aliproduct(pk, offer_id,cate_code):
     from .ali import get_ali_product_info
     import time
 
-    time.sleep(random.uniform(10,30))
+    time.sleep(random.uniform(30,60))
     message, status = get_ali_product_info(offer_id, cate_code)
     if status is False:
         AliProduct.objects.filter(pk=pk).update(created_error=message)

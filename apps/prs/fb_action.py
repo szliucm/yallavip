@@ -512,10 +512,13 @@ def post_photo_to_album(targer_page,album_no,product ):
     name = name + "\n\nPrice:  " + str(int(max_price)) + "SAR"
 
     #打标
+
     price1 = int(max_price)
+    '''
     if price1 == 0:
         print("价格为0")
         return None
+    '''
 
     price2 = int(price1 *  random.uniform(2, 3))
 

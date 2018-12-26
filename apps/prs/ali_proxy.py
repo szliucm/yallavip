@@ -10,8 +10,8 @@ chromedriver = "C:/chrome/chromedriver"
 #chrome_options.add_argument('blink-settings=imagesEnabled=false')
 
 chromeOptions = webdriver.ChromeOptions()
-chromeOptions.add_argument("--proxy-server=http://66.42.110.94:8888")
-url= 'https://www.baidu.com'
+chromeOptions.add_argument("--proxy-server=66.42.110.94:8888")
+url= 'https://www.1688.com'
 driver = webdriver.Chrome(chromedriver,chrome_options = chromeOptions)
 driver.get(url)
 time.sleep(60)
