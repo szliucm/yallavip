@@ -104,7 +104,7 @@ class MyProductAliShop(models.Model):
         verbose_name_plural = verbose_name
 
     def __str__(self):
-        return  self.vendor_nname
+        return  self.url.partition(".html")[0].rpartition("/")[2]
 
 
 class MyProductShopify(MyProduct):
