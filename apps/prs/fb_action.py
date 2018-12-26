@@ -106,6 +106,7 @@ def sycn_ad_product():
 def post_creative_feed():
     import filetype
     from shop.photo_mark import  photo_mark_url
+    from django.utils import timezone as datetime
 
     pages = MyPage.objects.filter(active=True)  # .values_list('page_no', flat=True)
     # page_nos = ["358078964734730"]   #for debug
