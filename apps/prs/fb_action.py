@@ -129,19 +129,21 @@ def post_creative_feed():
         resource = str(fb.myresource.resource)
         local_resource = os.path.join(settings.MEDIA_ROOT, resource)
         kind = filetype.guess(local_resource)
-        product = ShopifyProduct.objects.filter(handle=fb.myresource.handle).first()
-        if product is None:
-            print("找不到handle")
-            MyProductFb.objects.filter(pk=fb.pk).update(publish_error="找不到handle对应的产品")
-            continue
 
-        max_price = ShopifyVariant.objects.filter(product_no=product.product_no).aggregate(Max("price")).get(
-            "price__max")
-        if (max_price) is None:
-            print("取最大价格出错")
-            continue
-        price1 = int(max_price)
-        price2 = int(price1 * random.uniform(2, 3))
+        #素材需要取相关信息，以便打标
+        if fb.myresource.resource_type == "RAW":
+            product = ShopifyProduct.objects.filter(handle=fb.myresource.handle).first()
+            if product is None:
+                print("找不到handle")
+                MyProductFb.objects.filter(pk=fb.pk).update(publish_error="找不到handle对应的产品")
+                continue
+
+            max_price = ShopifyVariant.objects.filter(product_no=product.product_no).aggregate(Max("price")).get("price__max")
+            if max_price is None or max_price==0:
+                print("取最大价格出错")
+                continue
+            price1 = int(max_price)
+            price2 = int(price1 * random.uniform(2, 3))
 
         feed_post = None
         if kind.mime.find("video")>=0:
