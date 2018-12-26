@@ -115,7 +115,7 @@ def post_creative_feed():
         fbs = MyProductFb.objects.filter(~Q(myresource__handle='')&Q(myresource__handle__isnull=False),published=False,obj_type='FEED',mypage__page_no= page_id, ).order_by('myresource__created_time')
 
         if not fbs:
-            print("no content to post ")
+            print(page.page ,"no content to post ")
             continue
 
         fb= fbs.first()
@@ -134,13 +134,13 @@ def post_creative_feed():
         if fb.myresource.resource_type == "RAW":
             product = ShopifyProduct.objects.filter(handle=fb.myresource.handle).first()
             if product is None:
-                print("找不到handle")
+                print(page.page ,fb, "找不到handle")
                 MyProductFb.objects.filter(pk=fb.pk).update(publish_error="找不到handle对应的产品")
                 continue
 
             max_price = ShopifyVariant.objects.filter(product_no=product.product_no).aggregate(Max("price")).get("price__max")
             if max_price is None or max_price==0:
-                print("取最大价格出错")
+                print(page.page ,fb,"取最大价格出错")
                 continue
             price1 = int(max_price)
             price2 = int(price1 * random.uniform(2, 3))
@@ -148,20 +148,18 @@ def post_creative_feed():
         feed_post = None
         if kind.mime.find("video")>=0:
             print("视频")
-            product = ShopifyProduct.objects.filter(handle=fb.myresource.handle ).first()
-            max_price = ShopifyVariant.objects.filter(product_no=product.product_no).aggregate(Max("price")).get(
-                        "price__max")
-            if(max_price) is None:
-                print("取最大价格出错")
-                continue
-            price1 = int(max_price)
-            price2 = int(price1 * random.uniform(2, 3))
 
-            result = logo_video(resource, page.logo,page.price, fb.myresource.handle, str(price1),str(price2),no_logo=False)
-            if not result:
-                print("视频失败")
-                continue
-            destination_url = domain + os.path.join(settings.MEDIA_URL, resource.rpartition(".")[0] + "_watermark.mp4")
+            if fb.myresource.resource_type == "RAW":
+
+                result = logo_video(resource, page.logo,page.price, fb.myresource.handle, str(price1),str(price2),no_logo=False)
+                if not result:
+                    print("视频失败")
+                    continue
+                destination_url = domain + os.path.join(settings.MEDIA_URL, resource.rpartition(".")[0] + "_watermark.mp4")
+            else:
+                destination_url = domain + os.path.join(settings.MEDIA_URL, resource)
+
+
             fields = [
             ]
             params = {
