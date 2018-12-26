@@ -86,10 +86,7 @@ class MyProductAli(models.Model):
 
 
     def __str__(self):
-        if self.vendor_no:
-            return  self.vendor_no
-        else:
-            return "unknow"
+        return  self.url.partition(".html")[0].rpartition("/")[2]
 
 class MyProductAliShop(models.Model):
 
