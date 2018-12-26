@@ -59,7 +59,7 @@ from .models import Proxy
 def new_proxies():
     #return  {'http':'49.70.223.4:3217'}
 
-    url = "http://webapi.http.zhimacangku.com/getip?num=5&type=1&pro=&city=0&yys=0&port=11&time=1&ts=0&ys=0&cs=0&lb=5&sb=0&pb=4&mr=1&regions="
+    url = "http://webapi.http.zhimacangku.com/getip?num=1&type=1&pro=&city=0&yys=0&port=11&pack=37695&ts=0&ys=0&cs=0&lb=5&sb=0&pb=4&mr=1&regions="
     r = requests.session()
     res = r.get(url, headers=header(), allow_redirects=False)
 
