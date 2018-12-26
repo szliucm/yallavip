@@ -112,7 +112,8 @@ def post_creative_feed():
     for page in pages:
         page_id = page.page_no
 
-        fbs = MyProductFb.objects.filter(~Q(myresource__handle='')&Q(myresource__handle__isnull=False),published=False,obj_type='FEED',mypage__page_no= page_id, ).order_by('myresource__created_time')
+        #fbs = MyProductFb.objects.filter(~Q(myresource__handle='')&Q(myresource__handle__isnull=False),published=False,obj_type='FEED',mypage__page_no= page_id, ).order_by('myresource__created_time')
+        fbs = MyProductFb.objects.filter(published=False, obj_type='FEED', mypage__page_no=page_id, ).order_by( 'myresource__created_time')
 
         if not fbs:
             print(page.page ,"no content to post ")
@@ -383,8 +384,8 @@ from facebook_business.adobjects.adsinsights import AdsInsights
 
 import  random
 
-import time
-#import datetime
+#import time
+
 
 from shop.photo_mark import  photo_mark
 
