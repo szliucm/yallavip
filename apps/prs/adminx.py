@@ -299,7 +299,7 @@ class MyProductFbAdmin(object):
     list_display = [ "mypage", "myresource", 'myproduct',"myphoto", 'myfeed',"myad","obj_type", "published", ]
     # 'sku_name','img',
 
-    search_fields = ["myproduct","myresource" ]
+    search_fields = ["myproduct__product_no","myresource__handle","pk" ]
     list_filter = ["myproduct","obj_type","mypage","published",]
     list_editable = []
     readonly_fields = ("myphoto", 'myfeed',"myad",)
