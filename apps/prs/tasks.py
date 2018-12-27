@@ -849,11 +849,15 @@ def unlisting_overseas_package():
         print(mypages)
         for mypage in mypages:
 
-            FacebookAdsApi.init(access_token=get_token(mypage.page_no))
+
 
             myphotos = MyPhoto.objects.filter(name__icontains=sku_name, page_no=mypage.page_no )
 
             print("myphotos %s" % (myphotos), myphotos.count())
+            if myphotos is None or myphotos.count() == 0:
+                continue
+
+            FacebookAdsApi.init(access_token=get_token(mypage.page_no))
             n=1
             for myphoto in myphotos:
 
@@ -862,14 +866,14 @@ def unlisting_overseas_package():
                 params = {
 
                 }
-                '''
+
                 response = Photo(myphoto.photo_no).api_delete(
                     fields=fields,
                     params=params,
                 )
                 print("%s response is %s" %(n, response))
                 n +=1
-                '''
+
 
 
             # 修改数据库记录
