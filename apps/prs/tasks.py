@@ -866,13 +866,15 @@ def unlisting_overseas_package():
                 params = {
 
                 }
-
-                response = Photo(myphoto.photo_no).api_delete(
-                    fields=fields,
-                    params=params,
-                )
-                print("%s response is %s" %(n, response))
-                n +=1
+                try:
+                    response = Photo(myphoto.photo_no).api_delete(
+                        fields=fields,
+                        params=params,
+                    )
+                    print("%s response is %s" %(n, response))
+                    n +=1
+                except:
+                    continue
 
 
 
