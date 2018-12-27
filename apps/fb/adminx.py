@@ -37,10 +37,9 @@ from  shop.models import  ProductCategory
 
 
 APP_SCOPED_SYSTEM_USER_ID=100029952330435
-#my_access_token = "EAAHZCz2P7ZAuQBABHO6LywLswkIwvScVqBP2eF5CrUt4wErhesp8fJUQVqRli9MxspKRYYA4JVihu7s5TL3LfyA0ZACBaKZAfZCMoFDx7Tc57DLWj38uwTopJH4aeDpLdYoEF4JVXHf5Ei06p7soWmpih8BBzadiPUAEM8Fw4DuW5q8ZAkSc07PrAX4pGZA4zbSU70ZCqLZAMTQZDZD"
-
+my_access_token = "EAAHZCz2P7ZAuQBABHO6LywLswkIwvScVqBP2eF5CrUt4wErhesp8fJUQVqRli9MxspKRYYA4JVihu7s5TL3LfyA0ZACBaKZAfZCMoFDx7Tc57DLWj38uwTopJH4aeDpLdYoEF4JVXHf5Ei06p7soWmpih8BBzadiPUAEM8Fw4DuW5q8ZAkSc07PrAX4pGZA4zbSU70ZCqLZAMTQZDZD"
 my_access_token_dev = "EAAcGAyHVbOEBAAL2mne8lmKC55lbDMndPYEVR2TRmOWf9ePUN97SiZCqwCd3KOZBrEkC57rVt3ZClhXi6oxxf1i0hRCK50QALuAQOCs60U30FjNYimeP97xLjfl7wZAAjThdkXPJujsWcAXOwkTNKvKlmP6tZBPUtSYb3i4i1vUs40MZAUOzNIG9v7HNjnyyIZD"
-my_access_token = my_access_token_dev
+
 def get_token(target_page):
 
     url = "https://graph.facebook.com/v3.2/{}?fields=access_token".format(target_page)
@@ -152,7 +151,7 @@ class MyPageAdmin(object):
 
 
     def batch_update_albums(self, request, queryset):
-        adobjects = FacebookAdsApi.init(access_token=my_access_token_dev, debug=True)
+        adobjects = FacebookAdsApi.init(access_token=my_access_token, debug=True)
         for row in queryset:
             page_no = row.page_no
             #重置原有相册信息为不活跃

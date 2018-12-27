@@ -15,9 +15,28 @@ from shop.models import  Shop, ShopifyProduct, ShopifyVariant, ShopifyImage, Sho
 from shop.models import ProductCategoryMypage
 from fb.models import MyPage
 from .shop_action import sync_shop
-from orders.models import Order
+from orders.models import Order, OrderDetail
 
 
+my_app_id = "562741177444068"
+my_app_secret = "e6df363351fb5ce4b7f0080adad08a4d"
+my_access_token = "EAAHZCz2P7ZAuQBABHO6LywLswkIwvScVqBP2eF5CrUt4wErhesp8fJUQVqRli9MxspKRYYA4JVihu7s5TL3LfyA0ZACBaKZAfZCMoFDx7Tc57DLWj38uwTopJH4aeDpLdYoEF4JVXHf5Ei06p7soWmpih8BBzadiPUAEM8Fw4DuW5q8ZAkSc07PrAX4pGZA4zbSU70ZCqLZAMTQZDZD"
+def get_token(target_page,token=None):
+
+
+    url = "https://graph.facebook.com/v3.2/{}?fields=access_token".format(target_page)
+    param = dict()
+    if token is None:
+        param["access_token"] = my_access_token
+    else:
+        param["access_token"] = token
+
+    r = requests.get(url, param)
+
+    data = json.loads(r.text)
+
+    # print("request response is ", data["access_token"])
+    return data["access_token"]
 
 
 
@@ -516,7 +535,7 @@ def prepare_newproduct_album():
 #发布产品到Facebook的album
 @shared_task
 def post_newproduct_album():
-    from .fb_action import  create_new_album, post_photo_to_album
+    from .fb_action import   post_photo_to_album
     from fb.models import MyAlbum
 
 
@@ -572,6 +591,7 @@ def post_newproduct_album():
 
 
         if not target_album_no :
+            '''
             print("此相册还没有创建，新建一个")
             album_list = []
             album_list.append(album_name)
@@ -585,6 +605,10 @@ def post_newproduct_album():
                 target_album_no = target_albums[0]
 
             print("target_album %s" % (album_list))
+            '''
+            print("此相册还没有创建，请新建一个")
+            continue
+
 
 
 
@@ -680,7 +704,7 @@ def product_shopify_to_fb():
 #发布产品到Facebook的album
 @shared_task
 def post_to_album():
-    from .fb_action import  create_new_album, post_photo_to_album
+    from .fb_action import   post_photo_to_album
     from fb.models import MyAlbum
 
 
@@ -734,19 +758,9 @@ def post_to_album():
 
 
         if not target_album_no :
-            print("此相册还没有创建，新建一个")
-            album_list = []
-            album_list.append(album_name)
-
-            target_albums = create_new_album(mypage.page_no, album_list)
-
-            if len(target_albums)==0:
-                print("创建相册失败")
-                continue
-            else:
-                target_album_no = target_albums[0]
-
-            print("target_album %s" % (album_list))
+            print("此相册还没有创建，请新建一个")
+            continue
+        print("target_album %s" % (album_list))
 
 
 
@@ -804,6 +818,68 @@ def creative_feed():
     post_creative_feed()
     return
 #7,
+
+
+##########海外仓包裹从fb下架
+### 1  找到已销售的包裹
+### 2  从Facebook照片里找到对应的photo id， 删除
+### 3, 从Facebook feed里找到对应的帖子 id， 删除
+
+def unlisting_overseas_package():
+    from fb.models import  MyPhoto
+
+    from facebook_business.api import FacebookAdsApi
+    from facebook_business.adobjects.photo import Photo
+
+
+    # 订单状态已付款， 订单明细sku名字中含overseas的订单找出来
+
+    order_details = OrderDetail.objects.filter(~Q(order__order_status="已退款"), sku__istartswith="overseas")
+    n = 0
+    for order_detail in order_details:
+        sku = order_detail.sku
+        # 删除Facebook上的图片
+
+        sku_name = sku.partition("-")[2]
+
+        print("sku is %s, sku_name is %s" % (sku, sku_name))
+
+        # 选择所有可用的page
+        mypages = MyPage.objects.filter(active=True)
+        print(mypages)
+        for mypage in mypages:
+
+            FacebookAdsApi.init(access_token=get_token(mypage.page_no))
+
+            myphotos = MyPhoto.objects.filter(name__icontains=sku_name, page_no=mypage.page_no )
+
+            print("myphotos %s" % (myphotos), myphotos.count())
+            n=1
+            for myphoto in myphotos:
+
+                fields = [
+                ]
+                params = {
+
+                }
+                '''
+                response = Photo(myphoto.photo_no).api_delete(
+                    fields=fields,
+                    params=params,
+                )
+                print("%s response is %s" %(n, response))
+                n +=1
+                '''
+
+
+            # 修改数据库记录
+            myphotos.update(listing_status=False)
+
+            ShopifyVariant.objects.filter(sku=sku).update(supply_status="STOP", listing_status=False)
+
+
+
+
 
 
 

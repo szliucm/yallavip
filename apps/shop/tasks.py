@@ -285,11 +285,15 @@ def post_to_album():
             #print("品类需要的相册 %s, 已有相册 %s" % (category_album, target_album))
 
             if not target_album :
+                '''
                 #print("此类目还没有相册，新建一个")
                 album_list = []
                 album_list.append(category_album)
 
                 target_album = create_new_album(mypage.page_no, album_list)[0]
+                '''
+                print("此相册还没有创建，请新建一个")
+                continue
 
             #print("target_album %s" % (target_album))
 

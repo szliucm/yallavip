@@ -75,7 +75,7 @@ def get_token(target_page,token=None):
 
     # print("request response is ", data["access_token"])
     return data["access_token"]
-
+'''
 def create_new_album(page_no , new_albums ):
     # 建相册要用开发账号
 
@@ -122,6 +122,7 @@ def create_new_album(page_no , new_albums ):
 
         #print("created albums ", album)
     return  new_album_list
+'''
 
 def post_photo_to_album(targer_page,album_no,product ):
     from django.db.models import Max
