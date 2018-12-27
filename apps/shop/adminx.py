@@ -881,6 +881,9 @@ class ShopifyProductAdmin(object):
                 print("response is ",r)
             # 删除本地数据库记录
             ShopifyProduct.objects.filter(pk=product.pk).delete()
+            ShopifyVariant.objects.filter(product_no=product_no).delete()
+            ShopifyImage.objects.filter(product_no=product_no).delete()
+            ShopifyOptions.objects.filter(product_no=product_no).delete()
 
 
     delete_product.short_description = "删除主店铺产品"
@@ -1237,6 +1240,16 @@ class ShopifyProductAdmin(object):
                                },
                      )
     list_product.short_description = "同步到facebook产品资源管理"
+
+    def get_list_queryset(self):
+        """批量查询"""
+        queryset = super().get_list_queryset()
+
+        query = self.request.GET.get(SEARCH_VAR, '')
+
+        if (len(query) > 0):
+            queryset |= self.model.objects.filter(product_no__in=query.split(","))
+        return queryset
 
 class CombinationResource(resources.ModelResource):
     '''
