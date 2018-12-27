@@ -865,11 +865,11 @@ class ShopifyProductAdmin(object):
 
             # delete a product
 
-            product_id = product.product_no
-            if product_id is None:
+            product_no = product.product_no
+            if product_no is None:
                 continue
             else:
-                url = shop_url + "/admin/products/%s.json" % (product_id)
+                url = shop_url + "/admin/products/%s.json" % (product_no)
 
                 headers = {
                     "Content-Type": "application/json",
@@ -1250,6 +1250,8 @@ class ShopifyProductAdmin(object):
         if (len(query) > 0):
             queryset |= self.model.objects.filter(product_no__in=query.split(","))
         return queryset
+
+
 
 class CombinationResource(resources.ModelResource):
     '''
