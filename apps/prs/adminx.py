@@ -417,3 +417,57 @@ class AliProductAdmin(object):
     list_editable = ["price_rate",]
     readonly_fields = ()
     actions = []
+
+    def reset_aliproduct(self, request, queryset):
+
+        for aliproduct in queryset:
+
+
+            shop_obj = Shop.objects.get(shop_name="yallasale-com")
+            # 初始化SDK
+            shop_url = "https://%s:%s@%s.myshopify.com" % (shop_obj.apikey, shop_obj.password, shop_obj.shop_name)
+            products = ShopifyProduct.objects.filter(vendor=aliproduct.offer_id)
+            for product in products:
+                # delete a product
+
+                product_no = product.product_no
+                if product_no is None:
+                    continue
+                else:
+                    url = shop_url + "/admin/products/%s.json" % (product_no)
+
+                    headers = {
+                        "Content-Type": "application/json",
+                        "charset": "utf-8",
+
+                    }
+
+                    r = requests.delete(url, headers=headers)
+                    print("response is ",r)
+                # 删除本地数据库记录
+
+                ShopifyVariant.objects.filter(product_no=product_no).delete()
+                ShopifyImage.objects.filter(product_no=product_no).delete()
+                ShopifyOptions.objects.filter(product_no=product_no).delete()
+
+            products.delete()
+
+        queryset.update(published=False,publish_error="",published_time="")
+
+    reset_aliproduct.short_description = "重置ali产品"
+
+    def get_list_queryset(self):
+        """批量查询订单号"""
+        queryset = super().get_list_queryset()
+
+        query = self.request.GET.get(SEARCH_VAR, '')
+
+        if (len(query) > 0):
+            queryset |= self.model.objects.filter(offer_id__in=query.split(","))
+
+        return queryset
+
+
+
+
+
