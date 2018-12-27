@@ -11,7 +11,7 @@ from xadmin.filters import manager as filter_manager, FILTER_PREFIX, SEARCH_VAR,
     RelatedFieldSearchFilter
 
 from .models import *
-from shop.models import ShopifyProduct, ShopifyImage
+from shop.models import Shop,ShopifyProduct, ShopifyImage
 from .choose_target import ChoosePage
 
 import os
