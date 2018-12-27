@@ -454,7 +454,7 @@ class AliProductAdmin(object):
 
             products.delete()
 
-        queryset.update(published=False,publish_error="",published_time="")
+        queryset.update(published=False,publish_error="",published_time=None)
 
     reset_aliproduct.short_description = "重置ali产品"
 
