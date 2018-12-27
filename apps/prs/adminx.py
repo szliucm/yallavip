@@ -7,6 +7,8 @@ from import_export import resources, fields
 from django.db.models import Count
 import  re
 from django.utils.safestring import mark_safe
+from xadmin.filters import manager as filter_manager, FILTER_PREFIX, SEARCH_VAR, DateFieldListFilter, \
+    RelatedFieldSearchFilter
 
 from .models import *
 from shop.models import ShopifyProduct, ShopifyImage
