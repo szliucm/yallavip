@@ -418,7 +418,7 @@ class AliProductAdmin(object):
     list_filter = ["created","published",]
     list_editable = ["price_rate",]
     readonly_fields = ()
-    actions = []
+    actions = ["reset_aliproduct",]
 
     def reset_aliproduct(self, request, queryset):
 
