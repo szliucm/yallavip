@@ -426,7 +426,7 @@ def ali_list_get_info_shenjian():
 
     if status == "stopped":
         print("爬虫已停止, 准备开始新一轮爬取")
-        aliproducts = AliProduct.objects.filter(created = False, started=False)[:10]
+        aliproducts = AliProduct.objects.filter(created = False, started=False)[:100]
 
 
         #print("一共有%d 个1688产品信息待抓取"%(aliproducts.count()))
