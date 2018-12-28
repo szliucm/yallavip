@@ -129,7 +129,7 @@ def post_creative_feed_page(page):
 
     error, feed_post_id = post_creative_feed_page_fb(page, fb)
 
-    if feed_post_id:
+    if feed_post_id is not None:
         MyProductFb.objects.filter(pk=fb.pk).update(fb_id=feed_post_id, published=True,
                                                         published_time=datetime.now())
 
