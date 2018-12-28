@@ -426,7 +426,7 @@ def ali_list_get_info_shenjian():
 
     if status == "stopped":
         print("爬虫已停止, 准备开始新一轮爬取")
-        aliproducts = AliProduct.objects.filter(created = False, started=False)[:60]
+        aliproducts = AliProduct.objects.filter(created = False, started=False)[:10]
 
 
         #print("一共有%d 个1688产品信息待抓取"%(aliproducts.count()))
@@ -437,15 +437,16 @@ def ali_list_get_info_shenjian():
             AliProduct.objects.filter(pk=aliproduct.pk).update(started=True)
         params= {}
 
-        params["crawlType"] = 3
+        #params["crawlType"] = 3
         params["productUrl"] = url_list
-        params["crawlDetail"] = False
+        #params["crawlDetail"] = False
 
         # 创建爬虫类shenjian.Crawler
         crawler = shenjian.Crawler(user_key, user_secret, appID)
         n=0
         while(1):
             try:
+                crawler = shenjian.Crawler(user_key, user_secret, appID)
                 result = crawler.config_custom(params)
             except Exception as e:
                 print("自定义设置出错",str(e))
