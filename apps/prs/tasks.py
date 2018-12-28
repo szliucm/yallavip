@@ -451,10 +451,9 @@ def ali_list_get_info_shenjian():
             except Exception as e:
                 print("自定义设置出错",str(e))
                 n +=1
-                if n>30:
+                if n>3:
                     return  False
-                else:
-                    continue
+
 
         print("爬虫自定义设置", result)
 
