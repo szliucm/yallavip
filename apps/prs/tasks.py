@@ -503,7 +503,7 @@ def prepare_newproduct_album():
 
             # 根据品类找已经上架到shopify 但还未添加到fb接触点（新）的产品
             products_to_add = AliProduct.objects.raw('SELECT * FROM prs_aliproduct  A WHERE '
-                                                         'cate_code = %s and published = TRUE  '  
+                                                         'cate_code = %s and created = TRUE  '  
                                                          'and id  NOT  IN  ( SELECT  B.myaliproduct_id FROM prs_myfbproduct B where mypage_id=%s and B.myaliproduct_id is not NULL) order by rand() limit 30',[cate_code,page.pk], )
             print("products_to_add", page, cate_code, len(products_to_add))
 

@@ -1532,7 +1532,23 @@ class ProductCategoryMypageAdmin(object):
     search_fields = ["mypage","productcategory"]
     list_filter = ['mypage', 'productcategory',]
     list_editable = ["album_name", ]
-    actions = []
+    actions = ["sync_album",]
+
+    def sync_album(self, request, queryset):
+        from fb.models import MyAlbum
+
+        for row in queryset:
+            album_nos = MyAlbum.objects.filter(page_no = row.mypage.page_no , name = row.album_name ).values_list("album_no")
+            if album_nos.count() >1:
+                error = "相册重复"
+                album_no= None
+            else:
+                error = ""
+                album_no = album_nos[0]
+
+            ProductCategoryMypage.objects.filter(pk = row.pk).update(album_no = album_no,error=error)
+
+    sync_album.short_description = "同步相册编码"
 
 
 '''
