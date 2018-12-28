@@ -214,7 +214,8 @@ class MyProductAliShopAdmin(object):
 class MyProductResourcesAdmin(object):
     def show_fb(self, obj):
 
-        fb = obj.fb_resource.values_list('obj_type','mypage__page','published',).annotate(Count('id'))
+        #fb = obj.fb_resource.values_list('obj_type','mypage__page','published',).annotate(Count('id'))
+        fb = obj.fb_resource.values_list( 'mypage__page', 'published', )
 
         fb = re.split(r"\[|\]", str(fb))
 
