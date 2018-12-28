@@ -1526,11 +1526,11 @@ class ProductCategoryAdmin(object):
 @xadmin.sites.register(ProductCategoryMypage)
 class ProductCategoryMypageAdmin(object):
 
-    list_display = [ 'mypage','productcategory',"album_name", 'last_no', ]
+    list_display = [ 'mypage','productcategory',"album_name", 'album_no','error' ]
 
 
     search_fields = ["mypage","productcategory"]
-    list_filter = ['mypage', 'productcategory',]
+    list_filter = ['mypage', 'productcategory','error',]
     list_editable = ["album_name", ]
     actions = ["sync_album",]
 

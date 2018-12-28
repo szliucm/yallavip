@@ -345,8 +345,8 @@ class ProductCategoryMypage(models.Model):
                                related_name="page_category", on_delete=models.CASCADE)
 
     album_name = models.CharField(u'相册名', default='', max_length=256, null=True, blank=True)
-
-    last_no = models.BigIntegerField(u'最后更新产品ID', default=0, null=True,blank=True)
+    album_no = models.CharField(u'相册编码', default='', max_length=256, null=True, blank=True)
+    #last_no = models.BigIntegerField(u'最后更新产品ID', default=0, null=True,blank=True)
 
     active = models.BooleanField(u'page类目状态', default=True)
     error =  models.CharField(u'相册配对错误', default='', max_length=256, null=True, blank=True)
