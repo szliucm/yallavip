@@ -115,13 +115,11 @@ def post_creative_feed():
 
 
 def post_creative_feed_page(page):
-    import filetype
-    from shop.photo_mark import  photo_mark_url
+
     from django.utils import timezone as datetime
 
-    page_id = page.page_no
 
-    fbs = MyProductFb.objects.filter(published=False, obj_type='FEED', mypage__page_no=page_id, ).order_by( 'myresource__created_time')
+    fbs = MyProductFb.objects.filter(published=False, obj_type='FEED', mypage__page_no=page.page_no, publish_error="").order_by( 'myresource__created_time')
 
     if not fbs:
         error = "no content to post "
@@ -129,52 +127,74 @@ def post_creative_feed_page(page):
 
     fb= fbs.first()
 
+    error, feed_post_id = post_creative_feed_page_fb(page, fb)
+
+    if feed_post_id:
+        MyProductFb.objects.filter(pk=fb.pk).update(fb_id=feed_post_id, published=True,
+                                                        published_time=datetime.now())
+
+        print("Wow ", page.page_no, feed_post_id)
+        return "", feed_post_id
+    else:
+        MyProductFb.objects.filter(pk=fb.pk).update(fb_id="", published=False,
+                                                    publish_error =error,
+                                                        published_time=datetime.now())
+
+        print("发布创意失败 ", page.page_no, feed_post_id)
+
+        return "Facebook创建feed失败", None
+
+
+def post_creative_feed_page_fb(page,fb):
+
+    import filetype
+    from shop.photo_mark import  photo_mark_url
+
+    page_id = page.page_no
     token = get_token(page_id)
     FacebookAdsApi.init(access_token=token)
-    #domain = "http://dev.yallavip.com:8000"
+    # domain = "http://dev.yallavip.com:8000"
     domain = "http://admin.yallavip.com"
     resource = str(fb.myresource.resource)
     local_resource = os.path.join(settings.MEDIA_ROOT, resource)
     kind = filetype.guess(local_resource)
 
-    #素材需要取相关信息，以便打标
+    # 素材需要取相关信息，以便打标
     if fb.myresource.resource_type == "RAW":
         product = ShopifyProduct.objects.filter(handle=fb.myresource.handle).first()
         if product is None:
-            print(page.page ,fb, "找不到handle")
-            MyProductFb.objects.filter(pk=fb.pk).update(publish_error="找不到handle对应的产品")
-            return
+            error =  "找不到handle"
+            return error, None
 
-        max_price = ShopifyVariant.objects.filter(product_no=product.product_no).aggregate(Max("price")).get("price__max")
-        if max_price is None or max_price==0:
-
+        max_price = ShopifyVariant.objects.filter(product_no=product.product_no).aggregate(Max("price")).get(
+            "price__max")
+        if max_price is None or max_price == 0:
             error = "取最大价格出错"
             return error, None
 
         price1 = int(max_price)
         price2 = int(price1 * random.uniform(2, 3))
 
-
-    if kind.mime.find("video")>=0:
+    if kind.mime.find("video") >= 0:
         print("视频")
 
         if fb.myresource.resource_type == "RAW":
 
-            result = logo_video(resource, page.logo,page.price, fb.myresource.handle, str(price1),str(price2),no_logo=False)
+            result = logo_video(resource, page.logo, page.price, fb.myresource.handle, str(price1), str(price2),
+                                no_logo=False)
             if not result:
-                error ="视频失败"
+                error = "视频失败"
 
                 return error, None
             destination_url = domain + os.path.join(settings.MEDIA_URL, resource.rpartition(".")[0] + "_watermark.mp4")
         else:
             destination_url = domain + os.path.join(settings.MEDIA_URL, resource)
 
-
         fields = [
         ]
         params = {
             'title': fb.myresource.title,
-            'description':fb.myresource.message,
+            'description': fb.myresource.message,
             'file_url': destination_url,
             'published': 'true',
         }
@@ -184,13 +204,13 @@ def post_creative_feed_page(page):
         )
 
 
-    elif kind.mime.find("image")>=0:
+    elif kind.mime.find("image") >= 0:
         print("图片")
         destination_url = domain + os.path.join(settings.MEDIA_URL, resource)
         # 发图片post
         if fb.myresource.resource_type == "RAW":
-            #素材需要打标，否则直接发
-            finale, final_url = photo_mark_url(destination_url, product, str(price1),str(price2), page, type="album")
+            # 素材需要打标，否则直接发
+            finale, final_url = photo_mark_url(destination_url, product, str(price1), str(price2), page, type="album")
 
         else:
             final_url = destination_url
@@ -222,24 +242,13 @@ def post_creative_feed_page(page):
         error = "未知文件"
         return error, None
 
-
-
-
     if feed_post:
         feed_post_id = feed_post.get_id()
 
-        if feed_post_id:
-            MyProductFb.objects.filter(pk=fb.pk).update(fb_id=feed_post_id, published=True,
-                                                        published_time=datetime.now())
 
-            print("Wow ", page_id, feed_post_id)
-            return "", feed_post
+        return "", feed_post_id
     else:
         return "Facebook创建feed失败", None
-
-
-
-
 
 #####################################
 #########把表现较好的product发到feed
