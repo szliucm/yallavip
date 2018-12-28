@@ -1541,8 +1541,11 @@ class ProductCategoryMypageAdmin(object):
             if album_nos.count() >1:
                 error = "相册重复"
                 album_no= None
+            elif album_nos is None or album_nos.count ==0:
+                error = "相册不存在"
+                album_no = None
             else:
-                error = ""
+                error =""
                 album_no = album_nos[0]
 
             ProductCategoryMypage.objects.filter(pk = row.pk).update(album_no = album_no,error=error)
