@@ -411,7 +411,7 @@ def ali_list_get_info_shenjian():
     user_secret = "kyYWFhMzQ0NzFiNj-63e08890b765a49"
     appID = 3166948
 
-    service = shenjian.Service(user_key, user_secret)
+    #service = shenjian.Service(user_key, user_secret)
 
     # 创建爬虫类shenjian.Crawler
     crawler = shenjian.Crawler(user_key, user_secret, appID)
@@ -443,16 +443,14 @@ def ali_list_get_info_shenjian():
 
         # 创建爬虫类shenjian.Crawler
         crawler = shenjian.Crawler(user_key, user_secret, appID)
-        n=0
+
         while(1):
             try:
                 crawler = shenjian.Crawler(user_key, user_secret, appID)
                 result = crawler.config_custom(params)
             except Exception as e:
                 print("自定义设置出错",str(e))
-                n +=1
-                if n>3:
-                    return  False
+                return  False
 
 
         print("爬虫自定义设置", result)
