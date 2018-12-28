@@ -266,13 +266,13 @@ def post_to_album():
             products = ShopifyProduct.objects.filter(category_code=category.productcategory.code,
                                                      shop_name="yallasale-com",
                                                      #published_at__gt='2018-11-01',
-                                                    product_no__gt=category.last_no,
+                                                   # product_no__gt=category.last_no,
                                                      handle__startswith='a'). \
                 order_by("product_no")
             if not products :
                 print("当前类目没有产品了，跳出")
                 print(category.productcategory.code)
-                print(category.last_no)
+                #print(category.last_no)
 
                 ProductCategoryMypage.objects.filter(pk= category.pk).update(active=False)
 
@@ -305,7 +305,7 @@ def post_to_album():
                 obj, created = ProductCategoryMypage.objects.update_or_create(
                     mypage=mypage, productcategory=category.productcategory,
                     defaults={
-                        'last_no': product.product_no
+                        #'last_no': product.product_no
                     },
 
                 )

@@ -516,7 +516,6 @@ class ShopAdmin(object):
 
                     for j in range(len(customers)):
                         row = customers[j]
-
                         customer = ShopifyCustomer(
                             shop_name=shop.shop_name,
                             customer_no=row["id"],
