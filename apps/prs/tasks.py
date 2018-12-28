@@ -500,6 +500,7 @@ def prepare_newproduct_album():
         for cate in cates:
             cate_code = cate.productcategory.code
             album_name = cate.album_name
+            album_no = cate.album_no
 
             # 根据品类找已经上架到shopify 但还未添加到fb接触点（新）的产品
             products_to_add = AliProduct.objects.raw('SELECT * FROM prs_aliproduct  A WHERE '
@@ -519,6 +520,7 @@ def prepare_newproduct_album():
                     obj_type="PHOTO",
                     cate_code = cate_code,
                     album_name = album_name,
+                    album_no=album_no,
 
 
 
@@ -548,18 +550,6 @@ def post_newproduct_album():
     for mypage in mypages:
 
         print("当前处理主页", mypage, mypage.pk)
-
-        # 主页已有的相册
-        album_dict = {}
-        albums = MyAlbum.objects.filter(page_no=mypage.page_no,active=True)
-
-        for album in albums:
-            album_dict[album.name] = album.album_no
-
-        print("主页已有相册", album_dict)
-
-
-        #print("当前主页已有相册", album_dict)
 
         albums = MyFbProduct.objects.filter(mypage__pk=mypage.pk, published=False,myaliproduct__handle__startswith='b') \
             .values_list('album_name').annotate(product_count=Count('id')).order_by('-product_count')
@@ -594,31 +584,18 @@ def post_newproduct_album():
             print("没有产品可发布了")
             continue
 
-        # 是否已经建了相册
-
-        target_album_no = album_dict.get(album_name)
-
-
-
-        if not target_album_no :
-            print("此相册还没有创建，请新建一个")
-            continue
-
-
-
-
         # 发到指定相册
 
         n = 0
         for product in products:
             myproduct = product.myaliproduct
 
-            error, posted = post_photo_to_album(mypage, target_album_no, myproduct)
+            error, posted = post_photo_to_album(mypage, product.album_no, myproduct)
 
 
             if posted is not None:
                 MyFbProduct.objects.filter(mypage__pk=mypage.pk ,myaliproduct__pk=product.myaliproduct.pk).update(
-                    myproduct= myproduct,
+
                     fb_id = posted,
                     published = True,
                     published_time = datetime.now()

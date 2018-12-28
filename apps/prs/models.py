@@ -314,6 +314,7 @@ class MyFbProduct(models.Model):
     fb_id = models.CharField(default='',max_length=100, null=True, blank=True, verbose_name="接触点代码")
     cate_code = models.CharField(default='', max_length=100, null=True, blank=True, verbose_name="品类代码")
     album_name = models.CharField(default='', max_length=100, null=True, blank=True, verbose_name="相册")
+    album_no = models.CharField(default='', max_length=100, null=True, blank=True, verbose_name="相册编码")
 
     published = models.BooleanField(default=False, verbose_name="发布状态")
     publish_error = models.CharField(default='',max_length=100, null=True, blank=True, verbose_name="发布错误(或图片数量)")
