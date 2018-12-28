@@ -527,7 +527,7 @@ def prepare_newproduct_album():
                 myfbproduct_list.append(myfbproduct)
 
 
- #           print(myfbproduct_list)
+            print(myfbproduct_list)
             MyFbProduct.objects.bulk_create(myfbproduct_list)
 
 
@@ -616,7 +616,7 @@ def post_newproduct_album():
             error, posted = post_photo_to_album(mypage, target_album_no, myproduct)
 
 
-            if posted:
+            if posted is not None:
                 MyFbProduct.objects.filter(mypage__pk=mypage.pk ,myaliproduct__pk=product.myaliproduct.pk).update(
                     myproduct= myproduct,
                     fb_id = posted,

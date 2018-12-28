@@ -650,8 +650,8 @@ def post_photo_to_album(targer_page,album_no,aliproduct ):
             fields=fields,
             params=params,
         )
-    except:
-        error = "上传Facebook失败"
+    except Exception as e:
+        error = str(e)
         return error, None
 
     obj, created = MyPhoto.objects.update_or_create(photo_no=photo["id"],
