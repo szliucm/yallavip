@@ -569,11 +569,13 @@ def post_newproduct_album():
 
         album_list =[]
         for album in albums:
-            if album[1]>5 :
-                if len(album[0])>3:
+
+            if album[1]>0 and len(album[0])>3:
                     album_list.append(album[0])
+
             else:
-                break
+                print("相册名为空或者没有产品要发布了")
+                continue
 
         print("当前主页可处理产品相册", album_list)
 
@@ -584,6 +586,14 @@ def post_newproduct_album():
 
         album_name = random.choice(album_list)
         print("这次要处理的相册", album_name)
+
+        products = MyFbProduct.objects.filter(mypage__pk=mypage.pk, published=False, album_name=album_name,
+                                              myaliproduct__handle__startswith='b').order_by("-id")
+        print("###############这次需要发的产品", products.count(), products.query)
+        if products is None or products.count()==0:
+            print("没有产品可发布了")
+            continue
+
         # 是否已经建了相册
 
         target_album_no = album_dict.get(album_name)
@@ -591,21 +601,6 @@ def post_newproduct_album():
 
 
         if not target_album_no :
-            '''
-            print("此相册还没有创建，新建一个")
-            album_list = []
-            album_list.append(album_name)
-
-            target_albums = create_new_album(mypage.page_no, album_list)
-
-            if len(target_albums)==0:
-                print("创建相册失败")
-                continue
-            else:
-                target_album_no = target_albums[0]
-
-            print("target_album %s" % (album_list))
-            '''
             print("此相册还没有创建，请新建一个")
             continue
 
@@ -613,15 +608,12 @@ def post_newproduct_album():
 
 
         # 发到指定相册
-        products =MyFbProduct.objects.filter(mypage__pk=mypage.pk, published=False, album_name =album_name,myaliproduct__handle__startswith='b').order_by("-id")
-        print("###############这次需要发的产品", products.count(), products.query)
+
         n = 0
         for product in products:
-            myproduct = ShopifyProduct.objects.filter(vendor= product.myaliproduct.offer_id).first()
-            print("product", product, myproduct)
+            myproduct = product.myaliproduct
 
-
-            posted = post_photo_to_album(mypage, target_album_no, myproduct)
+            error, posted = post_photo_to_album(mypage, target_album_no, myproduct)
 
 
             if posted:
@@ -641,7 +633,7 @@ def post_newproduct_album():
                 MyFbProduct.objects.filter(mypage__pk=mypage.pk ,myaliproduct__pk=product.myaliproduct.pk).update(
                     myproduct=myproduct,
                     published=False,
-                    publish_error="发布失败",
+                    publish_error=error,
                     published_time=datetime.now()
                 )
 

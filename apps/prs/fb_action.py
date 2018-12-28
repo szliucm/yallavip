@@ -472,8 +472,8 @@ def create_new_album(page_no , new_albums ):
 
         #print("created albums ", album)
     return  new_album_list
-'''
 
+#之前的，从shopify中生成相册
 def post_photo_to_album(targer_page,album_no,product ):
     from django.db.models import Max
     # 检查产品是否已经在相册中了，如果不存在，就发布新图片
@@ -516,11 +516,7 @@ def post_photo_to_album(targer_page,album_no,product ):
     #打标
 
     price1 = int(max_price)
-    '''
-    if price1 == 0:
-        print("价格为0")
-        return None
-    '''
+
 
     price2 = int(price1 *  random.uniform(2, 3))
 
@@ -570,3 +566,114 @@ def post_photo_to_album(targer_page,album_no,product ):
 
     #print("new_photo saved ", obj, created)
     return  photo["id"]
+'''
+
+#直接从aliproduct发布到相册
+def post_photo_to_album(targer_page,album_no,aliproduct ):
+
+    #价格不正确，直接返回
+    if aliproduct.maxprice ==0:
+        error = "价格为0"
+        return  error,None
+
+    # 检查产品是否已经在相册中了，如果不存在，就发布新图片
+    #myphotos = MyPhoto.objects.filter(name=product.handle , album_no=album_no )
+
+    page_no = targer_page.page_no
+    myphotos = MyPhoto.objects.filter(name__icontains=aliproduct.handle, album_no=album_no)
+    #print("args is  %s %s %s"%(page_no,album_no , product.handle ))
+    if myphotos:
+        error = "图片已发布"
+        return error, None
+    else:
+        print("now we need to create new photos for %s"%(aliproduct.handle))
+
+
+    adobjects = FacebookAdsApi.init(my_app_id, my_app_secret, access_token=get_token(page_no), debug=True)
+
+
+    #print("product.product_no ", product.product_no)
+
+    ori_images = json.loads(aliproduct.images)
+    if not ori_images or len(ori_images)==0:
+
+        error = "没有图片"
+        return error, None
+
+    ori_image = random.choice(ori_images)
+
+    #print("position is ", ori_image.position)
+
+
+
+    name = aliproduct.title + "  [" + aliproduct.handle+"]"
+    options = json.loads(aliproduct.options)
+    for option in options:
+        value_list = option.get("values")
+        name = name + "\n\n   " + option.get("name") + " : " + ', '.join(value_list)
+
+
+    maxprice =aliproduct.maxprice
+    name = name + "\n\nPrice:  " + str(int(maxprice)) + "SAR"
+
+    #打标
+
+    price1 = int(maxprice)
+    '''
+    if price1 == 0:
+        print("价格为0")
+        return None
+    '''
+
+    price2 = int(price1 *  random.uniform(2, 3))
+
+    image, iamge_url = photo_mark(ori_image ,aliproduct.handle,str(price1), str(price2),  targer_page, type="album" )
+    if not image:
+        error = "打水印失败"
+        return error, None
+
+    #print("after photo mark", iamge_url)
+
+    fields = ["id","name","created_time", "updated_time","picture","link",
+                      "likes.summary(true)","comments.summary(true)"
+    ]
+    params = {
+        "published": "true",
+
+        "url": iamge_url,
+        "name": name,
+        "qn":aliproduct.handle
+
+    }
+    try:
+        photo = Album(album_no).create_photo(
+            fields=fields,
+            params=params,
+        )
+    except:
+        error = "上传Facebook失败"
+        return error, None
+
+    obj, created = MyPhoto.objects.update_or_create(photo_no=photo["id"],
+                                                    defaults={
+                                                            'page_no': page_no,
+                                                                'album_no': album_no,
+                                                              "product_no": aliproduct.product_no,
+                                                                'listing_status':True,
+                                                              'created_time':
+                                                                  photo["created_time"],#.split('+')[0],
+                                                              'updated_time':
+                                                                  photo["updated_time"],#.split('+')[0],
+
+                                                              'name': photo.get("name"),
+                                                              'picture': photo["picture"],
+                                                              'link': photo["link"],
+                                                              'like_count': photo["likes"]["summary"]["total_count"],
+                                                              'comment_count': photo["comments"]["summary"][
+                                                                  "total_count"]
+
+                                                              }
+                                                    )
+
+    #print("new_photo saved ", obj, created)
+    return  "成功", photo["id"]
