@@ -510,12 +510,8 @@ class OrderAdmin(object):
         from fb.models import MyPage, MyAlbum, MyPhoto
 
         for row in queryset:
-            order_no = row.order_no
 
-
-
-
-            myphotos = MyPhoto.objects.filter(name__icontains=sku_name)
+            myphotos = MyPhoto.objects.filter(name__icontains=row.order_no)
 
             print("myphotos %s"%(myphotos))
 
