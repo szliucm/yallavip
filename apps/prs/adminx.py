@@ -382,7 +382,7 @@ class MyFbProductAdmin(object):
     list_filter = ["mypage","cate_code","published", "published_time","publish_error",]
     list_editable = []
     readonly_fields = ()
-    actions = []
+    actions = ["delete_fb_photo",]
 
     def delete_fb_photo(self, request, queryset):
         from facebook_business.api import FacebookAdsApi
