@@ -441,6 +441,8 @@ def ali_list_get_info_shenjian():
         params["productUrl"] = url_list
         params["crawlDetail"] = False
 
+        # 创建爬虫类shenjian.Crawler
+        crawler = shenjian.Crawler(user_key, user_secret, appID)
         result = crawler.config_custom(params)
         print("爬虫自定义设置", result)
 
