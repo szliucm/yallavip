@@ -307,7 +307,6 @@ class MyFbProduct(models.Model):
                                   related_name="myfb_page", on_delete=models.SET_NULL)
     obj_type = models.CharField(choices=OBJ_TYPE,default='PHOTO',max_length=30, null=True, blank=True, verbose_name="接触点类型")
 
-
     #myresource = models.ForeignKey('MyProductResources', null=True, blank=True, verbose_name="创意",
      #                        related_name="myfb_resource", on_delete=models.SET_NULL)
 
