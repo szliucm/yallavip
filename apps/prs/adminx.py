@@ -17,7 +17,7 @@ from .choose_target import ChoosePage
 import os,requests
 
 from django.conf import settings
-from fb.fb_dev import get_token
+#from fb_dev import get_token
 
 @xadmin.sites.register(MyProduct)
 class MyProductAdmin(object):
