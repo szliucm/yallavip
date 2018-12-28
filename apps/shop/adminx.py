@@ -1542,7 +1542,7 @@ class ProductCategoryMypageAdmin(object):
                 error = "相册重复"
                 album_no= None
 
-            elif album_nos is None or album_nos.count ==0:
+            elif album_nos is None or album_nos.count() ==0:
                 error = "相册不存在"
                 album_no = None
 
