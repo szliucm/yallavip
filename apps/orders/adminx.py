@@ -534,7 +534,7 @@ class OrderAdmin(object):
             mypages = MyPage.objects.filter(active=True)
             for mypage in mypages:
 
-                myphotos = MyPhoto.objects.filter(name__icontains=row.order_no,page_no=mypage.page_no)
+                myphotos = MyPhoto.objects.filter(name__icontains=row.order_no,page_no=mypage.page_no,listing_status=True)
 
                 print("myphotos %s"%(myphotos))
                 if myphotos is None or myphotos.count() == 0:
