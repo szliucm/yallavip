@@ -447,7 +447,8 @@ def ali_list_get_info_shenjian():
         while(1):
             try:
                 result = crawler.config_custom(params)
-            except:
+            except Exception as e:
+                print("自定义设置出错",str(e))
                 n +=1
                 if n>30:
                     return  False
