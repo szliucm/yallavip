@@ -425,7 +425,7 @@ def ali_list_get_info_shenjian():
         reason = result["reason"]
 
     if status == "stopped":
-
+        print("爬虫已停止, 准备开始新一轮爬取")
         aliproducts = AliProduct.objects.filter(created = False, started=False)[:60]
         aliproducts.update(started = True)
 
@@ -441,10 +441,12 @@ def ali_list_get_info_shenjian():
         params["crawlDetail"] = False
 
         result = crawler.config_custom(params)
+        print("爬虫自定义设置", result)
 
         result = crawler.start()
+        print("爬虫启动", result)
     else:
-        print("等待爬取")
+        print("爬取中，等待")
 
 
 
