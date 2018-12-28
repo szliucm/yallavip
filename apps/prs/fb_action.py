@@ -136,13 +136,14 @@ def post_creative_feed_page(page):
         print("Wow ", page.page_no, feed_post_id)
         return "", feed_post_id
     else:
+
         MyProductFb.objects.filter(pk=fb.pk).update(fb_id="", published=False,
                                                     publish_error =error,
                                                         published_time=datetime.now())
 
-        print("发布创意失败 ", page.page_no, feed_post_id)
+        print("发布创意失败 ", page.page_no, error)
 
-        return "Facebook创建feed失败", None
+        return
 
 
 def post_creative_feed_page_fb(page,fb):
@@ -152,7 +153,7 @@ def post_creative_feed_page_fb(page,fb):
 
     page_id = page.page_no
     token = get_token(page_id)
-    FacebookAdsApi.init(access_token=token)
+    FacebookAdsApi.init(access_token=token,debug=True)
     # domain = "http://dev.yallavip.com:8000"
     domain = "http://admin.yallavip.com"
     resource = str(fb.myresource.resource)
