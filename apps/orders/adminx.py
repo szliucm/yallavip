@@ -539,7 +539,7 @@ class OrderAdmin(object):
                 print("myphotos %s"%(myphotos))
                 if myphotos is None or myphotos.count() == 0:
                     continue
-                FacebookAdsApi.init(access_token=get_token(myphoto.page_no))
+                FacebookAdsApi.init(access_token=get_token(mypage.page_no))
 
                 for myphoto in myphotos:
 
