@@ -516,7 +516,7 @@ def prepare_newproduct_album():
 
                 myfbproduct = MyFbProduct(
                     myaliproduct=AliProduct.objects.get(pk=product_to_add.pk),
-                    myproduct=ShopifyProduct.objects.filter(vendor=product_to_add.offer_id).first(),
+                    #myproduct=ShopifyProduct.objects.filter(vendor=product_to_add.offer_id).first(),
                     mypage=MyPage.objects.get(pk=page.pk),
                     obj_type="PHOTO",
                     cate_code = cate_code,
@@ -538,86 +538,88 @@ def prepare_newproduct_album():
 #发布产品到Facebook的album
 @shared_task
 def post_newproduct_album():
-    from .fb_action import   post_photo_to_album
-    from fb.models import MyAlbum
-
-
-
-
 
     #选择所有可用的page
     mypages = MyPage.objects.filter(active=True)
     print(mypages)
     for mypage in mypages:
+        post_newproduct_album_page(mypage)
 
-        print("当前处理主页", mypage, mypage.pk)
-
-        albums = MyFbProduct.objects.filter(mypage__pk=mypage.pk, published=False,myaliproduct__handle__startswith='b') \
-            .values_list('album_name').annotate(product_count=Count('id')).order_by('-product_count')
-
-        print("当前主页待处理产品相册", albums)
-
-
-        album_list =[]
-        for album in albums:
-
-            if album[1]>0 and len(album[0])>3:
-                    album_list.append(album[0])
-
-            else:
-                print("相册编码为空或者没有产品要发布了")
-                continue
-
-        print("当前主页可处理产品相册", album_list)
-
-        if len(album_list) == 0:
-            print("没有相册需要处理了")
-            continue
-
-
-        album_name = random.choice(album_list)
-        print("这次要处理的相册", album_name)
-
-        products = MyFbProduct.objects.filter(mypage__pk=mypage.pk, published=False, album_name=album_name,
-                                              myaliproduct__handle__startswith='b').order_by("-id")
-        print("###############这次需要发的产品", products.count(), products.query)
-        if products is None or products.count()==0:
-            print("没有产品可发布了")
-            continue
-
-        # 发到指定相册
-
-        n = 0
-        for product in products:
-            myproduct = product.myaliproduct
-
-            error, posted = post_photo_to_album(mypage, product.album_no, myproduct)
-
-
-            if posted is not None:
-                MyFbProduct.objects.filter(mypage__pk=mypage.pk ,myaliproduct__pk=product.myaliproduct.pk).update(
-
-                    fb_id = posted,
-                    published = True,
-                    published_time = datetime.now()
-                )
-                print("发布新产品到相册成功 page_pk %s  product_pk %s   photo_id   %s" % (mypage.pk, myproduct.pk, posted))
-                #print("created is ", created)
-                #print("obj is ", obj)
-                n += 1
-                if n>5:
-                    break
-            else:
-                MyFbProduct.objects.filter(mypage__pk=mypage.pk ,myaliproduct__pk=product.myaliproduct.pk).update(
-                    myproduct=myproduct,
-                    published=False,
-                    publish_error=error,
-                    published_time=datetime.now()
-                )
 
     return
 
+def post_newproduct_album_page(mypage):
 
+
+
+    print("当前处理主页", mypage, mypage.pk)
+
+    albums = MyFbProduct.objects.filter(mypage__pk=mypage.pk, published=False, myaliproduct__handle__startswith='b') \
+        .values_list('album_name').annotate(product_count=Count('id')).order_by('-product_count')
+
+    print("当前主页待处理产品相册", albums)
+
+    album_list = []
+    for album in albums:
+
+        if album[1] > 0 and len(album[0]) > 3:
+            album_list.append(album[0])
+
+        else:
+            print("相册为空或者没有产品要发布了")
+            continue
+
+    print("当前主页可处理产品相册", album_list)
+
+    if len(album_list) == 0:
+        print("没有相册需要处理了")
+        return
+
+    album_name = random.choice(album_list)
+    print("这次要处理的相册", album_name)
+
+    post_newproduct_album_page_album(mypage, album_name)
+
+
+def post_newproduct_album_page_album(mypage, album_name):
+    from .fb_action import   post_photo_to_album
+    from fb.models import MyAlbum
+
+    products = MyFbProduct.objects.filter(mypage__pk=mypage.pk, published=False, album_name=album_name,
+                                          myaliproduct__handle__startswith='b').order_by("-id")
+    print("###############这次需要发的产品", products.count(), products.query)
+    if products is None or products.count() == 0:
+        print("没有产品可发布了")
+        return
+
+    # 发到指定相册
+
+    n = 0
+    for product in products:
+        myproduct = product.myaliproduct
+
+        error, posted = post_photo_to_album(mypage, product.album_no, myproduct)
+
+        if posted is not None:
+            MyFbProduct.objects.filter(mypage__pk=mypage.pk, myaliproduct__pk=product.myaliproduct.pk).update(
+
+                fb_id=posted,
+                published=True,
+                published_time=datetime.now()
+            )
+            print("发布新产品到相册成功 page_pk %s  product_pk %s   photo_id   %s" % (mypage.pk, myproduct.pk, posted))
+            # print("created is ", created)
+            # print("obj is ", obj)
+            n += 1
+            if n > 5:
+                break
+        else:
+            MyFbProduct.objects.filter(mypage__pk=mypage.pk, myaliproduct__pk=product.myaliproduct.pk).update(
+                myproduct=myproduct,
+                published=False,
+                publish_error=error,
+                published_time=datetime.now()
+            )
 #####################################################################
 #4,0 把shopify产品库中的还未添加到fb产品库的产品按page对应的品类找出来并添加
 #######准备工作，每次从1688上新到shopify后调用一次即可
