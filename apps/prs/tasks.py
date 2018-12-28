@@ -399,6 +399,56 @@ def ali_cate_get_list():
             )
     return
 
+#################################
+# 2.0 神箭手版抓1688产品详情
+################################
+#根据1688产品列表抓取产品详细信息（标题，规格，图片，价格）
+@shared_task
+def ali_list_get_info_shenjian():
+    import shenjian
+
+    user_key = "2aaa34471b-NjVhNDllMj"
+    user_secret = "kyYWFhMzQ0NzFiNj-63e08890b765a49"
+    appID = 3166948
+
+    service = shenjian.Service(user_key, user_secret)
+
+    # 创建爬虫类shenjian.Crawler
+    crawler = shenjian.Crawler(user_key, user_secret, appID)
+
+    # 获取爬虫状态
+    result = crawler.get_status()
+    if result.get("code") == 0:
+        status = result["data"]["status"]
+    else:
+        status = "error"
+        reason = result["reason"]
+
+    if status == "stopped":
+
+        aliproducts = AliProduct.objects.filter(created = False, started=False)[:60]
+        aliproducts.update(started = True)
+
+        #print("一共有%d 个1688产品信息待抓取"%(aliproducts.count()))
+
+        url_list = []
+        for aliproduct in aliproducts:
+            url_list.append("https://detail.1688.com/offer/%s.html"%(aliproduct.offer_id))
+        params= {}
+
+        params["crawlType"] = 3
+        params["productUrl"] = url_list
+        params["crawlDetail"] = False
+
+        result = crawler.config_custom(params)
+
+        result = crawler.start()
+    else:
+        print("等待爬取")
+
+
+
+
 #2,根据1688产品列表抓取产品详细信息（标题，规格，图片，价格）
 @shared_task
 def ali_list_get_info():

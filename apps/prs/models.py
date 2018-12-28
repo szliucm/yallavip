@@ -344,6 +344,10 @@ class AliProduct(models.Model):
     maxprice = models.IntegerField(u'价格(人民币)', default=0, blank=True, null=True)
     price_rate = models.FloatField(u'价格系数',default=0,)
 
+    started = models.BooleanField(default=False, verbose_name="抓取状态")
+    started_error = models.CharField(default='', max_length=100, null=True, blank=True, verbose_name="抓取错误")
+    started_time = models.DateTimeField(null=True, blank=True, verbose_name="启动时间")
+
     created = models.BooleanField(default=False, verbose_name="创建状态")
     created_error = models.CharField(default='', max_length=100, null=True, blank=True, verbose_name="创建错误(或图片数量)")
     created_time = models.DateTimeField(null=True, blank=True, verbose_name="创建时间")
