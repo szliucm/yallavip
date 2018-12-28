@@ -511,7 +511,7 @@ class OrderAdmin(object):
 
         for row in queryset:
 
-            order_details = OrderDetail.objects.filter(order__pk=row.order.pk, sku__icontains="overseas" ).order_by("order__order_no")
+            order_details = OrderDetail.objects.filter(order__pk=row.pk, sku__icontains="overseas" ).order_by("order__order_no")
             n = 0
             for order_detail in order_details:
                 sku = order_detail.sku
@@ -963,7 +963,7 @@ class OrderDetailAdmin(object):
             print("myphotos %s"%(myphotos))
 
             for myphoto in myphotos:
-                '''
+
                 fields = [
                 ]
                 params = {
@@ -974,7 +974,7 @@ class OrderDetailAdmin(object):
                     params=params,
                 )
                 print("response is %s" %( response))
-                '''
+
                 print("delte photo %s "% (myphoto.photo_no))
 
 
@@ -1125,6 +1125,8 @@ class VerifyAdmin(object):
 
         query = self.request.GET.get(SEARCH_VAR, '')
 
+        if (len(query) > 0):
+            queryset |= self.model.objects.filter(order__order_no__in=query.split(","))
         if (len(query) > 0):
             queryset |= self.model.objects.filter(order__order_no__in=query.split(","))
 
