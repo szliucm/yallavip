@@ -587,7 +587,7 @@ def post_newproduct_album_page_album(mypage, album_name):
 
     products = MyFbProduct.objects.filter(mypage__pk=mypage.pk, published=False, album_name=album_name,
                                           myaliproduct__handle__startswith='b').order_by("-id")
-    print("###############这次需要发的产品", products.count(), products.query)
+    print("###############这次需要发的产品", products.count(),products )
     if products is None or products.count() == 0:
         print("没有产品可发布了")
         return
@@ -614,6 +614,7 @@ def post_newproduct_album_page_album(mypage, album_name):
             if n > 5:
                 break
         else:
+            print("发布新产品到相册失败 page_pk %s  product_pk %s   error   %s" % (mypage.pk, myproduct.pk, error))
             MyFbProduct.objects.filter(mypage__pk=mypage.pk, myaliproduct__pk=product.myaliproduct.pk).update(
                 myproduct=myproduct,
                 published=False,
