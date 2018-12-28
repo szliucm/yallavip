@@ -35,6 +35,26 @@ from xadmin.filters import manager as filter_manager, FILTER_PREFIX, SEARCH_VAR,
     RelatedFieldSearchFilter
 from django.utils.html import format_html
 
+my_app_id = "562741177444068"
+my_app_secret = "e6df363351fb5ce4b7f0080adad08a4d"
+my_access_token = "EAAHZCz2P7ZAuQBABHO6LywLswkIwvScVqBP2eF5CrUt4wErhesp8fJUQVqRli9MxspKRYYA4JVihu7s5TL3LfyA0ZACBaKZAfZCMoFDx7Tc57DLWj38uwTopJH4aeDpLdYoEF4JVXHf5Ei06p7soWmpih8BBzadiPUAEM8Fw4DuW5q8ZAkSc07PrAX4pGZA4zbSU70ZCqLZAMTQZDZD"
+def get_token(target_page,token=None):
+
+
+    url = "https://graph.facebook.com/v3.2/{}?fields=access_token".format(target_page)
+    param = dict()
+    if token is None:
+        param["access_token"] = my_access_token
+    else:
+        param["access_token"] = token
+
+    r = requests.get(url, param)
+
+    data = json.loads(r.text)
+
+    # print("request response is ", data["access_token"])
+    return data["access_token"]
+
 
 #批量导入，修改时区
 '''
@@ -508,33 +528,39 @@ class OrderAdmin(object):
 
         from facebook_business.adobjects.photo import Photo
         from fb.models import MyPage, MyAlbum, MyPhoto
+        from facebook_business.api import FacebookAdsApi
 
         for row in queryset:
+            mypages = MyPage.objects.filter(active=True)
+            for mypage in mypages:
 
-            myphotos = MyPhoto.objects.filter(name__icontains=row.order_no)
+                myphotos = MyPhoto.objects.filter(name__icontains=row.order_no,page_no=mypage.page_no)
 
-            print("myphotos %s"%(myphotos))
+                print("myphotos %s"%(myphotos))
+                if myphotos is None or myphotos.count() == 0:
+                    continue
+                FacebookAdsApi.init(access_token=get_token(myphoto.page_no))
 
-            for myphoto in myphotos:
+                for myphoto in myphotos:
 
-                fields = [
-                ]
-                params = {
+                    fields = [
+                    ]
+                    params = {
 
-                }
-                response = Photo(myphoto.photo_no).api_delete(
-                    fields=fields,
-                    params=params,
-                )
-                print("response is %s" %( response))
+                    }
+                    response = Photo(myphoto.photo_no).api_delete(
+                        fields=fields,
+                        params=params,
+                    )
+                    print("response is %s" %( response))
 
-                print("delte photo %s "% (myphoto.photo_no))
+                    print("delte photo %s "% (myphoto.photo_no))
 
 
-            # 修改数据库记录
-            myphotos.update(listing_status=False)
+                # 修改数据库记录
+                myphotos.update(listing_status=False)
 
-            ShopifyVariant.objects.filter(sku = sku).update( supply_status="STOP", listing_status=False)
+                ShopifyVariant.objects.filter(sku__icontains = row.order_no).update( supply_status="STOP", listing_status=False)
 
 
     batch_overseas_stop.short_description = "海外仓批量下架"
@@ -933,6 +959,7 @@ class OrderDetailAdmin(object):
 
         from facebook_business.adobjects.photo import Photo
         from fb.models import MyPage, MyAlbum, MyPhoto
+        from facebook_business.api import FacebookAdsApi
 
         #订单状态已付款， 订单明细sku名字中含overseas的订单找出来
 
@@ -952,7 +979,7 @@ class OrderDetailAdmin(object):
             print("myphotos %s"%(myphotos))
 
             for myphoto in myphotos:
-
+                FacebookAdsApi.init(access_token=get_token(myphoto.page_no))
                 fields = [
                 ]
                 params = {
