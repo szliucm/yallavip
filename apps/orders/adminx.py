@@ -204,7 +204,7 @@ class OrderAdmin(object):
 
 
 
-    actions = ['fullfill', 'start_verify','batch_copy','start_package_track',]
+    actions = ['fullfill', 'start_verify','batch_copy','start_package_track',"batch_overseas_stop"]
 
 
     def fullfill(self, request, queryset):
@@ -502,6 +502,54 @@ class OrderAdmin(object):
         return
 
     fullfill.short_description = "批量发货"
+
+    def batch_overseas_stop(self, request, queryset):
+        # 定义actions函数
+
+        from facebook_business.adobjects.photo import Photo
+        from fb.models import MyPage, MyAlbum, MyPhoto
+
+        for row in queryset:
+
+            order_details = OrderDetail.objects.filter(order__pk=row.order.pk, sku__icontains="overseas" ).order_by("order__order_no")
+            n = 0
+            for order_detail in order_details:
+                sku = order_detail.sku
+                #删除Facebook上的图片
+
+
+                sku_name = sku.partition("-")[2]
+
+                print("sku is %s, sku_name is %s"%(sku, sku_name))
+
+                myphotos = MyPhoto.objects.filter(name__icontains=sku_name)
+
+                print("myphotos %s"%(myphotos))
+
+                for myphoto in myphotos:
+
+                    fields = [
+                    ]
+                    params = {
+    
+                    }
+                    response = Photo(myphoto.photo_no).api_delete(
+                        fields=fields,
+                        params=params,
+                    )
+                    print("response is %s" %( response))
+
+                    print("delte photo %s "% (myphoto.photo_no))
+
+
+                # 修改数据库记录
+                myphotos.update(listing_status=False)
+
+                ShopifyVariant.objects.filter(sku = sku).update( supply_status="STOP", listing_status=False)
+
+
+    batch_overseas_stop.short_description = "海外仓批量下架"
+
 
     def start_verify(self, request, queryset):
         # 定义actions函数
