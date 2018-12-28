@@ -1537,13 +1537,15 @@ class ProductCategoryMypageAdmin(object):
         from fb.models import MyAlbum
 
         for row in queryset:
-            album_nos = MyAlbum.objects.filter(page_no = row.mypage.page_no , name = row.album_name ).values_list("album_no")
+            album_nos = MyAlbum.objects.filter(page_no = row.mypage.page_no , name = row.album_name ).values_list("album_no",flat=True)
             if album_nos.count() >1:
                 error = "相册重复"
                 album_no= None
+
             elif album_nos is None or album_nos.count ==0:
                 error = "相册不存在"
                 album_no = None
+
             else:
                 error =""
                 album_no = album_nos[0]
