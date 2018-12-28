@@ -11,12 +11,13 @@ from xadmin.filters import manager as filter_manager, FILTER_PREFIX, SEARCH_VAR,
     RelatedFieldSearchFilter
 
 from .models import *
-from shop.models import Shop,ShopifyProduct, ShopifyImage
+from shop.models import Shop,ShopifyProduct, ShopifyImage,ShopifyVariant,ShopifyOptions
 from .choose_target import ChoosePage
 
-import os
+import os,requests
 
 from django.conf import settings
+from fb.fb_dev import get_token
 
 @xadmin.sites.register(MyProduct)
 class MyProductAdmin(object):
@@ -382,6 +383,34 @@ class MyFbProductAdmin(object):
     list_editable = []
     readonly_fields = ()
     actions = []
+
+    def delete_fb_photo(self, request, queryset):
+        from facebook_business.api import FacebookAdsApi
+        from facebook_business.adobjects.photo import Photo
+
+        n=1
+        for fb in queryset:
+
+            FacebookAdsApi.init(access_token=get_token(fb.mypage.page_no))
+            fields = [
+            ]
+            params = {
+
+            }
+            try:
+                response = Photo(fb.fb_id).api_delete(
+                    fields=fields,
+                    params=params,
+                )
+                print("%s response is %s" % (n, response))
+                n += 1
+            except:
+                continue
+
+        queryset.update(fb_id = "",
+                    published = False,
+                    published_time = None)
+
 
 @xadmin.sites.register(AliProduct)
 class AliProductAdmin(object):
