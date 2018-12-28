@@ -295,7 +295,7 @@ def post_product_feed():
 
         dest_images =[]
         for ori_image in images:
-            image, iamge_url = photo_mark(ori_image.src, product, str(price1), str(price2), page, type="album")
+            image, iamge_url = photo_mark(ori_image.src, product.handle, str(price1), str(price2), page, type="album")
             if not image:
                 print("打水印失败")
                 continue
