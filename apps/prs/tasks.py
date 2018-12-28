@@ -427,13 +427,14 @@ def ali_list_get_info_shenjian():
     if status == "stopped":
         print("爬虫已停止, 准备开始新一轮爬取")
         aliproducts = AliProduct.objects.filter(created = False, started=False)[:60]
-        aliproducts.update(started = True)
+
 
         #print("一共有%d 个1688产品信息待抓取"%(aliproducts.count()))
 
         url_list = []
         for aliproduct in aliproducts:
             url_list.append("https://detail.1688.com/offer/%s.html"%(aliproduct.offer_id))
+            AliProduct.objects.filter(pk=aliproduct.pk).update(started=True)
         params= {}
 
         params["crawlType"] = 3
