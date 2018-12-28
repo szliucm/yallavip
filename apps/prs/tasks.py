@@ -618,7 +618,7 @@ def post_newproduct_album_page_album(mypage, album_name):
             MyFbProduct.objects.filter(mypage__pk=mypage.pk, myaliproduct__pk=product.myaliproduct.pk).update(
                 myproduct=myproduct,
                 published=False,
-                publish_error=error,
+                publish_error=error[:490],
                 published_time=datetime.now()
             )
 #####################################################################
