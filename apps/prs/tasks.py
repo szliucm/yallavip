@@ -443,7 +443,17 @@ def ali_list_get_info_shenjian():
 
         # 创建爬虫类shenjian.Crawler
         crawler = shenjian.Crawler(user_key, user_secret, appID)
-        result = crawler.config_custom(params)
+        n=0
+        while(1):
+            try:
+                result = crawler.config_custom(params)
+            except:
+                n +=1
+                if n>30:
+                    return  False
+                else:
+                    continue
+
         print("爬虫自定义设置", result)
 
         result = crawler.start()
@@ -451,6 +461,7 @@ def ali_list_get_info_shenjian():
     else:
         print("爬取中，等待")
 
+    return  True
 
 
 
