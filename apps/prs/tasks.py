@@ -443,17 +443,15 @@ def ali_list_get_info_shenjian():
 
         # 创建爬虫类shenjian.Crawler
         crawler = shenjian.Crawler(user_key, user_secret, appID)
-
-        while(1):
-            try:
-                crawler = shenjian.Crawler(user_key, user_secret, appID)
-                result = crawler.config_custom(params)
-            except Exception as e:
-                print("自定义设置出错",str(e))
-                return  False
+        try:
+            print("自定义设置")
+            result = crawler.config_custom(params)
+        except Exception as e:
+            print("自定义设置出错",str(e))
+            return  False
 
 
-        print("爬虫自定义设置", result)
+        print("爬虫自定义设置结果", result)
 
         result = crawler.start()
         print("爬虫启动", result)
