@@ -438,7 +438,7 @@ def ali_list_get_info_shenjian():
         params= {}
 
         #params["crawlType"] = 3
-        params["productUrl"] = url_list
+        params["productUrl[]"] = url_list
         #params["crawlDetail"] = False
 
         # 创建爬虫类shenjian.Crawler
