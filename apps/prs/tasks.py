@@ -505,7 +505,7 @@ def prepare_newproduct_album():
             products_to_add = AliProduct.objects.raw('SELECT * FROM prs_aliproduct  A WHERE '
                                                          'cate_code = %s and published = TRUE  '  
                                                          'and id  NOT  IN  ( SELECT  B.myaliproduct_id FROM prs_myfbproduct B where mypage_id=%s and B.myaliproduct_id is not NULL) order by rand() limit 30',[cate_code,page.pk], )
-            print("products_to_add", cate_code, len(products_to_add))
+            print("products_to_add", page, cate_code, len(products_to_add))
 
             myfbproduct_list = []
             for product_to_add in products_to_add:
