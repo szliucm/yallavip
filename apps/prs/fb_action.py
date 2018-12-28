@@ -613,7 +613,7 @@ def post_photo_to_album(targer_page,album_no,aliproduct ):
         name = name + "\n\n   " + option.get("name") + " : " + ', '.join(value_list)
 
 
-    maxprice =aliproduct.maxprice
+    maxprice =int(aliproduct.maxprice * aliproduct.price_rate)
     name = name + "\n\nPrice:  " + str(int(maxprice)) + "SAR"
 
     #打标
