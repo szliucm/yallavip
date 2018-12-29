@@ -331,27 +331,51 @@ class AliProduct(models.Model):
     offer_id = models.CharField(default='',max_length=300, null=True, blank=True, verbose_name="编号")
     cate_code = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="品类")
 
+
+
+
+
+    #为上传shopify而生成的记录
     title = models.CharField(default='',max_length=300, null=True, blank=True, verbose_name="标题")
-    images = models.TextField(default='', null=True, blank=True, verbose_name="图片")
+    #images = models.TextField(default='', null=True, blank=True, verbose_name="图片")
     options = models.TextField(default='', null=True, blank=True, verbose_name="属性")
     options_zh = models.TextField(default='', null=True, blank=True, verbose_name="中文属性")
     image_dict = models.TextField(default='', null=True, blank=True, verbose_name="图片字典")
     price_dict = models.TextField(default='', null=True, blank=True, verbose_name="价格字典")
-    #variants = models.TextField(default='', null=True, blank=True, verbose_name="变体")
+
+    maxprice = models.IntegerField(u'价格(price)', default=0, blank=True, null=True)
+    price_rate = models.FloatField(u'价格系数',default=0,)
+
 
     product_no = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="product_no")
     handle = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="货号")
-    maxprice = models.IntegerField(u'价格(人民币)', default=0, blank=True, null=True)
-    price_rate = models.FloatField(u'价格系数',default=0,)
 
+    #系统运行记录
     started = models.BooleanField(default=False, verbose_name="抓取状态")
     started_error = models.CharField(default='', max_length=100, null=True, blank=True, verbose_name="抓取错误")
     started_time = models.DateTimeField(null=True, blank=True, verbose_name="启动时间")
 
-    created = models.BooleanField(default=False, verbose_name="创建状态")
-    created_error = models.CharField(default='', max_length=100, null=True, blank=True, verbose_name="创建错误(或图片数量)")
-    created_time = models.DateTimeField(null=True, blank=True, verbose_name="创建时间")
+    # 神箭手抓下来的记录
+    created = models.BooleanField(default=False, verbose_name="爬取状态")
+    created_error = models.CharField(default='', max_length=100, null=True, blank=True, verbose_name="爬取错误")
+    created_time = models.DateTimeField(null=True, blank=True, verbose_name="爬取时间")
 
+    title_zh = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="商品名称(name)")
+    price_range = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="价格(price)")
+
+    trade_info =models.TextField(default='', null=True, blank=True, verbose_name="批发信息(trade_info)")
+    sales_count = models.IntegerField(u'总销量(sales_count)', default=0, blank=True, null=True)
+
+    sku_info = models.TextField(default='', null=True, blank=True, verbose_name="商品规格(sku)")
+    sku_detail = models.TextField(default='', null=True, blank=True, verbose_name="规格详情(sku_detail)")
+    params = models.TextField(default='', null=True, blank=True, verbose_name="商品参数(params)")
+    images = models.TextField(default='', null=True, blank=True, verbose_name="商品图片(images)")
+    shipping_from = models.TextField(default='', null=True, blank=True, verbose_name="发货地(shipping_from)")
+    score = models.CharField(default='', max_length=100,null=True, blank=True, verbose_name="商品评分(score)")
+    comments_count = models.CharField(default='',max_length=100, null=True, blank=True, verbose_name="评价数(comments_count)")
+
+    sid = models.CharField(default='', max_length=100, null=True, blank=True, verbose_name="店铺ID(sid)")
+    company_name = models.CharField(default='', max_length=100, null=True, blank=True, verbose_name="公司名称(company_name)")
 
     published = models.BooleanField(default=False, verbose_name="发布状态")
     publish_error = models.CharField(default='', max_length=100, null=True, blank=True, verbose_name="发布错误(或图片数量)")

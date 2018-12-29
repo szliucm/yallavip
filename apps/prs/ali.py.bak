@@ -1446,6 +1446,103 @@ def get_products():
     print('一共%d条数据'%index)
 
 
+def create_body(aliproduct):
+ ################################
+    ##############################
+    ############可以发布主产品了
+    #############################
+    from shop.models import Shop, ShopifyProduct
+    from prs.shop_action import post_product_main,   update_or_create_product
+
+
+
+    dest_shop = "yallasale-com"
+    shop_obj = Shop.objects.get(shop_name=dest_shop)
+
+    shop_url = "https://%s:%s@%s.myshopify.com" % (shop_obj.apikey, shop_obj.password, shop_obj.shop_name)
+
+    handle_new = 'b' + str(aliproduct.pk).zfill(4)
+
+    shopify_images = []
+    #image_no = 0
+
+    for image in json.loads(aliproduct.images):
+        image = {
+            "src": image,
+            #"image_no": image_no
+        }
+        shopify_images.append(image)
+        #image_no += 1
+
+
+    params = {
+        "product": {
+            "handle": handle_new,
+            "title": aliproduct.title,
+            "body_html": aliproduct.title,
+            "vendor": aliproduct.offer_id,
+            "product_type": "auto",
+            "tags": aliproduct.cate_code.replace("_", ","),
+            "images": shopify_images,
+            # "variants": variants_list,
+            #"options": json.loads(aliproduct.options),
+        }
+    }
+    headers = {
+        "Content-Type": "application/json",
+        "charset": "utf-8",
+
+    }
+    # 初始化SDK
+    # shop_obj = Shop.objects.get(shop_name=shop_name)
+
+
+    url = shop_url + "/admin/products.json"
+
+
+    print("开始创建主体")
+    print(url, json.dumps(params))
+
+
+
+    r = requests.post(url, headers=headers, data=json.dumps(params))
+    if r.text is None:
+        return None
+    try:
+        data = json.loads(r.text)
+        print("创建的新产品",r, data)
+    except:
+        print("创建产品主体失败")
+        print(url, json.dumps(params))
+        print(r)
+        print(r.text)
+        return None
+    # print("r is ", r)
+    # print("r.text is ", r.text)
+
+    # data = demjson.decode(r.text)
+    new_product = data.get("product")
+
+    if new_product:
+        products = []
+        products.append(new_product)
+        # 插入到系统数据库
+        #insert_product(shop_obj.shop_name, products)
+        update_or_create_product(shop_obj.shop_name, products)
+        # 修改handle最大值
+        #Shop.objects.filter(shop_name=shop_obj.shop_name).update(max_id=max_id)
+
+        print("产品主体发布成功！！！！")
+        #print(type(new_product),  new_product)
+        return new_product
+
+    else:
+
+        print("产品主体发布失败！！！！")
+        print(data)
+        return None
+
+
 def create_variant(aliproduct, shopifyproduct):
     from prs.shop_action import post_product_variant,update_or_create_product
     from shop.models import Shop, ShopifyProduct
@@ -1593,399 +1690,6 @@ def create_variant(aliproduct, shopifyproduct):
 
     shop_url = "https://%s:%s@%s.myshopify.com" % (shop_obj.apikey, shop_obj.password, shop_obj.shop_name)
     new_product = post_product_variant(shop_url, shopifyproduct.get("id"), variants_list, option_list)
-    if new_product:
-        products = []
-        products.append(new_product)
-        # 插入到系统数据库
-        #insert_product(shop_obj.shop_name, products)
-        update_or_create_product(shop_obj.shop_name, products)
-
-
-        print("产品变体发布成功！！！！")
-        print(type(new_product),  new_product.get("id"))
-        return new_product
-
-    else:
-
-        print("产品变体发布失败！！！！")
-        return None
-
-
-def create_body(aliproduct):
- ################################
-    ##############################
-    ############可以发布主产品了
-    #############################
-    from shop.models import Shop, ShopifyProduct
-    from prs.shop_action import post_product_main,   update_or_create_product
-
-
-
-    dest_shop = "yallasale-com"
-    shop_obj = Shop.objects.get(shop_name=dest_shop)
-
-    shop_url = "https://%s:%s@%s.myshopify.com" % (shop_obj.apikey, shop_obj.password, shop_obj.shop_name)
-
-    handle_new = 'b' + str(aliproduct.pk).zfill(4)
-
-    shopify_images = []
-    #image_no = 0
-
-    for image in json.loads(aliproduct.images):
-        image = {
-            "src": image,
-            #"image_no": image_no
-        }
-        shopify_images.append(image)
-        #image_no += 1
-
-
-    params = {
-        "product": {
-            "handle": handle_new,
-            "title": aliproduct.title,
-            "body_html": aliproduct.title,
-            "vendor": aliproduct.offer_id,
-            "product_type": "auto",
-            "tags": aliproduct.cate_code.replace("_", ","),
-            "images": shopify_images,
-            # "variants": variants_list,
-            #"options": json.loads(aliproduct.options),
-        }
-    }
-    headers = {
-        "Content-Type": "application/json",
-        "charset": "utf-8",
-
-    }
-    # 初始化SDK
-    # shop_obj = Shop.objects.get(shop_name=shop_name)
-
-
-    url = shop_url + "/admin/products.json"
-
-
-    print("开始创建主体")
-    print(url, json.dumps(params))
-
-
-
-    r = requests.post(url, headers=headers, data=json.dumps(params))
-    if r.text is None:
-        return None
-    try:
-        data = json.loads(r.text)
-        print("创建的新产品",r, data)
-    except:
-        print("创建产品主体失败")
-        print(url, json.dumps(params))
-        print(r)
-        print(r.text)
-        return None
-    # print("r is ", r)
-    # print("r.text is ", r.text)
-
-    # data = demjson.decode(r.text)
-    new_product = data.get("product")
-
-    if new_product:
-        products = []
-        products.append(new_product)
-        # 插入到系统数据库
-        #insert_product(shop_obj.shop_name, products)
-        update_or_create_product(shop_obj.shop_name, products)
-        # 修改handle最大值
-        #Shop.objects.filter(shop_name=shop_obj.shop_name).update(max_id=max_id)
-
-        print("产品主体发布成功！！！！")
-        #print(type(new_product),  new_product)
-        return new_product
-
-    else:
-
-        print("产品主体发布失败！！！！")
-        print(data)
-        return None
-
-#从神箭手的数据生成ali图片列表
-def get_image_list(aliproduct):
-    image_list = []
-    #先取主图
-    for image in json.loads(aliproduct.images):
-        image_list.append(image)
-
-    #再取规格图
-    for sku in json.loads(aliproduct.sku_info):
-        try:
-            values = sku.get("values")
-            if values is None:
-                continue
-            for value in values:
-                sku_image = value.get("image")
-                if  sku_image is not None and sku_image not in image_list:
-                        image_list.append(sku_image)
-        except:
-            continue
-
-    #生成shopify图
-    shopify_images = []
-    for image in image_list:
-        image = {
-            "src": image,
-            #"image_no": image_no
-        }
-        shopify_images.append(image)
-        #image_no += 1
-    return  shopify_images
-
-#这一版是从神箭手转化数据
-#即使自己抓，也可以转化成神箭手的格式，后话了
-##################################################
-def create_body_shenjian(aliproduct):
- ################################
-    ##############################
-    ############可以发布主产品了
-    #############################
-    from shop.models import Shop, ShopifyProduct
-    from prs.shop_action import post_product_main,   update_or_create_product
-
-    dest_shop = "yallasale-com"
-    shop_obj = Shop.objects.get(shop_name=dest_shop)
-
-    shop_url = "https://%s:%s@%s.myshopify.com" % (shop_obj.apikey, shop_obj.password, shop_obj.shop_name)
-
-    handle_new = 'b' + str(aliproduct.pk).zfill(5)
-    title = fanyi(aliproduct.title_zh)
-
-    #image_no = 0
-
-
-    shopify_images = get_image_list(aliproduct)
-
-    params = {
-        "product": {
-            "handle": handle_new,
-            "title": title,
-            "body_html": title,
-            "vendor": aliproduct.offer_id,
-            "product_type": "auto",
-            "tags": aliproduct.cate_code.replace("_", ","),
-            "images": shopify_images,
-            # "variants": variants_list,
-            #"options": json.loads(aliproduct.options),
-        }
-    }
-    headers = {
-        "Content-Type": "application/json",
-        "charset": "utf-8",
-
-    }
-    # 初始化SDK
-    # shop_obj = Shop.objects.get(shop_name=shop_name)
-
-
-    url = shop_url + "/admin/products.json"
-
-
-    print("开始创建主体")
-    print(url, json.dumps(params))
-
-
-
-    r = requests.post(url, headers=headers, data=json.dumps(params))
-    if r.text is None:
-        return None
-    try:
-        data = json.loads(r.text)
-        print("创建的新产品",r, data)
-    except:
-        print("创建产品主体失败")
-        print(url, json.dumps(params))
-        print(r)
-        print(r.text)
-        return None
-    # print("r is ", r)
-    # print("r.text is ", r.text)
-
-    # data = demjson.decode(r.text)
-    new_product = data.get("product")
-
-    if new_product:
-        products = []
-        products.append(new_product)
-        # 插入到系统数据库
-        #insert_product(shop_obj.shop_name, products)
-        update_or_create_product(shop_obj.shop_name, products)
-        # 修改handle最大值
-        #Shop.objects.filter(shop_name=shop_obj.shop_name).update(max_id=max_id)
-
-        print("产品主体发布成功！！！！")
-        #print(type(new_product),  new_product)
-        return new_product
-
-    else:
-
-        print("产品主体发布失败！！！！")
-        print(data)
-        return None
-
-
-def create_variant_shenjian(aliproduct, shopifyproduct):
-    from prs.shop_action import post_product_variant,update_or_create_product
-    from shop.models import Shop, ShopifyProduct
-    #################################
-    # 新创建的主图信息，创建变体需要
-    #################################
-
-    shopify_images = shopifyproduct.get("images")
-
-
-    #print("aliproduct", aliproduct)
-    #print("shopifyproduct", shopifyproduct)
-    #print("shopify_images", shopify_images)
-
-    ###################################
-    # 创建变体
-    ###################################
-    shopify_images = shopifyproduct.get("images")
-
-    ali_image_list =[]
-    shopify_option_list = []
-    ali_image_dict = {}
-    for sku in json.loads(aliproduct.sku_info):
-
-        try:
-            values = sku.get("values")
-
-            if values is None:
-                continue
-        except:
-            continue
-
-
-        option_list = []
-        for value in values:
-            print("5 ###########", value)
-            desc_zh = value.get("desc")
-
-            if desc_zh is not None:
-                desc = fanyi(desc_zh)
-                if desc in option_list:
-                    desc = desc + "_" + str(len(option_list))
-                option_list.append(desc)
-            else:
-                continue
-
-            sku_image = value.get("image")
-
-            if sku_image is not None:
-                # 规格图片如果不在主图里，也插进列表
-                if sku_image not in ali_image_list:
-                    ali_image_list.append(sku_image)
-
-                # 规格-图片地址 字典
-                ali_image_dict[desc] = ali_image_list.index(sku_image)
-
-        shopify_option ={
-            "name" : fanyi(sku.get("label")),
-            "values": option_list
-        }
-        shopify_option_list.append(shopify_option)
-    print("1 ############",ali_image_dict,  "\n\n1.1 ##########",ali_image_list)
-
-    price_rate = aliproduct.price_rate
-    if price_rate == 0:
-        price_rate = 3
-    price_compare_rate = random.uniform(2, 4)
-
-
-
-    variants_list =[]
-    position = 0
-
-    for sku_detail in json.loads(aliproduct.sku_detail):
-        print("2 ###############", sku_detail)
-        try:
-            sku= sku_detail.get("sku")
-        except:
-            continue
-
-        if sku.find(">") >0:
-            option1 = fanyi(sku.partition(">")[0])
-            option2 = fanyi(sku.partition(">")[2])
-            option3 = None
-        else:
-            option1 = fanyi(sku)
-            option2 = None
-            option3 = None
-
-
-
-        ali_image_no = ali_image_dict.get(option1, None)
-        if ali_image_no is None:
-            shopify_image_no = None
-        else:
-            if ali_image_no < len(shopify_images):
-                shopify_image_no = shopify_images[ali_image_no].get("id")
-            else:
-                shopify_image_no = None
-        print(ali_image_dict)
-        print("3 ##############", option1, option2, ali_image_no, shopify_image_no)
-
-
-        if sku_detail.get("price") is None:
-            price_range = aliproduct.price_range
-            if price_range.find("-")>=0:
-                print ("here", price_range)
-                price = float(price_range.partition("-")[0]) * price_rate
-            else:
-
-                price = float(price_range )* price_rate
-
-        else:
-            price = float(sku_detail.get("price") )* price_rate
-
-        variant_sku = shopifyproduct.get("handle")
-        if option1:
-            variant_sku = variant_sku + "-" + option1.replace("&", '').replace('-', '').replace('.', '').replace(' ', '')
-            if option2:
-                variant_sku = variant_sku + "_" + option2.replace("&", '').replace('-', '').replace('.', '').replace(' ', '')
-                if option3:
-                    variant_sku = variant_sku + "_" + option3.replace("&", '').replace('-', '').replace('.', '').replace(' ',
-                                                                                                                         '')
-
-        variant_item = {
-            "option1": option1,
-            "option2": option2,
-            "option3": option3,
-            "price": int(price),
-            "compare_at_price": int(price * price_compare_rate),
-            "sku": variant_sku,
-            "position": position,
-            "image_id": shopify_image_no,
-            "grams": 0,
-            "title": variant_sku,
-            "taxable": "true",
-            "inventory_management": "shopify",
-            "fulfillment_service": "manual",
-            "inventory_policy": "continue",
-
-            "inventory_quantity": 10000,
-            "requires_shipping": "true",
-            "weight": 0.5,
-            "weight_unit": "kg",
-
-        }
-        print("variant_item", variant_item)
-        variants_list.append(variant_item)
-        position += 1
-
-
-    dest_shop = "yallasale-com"
-    shop_obj = Shop.objects.get(shop_name=dest_shop)
-
-    shop_url = "https://%s:%s@%s.myshopify.com" % (shop_obj.apikey, shop_obj.password, shop_obj.shop_name)
-    new_product = post_product_variant(shop_url, shopifyproduct.get("id"), variants_list, shopify_option_list)
     if new_product:
         products = []
         products.append(new_product)

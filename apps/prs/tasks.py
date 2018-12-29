@@ -506,7 +506,72 @@ def post_ali_shopify():
         post_to_shopify.delay(aliproduct.pk)
 
 @task
-def post_to_shopify(aliproduct_pk, ):
+def post_to_shopify(aliproduct_pk ):
+    from .ali import create_body, create_variant
+    from django.utils import timezone as datetime
+    dest_shop = "yallasale-com"
+
+    aliproduct = AliProduct.objects.get(pk=aliproduct_pk)
+
+    vendor_no = aliproduct.offer_id
+    print("vendor_no", vendor_no)
+
+    dest_products = ShopifyProduct.objects.filter(shop_name=dest_shop, vendor=vendor_no)
+
+    if dest_products:
+        print("这个产品已经发布过了！！！！", vendor_no)
+        #把以前的删了重新发布
+        shop_obj = Shop.objects.get(shop_name=dest_shop)
+        # 初始化SDK
+        shop_url = "https://%s:%s@%s.myshopify.com" % (shop_obj.apikey, shop_obj.password, shop_obj.shop_name)
+        for product in dest_products:
+            # delete a product
+
+            product_no = product.product_no
+            if product_no is None:
+                continue
+            else:
+                url = shop_url + "/admin/products/%s.json" % (product_no)
+
+                headers = {
+                    "Content-Type": "application/json",
+                    "charset": "utf-8",
+
+                }
+
+                r = requests.delete(url, headers=headers)
+                print("response is ", r)
+            # 删除本地数据库记录
+            ShopifyProduct.objects.filter(pk=product.pk).delete()
+            ShopifyVariant.objects.filter(product_no=product_no).delete()
+            ShopifyImage.objects.filter(product_no=product_no).delete()
+            ShopifyOptions.objects.filter(product_no=product_no).delete()
+
+    #shop_obj = Shop.objects.get(shop_name=dest_shop)
+    #max_id = shop_obj.max_id + 1
+
+    shopifyproduct = create_body(aliproduct )
+    if shopifyproduct is not None:
+        posted = create_variant(aliproduct, shopifyproduct)
+        if posted is not None:
+            print("创建新产品成功")
+            AliProduct.objects.filter(pk=aliproduct.pk).update(published=True, handle=posted.get("handle"),
+                                                               product_no=posted.get("product_no"),
+                                                               published_time=datetime.now())
+        else:
+            print("创建新产品变体失败")
+            AliProduct.objects.filter(pk=aliproduct.pk).update(publish_error="创建新产品变体失败",
+                                                               published_time=datetime.now())
+            return
+
+    else:
+        print("创建新产品失败")
+        AliProduct.objects.filter(pk=aliproduct.pk).update(publish_error="创建新产品失败", published_time=datetime.now())
+        return
+
+
+@task
+def post_to_shopify_shenjian(aliproduct_pk ):
     from .ali import create_body, create_variant
     from django.utils import timezone as datetime
     dest_shop = "yallasale-com"
@@ -546,7 +611,6 @@ def post_to_shopify(aliproduct_pk, ):
         print("创建新产品失败")
         AliProduct.objects.filter(pk=aliproduct.pk).update(publish_error="创建新产品失败", published_time=datetime.now())
         return
-
 
 ###########################################################
 ######4.0  每个page 根据自己的品类，从1688新品中随机挑选30个产品，放入待发相册的数据库，供人工排查
@@ -918,6 +982,8 @@ def unlisting_overseas_package():
             myphotos.update(listing_status=False)
 
             ShopifyVariant.objects.filter(sku=sku).update(supply_status="STOP", listing_status=False)
+
+
 
 
 

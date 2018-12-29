@@ -412,9 +412,40 @@ class MyFbProductAdmin(object):
                     published = False,
                     published_time = None)
 
+class AliProductResource(resources.ModelResource):
+    created_time = fields.Field(attribute='created_time', column_name='爬取时间(__time)')
+    #created = fields.Field(attribute='created',default=True)
+    offer_id = fields.Field(attribute='offer_id', column_name='商品ID(pid)')
+    title_zh = fields.Field(attribute='title_zh', column_name='商品名称(name)')
+    price_range = fields.Field(attribute='price_range', column_name='价格(price)')
+    trade_info = fields.Field(attribute='trade_info', column_name='批发信息(trade_info)')
+    sales_count = fields.Field(attribute='sales_count', column_name='总销量(sales_count)')
+    sku_info = fields.Field(attribute='sku_info', column_name='商品规格(sku)')
+    sku_detail = fields.Field(attribute='sku_detail', column_name='规格详情(sku_detail)')
+    params = fields.Field(attribute='params', column_name='商品参数(params)')
+    images = fields.Field(attribute='images', column_name='商品图片(images)')
+    shipping_from = fields.Field(attribute='shipping_from', column_name='发货地(shipping_from)')
+    score = fields.Field(attribute='score', column_name='商品评分(score)')
+    comments_count = fields.Field(attribute='comments_count', column_name='评价数(comments_count)')
+    sid = fields.Field(attribute='sid', column_name='店铺ID(sid)')
+    company_name = fields.Field(attribute='company_name', column_name='公司名称(company_name)')
+    class Meta:
+        model = AliProduct
+        skip_unchanged = True
+        report_skipped = True
+        import_id_fields = ('offer_id',)
+        fields = ('created_time','created','offer_id','title_zh', 'price_range',"trade_info","sales_count",
+                  'sku_info', 'sku_detail', 'params',"images", "shipping_from", "score",
+                  'comments_count', "sid", "company_name",)
+        # exclude = ()
+
 
 @xadmin.sites.register(AliProduct)
 class AliProductAdmin(object):
+    import_export_args = {"import_resource_class": AliProductResource,
+                          "export_resource_class": AliProductResource}
+
+
     def price_try(self, obj):
         return int(obj.maxprice * obj.price_rate)
 
