@@ -555,7 +555,7 @@ def post_photo_to_album(targer_page,album_no,product ):
 
 #直接从aliproduct发布到相册
 def post_photo_to_album(targer_page,album_no,aliproduct ):
-
+    from shop.photo_mark import photo_mark_image, get_remote_image
     #价格不正确，直接返回
     if aliproduct.maxprice ==0:
         error = "价格为0"
@@ -579,13 +579,7 @@ def post_photo_to_album(targer_page,album_no,aliproduct ):
 
     #print("product.product_no ", product.product_no)
 
-    ori_images = json.loads(aliproduct.images)
-    if not ori_images or len(ori_images)==0:
 
-        error = "没有图片"
-        return error, None
-
-    ori_image = random.choice(ori_images)
 
     #print("position is ", ori_image.position)
 
@@ -612,7 +606,33 @@ def post_photo_to_album(targer_page,album_no,aliproduct ):
 
     price2 = int(price1 *  random.uniform(2, 3))
 
-    image, iamge_url = photo_mark(ori_image ,aliproduct.handle,str(price1), str(price2),  targer_page, type="album" )
+
+
+    ori_images = json.loads(aliproduct.images)
+
+    if not ori_images or len(ori_images) == 0:
+        error = "没有图片"
+        return error, None
+
+    #选择尺寸合适的图片
+    n=0
+    while(1):
+        ori_image = random.choice(ori_images)
+        n +=1
+
+        image = get_remote_image(ori_image)
+        if not image and n <15:
+            continue
+
+        ori_w, ori_h = image.size
+        if ori_w <600 and n<15:
+            continue
+
+    if not image :
+        return  None,None
+
+
+    image, iamge_url = photo_mark_image(image ,aliproduct.handle,str(price1), str(price2),  targer_page, type="album" )
     if not image:
         error = "打水印失败"
         return error, None
