@@ -505,6 +505,22 @@ def post_ali_shopify():
     for aliproduct in aliproducts:
         post_to_shopify.delay(aliproduct.pk)
 
+#3,将1688产品详细信息发布到shopfiy店铺
+@shared_task
+def post_ali_shopify_shenjian():
+
+
+    dest_shop = "yallasale-com"
+    # ori_shop = "yallavip-saudi"
+
+    # sync_shop(ori_shop)
+    sync_shop(dest_shop)
+
+    aliproducts = AliProduct.objects.filter(created = True, published=False)
+    print("一共有%d 个1688产品信息待发布" % (aliproducts.count()))
+    for aliproduct in aliproducts:
+        post_to_shopify_shenjian.delay(aliproduct.pk)
+
 @task
 def post_to_shopify_shenjian(aliproduct_pk ):
     from .ali import create_body_shenjian, create_variant_shenjian
