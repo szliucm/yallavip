@@ -500,14 +500,14 @@ def post_ali_shopify():
     # sync_shop(ori_shop)
     sync_shop(dest_shop)
 
-    aliproducts = AliProduct.objects.filter(published=False)
+    aliproducts = AliProduct.objects.filter(created = True, published=False)
     print("一共有%d 个1688产品信息待发布" % (aliproducts.count()))
     for aliproduct in aliproducts:
         post_to_shopify.delay(aliproduct.pk)
 
 @task
-def post_to_shopify(aliproduct_pk ):
-    from .ali import create_body, create_variant
+def post_to_shopify_shenjian(aliproduct_pk ):
+    from .ali import create_body_shenjian, create_variant_shenjian
     from django.utils import timezone as datetime
     dest_shop = "yallasale-com"
 
@@ -550,9 +550,9 @@ def post_to_shopify(aliproduct_pk ):
     #shop_obj = Shop.objects.get(shop_name=dest_shop)
     #max_id = shop_obj.max_id + 1
 
-    shopifyproduct = create_body(aliproduct )
+    shopifyproduct = create_body_shenjian(aliproduct )
     if shopifyproduct is not None:
-        posted = create_variant(aliproduct, shopifyproduct)
+        posted = create_variant_shenjian(aliproduct, shopifyproduct)
         if posted is not None:
             print("创建新产品成功")
             AliProduct.objects.filter(pk=aliproduct.pk).update(published=True, handle=posted.get("handle"),
@@ -571,7 +571,7 @@ def post_to_shopify(aliproduct_pk ):
 
 
 @task
-def post_to_shopify_shenjian(aliproduct_pk ):
+def post_to_shopify(aliproduct_pk ):
     from .ali import create_body, create_variant
     from django.utils import timezone as datetime
     dest_shop = "yallasale-com"
