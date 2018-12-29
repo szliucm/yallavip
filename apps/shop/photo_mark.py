@@ -29,7 +29,7 @@ def get_remote_image(img_url):
         return  Image.open(BytesIO(response.content))
     except:
         print("open image error: image_url %s response %s "%(img_url,response))
-        return  False
+        return  None
 
 
 # 裁剪压缩图片

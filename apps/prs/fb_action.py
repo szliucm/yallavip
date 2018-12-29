@@ -621,21 +621,29 @@ def post_photo_to_album(targer_page,album_no,aliproduct ):
         n +=1
 
         image = get_remote_image(ori_image)
-        if not image and n <15:
+        print("###############", n , image)
+        if image is None:
             print("远程图片打不开")
-            continue
+            if n <15:
+                continue
+            else:
+                image = None
+                break
         else:
-            break
+            ori_w, ori_h = image.size
+            if ori_w > 600 :
+                break
+            else:
+                print("图片分辨率太低")
+                if n < 15:
+                    continue
+                else:
+                    image = None
+                    break
 
-        ori_w, ori_h = image.size
-        if ori_w <600 and n<15:
-            print("图片分辨率太低")
-            continue
-        else:
-            break
 
 
-    if not image :
+    if image is None :
         return  None,None
 
 
