@@ -1906,6 +1906,14 @@ def create_variant_shenjian(aliproduct, shopifyproduct):
     for sku_detail in json.loads(aliproduct.sku_detail):
         print("2 ###############", sku_detail)
         try:
+            stock= sku_detail.get("stock")
+        except:
+            continue
+        if stock == 0:
+            print("库存为0")
+            continue
+
+        try:
             sku= sku_detail.get("sku")
         except:
             continue
