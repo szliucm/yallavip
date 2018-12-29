@@ -588,7 +588,7 @@ def post_photo_to_album(targer_page,album_no,aliproduct ):
     name = aliproduct.title + "  [" + aliproduct.handle+"]"
     options = json.loads(aliproduct.options)
     for option in options:
-        value_list = option.get("values")
+        value_list = option.get("values",[])
         name = name + "\n\n   " + option.get("name") + " : " + ', '.join(value_list)
 
 
@@ -624,11 +624,16 @@ def post_photo_to_album(targer_page,album_no,aliproduct ):
         if not image and n <15:
             print("远程图片打不开")
             continue
+        else:
+            break
 
         ori_w, ori_h = image.size
         if ori_w <600 and n<15:
             print("图片分辨率太低")
             continue
+        else:
+            break
+
 
     if not image :
         return  None,None
