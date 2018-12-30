@@ -162,9 +162,9 @@ def ali_list(html):
         offer_id = vendor.attrib.get('offerid')
         vendor_list.append(offer_id)
 
-        price_div = vendor.xpath('.//span[@class="sm-offer-priceNum sw-dpl-offer-priceNum"]')
-        print("##################",price_div)
-        price = price_div.attrib.get('title')
+        #price_div = vendor.xpath('.//span[@class="sm-offer-priceNum sw-dpl-offer-priceNum"]')
+        #print("##################",price_div)
+        #price = price_div.attrib.get('title')
 
-        print("type  offer_id",type(offer_id), offer_id,price)
+        #print("type  offer_id",type(offer_id), offer_id,price)
     return  vendor_list
