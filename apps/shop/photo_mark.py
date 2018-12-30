@@ -225,7 +225,7 @@ def photo_mark(ori_image,  handle, price1, price2, targer_page,  type="album" ):
 
     return  destination, destination_url
 
-def photo_mark_url(ori_image_url,  product, price1, price2, targer_page,  type="album" ):
+def photo_mark_url(ori_image_url,  handle, price1, price2, targer_page,  type="album" ):
     # 获取远程图片
 
 
@@ -233,9 +233,9 @@ def photo_mark_url(ori_image_url,  product, price1, price2, targer_page,  type="
 
     if not image:
         return  None,None
-    photo_mark_image(image, product, price1, price2, targer_page, type)
+    photo_mark_image(image, handle, price1, price2, targer_page, type)
 
-def photo_mark_image(image, product, price1, price2, targer_page, type="album"):
+def photo_mark_image(image, handle, price1, price2, targer_page, type="album"):
     from django.utils import timezone as datetime
     # 对图片进行处理
     ################
@@ -243,10 +243,6 @@ def photo_mark_image(image, product, price1, price2, targer_page, type="album"):
     promote = targer_page.promote
     price = targer_page.price
     print("logo %s promote %s price %s "%(logo,promote,price   ))
-
-    handle = product.handle
-
-
 
 
 
