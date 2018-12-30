@@ -631,10 +631,10 @@ def post_photo_to_album(targer_page,album_no,aliproduct ):
                 break
         else:
             ori_w, ori_h = image.size
-            if ori_w > 600 :
+            if ori_w >= 600 :
                 break
             else:
-                print("图片分辨率太低")
+                print("图片分辨率太低", ori_w)
                 if n < 15:
                     continue
                 else:
@@ -644,7 +644,7 @@ def post_photo_to_album(targer_page,album_no,aliproduct ):
 
 
     if image is None :
-        return  None,None
+        return  "没有合适的图片",None
 
 
     image, iamge_url = photo_mark_image(image ,aliproduct.handle,str(price1), str(price2),  targer_page, type="album" )
