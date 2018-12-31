@@ -916,9 +916,10 @@ def post_to_album():
 ############################
 @shared_task
 def product_feed():
-    from .fb_action import post_product_feed
+    from .fb_action import post_album_feed
 
-    post_product_feed()
+    post_album_feed()
+    #post_product_feed()
 
     return
 
