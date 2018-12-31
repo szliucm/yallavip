@@ -265,7 +265,11 @@ def post_product_feed():
     for page in pages:
         page_no= page.page_no
 
-        product = MyProductShopify.objects.order_by('?')[:1].first()
+        #product = MyProductShopify.objects.order_by('?')[:1].first()
+        #根据店铺品类，随机选择一个产品
+        cates = ProductCategoryMypage.objects.filter(mypage__pk=page.pk)
+        cate = random.choice(cates)
+        product = MyProductShopify.objects.filter(myproductcate__code=cate.cate_code).order_by('?')[:1].first()
 
         images = ShopifyImage.objects.filter(product_no=product.product_no).order_by("position")
 
@@ -587,8 +591,10 @@ def post_photo_to_album(targer_page,album_no,aliproduct ):
 
     name = aliproduct.title + "  [" + aliproduct.handle+"]"
     options = json.loads(aliproduct.options)
+    print(name, options)
     for option in options:
         value_list = option.get("values",[])
+        print(value_list)
         name = name + "\n\n   " + option.get("name") + " : " + ', '.join(value_list)
 
 
