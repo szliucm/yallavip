@@ -326,7 +326,7 @@ def post_album_feed():
     for page in pages:
         page_no= page.page_no
 
-        fbproduct = MyFbProduct.objects.filter(mypage__pk=page.pk).order_by('?')[:1].first()
+        fbproduct = MyFbProduct.objects.filter(mypage__pk=page.pk,published=True).order_by('?')[:1].first()
         product = fbproduct.myproduct
         images = ShopifyImage.objects.filter(product_no=product.product_no).order_by("position")
 
