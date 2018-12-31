@@ -251,6 +251,7 @@ def post_saudi_mainshop():
 #随机选有动销的产品动图到活跃的page
 #
 ############################
+'''
 @shared_task
 def product_feed():
     from .fb_action import post_product_feed
@@ -259,7 +260,7 @@ def product_feed():
 
     return
 
-
+'''
 
 
 #####################################
