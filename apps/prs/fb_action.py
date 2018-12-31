@@ -327,6 +327,9 @@ def post_album_feed():
         page_no= page.page_no
 
         fbproduct = MyFbProduct.objects.filter(mypage__pk=page.pk,published=True).order_by('?')[:1].first()
+        if fbproduct is None:
+            print("没有fb产品", page)
+            continue
         product = fbproduct.myproduct
         images = ShopifyImage.objects.filter(product_no=product.product_no).order_by("position")
 
