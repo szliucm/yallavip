@@ -652,9 +652,13 @@ def post_photo_to_album(targer_page,album_no,aliproduct ):
     options = json.loads(aliproduct.options)
     print(name, options)
     for option in options:
-        value_list = option.get("values",[])
-        print(value_list)
-        name = name + "\n\n   " + option.get("name") + " : " + ', '.join(value_list)
+        value_list = option.get("values")
+        value_name = option.get("name")
+        if value_list is not  None and value_name is not None:
+                name = name + "\n\n   " + value_name + " : " + ', '.join(value_list)
+        else:
+            error = option +"option 取信息出错"
+            return error, None
 
 
     maxprice =int(aliproduct.maxprice * aliproduct.price_rate)
