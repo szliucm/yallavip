@@ -265,11 +265,7 @@ def post_product_feed():
     for page in pages:
         page_no= page.page_no
 
-        #product = MyProductShopify.objects.order_by('?')[:1].first()
-        #根据店铺品类，随机选择一个产品
-        cates = ProductCategoryMypage.objects.filter(mypage__pk=page.pk)
-        cate = random.choice(cates)
-        product = MyProductShopify.objects.filter(myproductcate__code=cate.productcategory.code).order_by('?')[:1].first()
+        product = MyProductShopify.objects.order_by('?')[:1].first()
 
         images = ShopifyImage.objects.filter(product_no=product.product_no).order_by("position")
 
@@ -316,6 +312,66 @@ def post_product_feed():
 
     return
 
+#####################################
+#########从相册里挑一个product发到feed
+#########每个page从相册里随机选一个产品，组成动图，发到feed里
+######################################
+def post_album_feed():
+    from .video import fb_slideshow
+    from shop.models import  ShopifyImage
+    from shop.photo_mark import photo_mark
+
+    pages = MyPage.objects.filter(active=True)      #.values_list('page_no', flat=True)
+    #page_nos = ["358078964734730"]   #for debug
+    for page in pages:
+        page_no= page.page_no
+
+        fbproduct = MyFbProduct.objects.filter(mypage__pk=page.pk).order_by('?')[:1].first()
+        product = fbproduct.myproduct
+        images = ShopifyImage.objects.filter(product_no=product.product_no).order_by("position")
+
+        images_count = len(images)
+        if images_count<3:
+            print("图片太少")
+            print("result is ", page_no, product.handle, product.product_no)
+            print(images)
+            continue
+        elif images_count>7:
+            images = images[:7]
+
+        #######################
+            # 打标
+            # name = product.title + "  [" + product.handle + "]"
+            # options = ShopifyOptions.objects.filter(product_no=product.product_no).values()
+            # for option in options:
+            #   name = name + "\n\n   " + option.get("name") + " : " + option.get("values")
+
+        max_price = ShopifyVariant.objects.filter(product_no=product.product_no).aggregate(Max("price")).get(
+            "price__max")
+        # name = name + "\n\nPrice:  " + str(int(max_price)) + "SAR"
+
+        # 打标
+        price1 = int(max_price)
+        price2 = int(price1 * random.uniform(2, 3))
+
+        dest_images =[]
+        for ori_image in images:
+            image, iamge_url = photo_mark(ori_image.src, product.handle, str(price1), str(price2), page, type="album")
+            if not image:
+                print("打水印失败")
+                continue
+
+            dest_images.append(iamge_url)
+
+        post_id = fb_slideshow(list(dest_images), page_no)
+
+        print("postid ", post_id)
+
+
+
+
+
+    return
 
 
 
