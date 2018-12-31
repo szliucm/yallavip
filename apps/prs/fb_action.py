@@ -269,7 +269,7 @@ def post_product_feed():
         #根据店铺品类，随机选择一个产品
         cates = ProductCategoryMypage.objects.filter(mypage__pk=page.pk)
         cate = random.choice(cates)
-        product = MyProductShopify.objects.filter(myproductcate__code=cate.cate_code).order_by('?')[:1].first()
+        product = MyProductShopify.objects.filter(myproductcate__code=cate.productcategory.code).order_by('?')[:1].first()
 
         images = ShopifyImage.objects.filter(product_no=product.product_no).order_by("position")
 
