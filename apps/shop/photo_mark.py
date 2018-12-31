@@ -193,7 +193,7 @@ def deal_image(im,logo = None ,handle = None, price = None,price1 = None, price2
 def photo_mark(ori_image,  handle, price1, price2, targer_page,  type="album" ):
     # 获取远程图片
 
-    image = get_remote_image(ori_image)
+    image = get_remote_image(ori_image.src)
 
     if not image:
         return  None,None
@@ -213,7 +213,7 @@ def photo_mark(ori_image,  handle, price1, price2, targer_page,  type="album" ):
 
     # 处理完的图片保存到本地
 
-    image_filename = handle + '_' +  targer_page.page + '.jpg'
+    image_filename = handle + '_' +  targer_page.page + '_'+ori_image.position+'.jpg'
     image_filename = image_filename.replace(' ', '')
     destination = os.path.join(settings.MEDIA_ROOT, "product/", image_filename)
 
