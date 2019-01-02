@@ -654,6 +654,9 @@ def post_photo_to_album(targer_page,album_no,aliproduct ):
     for option in options:
         value_list = option.get("values")
         value_name = option.get("name")
+        for i in  range(value_list.count(None)):
+            value_list.remove(None)
+
         if value_list is not  None and value_name is not None:
                 name = name + "\n\n   " + value_name + " : " + ', '.join(value_list)
         else:
