@@ -27,7 +27,9 @@ def updatelogistic_trail():
     param_data["customerid"] = "3c917d0c-6290-11e8-a277-6c92bf623ff2"
     param_data["isdisplaydetail"] = "true"
 
-    queryset = Package.objects.filter(Q(logistic_update_date__lt = (timezone.now()- timedelta(days=1)).date())|Q(logistic_update_date__isnull = True),file_status= "OPEN")
+    queryset = Package.objects.filter(Q(logistic_update_date__lt = (timezone.now()- timedelta(days=1)).date())|Q(logistic_update_date__isnull = True),
+                                      logistic_no__startwith = "JCR",
+                                      file_status= "OPEN")
     for row in queryset:
 
         if row.logistic_update_date is not None:
