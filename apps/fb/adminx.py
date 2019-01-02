@@ -1094,16 +1094,20 @@ class MyPhotoAdmin(object):
         #删除Facebook图片
         adobjects = FacebookAdsApi.init(access_token=my_access_token, debug=True)
         for row in queryset:
-            photo_no = row.photo_no
-            fields = [
-                      ]
-            params = {
+            try:
+                photo_no = row.photo_no
+                fields = [
+                          ]
+                params = {
 
-            }
-            photos = Photo(photo_no).api_delete(
-                fields=fields,
-                params=params,
-            )
+                }
+                photos = Photo(photo_no).api_delete(
+                    fields=fields,
+                    params=params,
+                )
+            except:
+                continue
+
         #删除本地数据库信息
         queryset.delete()
 
