@@ -66,15 +66,15 @@ def updatelogistic_trail():
             trail_time = datetime.strptime("2018-01-01 00:00:00", "%Y-%m-%d %H:%M:%S")
 
 
-        print("!!!!!!!!!!!",trail_time)
+        #print("!!!!!!!!!!!",trail_time)
         for status_d in statusdetail:
 
             new_trail_time =   datetime.strptime(status_d["time"] , "%Y-%m-%d %H:%M:%S").replace(tzinfo=pytz.timezone('Asia/Riyadh'))
             if new_trail_time <= trail_time:
-                print("@@@@@@@@@@@@ ", new_trail_time)
+                #print("@@@@@@@@@@@@ ", new_trail_time)
                 break
 
-            print("#######",new_trail_time )
+            #print("#######",new_trail_time )
 
             LogisticTrail.objects.update_or_create(
                 waybillnumber=waybillnumber,trail_time = new_trail_time,
