@@ -63,7 +63,7 @@ def updatelogistic_trail():
             #print(trail.first())
             trail_time = trail.first().trail_time
         else:
-            trail_time = datetime.strptime("2018-01-01 00:00:00", "%Y-%m-%d %H:%M:%S")
+            trail_time = datetime.strptime("2018-01-01 00:00:00", "%Y-%m-%d %H:%M:%S").replace(tzinfo=pytz.timezone('Asia/Riyadh'))
 
 
         #print("!!!!!!!!!!!",trail_time)
