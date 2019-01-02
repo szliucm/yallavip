@@ -1025,7 +1025,7 @@ class MyPhotoAdmin(object):
 
     search_fields = ['photo_no',"album_no", "name"]
     list_filter = ("page_no","album_no","like_count")
-    actions = [ "batch_get_insight","batch_delete_photos",]
+    actions = [ "batch_delete_local_photos", "batch_get_insight","batch_delete_photos",]
 
     def album(self,obj):
         return  MyAlbum.objects.get(album_no=obj.album_no).name
@@ -1109,6 +1109,11 @@ class MyPhotoAdmin(object):
 
 
     batch_delete_photos.short_description = "批量删除图片"
+
+    def batch_delete_local_photos(self, request, queryset):
+        queryset.delete()
+
+    batch_delete_local_photos.short_description = "批量删除本地图片"
 
 
 class ConversationResource(resources.ModelResource):
