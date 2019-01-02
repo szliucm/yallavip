@@ -1034,7 +1034,7 @@ class MyPhotoAdmin(object):
 
     def img(self, obj):
         try:
-            img = mark_safe('<a href="%s" target="view_window"><img src="%s" width="50px"></a>' % (obj.link, obj.picture))
+            img = mark_safe('<a href="%s" target="view_window"><img src="%s" width="100px"></a>' % (obj.link, obj.picture))
 
         except Exception as e:
             img = ''
