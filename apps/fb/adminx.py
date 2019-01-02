@@ -1091,6 +1091,7 @@ class MyPhotoAdmin(object):
     batch_get_insight.short_description = "更新图片insight"
 
     def batch_delete_photos(self, request, queryset):
+        #删除Facebook图片
         adobjects = FacebookAdsApi.init(access_token=my_access_token, debug=True)
         for row in queryset:
             photo_no = row.photo_no
@@ -1103,8 +1104,9 @@ class MyPhotoAdmin(object):
                 fields=fields,
                 params=params,
             )
+        #删除本地数据库信息
+        queryset.delete()
 
-            print("photos is ", photos)
 
 
 
