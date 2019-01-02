@@ -233,7 +233,7 @@ def photo_mark_url(ori_image_url,  handle, price1, price2, targer_page,  type="a
 
     if not image:
         return  None,None
-    photo_mark_image(image, handle, price1, price2, targer_page, type)
+    return  photo_mark_image(image, handle, price1, price2, targer_page, type)
 
 def photo_mark_image(image, handle, price1, price2, targer_page, type="album"):
     from django.utils import timezone as datetime
