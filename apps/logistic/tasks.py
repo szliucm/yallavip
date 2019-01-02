@@ -56,7 +56,11 @@ def updatelogistic_trail():
         #逆序，最新动态在最前面
         statusdetail.reverse()
         trail =  LogisticTrail.objects.filter(waybillnumber=waybillnumber).order_by("-trail_time").first()
-        trail_time = trail.trail_time
+
+        if trail is None:
+            trail_time = time.strptime("2018-01-01 00:00:00" , "%Y-%m-%d %H:%M:%S")
+        else:
+            trail_time = trail.trail_time
         print("!!!!!!!!!!!",trail_time)
         for status_d in statusdetail:
 
