@@ -1025,7 +1025,7 @@ class MyPhotoAdmin(object):
 
     search_fields = ['photo_no',"album_no", "name"]
     list_filter = ("page_no","album_no","like_count")
-    actions = [ "batch_get_insight",]
+    actions = [ "batch_get_insight","batch_delete_photos",]
 
     def album(self,obj):
         return  MyAlbum.objects.get(album_no=obj.album_no).name
