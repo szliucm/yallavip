@@ -28,7 +28,7 @@ def updatelogistic_trail():
     param_data["isdisplaydetail"] = "true"
 
     queryset = Package.objects.filter(Q(logistic_update_date__lt = (timezone.now()- timedelta(days=1)).date())|Q(logistic_update_date__isnull = True),
-                                      logistic_no__startwith = "JCR",
+                                      logistic_no__startswith = "JCR",
                                       file_status= "OPEN")
     for row in queryset:
 
