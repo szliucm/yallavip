@@ -176,6 +176,9 @@ def post_creative_feed_page_fb(page,fb):
         price1 = int(max_price)
         price2 = int(price1 * random.uniform(2, 3))
 
+
+
+
     if kind.mime.find("video") >= 0:
         print("视频")
 
@@ -207,19 +210,20 @@ def post_creative_feed_page_fb(page,fb):
 
     elif kind.mime.find("image") >= 0:
         print("图片")
-        destination_url = domain + os.path.join(settings.MEDIA_URL, resource)
+        image_url = domain + os.path.join(settings.MEDIA_URL, resource)
         # 发图片post
         if fb.myresource.resource_type == "RAW":
             # 素材需要打标，否则直接发
-            finale, final_url = photo_mark_url(destination_url, product.handle, str(price1), str(price2), page, type="album")
+            print("#######",image_url, product, price1, price2, page)
+            finale, destination_url = photo_mark_url(image_url, product.handle, str(price1), str(price2), page, type="album")
 
         else:
-            final_url = destination_url
+            destination_url = image_url
 
         fields = [
         ]
         params = {
-            'url': final_url,
+            'url': destination_url,
             'published': 'false',
         }
         photo_to_be_post = Page(page_id).create_photo(
