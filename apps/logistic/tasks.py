@@ -7,8 +7,9 @@ from celery import shared_task,task
 import requests
 import json
 import base64
-import  time
-from django.utils import timezone as datetime
+from  datetime import datetime
+import  pytz
+#from django.utils import timezone as datetime
 from .models import Package, LogisticTrail
 
 @shared_task
@@ -24,7 +25,7 @@ def updatelogistic_trail():
     param_data["customerid"] = "3c917d0c-6290-11e8-a277-6c92bf623ff2"
     param_data["isdisplaydetail"] = "true"
 
-    queryset = Package.objects.filter(file_status= "OPEN")
+    queryset = Package.objects.filter(file_status= "OPEN")[:10]
     for row in queryset:
 
         param_data["waybillnumber"] = row.logistic_no
@@ -55,24 +56,28 @@ def updatelogistic_trail():
 
         #逆序，最新动态在最前面
         statusdetail.reverse()
-        trail =  LogisticTrail.objects.filter(waybillnumber=waybillnumber).order_by("-trail_time").first()
+        trail =  LogisticTrail.objects.filter(waybillnumber=waybillnumber).order_by("-trail_time")
 
-        if trail is None:
-            trail_time = time.strptime("2018-01-01 00:00:00" , "%Y-%m-%d %H:%M:%S")
+        if trail.exists() :
+            #print(trail)
+            #print(trail.first())
+            trail_time = trail.first().trail_time
         else:
-            trail_time = trail.trail_time
+            trail_time = datetime.strptime("2018-01-01 00:00:00", "%Y-%m-%d %H:%M:%S")
+
+
         print("!!!!!!!!!!!",trail_time)
         for status_d in statusdetail:
 
-            new_trail_time =   time.strptime(status_d["time"] , "%Y-%m-%d %H:%M:%S")
-            if new_trail_time <= trail_time.timetuple():
+            new_trail_time =   datetime.strptime(status_d["time"] , "%Y-%m-%d %H:%M:%S").replace(tzinfo=pytz.timezone('Asia/Riyadh'))
+            if new_trail_time <= trail_time:
                 print("@@@@@@@@@@@@ ", new_trail_time)
                 break
 
             print("#######",new_trail_time )
 
             LogisticTrail.objects.update_or_create(
-                waybillnumber=waybillnumber,trail_time = status_d["time"],
+                waybillnumber=waybillnumber,trail_time = new_trail_time,
                 defaults={
                            'trail_locaiton': status_d["locate"],
                            'trail_status': status_d["status"],
