@@ -12,6 +12,7 @@ import  pytz
 #from django.utils import timezone as datetime
 from .models import Package, LogisticTrail
 from django.utils import timezone
+from django.db.models import Q
 
 @shared_task
 def updatelogistic_trail():
