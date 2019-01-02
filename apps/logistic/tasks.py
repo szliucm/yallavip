@@ -17,7 +17,7 @@ def updatelogistic_trail():
     param_data["customerid"] = "3c917d0c-6290-11e8-a277-6c92bf623ff2"
     param_data["isdisplaydetail"] = "true"
 
-    queryset = Package.objects.filter(file_status= "OPEN")[:10]
+    queryset = Package.objects.filter(file_status= "OPEN")
     for row in queryset:
 
         param_data["waybillnumber"] = row.logistic_no
