@@ -1,3 +1,9 @@
+# Create your tasks here
+from __future__ import absolute_import, unicode_literals
+import numpy as np, re
+from celery import shared_task,task
+
+
 import requests
 import json
 import base64
@@ -5,6 +11,7 @@ import  time
 from django.utils import timezone as datetime
 from .models import Package, LogisticTrail
 
+@shared_task
 def updatelogistic_trail():
 
     requrl = "http://api.jcex.com/JcexJson/api/notify/sendmsg"
