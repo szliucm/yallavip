@@ -211,7 +211,7 @@ def post_creative_feed_page_fb(page,fb):
         # 发图片post
         if fb.myresource.resource_type == "RAW":
             # 素材需要打标，否则直接发
-            finale, final_url = photo_mark_url(destination_url, product, str(price1), str(price2), page, type="album")
+            finale, final_url = photo_mark_url(destination_url, product.handle, str(price1), str(price2), page, type="album")
 
         else:
             final_url = destination_url
