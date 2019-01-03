@@ -743,8 +743,9 @@ def post_newproduct_album_page_album(mypage, album_name):
     n = 0
     for product in products:
         myproduct = product.myaliproduct
+        album_no = ProductCategoryMypage.objects.get(mypage__pk=mypage.pk,album_name= album_name).album_no
 
-        error, posted = post_photo_to_album(mypage, product.album_no, myproduct)
+        error, posted = post_photo_to_album(mypage, album_no, myproduct)
 
         if posted is not None:
             MyFbProduct.objects.filter(mypage__pk=mypage.pk, myaliproduct__pk=product.myaliproduct.pk).update(
