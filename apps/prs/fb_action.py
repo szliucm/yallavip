@@ -686,13 +686,14 @@ def post_photo_to_album(targer_page,album_no,aliproduct ):
 
                 if values is None:
                     continue
-                print("#### value", values)
+                print("#### values", values)
             except:
                 continue
 
             value_list = []
             for value in values:
                 desc_zh = value.get("desc")
+                print("$$$$$$$$$$$ desc_zh", desc_zh)
 
                 if desc_zh is not None:
                     desc = fanyi(desc_zh)
