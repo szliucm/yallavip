@@ -667,26 +667,48 @@ def post_photo_to_album(targer_page,album_no,aliproduct ):
 
 
     #print("position is ", ori_image.position)
+
     value_list = None
     value_name = None
     if aliproduct.title is None or len(aliproduct.title) == 0:
         handle_new = 'b' + str(aliproduct.pk).zfill(5)
         title = fanyi(aliproduct.title_zh)
+        name = title + "  [" + handle_new + "]"
 
-        options = json.loads(aliproduct.sku_info)
-        #print( options)
-        for option in options:
-            values = option.get("values")
-            value_name = option.get("label")
-            value_list =[]
+        for sku in json.loads(aliproduct.sku_info):
+
+            try:
+                values = sku.get("values")
+
+                if values is None:
+                    continue
+            except:
+                continue
+
+            value_list = []
             for value in values:
-                desc = value.get("desc")
-                if desc is not None:
-                    value_list.append(desc)
+                desc_zh = value.get("desc")
+
+                if desc_zh is not None:
+                    desc = fanyi(desc_zh)
+                    if desc in value_list:
+                        desc = desc + "_" + str(len(value_list))
+                        value_list.append(desc)
+                else:
+                    continue
+
+            if value_list is not None and value_name is not None:
+                name = name + "\n\n   " + value_name + " : " + ', '.join(value_list)
+            else:
+                error = str(sku) + "option 取信息出错"
+                return error, None
+
+
 
     else:
         handle_new = aliproduct.handle
         title = aliproduct.title
+        name = title + "  [" + handle_new + "]"
 
         options = json.loads(aliproduct.options)
         #print( options)
@@ -697,12 +719,12 @@ def post_photo_to_album(targer_page,album_no,aliproduct ):
                 value_list.remove(None)
 
 
-    name = title + "  [" + handle_new + "]"
-    if value_list is not None and value_name is not None:
-        name = name + "\n\n   " + value_name + " : " + ', '.join(value_list)
-    else:
-        error = str(options) + "option 取信息出错"
-        return error, None
+
+            if value_list is not None and value_name is not None:
+                name = name + "\n\n   " + value_name + " : " + ', '.join(value_list)
+            else:
+                error = str(options) + "option 取信息出错"
+                return error, None
 
 
 
