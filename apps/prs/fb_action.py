@@ -624,9 +624,26 @@ def post_photo_to_album(targer_page,album_no,product ):
 def post_photo_to_album(targer_page,album_no,aliproduct ):
     from shop.photo_mark import photo_mark_image, get_remote_image
     #价格不正确，直接返回
+    price_rate = aliproduct.price_rate
+    if price_rate == 0:
+        price_rate = 3
+
     if aliproduct.maxprice ==0:
-        error = "价格为0"
-        return  error,None
+        price_range = aliproduct.price_range
+
+        if len(price_range) >0:
+
+            if price_range.find("-") >= 0:
+                print("here", price_range)
+                maxprice = float(price_range.partition("-")[0]) * price_rate
+            else:
+
+                maxprice = float(price_range) * price_rate
+        else:
+            error = "价格为0"
+            return  error,None
+    else:
+        maxprice = int(aliproduct.maxprice * price_rate)
 
     # 检查产品是否已经在相册中了，如果不存在，就发布新图片
     #myphotos = MyPhoto.objects.filter(name=product.handle , album_no=album_no )
@@ -668,7 +685,7 @@ def post_photo_to_album(targer_page,album_no,aliproduct ):
             return error, None
 
 
-    maxprice =int(aliproduct.maxprice * aliproduct.price_rate)
+
     name = name + "\n\nPrice:  " + str(int(maxprice)) + "SAR"
 
     #打标
