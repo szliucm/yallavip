@@ -678,6 +678,7 @@ def post_photo_to_album(targer_page,album_no,aliproduct ):
 
         for sku in json.loads(aliproduct.sku_info):
             value_name = sku.get("label")
+
             print("###value_name", value_name)
 
             try:
@@ -703,7 +704,7 @@ def post_photo_to_album(targer_page,album_no,aliproduct ):
                     continue
 
             if value_list is not None and value_name is not None:
-                name = name + "\n\n   " + value_name + " : " + ', '.join(value_list)
+                name = name + "\n\n   " + fanyi(value_name) + " : " + ', '.join(value_list)
             else:
                 error = str(sku) + "option 取信息出错"
                 return error, None
