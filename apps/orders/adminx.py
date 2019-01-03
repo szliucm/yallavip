@@ -923,8 +923,7 @@ class OrderDetailAdmin(object):
             image_no = ShopifyVariant.objects.get(sku=obj.sku).image_no
 
             img = mark_safe(
-                '<a href="%s" target="view_window"><img src="%s" width="100px"></a>' % (
-                    obj.sku,
+                '<img src="%s" width="100px"></a>' % (
                     ShopifyImage.objects.get(image_no=image_no).src,
                     ))
 

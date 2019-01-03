@@ -206,8 +206,11 @@ def get_ali_page(offer_id):
 
 from .fanyi import  baidu_translate
 def fanyi(data):
-    res =  baidu_translate(data,"zh","en")#.replace("['","").replace("']","")
-    return res
+    if data.isdigit():
+        return data
+    else:
+        return baidu_translate(data,"zh","en")#.replace("['","").replace("']","")
+
     #return requests.post('https://fanyi.baidu.com/transapi', data={"query": data, 'from': 'zh', 'to': 'en'}).json()['data'][0]['dst']
 
 def fanyi_en(data):
@@ -1748,6 +1751,7 @@ def create_body_shenjian(aliproduct):
     #############################
     from shop.models import Shop, ShopifyProduct
     from prs.shop_action import post_product_main,   update_or_create_product
+    from .models import AliProduct
 
     dest_shop = "yallasale-com"
     shop_obj = Shop.objects.get(shop_name=dest_shop)
@@ -1818,8 +1822,9 @@ def create_body_shenjian(aliproduct):
         update_or_create_product(shop_obj.shop_name, products)
         # 修改handle最大值
         #Shop.objects.filter(shop_name=shop_obj.shop_name).update(max_id=max_id)
-
+        #AliProduct.objects.filter(pk=aliproduct.pk).update(title=title,handle = handle_new,publish_error="产品主体发布成功" )
         print("产品主体发布成功！！！！")
+
         #print(type(new_product),  new_product)
         return new_product
 
