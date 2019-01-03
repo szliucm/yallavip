@@ -743,7 +743,7 @@ def post_newproduct_album_page_album(mypage, album_name):
     n = 0
     for product in products:
         myproduct = product.myaliproduct
-        album_no = ProductCategoryMypage.objects.get(mypage__pk=mypage.pk,album_name= album_name).album_no
+        album_no = MyAlbum.objects.get(page_no=mypage.page_no,name= album_name).album_no
 
         error, posted = post_photo_to_album(mypage, album_no, myproduct)
 
