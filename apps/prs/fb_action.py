@@ -674,14 +674,18 @@ def post_photo_to_album(targer_page,album_no,aliproduct ):
         handle_new = 'b' + str(aliproduct.pk).zfill(5)
         title = fanyi(aliproduct.title_zh)
         name = title + "  [" + handle_new + "]"
+        print("######### name", name)
 
         for sku in json.loads(aliproduct.sku_info):
+            value_name = sku.get("label")
+            print("###value_name", value_name)
 
             try:
                 values = sku.get("values")
 
                 if values is None:
                     continue
+                print("#### value", values)
             except:
                 continue
 
@@ -694,6 +698,7 @@ def post_photo_to_album(targer_page,album_no,aliproduct ):
                     if desc in value_list:
                         desc = desc + "_" + str(len(value_list))
                         value_list.append(desc)
+                        print("############ desc", value_list)
                 else:
                     continue
 
