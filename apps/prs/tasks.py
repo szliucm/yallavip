@@ -573,6 +573,8 @@ def post_to_shopify_shenjian(aliproduct_pk ):
         if posted is not None:
             print("创建新产品成功")
             AliProduct.objects.filter(pk=aliproduct.pk).update(published=True, handle=posted.get("handle"),
+                                                               title = posted.get("title"),
+
                                                                product_no=posted.get("product_no"),
                                                                published_time=datetime.now())
         else:
@@ -758,7 +760,7 @@ def post_newproduct_album_page_album(mypage, album_name):
             if n > 5:
                 break
         else:
-            print("发布新产品到相册失败 page_pk %s  product_pk %s   error   %s" % (mypage.pk, myproduct.pk, error))
+            print("发布新产品到相册失败 page_pk %s  album %s product_pk %s   error   %s" % (mypage.pk, album_name,myproduct.pk, error))
             MyFbProduct.objects.filter(mypage__pk=mypage.pk, myaliproduct__pk=product.myaliproduct.pk).update(
                 myproduct=myproduct,
                 published=False,
