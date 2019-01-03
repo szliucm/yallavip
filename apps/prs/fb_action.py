@@ -699,8 +699,9 @@ def post_photo_to_album(targer_page,album_no,aliproduct ):
                     desc = fanyi(desc_zh)
                     if desc in value_list:
                         desc = desc + "_" + str(len(value_list))
-                        value_list.append(desc)
-                        print("############ desc", value_list)
+
+                    value_list.append(desc)
+                    print("############ desc", value_list)
                 else:
                     continue
 
