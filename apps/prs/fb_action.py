@@ -664,7 +664,7 @@ def post_photo_to_album(targer_page,album_no,aliproduct ):
         if value_list is not  None and value_name is not None:
                 name = name + "\n\n   " + value_name + " : " + ', '.join(value_list)
         else:
-            error = option +"option 取信息出错"
+            error = str(option) +"option 取信息出错"
             return error, None
 
 

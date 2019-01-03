@@ -41,7 +41,7 @@ def updatelogistic_trail():
         data_body = base64.b64encode(json.dumps(param_data).encode('utf-8'))
         param["data_body"] = data_body
 
-        print("start update track requrl is %s param is %s " % (requrl, param))
+        print("start update track requrl is %s waybillnumber is %s " % (requrl, row.logistic_no))
 
         res = requests.post(requrl, params=param)
 

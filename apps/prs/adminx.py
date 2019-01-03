@@ -414,7 +414,7 @@ class MyFbProductAdmin(object):
 
 class AliProductResource(resources.ModelResource):
     created_time = fields.Field(attribute='created_time', column_name='爬取时间(__time)')
-    #created = fields.Field(attribute='created',default=True)
+    created = fields.Field(attribute='created',column_name='created')
     offer_id = fields.Field(attribute='offer_id', column_name='商品ID(pid)')
     title_zh = fields.Field(attribute='title_zh', column_name='商品名称(name)')
     price_range = fields.Field(attribute='price_range', column_name='价格(price)')
