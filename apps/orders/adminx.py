@@ -14,7 +14,7 @@ from import_export.widgets import ForeignKeyWidget
 from .models import Order, OrderDetail,Verify, OrderConversation,ClientService,Verification,\
         Logistic_winlink,Logistic_jiacheng,Logistic_status,Logistic_trail, Sms,Logistic, OrderTrack,\
         LogisticAccount
-from shop.models import ShopifyProduct, ShopifyVariant,Combination
+from shop.models import ShopifyProduct, ShopifyVariant,Combination,ShopifyImage
 
 from conversations.models import Conversation
 from logistic.models import Package
@@ -916,6 +916,24 @@ class OrderDetailResource(resources.ModelResource):
 
 
 class OrderDetailAdmin(object):
+    def show_image(self, obj):
+
+        try:
+            #img = mark_safe('<img src="%s" width="100px" />' % (obj.logo.url,))
+            image_no = ShopifyVariant.objects.get(sku=obj.sku).image_no
+
+            img = mark_safe(
+                '<a href="%s" target="view_window"><img src="%s" width="100px"></a>' % (
+                    obj.sku,
+                    ShopifyImage.objects.get(image_no=image_no).src,
+                    ))
+
+        except Exception as e:
+            img = ''
+        return img
+
+    show_image.short_description = "产品图"
+
     def show_supply_status(self, obj):
         supply_status = Product.objects.get(sku=obj.sku).supply_status
 
@@ -945,9 +963,9 @@ class OrderDetailAdmin(object):
 
     import_export_args = {"import_resource_class": OrderDetailResource, "export_resource_class": OrderDetailResource}
 
-    list_display = ['order', 'sku', 'order_status','show_supply_status','alternative', 'product_quantity',  'price', ]
+    list_display = ['order', 'sku',"show_image", 'order_status','show_supply_status','alternative', 'product_quantity',  'price', ]
 
-    search_fields = ["order__order_no",'sku', ]
+    search_fields = ["order__order_no",'sku',"order__logistic_no" ]
 
     ordering = ['-order__order_no']
     list_filter = ("order__order_status", )
