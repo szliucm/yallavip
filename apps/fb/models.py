@@ -177,7 +177,7 @@ class MyPhoto(models.Model):
 
     created_time = models.DateTimeField(null=True, blank=True, verbose_name="创建时间")
     updated_time = models.DateTimeField(null=True, blank=True, verbose_name="更新时间")
-    name = models.CharField(max_length=1000, null=True, blank=True, verbose_name="name")
+    name = models.CharField(max_length=3000, null=True, blank=True, verbose_name="name")
 
     picture = models.CharField(max_length=500, null=True, blank=True, verbose_name="picture")
     link = models.CharField(max_length=500, null=True, blank=True, verbose_name="link")
