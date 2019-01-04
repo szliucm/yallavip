@@ -722,7 +722,9 @@ def post_photo_to_album(targer_page,album_no,aliproduct ):
             error = handle_new + "option 取信息出错"
             return error, None
 
-        options = json.loads(aliproduct.options)
+        print(handle_new, alioptions)
+
+        options = json.loads(alioptions)
         #print( options)
         for option in options:
             value_list = option.get("values")
