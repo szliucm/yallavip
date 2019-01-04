@@ -323,7 +323,7 @@ def post_product_feed():
 def post_album_feed():
     from .video import fb_slideshow
     from shop.models import  ShopifyImage
-    from shop.photo_mark import photo_mark
+    from shop.photo_mark import photo_mark_url
 
     pages = MyPage.objects.filter(active=True)      #.values_list('page_no', flat=True)
     #page_nos = ["358078964734730"]   #for debug
@@ -386,7 +386,7 @@ def post_album_feed():
 
         dest_images =[]
         for ori_image in images:
-            image, iamge_url = photo_mark(ori_image, myaliproduct.handle, str(price1), str(price2), page, type="album")
+            image, iamge_url = photo_mark_url(ori_image, myaliproduct.handle, str(price1), str(price2), page, type="album")
             if not image:
                 print("打水印失败")
                 continue
