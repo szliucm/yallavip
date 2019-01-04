@@ -357,12 +357,31 @@ def post_album_feed():
             # for option in options:
             #   name = name + "\n\n   " + option.get("name") + " : " + option.get("values")
 
-        max_price = ShopifyVariant.objects.filter(product_no=myaliproduct.product_no).aggregate(Max("price")).get(
-            "price__max")
+        price_rate = myaliproduct.price_rate
+        if price_rate == 0:
+            price_rate = 3
+
+        if myaliproduct.maxprice == 0:
+            price_range = myaliproduct.price_range
+
+            if len(price_range) > 0:
+
+                if price_range.find("-") >= 0:
+                    print("here", price_range)
+                    maxprice = float(price_range.partition("-")[0]) * price_rate
+                else:
+
+                    maxprice = float(price_range) * price_rate
+            else:
+                error = "价格为0"
+                return error, None
+        else:
+            maxprice = int(myaliproduct.maxprice * price_rate)
+
         # name = name + "\n\nPrice:  " + str(int(max_price)) + "SAR"
 
         # 打标
-        price1 = int(max_price)
+        price1 = int(maxprice)
         price2 = int(price1 * random.uniform(2, 3))
 
         dest_images =[]
