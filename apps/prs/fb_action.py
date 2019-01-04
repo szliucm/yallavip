@@ -339,8 +339,8 @@ def post_album_feed():
             print("没有产品", fbproduct)
             continue
 
-        images = ShopifyImage.objects.filter(product_no=myaliproduct.product_no).order_by("position")
-
+        #images = ShopifyImage.objects.filter(product_no=myaliproduct.product_no).order_by("position")
+        images = json.loads(myaliproduct.images)
         images_count = len(images)
         if images_count<3:
             print("图片太少")
