@@ -1014,7 +1014,8 @@ def sync_aliproduct_shopify():
         dest_products = ShopifyProduct.objects.filter(vendor=aliproduct.offer_id)
 
         if dest_products is not None:
-            print("这个产品已经发布过了！！！！", aliproduct.offer_id)
+
+            print("这个产品已经发布过了！！！！", aliproduct.offer_id, dest_products)
             AliProduct.objects.filter(pk=aliproduct.pk).update(published=True, published_time= datetime.now(),publish_error="")
         else:
             print("还没有发布过 ######", aliproduct.offer_id)
