@@ -717,6 +717,10 @@ def post_photo_to_album(targer_page,album_no,aliproduct ):
         handle_new = aliproduct.handle
         title = aliproduct.title
         name = title + "  [" + handle_new + "]"
+        alioptions = aliproduct.options
+        if alioptions is None:
+            error = handle_new + "option 取信息出错"
+            return error, None
 
         options = json.loads(aliproduct.options)
         #print( options)
