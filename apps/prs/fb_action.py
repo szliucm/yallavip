@@ -670,7 +670,7 @@ def post_photo_to_album(targer_page,album_no,aliproduct ):
 
     value_list = None
     value_name = None
-    if aliproduct.title is None or len(aliproduct.title) == 0:
+    if len(aliproduct.title_zh) >0:
         handle_new = 'b' + str(aliproduct.pk).zfill(5)
         title = fanyi(aliproduct.title_zh)
         name = title + "  [" + handle_new + "]"
@@ -717,8 +717,9 @@ def post_photo_to_album(targer_page,album_no,aliproduct ):
         handle_new = aliproduct.handle
         title = aliproduct.title
         name = title + "  [" + handle_new + "]"
+
         alioptions = aliproduct.options
-        if alioptions is None:
+        if alioptions is None or len(alioptions) == 0:
             error = handle_new + "option 取信息出错"
             return error, None
 
