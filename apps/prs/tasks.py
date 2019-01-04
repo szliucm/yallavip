@@ -1019,7 +1019,7 @@ def sync_aliproduct_shopify():
             AliProduct.objects.filter(pk=aliproduct.pk).update(published=True, published_time= datetime.now(),publish_error="")
         else:
             print("还没有发布过 ######", aliproduct.offer_id)
-            AliProduct.objects.filter(pk=aliproduct.pk).update(published=False, published_time="",
+            AliProduct.objects.filter(pk=aliproduct.pk).update(published=False, published_time=None,
                                                                publish_error="")
 
 
