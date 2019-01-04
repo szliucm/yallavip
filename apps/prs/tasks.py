@@ -1007,7 +1007,7 @@ def unlisting_overseas_package():
 def sync_aliproduct_shopify():
     from django.utils import timezone as datetime
 
-    aliproducts = AliProduct.objects.filter(created=True, published=False)
+    aliproducts = AliProduct.objects.filter(created=True)
     print("一共有%d 个1688产品信息待同步" % (aliproducts.count()))
 
     for aliproduct in aliproducts:
@@ -1016,7 +1016,10 @@ def sync_aliproduct_shopify():
         if dest_products is not None:
             print("这个产品已经发布过了！！！！", aliproduct.offer_id)
             AliProduct.objects.filter(pk=aliproduct.pk).update(published=True, published_time= datetime.now(),publish_error="")
-
+        else:
+            print("还没有发布过 ######", aliproduct.offer_id)
+            AliProduct.objects.filter(pk=aliproduct.pk).update(published=False, published_time="",
+                                                               publish_error="")
 
 
 
