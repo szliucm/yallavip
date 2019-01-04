@@ -334,13 +334,17 @@ def post_album_feed():
         if fbproduct is None:
             print("没有fb产品", page)
             continue
-        product = fbproduct.myproduct
-        images = ShopifyImage.objects.filter(product_no=product.product_no).order_by("position")
+        myaliproduct = fbproduct.myaliproduct
+        if myaliproduct is None:
+            print("没有产品", fbproduct)
+            continue
+
+        images = ShopifyImage.objects.filter(product_no=myaliproduct.product_no).order_by("position")
 
         images_count = len(images)
         if images_count<3:
             print("图片太少")
-            print("result is ", page_no, product.handle, product.product_no)
+            print("result is ", page_no, myaliproduct.handle, myaliproduct.product_no)
             print(images)
             continue
         elif images_count>7:
@@ -353,7 +357,7 @@ def post_album_feed():
             # for option in options:
             #   name = name + "\n\n   " + option.get("name") + " : " + option.get("values")
 
-        max_price = ShopifyVariant.objects.filter(product_no=product.product_no).aggregate(Max("price")).get(
+        max_price = ShopifyVariant.objects.filter(product_no=myaliproduct.product_no).aggregate(Max("price")).get(
             "price__max")
         # name = name + "\n\nPrice:  " + str(int(max_price)) + "SAR"
 
@@ -363,7 +367,7 @@ def post_album_feed():
 
         dest_images =[]
         for ori_image in images:
-            image, iamge_url = photo_mark(ori_image, product.handle, str(price1), str(price2), page, type="album")
+            image, iamge_url = photo_mark(ori_image, myaliproduct.handle, str(price1), str(price2), page, type="album")
             if not image:
                 print("打水印失败")
                 continue
