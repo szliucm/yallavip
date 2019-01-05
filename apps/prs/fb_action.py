@@ -700,6 +700,10 @@ def post_photo_to_album(targer_page,album_no,aliproduct ):
         print("######### name", name)
 
         for sku in json.loads(aliproduct.sku_info):
+            if sku.find("暂无") >= 0:
+                print("没有规格信息")
+                break
+
             value_name = sku.get("label")
 
             print("###value_name", value_name)
