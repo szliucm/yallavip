@@ -23,8 +23,10 @@ import random
 
 
 def baidu_translate(content,fromLang ='zh',toLang='en'):
-    appid = '20181223000251503'
-    secretKey = 's6Kv6Lq3zyqz2YzqXMlC'
+    #appid = '20181223000251503'
+    #secretKey = 's6Kv6Lq3zyqz2YzqXMlC'
+    appid = '20190106000254999'
+    secretKey = 'xGTgzFUIzDcIShExnCh6'
     httpClient = None
     myurl = '/api/trans/vip/translate'
     q = str(content)
