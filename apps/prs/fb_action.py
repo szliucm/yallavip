@@ -696,6 +696,7 @@ def post_photo_to_album(targer_page,album_no,aliproduct ):
     if len(aliproduct.title_zh) >0:
         handle_new = 'b' + str(aliproduct.pk).zfill(5)
         title = fanyi(aliproduct.title_zh)
+        print(handle_new, aliproduct.title_zh, title)
         name = title + "  [" + handle_new + "]"
         print("######### name", name)
 
