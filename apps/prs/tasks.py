@@ -1025,7 +1025,8 @@ def sync_aliproduct_shopify():
 def complete_aliproduct_shopify():
     from django.utils import timezone as datetime
 
-    aliproducts = AliProduct.objects.filter(created=True,published=True,handle="")
+    #aliproducts = AliProduct.objects.filter(created=True,published=True,handle="")
+    aliproducts = AliProduct.objects.filter(created=True, handle="")
     print("一共有%d 个1688产品信息待补充" % (aliproducts.count()))
 
     for aliproduct in aliproducts:
