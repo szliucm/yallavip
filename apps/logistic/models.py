@@ -224,4 +224,4 @@ class LogisticBalance(models.Model):
 
 
     def __str__(self):
-        return self.waybillnumber + "_" + self.balance_type + "_" + self.batch
+        return str(self.waybillnumber) + "_" + self.balance_type + "_" + self.batch
