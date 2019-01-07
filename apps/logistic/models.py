@@ -210,8 +210,8 @@ class LogisticBalance(models.Model):
     other_fee = models.CharField(u'其他杂费', default='', max_length=100, blank=True, null=True)
     comment = models.CharField(u'备注', default='', max_length=100, blank=True, null=True)
 
-    receivable = models.CharField(u'应收金额', default='', max_length=100, blank=True, null=False)
-    refunded = models.CharField(u'应退金额', default='', max_length=100, blank=True, null=False)
+    receivable = models.CharField(u'应收金额', default='', max_length=100, blank=True, null=True)
+    refunded = models.CharField(u'应退金额', default='', max_length=100, blank=True, null=True)
 
 
     upload_time = models.DateTimeField(u'上传时间', auto_now=True, blank=True, null=True)
