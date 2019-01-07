@@ -24,7 +24,7 @@ import xadmin
 from django.shortcuts import get_object_or_404, get_list_or_404, render
 from import_export import resources, fields
 from import_export.widgets import ForeignKeyWidget
-from .models import Package, LogisticSupplier,LogisticCustomerService,OverseaPackage,Resell
+from .models import Package, LogisticSupplier,LogisticCustomerService,OverseaPackage,Resell,LogisticBalance
 from orders.models import Order,OrderConversation,OrderDetail
 from product.models import Product
 from django.db import models
@@ -1281,3 +1281,66 @@ xadmin.site.register(LogisticSupplier,LogisticSupplierAdmin)
 xadmin.site.register(OverseaPackage,OverseaPackageAdmin)
 xadmin.site.register(LogisticCustomerService,LogisticCustomerServiceAdmin)
 xadmin.site.register(Resell,ResellAdmin)
+
+
+class LogisticBalanceResource(resources.ModelResource):
+    '''
+    package = fields.Field(
+        column_name='客户单号',
+        attribute='package',
+        widget=ForeignKeyWidget(Package, 'logistic_no'))
+    '''
+
+    waybillnumber = fields.Field(attribute='waybillnumber', column_name='客户单号')
+    balance_type = fields.Field(attribute='balance_type', column_name='对账类型')
+
+    batch = fields.Field(attribute='batch', column_name='批次')
+
+    charge_weight = fields.Field(attribute='charge_weight', column_name='收货计费重')
+    cod = fields.Field(attribute='cod', column_name='代收货款')
+    money = fields.Field(attribute='money', column_name='币种')
+    exchange = fields.Field(attribute='money', column_name='汇率')
+    cod_base = fields.Field(attribute='cod_base', column_name='本位币金额')
+
+    freight = fields.Field(attribute='freight', column_name='运费')
+
+    cod_fee = fields.Field(attribute='cod_fee', column_name='代收款手续费')
+    vat = fields.Field(attribute='vat', column_name='VAT')
+    re_deliver = fields.Field(attribute='re_deliver', column_name='重派费')
+    print_fee = fields.Field(attribute='print_fee', column_name='打单费')
+
+    other_fee = fields.Field(attribute='other_fee', column_name='其他杂费')
+
+    comment = fields.Field(attribute='comment', column_name='备注')
+    receivable = fields.Field(attribute='receivable', column_name='应收金额')
+
+    refunded = fields.Field(attribute='refunded', column_name='应退金额')
+
+
+
+    class Meta:
+        model = LogisticBalance
+        skip_unchanged = True
+        report_skipped = True
+        import_id_fields = ('waybillnumber',"balance_type","batch")
+        fields = ( 'waybillnumber','balance_type','batch','charge_weight','cod',
+                  'money','cod_base','freight','cod_fee','vat','re_deliver',
+                  'print_fee', 'other_fee', 'comment', 'receivable', 'refunded',)
+
+@xadmin.sites.register(LogisticBalance)
+class LogisticBalanceAdmin(object):
+    import_export_args = {"import_resource_class": LogisticBalanceResource,
+                          "export_resource_class": LogisticBalanceResource}
+
+
+
+    actions = [ ]
+
+
+    list_display = (  'waybillnumber','balance_type','batch','charge_weight','cod',
+                  'money','cod_base','freight','cod_fee','vat','re_deliver',
+                  'print_fee', 'other_fee', 'comment', 'receivable', 'refunded',)
+    list_editable = [ ]
+    search_fields = ['waybillnumber', ]
+    list_filter = ("balance_type","batch",)
+    ordering = []

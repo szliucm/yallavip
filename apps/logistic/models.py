@@ -180,3 +180,47 @@ class LogisticTrail(models.Model):
 
     def __str__(self):
         return self.waybillnumber + "_" + self.trail_status
+
+class LogisticBalance(models.Model):
+    package = models.ForeignKey(Package, related_name='package_balance', null=True, on_delete=models.SET_NULL,
+                              verbose_name="包裹")
+    waybillnumber = models.CharField(u'物流追踪号', default='', max_length=100, blank=True)
+
+    BALANCE_TYPE = (
+        ("COD",    "COD收款"),
+        ("RETURN", "退仓"),
+        ("RESEND", "重派"),
+
+
+    )
+    balance_type =  models.CharField(choices=BALANCE_TYPE, default='COD', max_length=30, null=True, blank=True,
+                                verbose_name="对账类型")
+    batch = models.CharField(u'批次', default='', max_length=100, blank=True)
+    charge_weight = models.CharField(u'计费重', default='', max_length=100, blank=True)
+    cod = models.CharField(u'代收货款', default='', max_length=100, blank=True, null=True)
+    money = models.CharField(u'币种', default='', max_length=100, blank=True, null=True)
+    exchange = models.CharField(u'汇率', default='', max_length=100, blank=True, null=True)
+    cod_base = models.CharField(u'本位币金额', default='', max_length=100, blank=True, null=True)
+    freight = models.CharField(u'运费', default='', max_length=100, blank=True, null=True)
+    cod_fee = models.CharField(u'代收款手续费', default='', max_length=100, blank=True, null=True)
+    vat = models.CharField(u'VAT', default='', max_length=100, blank=True, null=True)
+    re_deliver = models.CharField(u'重派费', default='', max_length=100, blank=True, null=True)
+    print_fee = models.CharField(u'打单费', default='', max_length=100, blank=True, null=True)
+    other_fee = models.CharField(u'其他杂费', default='', max_length=100, blank=True, null=True)
+    comment = models.CharField(u'备注', default='', max_length=100, blank=True, null=True)
+
+    receivable = models.CharField(u'应收金额', default='', max_length=100, blank=True, null=False)
+    refunded = models.CharField(u'应退金额', default='', max_length=100, blank=True, null=False)
+
+
+    upload_time = models.DateTimeField(u'上传时间', auto_now=True, blank=True, null=True)
+
+
+
+    class Meta:
+        verbose_name = "物流对账"
+        verbose_name_plural = verbose_name
+
+
+    def __str__(self):
+        return self.waybillnumber + "_" + self.balance_type + "_" + self.batch
