@@ -190,6 +190,7 @@ class LogisticBalance(models.Model):
         ("COD",    "COD收款"),
         ("RETURN", "退仓"),
         ("RESEND", "重派"),
+        ("COMPANSATE", "赔偿"),
 
 
     )
