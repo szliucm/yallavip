@@ -1299,7 +1299,7 @@ class LogisticBalanceResource(resources.ModelResource):
     charge_weight = fields.Field(attribute='charge_weight', column_name='收货计费重')
     cod = fields.Field(attribute='cod', column_name='代收货款')
     money = fields.Field(attribute='money', column_name='币种')
-    exchange = fields.Field(attribute='money', column_name='汇率')
+    exchange = fields.Field(attribute='exchange', column_name='汇率')
     cod_base = fields.Field(attribute='cod_base', column_name='本位币金额')
 
     freight = fields.Field(attribute='freight', column_name='运费')
