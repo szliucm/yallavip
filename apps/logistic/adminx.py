@@ -24,7 +24,7 @@ import xadmin
 from django.shortcuts import get_object_or_404, get_list_or_404, render
 from import_export import resources, fields
 from import_export.widgets import ForeignKeyWidget
-from .models import Package, LogisticSupplier,LogisticCustomerService,OverseaPackage,Resell,LogisticBalance
+from .models import Package, LogisticSupplier,LogisticCustomerService,OverseaPackage,Resell,LogisticBalance,Overtime
 from orders.models import Order,OrderConversation,OrderDetail
 from product.models import Product
 from django.db import models
@@ -1344,3 +1344,25 @@ class LogisticBalanceAdmin(object):
     search_fields = ['waybillnumber', ]
     list_filter = ("balance_type","batch",)
     ordering = []
+
+@xadmin.sites.register(Overtime)
+class OvertimeAdmin(object):
+    list_display = ('logistic_no',  'refer_no','yallavip_package_status',
+                    'resell_status',
+                    'logistic_update_date', 'logistic_update_status',
+                    'sec_logistic_no',"total_date","lost_date",
+
+                    )
+    list_editable = [ ]
+    search_fields = ['logistic_no', ]
+    list_filter = ()
+    ordering = []
+    actions = []
+
+
+    def queryset(self):
+        qs = super().queryset()
+        return qs.filter(logistic_supplier='佳成',file_status="OPEN" )
+
+
+

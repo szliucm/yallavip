@@ -1,4 +1,6 @@
 from django.db import models
+from pytz import timezone
+from datetime import  datetime
 
 # Create your models here.
 class Package(models.Model):
@@ -114,6 +116,30 @@ class Package(models.Model):
 
     sec_logistic_no = models.CharField(u'二次物流追踪号', default='', max_length=100, blank=True)
 
+    def cal_total_date(self):
+        cst_tz = timezone('Asia/Shanghai')
+
+        if self.file_status =="OPEN":
+            now = datetime.now().replace(tzinfo=cst_tz)
+            return (now - self.send_time).days
+        else:
+            return (self.logistic_update_date - self.send_time).days
+
+    cal_total_date.short_description = "累计时间(天)"
+    total_date = property(cal_total_date)
+
+    def cal_lost_date(self):
+        cst_tz = timezone('Asia/Shanghai')
+
+        if self.file_status =="OPEN":
+            now = datetime.now().replace(tzinfo=cst_tz)
+            return (now.date() - self.logistic_update_date).days
+        else:
+            return 0
+
+    cal_lost_date.short_description = "累计失联时间(天)"
+    lost_date = property(cal_lost_date)
+
     class Meta:
         verbose_name = "包裹追踪"
         verbose_name_plural = verbose_name
@@ -227,3 +253,14 @@ class LogisticBalance(models.Model):
 
     def __str__(self):
         return str(self.waybillnumber) + "_" + self.balance_type + "_" + self.batch
+
+class Overtime(Package):
+    class Meta:
+        proxy = True
+
+        verbose_name = "超时订单"
+        verbose_name_plural = verbose_name
+
+
+    def __str__(self):
+        return self.logistic_no
