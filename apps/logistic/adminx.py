@@ -1347,7 +1347,7 @@ class LogisticBalanceAdmin(object):
 
 @xadmin.sites.register(Overtime)
 class OvertimeAdmin(object):
-    list_display = ('logistic_no',  'yallavip_package_status',
+    list_display = ('logistic_no',
                     "send_time", "logistic_start_date",
                     'logistic_update_date', 'logistic_update_status',
                     "total_date","cal_total_trans_date","lost_date",
@@ -1362,7 +1362,7 @@ class OvertimeAdmin(object):
 
     def queryset(self):
         qs = super().queryset()
-        return qs.filter(logistic_supplier='佳成',file_status="OPEN" )
+        return qs.filter(logistic_supplier='佳成',file_status="OPEN" , wait_status = False)
 
 
 
