@@ -28,7 +28,7 @@ def updatelogistic_trail():
     param_data["isdisplaydetail"] = "true"
 
     queryset = Package.objects.filter(Q(logistic_update_date__lt = (timezone.now()- timedelta(days=1)).date())|Q(logistic_update_date__isnull = True),
-                                      logistic_no__startswith = "J",
+                                      logistic_supplier="佳成",
                                       file_status= "OPEN")
     for row in queryset:
 
@@ -101,3 +101,13 @@ def updatelogistic_trail():
                                                     logistic_update_locate= latest_status["locate"],)
 
     return
+
+@shared_task
+def sync_balance():
+    logistic_suppplier = "佳成"
+    packages_to_sync = Package.objects.raw('SELECT * FROM logistic_package  A WHERE '
+                                                 'logistic_supplier = %s and file_status = "OPEN" '
+                                                 'and logistic_no  IN  ( SELECT  B.waybillnumber FROM logistic_logisticbalance B where balance_type="COD") ',
+                                                 [logistic_suppplier])
+
+    packages_to_sync.objects.update(file_status="CLOSED")
