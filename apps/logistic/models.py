@@ -140,7 +140,7 @@ class Package(models.Model):
         if self.file_status =="OPEN":
             if self.logistic_start_date is not None:
                 now = datetime.now().replace(tzinfo=cst_tz)
-                return (now - self.logistic_start_date).days
+                return (now.date() - self.logistic_start_date).days
             else:
                 return "没有轨迹信息"
         else:
