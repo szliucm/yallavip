@@ -44,6 +44,7 @@ def updatelogistic_trail():
         print("start update track requrl is %s waybillnumber is %s " % (requrl, row.logistic_no))
 
         res = requests.post(requrl, params=param)
+        print(requrl, param)
 
         if res.status_code != 200:
             print("error !!!!!! response is ", res, res.content)
