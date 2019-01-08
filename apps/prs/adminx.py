@@ -472,7 +472,7 @@ class AliProductAdmin(object):
 
     show_image.short_description = "产品图片"
 
-    list_display = [ "offer_id", "show_image","handle","maxprice","price_rate" ,"price_try","title", "sku_info","cate_code","created","published", ]
+    list_display = [ "offer_id", "show_image","handle", "sku_info","cate_code","created","published", ]
     # 'sku_name','img',
 
     search_fields = ["offer_id","handle","sku_info"]
