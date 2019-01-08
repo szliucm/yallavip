@@ -46,7 +46,7 @@ def updatelogistic_trail():
         res = requests.post(requrl, params=param)
 
         if res.status_code != 200:
-            print("error !!!!!! response is ", res)
+            print("error !!!!!! response is ", res, res.content)
             continue
 
         data = json.loads(res.text)
