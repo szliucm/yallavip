@@ -472,14 +472,14 @@ class AliProductAdmin(object):
 
     show_image.short_description = "产品图片"
 
-    list_display = [ "offer_id", "show_image","handle","maxprice","price_rate" ,"price_try","title", "cate_code","created","published", ]
+    list_display = [ "offer_id", "show_image","handle","maxprice","price_rate" ,"price_try","title", "sku_info","cate_code","created","published", ]
     # 'sku_name','img',
 
-    search_fields = ["offer_id","handle"]
-    list_filter = ["created","published",]
+    search_fields = ["offer_id","handle","sku_info"]
+    list_filter = ["created","published","stopped",]
     list_editable = ["price_rate",]
     readonly_fields = ()
-    actions = ["reset_aliproduct",]
+    actions = ["reset_aliproduct","batch_stop",]
 
     def reset_aliproduct(self, request, queryset):
 
@@ -518,6 +518,14 @@ class AliProductAdmin(object):
         queryset.update(published=False,publish_error="",published_time=None)
 
     reset_aliproduct.short_description = "重置ali产品"
+
+    def batch_stop(self, request, queryset):
+        queryset.update(stopped=True)
+        return
+
+    batch_stop.short_description = "批量停用"
+
+
 
     def get_list_queryset(self):
         """批量查询订单号"""
