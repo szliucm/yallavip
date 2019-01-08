@@ -100,6 +100,7 @@ class Package(models.Model):
     )
     file_status = models.CharField(choices=FILE_STTUS, max_length=50, default='OPEN', verbose_name="归档状态",
                                        blank=True)
+    wait_status = models.BooleanField(default=False, verbose_name="等待确认")
 
     RESELL_STATUS = (
         ("NONE", "未处理"),
