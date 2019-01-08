@@ -117,3 +117,12 @@ def sync_balance():
                                                  [logistic_suppplier])
 
     packages_to_sync.objects.update(file_status="CLOSED")
+
+
+################# 用订单表的发货时间更新包裹表的发货时间
+#  update logistic_package l, orders_order o set l.send_time = o.send_time where l.logistic_no = o.logistic_no and l.send_time is null
+###################
+###############  更新已对账包裹的状态
+#   update logistic_package set file_status = "CLOSED" WHERE logistic_supplier ="佳成" and file_status = "OPEN"  and logistic_no  IN  (SELECT  waybillnumber as logistic_no FROM logistic_logisticbalance  where balance_type="COD")
+
+#  update logistic_package set file_status = "CLOSED" WHERE logistic_supplier ="佳成" and file_status = "OPEN"  and logistic_no  IN  (SELECT  waybillnumber as logistic_no FROM logistic_logisticbalance  where balance_type="RETURN")

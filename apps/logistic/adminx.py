@@ -7,6 +7,8 @@ import time
 import base64
 import operator
 
+from django.utils import timezone
+
 from io import BytesIO
 
 # 图片的基本参数获取
@@ -1351,9 +1353,10 @@ class OvertimeAdmin(object):
                     "send_time", "logistic_start_date",
                     'logistic_update_date', 'logistic_update_status',
                     "total_date","cal_total_trans_date","lost_date",
+                    "warehouse_check","warehouse_check_comments","warehouse_checktime","warehouse_check_manager",
 
                     )
-    list_editable = [ ]
+    list_editable = [ "warehouse_check","warehouse_check_comments",]
     search_fields = ['logistic_no', ]
     list_filter = ()
     ordering = ["send_time"]
@@ -1363,6 +1366,13 @@ class OvertimeAdmin(object):
     def queryset(self):
         qs = super().queryset()
         return qs.filter(logistic_supplier='佳成',file_status="OPEN" , wait_status = False)
+
+    def save_models(self):
+        obj = self.new_obj
+        obj.warehouse_check_manager = str(self.request.user)
+        obj.warehouse_checktime = timezone.now()
+
+        obj.save()
 
 
 

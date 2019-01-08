@@ -117,6 +117,18 @@ class Package(models.Model):
 
     sec_logistic_no = models.CharField(u'二次物流追踪号', default='', max_length=100, blank=True)
 
+    WAREHOUSE_CHECK_STATUS = (
+        ("NONE", "未处理"),
+        ("TOCHECK", "待确认"),
+        ("BALANCED", "已对账"),
+
+    )
+
+    warehouse_check = models.CharField(choices=WAREHOUSE_CHECK_STATUS, max_length=50, default='NONE', verbose_name="仓库对账状态",blank=True)
+    warehouse_check_comments = models.CharField(u'仓库对账说明', default='', max_length=200, blank=True)
+    warehouse_checktime = models.DateTimeField(u'仓库对账时间', auto_now=False, blank=True, null=True)
+    warehouse_check_manager = models.ForeignKey(User, on_delete=models.CASCADE, editable=False, null=True)
+
     def cal_total_date(self):
         cst_tz = timezone('Asia/Shanghai')
 
