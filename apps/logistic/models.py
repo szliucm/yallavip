@@ -124,15 +124,33 @@ class Package(models.Model):
                 now = datetime.now().replace(tzinfo=cst_tz)
                 return (now - self.send_time).days
             else:
-                return "没有轨迹信息"
+                return "没有发货信息"
         else:
             if self.logistic_update_date is not None and self.send_time is not None:
                 return (self.logistic_update_date - self.send_time).days
             else:
                 return "没有轨迹信息"
 
-    cal_total_date.short_description = "累计时间(天)"
+    cal_total_date.short_description = "累计交运时间(天)"
     total_date = property(cal_total_date)
+
+    def cal_total_trans_date(self):
+        cst_tz = timezone('Asia/Shanghai')
+
+        if self.file_status =="OPEN":
+            if self.logistic_start_date is not None:
+                now = datetime.now().replace(tzinfo=cst_tz)
+                return (now - self.logistic_start_date).days
+            else:
+                return "没有轨迹信息"
+        else:
+            if self.logistic_update_date is not None and self.logistic_start_date is not None:
+                return (self.logistic_update_date - self.logistic_start_date).days
+            else:
+                return "没有轨迹信息"
+
+    cal_total_trans_date.short_description = "累计运输时间(天)"
+    total_trans_date = property(cal_total_trans_date)
 
     def cal_lost_date(self):
         cst_tz = timezone('Asia/Shanghai')

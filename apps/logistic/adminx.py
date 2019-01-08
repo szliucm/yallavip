@@ -1350,7 +1350,7 @@ class OvertimeAdmin(object):
     list_display = ('logistic_no',  'yallavip_package_status',
                     "send_time", "logistic_start_date",
                     'logistic_update_date', 'logistic_update_status',
-                    "total_date","lost_date",
+                    "total_date","cal_total_trans_date","lost_date",
 
                     )
     list_editable = [ ]
