@@ -1143,7 +1143,7 @@ class LogisticCustomerServiceAdmin(object):
 
     def queryset(self):
         qs = super().queryset()
-        return qs.filter(logistic_supplier='佳成',file_status="OPEN" , wait_status = False)
+        return qs.filter(logistic_supplier='佳成',file_status="OPEN" , wait_status = False, warehouse_check= "NONE")
 
 
 class ResellAdmin(object):
