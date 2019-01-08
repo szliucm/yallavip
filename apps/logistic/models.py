@@ -119,6 +119,7 @@ class Package(models.Model):
 
     WAREHOUSE_CHECK_STATUS = (
         ("NONE", "未处理"),
+        ("DISCARD", "废弃订单"),
         ("TOCHECK", "待确认"),
         ("BALANCED", "已对账"),
 
