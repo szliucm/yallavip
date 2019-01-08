@@ -1360,7 +1360,7 @@ class OvertimeAdmin(object):
 
                     )
     list_editable = [ "warehouse_check","warehouse_check_comments",]
-    search_fields = ['logistic_no', ]
+    search_fields = ['logistic_no', 'logistic_update_status',]
     list_filter = ("warehouse_check",)
     ordering = ["send_time"]
     actions = ["batch_refund","batch_return",]
