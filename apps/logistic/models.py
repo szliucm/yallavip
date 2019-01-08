@@ -146,7 +146,7 @@ class Package(models.Model):
         else:
             return 0
 
-    cal_lost_date.short_description = "累计失联时间(天)"
+    cal_lost_date.short_description = "最后更新时间(天)"
     lost_date = property(cal_lost_date)
 
     class Meta:

@@ -1347,16 +1347,16 @@ class LogisticBalanceAdmin(object):
 
 @xadmin.sites.register(Overtime)
 class OvertimeAdmin(object):
-    list_display = ('logistic_no',  'refer_no','yallavip_package_status',
-                    'resell_status',
+    list_display = ('logistic_no',  'yallavip_package_status',
+                    "send_time", "logistic_start_date",
                     'logistic_update_date', 'logistic_update_status',
-                    'sec_logistic_no',"total_date","lost_date",
+                    "total_date","lost_date",
 
                     )
     list_editable = [ ]
     search_fields = ['logistic_no', ]
     list_filter = ()
-    ordering = []
+    ordering = ["total_date"]
     actions = []
 
 
