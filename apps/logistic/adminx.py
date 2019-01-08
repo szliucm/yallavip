@@ -1367,6 +1367,17 @@ class OvertimeAdmin(object):
         qs = super().queryset()
         return qs.filter(logistic_supplier='佳成',file_status="OPEN" , wait_status = False)
 
+    def get_list_queryset(self):
+        """批量查询订单号"""
+        queryset = super().get_list_queryset()
+
+        query = self.request.GET.get(SEARCH_VAR, '')
+
+
+        if (len(query) > 0):
+            queryset |= self.model.objects.filter(logistic_no__in=query.split(","))
+        return queryset
+
     def save_models(self):
         obj = self.new_obj
         obj.warehouse_check_manager = str(self.request.user)
