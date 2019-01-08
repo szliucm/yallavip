@@ -30,7 +30,12 @@ def updatelogistic_trail():
     queryset = Package.objects.filter(Q(logistic_update_date__lt = (timezone.now()- timedelta(days=1)).date())|Q(logistic_update_date__isnull = True),
                                       logistic_supplier="佳成",
                                       file_status= "OPEN")
+
+    total = queryset.count()
+    n=0
     for row in queryset:
+        print("一共还有  %d  个包裹需要更新轨迹",total - n )
+        n += 1
 
         if row.logistic_update_date is not None:
             if row.logistic_update_date>=(timezone.now()- timedelta(days=1)).date():
