@@ -1141,6 +1141,9 @@ class LogisticCustomerServiceAdmin(object):
             queryset |= self.model.objects.filter(logistic_no__in=query.split(","))
         return queryset
 
+    def queryset(self):
+        qs = super().queryset()
+        return qs.filter(logistic_supplier='佳成',file_status="OPEN" , wait_status = False)
 
 
 class ResellAdmin(object):
@@ -1360,8 +1363,20 @@ class OvertimeAdmin(object):
     search_fields = ['logistic_no', ]
     list_filter = ("warehouse_check",)
     ordering = ["send_time"]
-    actions = []
+    actions = ["batch_refund","batch_return",]
 
+
+    def batch_refund(self, request, queryset):
+        queryset.update(warehouse_check="TOREFUND", wait_status= True)
+        return
+
+    batch_refund.short_description = "批量签收待确认"
+
+    def batch_return(self, request, queryset):
+        queryset.update(warehouse_check="TORETURN", wait_status= True)
+        return
+
+    batch_return.short_description = "批量退仓待确认"
 
     def queryset(self):
         qs = super().queryset()
