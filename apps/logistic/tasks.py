@@ -110,7 +110,10 @@ def update_trail(logistic_no):
                        }
              )
     if len(statusdetail)>=1:
+
         latest_status = statusdetail[0]
+        print(latest_status, logistic_no)
+
         Package.objects.filter(logistic_no = logistic_no).update(logistic_update_date =  timezone.now(),
                                                 logistic_update_status=latest_status["status"],
                                                 logistic_update_locate= latest_status["locate"],)
