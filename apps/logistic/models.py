@@ -120,10 +120,16 @@ class Package(models.Model):
         cst_tz = timezone('Asia/Shanghai')
 
         if self.file_status =="OPEN":
-            now = datetime.now().replace(tzinfo=cst_tz)
-            return (now - self.send_time).days
+            if self.send_time is not None:
+                now = datetime.now().replace(tzinfo=cst_tz)
+                return (now - self.send_time).days
+            else:
+                return "没有轨迹信息"
         else:
-            return (self.logistic_update_date - self.send_time).days
+            if self.logistic_update_date is not None and self.send_time is not None:
+                return (self.logistic_update_date - self.send_time).days
+            else:
+                return "没有轨迹信息"
 
     cal_total_date.short_description = "累计时间(天)"
     total_date = property(cal_total_date)
@@ -132,8 +138,11 @@ class Package(models.Model):
         cst_tz = timezone('Asia/Shanghai')
 
         if self.file_status =="OPEN":
-            now = datetime.now().replace(tzinfo=cst_tz)
-            return (now.date() - self.logistic_update_date).days
+            if self.logistic_update_date is not None:
+                now = datetime.now().replace(tzinfo=cst_tz)
+                return (now.date() - self.logistic_update_date).days
+            else:
+                return "没有轨迹信息"
         else:
             return 0
 
