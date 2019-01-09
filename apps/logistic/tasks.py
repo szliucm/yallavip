@@ -30,7 +30,7 @@ def updatelogistic_trail():
         n += 1
 
         if row.update_trainl_time is not None:
-            if row.update_trainl_time>=(timezone.now()- timedelta(days=1)).date():
+            if row.update_trainl_time>=(timezone.now()- timedelta(days=1)):
                 print("更新时间少于一天")
                 continue
 
