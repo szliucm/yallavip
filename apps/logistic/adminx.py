@@ -936,7 +936,7 @@ class LogisticCustomerServiceAdmin(object):
                     'problem_type', 'response', 'feedback', 'deal', 'feedback_time',
                      'order_no','order_comment', 'receiver_phone',
                     'show_conversation')
-    list_editable = ['feedback', 'deal', ]
+    list_editable = ['feedback',  ]
     search_fields = [ 'logistic_no' ]
     list_filter = ('logistic_start_date','logistic_update_date', 'logistic_update_status', 'deal','package_status','yallavip_package_status',)
     ordering = ['send_time']
@@ -1432,7 +1432,7 @@ class ToBalanceAdmin(object):
                     "warehouse_check","warehouse_check_comments","warehouse_checktime","warehouse_check_manager",
 
                     )
-    list_editable = [ "warehouse_check","warehouse_check_comments",]
+    list_editable = [ ]
     search_fields = ['logistic_no', 'logistic_update_status',]
     list_filter = ("warehouse_check",)
     ordering = ["send_time"]
@@ -1466,12 +1466,7 @@ class ToBalanceAdmin(object):
             queryset |= self.model.objects.filter(logistic_no__in=query.split(","))
         return queryset
 
-    def save_models(self):
-        obj = self.new_obj
-        obj.warehouse_check_manager = str(self.request.user)
-        obj.warehouse_checktime = timezone.now()
 
-        obj.save()
 
 
 
