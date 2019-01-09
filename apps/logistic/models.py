@@ -120,6 +120,8 @@ class Package(models.Model):
     WAREHOUSE_CHECK_STATUS = (
         ("NONE", "未处理"),
         ("DISCARD", "废弃订单"),
+        ("MULTIPACKAGE", "多包裹"),
+        ("TOCLEAR", "状态不明待确认"),
         ("TOREFUND", "签收待确认"),
         ("TORETURN", "退仓待确认"),
         ("BALANCED", "已对账"),
