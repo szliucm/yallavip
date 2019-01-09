@@ -134,11 +134,8 @@ def sync_balance():
 
 def my_custom_sql(mysql):
     from django.db import connection, transaction
-    cursor = connection.cursor()
-
-    # Data modifying operation - commit required
-    cursor.execute(mysql)
-    transaction.commit_unless_managed()
+    with connection.cursor() as c:
+        c.execute(mysql)
 
     # Data retrieval operation - no commit required
     #cursor.execute("SELECT foo FROM bar WHERE baz = %s", [self.baz])
