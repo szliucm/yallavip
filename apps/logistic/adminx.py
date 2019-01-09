@@ -938,7 +938,7 @@ class LogisticCustomerServiceAdmin(object):
     list_editable = ['feedback', 'deal', ]
     search_fields = [ 'logistic_no' ]
     list_filter = ('logistic_start_date','logistic_update_date', 'logistic_update_status', 'deal','package_status','yallavip_package_status',)
-    ordering = ['-send_time']
+    ordering = ['send_time']
 
     def batch_updatelogistic_trail(self, request, queryset):
         # 定义actions函数
@@ -948,6 +948,7 @@ class LogisticCustomerServiceAdmin(object):
         param_data["customerid"] = -1
         # param_data["waybillnumber"] = "989384782"
         param_data["isdisplaydetail"] = "true"
+
 
         # data_body =base64.b64encode(json.dumps(param_data).encode('utf-8'))
         #  base64.b64encode()
