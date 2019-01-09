@@ -43,6 +43,7 @@ from django.template import RequestContext
 from xadmin.filters import manager as filter_manager, FILTER_PREFIX, SEARCH_VAR, DateFieldListFilter, \
     RelatedFieldSearchFilter
 from django.utils.html import format_html
+from django.utils import timezone as dt
 
 
 def create_product(dest_shop, queryset ):
@@ -1153,6 +1154,8 @@ class LogisticCustomerServiceAdmin(object):
                          logistic_update_status__in=error_list)
 
 
+
+
 class ResellAdmin(object):
     def order_no(self, obj):
         orders = Order.objects.filter(logistic_no=obj.logistic_no)
@@ -1366,24 +1369,37 @@ class OvertimeAdmin(object):
                     "warehouse_check","warehouse_check_comments","warehouse_checktime","warehouse_check_manager",
 
                     )
-    list_editable = [ "warehouse_check","warehouse_check_comments",]
+    list_editable = [ "warehouse_check_comments",]
     search_fields = ['logistic_no', 'logistic_update_status',]
     list_filter = ("warehouse_check",'logistic_update_status',)
     ordering = ["send_time"]
-    actions = ["batch_refund","batch_return",]
+    actions = ["batch_refund","batch_return","batch_filed"]
 
 
     def batch_refund(self, request, queryset):
-        queryset.update(warehouse_check="TOREFUND", wait_status= True)
+        queryset.update(warehouse_check="TOREFUND",
+                        wait_status= True,
+                        warehouse_checktime = dt.now(),
+                        warehouse_check_manager = str(self.request.user)
+                        )
         return
 
     batch_refund.short_description = "批量签收待确认"
 
     def batch_return(self, request, queryset):
-        queryset.update(warehouse_check="TORETURN", wait_status= True)
+        queryset.update(warehouse_check="TORETURN", wait_status= True,
+                        warehouse_checktime=dt.now(),
+                        warehouse_check_manager=str(self.request.user)
+                        )
         return
 
     batch_return.short_description = "批量退仓待确认"
+
+    def batch_filed(self, request, queryset):
+        queryset.update(file_status="CLOSED", wait_status= False)
+        return
+
+    batch_filed.short_description = "批量归档"
 
     def queryset(self):
         qs = super().queryset()

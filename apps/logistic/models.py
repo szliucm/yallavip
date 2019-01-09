@@ -1,6 +1,8 @@
 from django.db import models
 from pytz import timezone
 from datetime import  datetime
+from django.utils import timezone as dt
+
 
 # Create your models here.
 class Package(models.Model):
@@ -184,6 +186,16 @@ class Package(models.Model):
     cal_lost_date.short_description = "最后更新时间(天)"
     lost_date = property(cal_lost_date)
 
+    '''
+    def save(self, *args, **kwargs):
+        cst_tz = timezone('Asia/Shanghai')
+        now = datetime.now().replace(tzinfo=cst_tz)
+
+        self.feedback_time = now
+        print("@@@@@@@@@@@@@")
+        super().save(*args, **kwargs)
+    '''
+
     class Meta:
         verbose_name = "包裹追踪"
         verbose_name_plural = verbose_name
@@ -191,6 +203,8 @@ class Package(models.Model):
 
     def __str__(self):
         return self.logistic_no
+
+
 
 class LogisticSupplier(Package):
     class Meta:
@@ -213,6 +227,9 @@ class LogisticCustomerService(Package):
 
     def __str__(self):
         return self.logistic_no
+
+
+
 
 class OverseaPackage(Package):
     class Meta:
@@ -314,6 +331,17 @@ class ToBalance(Package):
         proxy = True
 
         verbose_name = "待对账"
+        verbose_name_plural = verbose_name
+
+
+    def __str__(self):
+        return self.logistic_no
+
+class Filed(Package):
+    class Meta:
+        proxy = True
+
+        verbose_name = "已归档包裹"
         verbose_name_plural = verbose_name
 
 
