@@ -144,7 +144,7 @@ class Package(models.Model):
                 return "没有发货信息"
         else:
             if self.logistic_update_date is not None and self.send_time is not None:
-                return (self.logistic_update_date - self.send_time).days
+                return (self.logistic_update_date - self.send_time.date()).days
             else:
                 return "没有轨迹信息"
 
