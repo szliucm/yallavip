@@ -121,13 +121,30 @@ def update_trail(logistic_no):
 @shared_task
 def sync_balance():
     logistic_suppplier = "佳成"
+    '''
     packages_to_sync = Package.objects.raw('SELECT * FROM logistic_package  A WHERE '
                                                  'logistic_supplier = %s and file_status = "OPEN" '
                                                  'and logistic_no  IN  ( SELECT  B.waybillnumber FROM logistic_logisticbalance B where balance_type="COD") ',
                                                  [logistic_suppplier])
 
     packages_to_sync.objects.update(file_status="CLOSED")
+    '''
+    mysql = "update logistic_package set file_status = 'CLOSED' WHERE logistic_supplier ='佳成' and file_status = 'OPEN'  and logistic_no  IN  (SELECT  waybillnumber as logistic_no FROM logistic_logisticbalance  where balance_type in ('COD','RETURN') )"
+    my_custom_sql(mysql)
 
+def my_custom_sql(mysql):
+    from django.db import connection, transaction
+    cursor = connection.cursor()
+
+    # Data modifying operation - commit required
+    cursor.execute(mysql)
+    transaction.commit_unless_managed()
+
+    # Data retrieval operation - no commit required
+    #cursor.execute("SELECT foo FROM bar WHERE baz = %s", [self.baz])
+    #row = cursor.fetchone()
+
+    return
 
 ################# 用订单表的发货时间更新包裹表的发货时间
 #  update logistic_package l, orders_order o set l.send_time = o.send_time where l.logistic_no = o.logistic_no and l.send_time is null
