@@ -19,7 +19,7 @@ def updatelogistic_trail():
 
 
 
-    queryset = Package.objects.filter(Q(update_trainl_time__lt = (timezone.now()- timedelta(days=1)).date())|Q(logistic_update_date__isnull = True),
+    queryset = Package.objects.filter(Q(update_trainl_time__lt = (timezone.now()- timedelta(days=1)))|Q(update_trainl_time__isnull = True),
                                       logistic_supplier="佳成",
                                       file_status= "OPEN")
 
