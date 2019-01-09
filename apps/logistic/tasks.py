@@ -119,7 +119,7 @@ def update_trail(logistic_no):
                                                 logistic_update_locate= latest_status["locate"],)
 
 @shared_task
-def sync_balance():
+def sync_balance(type):
     logistic_suppplier = "佳成"
     '''
     packages_to_sync = Package.objects.raw('SELECT * FROM logistic_package  A WHERE '
@@ -129,8 +129,14 @@ def sync_balance():
 
     packages_to_sync.objects.update(file_status="CLOSED")
     '''
-    mysql = "update logistic_package set file_status = 'CLOSED' WHERE logistic_supplier ='佳成' and file_status = 'OPEN'  and logistic_no  IN  (SELECT  waybillnumber as logistic_no FROM logistic_logisticbalance  where balance_type in ('COD','RETURN') )"
-    my_custom_sql(mysql)
+    if type == 1:
+        #更新已对账的包裹的状态
+        mysql = "update logistic_package set file_status = 'CLOSED' WHERE logistic_supplier ='佳成' and file_status = 'OPEN'  and logistic_no  IN  (SELECT  waybillnumber as logistic_no FROM logistic_logisticbalance  where balance_type in ('COD','RETURN') )"
+        my_custom_sql(mysql)
+    elif type == 2:
+        #将物流轨迹显示“Delivered”的包裹标记成待对账
+        mysql = "update logistic_package set warehouse_check = 'TOREFUND', wait_status=TRUE WHERE logistic_supplier ='佳成' and file_status = 'OPEN'  and warehouse_check='NONE' and logistic_update_status='Delivered' "
+        my_custom_sql(mysql)
 
 def my_custom_sql(mysql):
     from django.db import connection, transaction
