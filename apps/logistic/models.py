@@ -306,3 +306,14 @@ class Overtime(Package):
 
     def __str__(self):
         return self.logistic_no
+
+class ToBalance(Package):
+    class Meta:
+        proxy = True
+
+        verbose_name = "待对账"
+        verbose_name_plural = verbose_name
+
+
+    def __str__(self):
+        return self.logistic_no

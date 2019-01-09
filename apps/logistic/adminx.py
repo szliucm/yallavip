@@ -26,7 +26,7 @@ import xadmin
 from django.shortcuts import get_object_or_404, get_list_or_404, render
 from import_export import resources, fields
 from import_export.widgets import ForeignKeyWidget
-from .models import Package, LogisticSupplier,LogisticCustomerService,OverseaPackage,Resell,LogisticBalance,Overtime
+from .models import Package, LogisticSupplier,LogisticCustomerService,OverseaPackage,Resell,LogisticBalance,Overtime,ToBalance
 from orders.models import Order,OrderConversation,OrderDetail
 from product.models import Product
 from django.db import models
@@ -1381,6 +1381,56 @@ class OvertimeAdmin(object):
     def queryset(self):
         qs = super().queryset()
         return qs.filter(logistic_supplier='佳成',file_status="OPEN" , wait_status = False)
+
+    def get_list_queryset(self):
+        """批量查询订单号"""
+        queryset = super().get_list_queryset()
+
+        query = self.request.GET.get(SEARCH_VAR, '')
+
+
+        if (len(query) > 0):
+            queryset |= self.model.objects.filter(logistic_no__in=query.split(","))
+        return queryset
+
+    def save_models(self):
+        obj = self.new_obj
+        obj.warehouse_check_manager = str(self.request.user)
+        obj.warehouse_checktime = timezone.now()
+
+        obj.save()
+
+@xadmin.sites.register(ToBalance)
+class ToBalanceAdmin(object):
+    list_display = ('logistic_no',
+                    "send_time", "logistic_start_date",
+                    'logistic_update_date', 'logistic_update_status',
+                    "total_date","cal_total_trans_date","lost_date",
+                    "warehouse_check","warehouse_check_comments","warehouse_checktime","warehouse_check_manager",
+
+                    )
+    list_editable = [ "warehouse_check","warehouse_check_comments",]
+    search_fields = ['logistic_no', 'logistic_update_status',]
+    list_filter = ("warehouse_check",)
+    ordering = ["send_time"]
+    #actions = ["batch_refund","batch_return",]
+
+
+    def batch_refund(self, request, queryset):
+        queryset.update(warehouse_check="TOREFUND", wait_status= True)
+        return
+
+    batch_refund.short_description = "批量签收待确认"
+
+    def batch_return(self, request, queryset):
+        queryset.update(warehouse_check="TORETURN", wait_status= True)
+        return
+
+    batch_return.short_description = "批量退仓待确认"
+
+    def queryset(self):
+        qs = super().queryset()
+        return qs.filter(logistic_supplier='佳成',file_status="OPEN" , wait_status = True)
 
     def get_list_queryset(self):
         """批量查询订单号"""
