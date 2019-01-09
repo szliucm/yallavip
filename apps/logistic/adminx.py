@@ -928,7 +928,7 @@ class LogisticCustomerServiceAdmin(object):
         'batch_refused', 'batch_returning', 'batch_returned',
        ]
 
-    list_display = ('logistic_no','tracking_no','logistic_type','send_time','logistic_start_date','package_status','yallavip_package_status',
+    list_display = ('logistic_no','send_time','logistic_start_date','yallavip_package_status',
 
                     'logistic_update_date', 'logistic_update_status', 'logistic_update_locate',
 
@@ -1143,7 +1143,13 @@ class LogisticCustomerServiceAdmin(object):
 
     def queryset(self):
         qs = super().queryset()
-        return qs.filter(logistic_supplier='佳成',file_status="OPEN" , wait_status = False, warehouse_check= "NONE")
+        error_list= ["RECEIVER UNABLE TO BE CONNECTED",
+                     "receiver refused to accept the shipment",
+                     "DELIVERY INFO INCORRECT/INCOMPLETE/MISSING",
+
+                     ]
+        return qs.filter(logistic_supplier='佳成',file_status="OPEN" , wait_status = False, warehouse_check= "NONE",
+                         logistic_update_status__in=error_list)
 
 
 class ResellAdmin(object):
