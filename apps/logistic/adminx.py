@@ -26,7 +26,7 @@ import xadmin
 from django.shortcuts import get_object_or_404, get_list_or_404, render
 from import_export import resources, fields
 from import_export.widgets import ForeignKeyWidget
-from .models import Package, LogisticSupplier,LogisticCustomerService,OverseaPackage,Resell,LogisticBalance,Overtime,ToBalance
+from .models import Package, LogisticSupplier,LogisticCustomerService,OverseaPackage,Resell,LogisticBalance,Overtime,ToBalance,LogisticManagerConfirm,LogisticResendTrail
 from orders.models import Order,OrderConversation,OrderDetail
 from product.models import Product
 from django.db import models
@@ -890,6 +890,8 @@ class LogisticCustomerServiceAdmin(object):
                             conversation.link, u'  ' + order.order_no))
                     links = links + link
         return (links)
+    show_conversation.allow_tags = True
+    show_conversation.short_description = "会话"
 
     def order_comment(self, obj):
         orders = Order.objects.filter(logistic_no=obj.logistic_no)
@@ -913,8 +915,7 @@ class LogisticCustomerServiceAdmin(object):
     receiver_phone.short_description = "收货人电话"
 
 
-    show_conversation.allow_tags = True
-    show_conversation.short_description = "会话"
+
 
     actions = [
         'batch_updatelogistic_trail',
@@ -937,13 +938,16 @@ class LogisticCustomerServiceAdmin(object):
                      'order_no','order_comment', 'receiver_phone',
                     'show_conversation')
     list_editable = ['feedback',  ]
+
     search_fields = [ 'logistic_no' ]
     list_filter = ('logistic_start_date','logistic_update_date', 'logistic_update_status', 'deal','package_status','yallavip_package_status',)
     ordering = ['send_time']
 
+
     def batch_updatelogistic_trail(self, request, queryset):
         # 定义actions函数
         requrl = "http://api.jcex.com/JcexJson/api/notify/sendmsg"
+
 
         param_data = dict()
         param_data["customerid"] = -1
@@ -1150,8 +1154,12 @@ class LogisticCustomerServiceAdmin(object):
                      "DELIVERY INFO INCORRECT/INCOMPLETE/MISSING",
 
                      ]
+        deal_list= ["NONE",
+                     "WAITING",
+                     ]
+
         return qs.filter(logistic_supplier='佳成',file_status="OPEN" , wait_status = False, warehouse_check= "NONE",
-                         logistic_update_status__in=error_list)
+                         logistic_update_status__in=error_list, deal__in = deal_list)
 
 
 
@@ -1422,6 +1430,204 @@ class OvertimeAdmin(object):
         obj.warehouse_checktime = timezone.now()
 
         obj.save()
+
+@xadmin.sites.register(LogisticManagerConfirm)
+class LogisticManagerConfirmAdmin(object):
+
+
+
+    list_display = ('logistic_no', 'send_time', 'logistic_start_date', 'yallavip_package_status',
+
+                    'logistic_update_date', 'logistic_update_status', 'logistic_update_locate',
+
+                    'problem_type', 'response', 'feedback', 'deal', 'feedback_time',
+                    'order_no', 'order_comment', 'receiver_phone',
+                    'show_conversation')
+    list_editable = ['feedback', ]
+
+    search_fields = ['logistic_no']
+    list_filter = ('logistic_start_date', 'logistic_update_date', 'logistic_update_status', 'deal', 'package_status',
+                   'yallavip_package_status',)
+    ordering = ['send_time']
+
+    def order_no(self, obj):
+        orders = Order.objects.filter(logistic_no=obj.logistic_no)
+        order_nos = ''
+        for order in orders:
+            if (order == None):
+                continue
+            order_nos = str(order_nos) + str(order.order_no) + str(',')
+        return order_nos
+
+    order_no.short_description = "订单号"
+
+    def logistic_type(self, obj):
+        order = Order.objects.filter(logistic_no=obj.logistic_no).first()
+
+        return order.logistic_type
+
+    logistic_type.short_description = "物流公司"
+
+    def show_conversation(self, obj):
+        # print('orderconversation')
+        # print('orderconversation')
+        orders = Order.objects.filter(logistic_no=obj.logistic_no)
+
+        links = ''
+        for order in orders:
+
+            if (order == None):
+                continue
+
+            orderconversation = OrderConversation.objects.filter(order=order)
+            for item in orderconversation:
+                conversation = item.conversation
+
+                if (conversation != None):
+                    link = mark_safe(
+                        u'<a href="http://business.facebook.com%s" target="view_window">%s</a>' % (
+                            conversation.link, u'  ' + order.order_no))
+                    links = links + link
+        return (links)
+
+    show_conversation.allow_tags = True
+    show_conversation.short_description = "会话"
+
+    def order_comment(self, obj):
+        orders = Order.objects.filter(logistic_no=obj.logistic_no)
+        comments = ''
+        for order in orders:
+            if (order == None):
+                continue
+            comments = str(comments) + str(order.order_comment) + str(',')
+        return comments
+
+    order_comment.short_description = "订单备注"
+
+    def receiver_phone(self, obj):
+        order = Order.objects.filter(logistic_no=obj.logistic_no).last
+
+        return order.receiver_phone
+
+    receiver_phone.short_description = "收货人电话"
+
+
+    def get_list_queryset(self):
+        """批量查询订单号"""
+        queryset = super().get_list_queryset()
+
+        query = self.request.GET.get(SEARCH_VAR, '')
+
+        if (len(query) > 0):
+            queryset |= self.model.objects.filter(logistic_no__in=query.split(","))
+        return queryset
+
+    def queryset(self):
+        qs = super().queryset()
+        deal_list = ["LOST",
+                     "REFUSED",
+                     "LOSTCONNECT",
+
+                     ]
+        return qs.filter(logistic_supplier='佳成', file_status="OPEN", wait_status=False, warehouse_check="NONE",
+                         deal__in=deal_list)
+
+@xadmin.sites.register(LogisticResendTrail)
+class LogisticTrailAdmin(object):
+    list_display = ('logistic_no', 'send_time', 'logistic_start_date', 'yallavip_package_status',
+
+                    'logistic_update_date', 'logistic_update_status', 'logistic_update_locate',
+
+                    'problem_type', 'response', 'feedback', 'deal', 'feedback_time',
+                    'order_no', 'order_comment', 'receiver_phone',
+                    'show_conversation')
+    list_editable = ['feedback', ]
+
+    search_fields = ['logistic_no']
+    list_filter = ('logistic_start_date', 'logistic_update_date', 'logistic_update_status', 'deal', 'package_status',
+                   'yallavip_package_status',)
+    ordering = ['send_time']
+
+    def order_no(self, obj):
+        orders = Order.objects.filter(logistic_no=obj.logistic_no)
+        order_nos = ''
+        for order in orders:
+            if (order == None):
+                continue
+            order_nos = str(order_nos) + str(order.order_no) + str(',')
+        return order_nos
+
+    order_no.short_description = "订单号"
+
+    def logistic_type(self, obj):
+        order = Order.objects.filter(logistic_no=obj.logistic_no).first()
+
+        return order.logistic_type
+
+    logistic_type.short_description = "物流公司"
+
+    def show_conversation(self, obj):
+        # print('orderconversation')
+        # print('orderconversation')
+        orders = Order.objects.filter(logistic_no=obj.logistic_no)
+
+        links = ''
+        for order in orders:
+
+            if (order == None):
+                continue
+
+            orderconversation = OrderConversation.objects.filter(order=order)
+            for item in orderconversation:
+                conversation = item.conversation
+
+                if (conversation != None):
+                    link = mark_safe(
+                        u'<a href="http://business.facebook.com%s" target="view_window">%s</a>' % (
+                            conversation.link, u'  ' + order.order_no))
+                    links = links + link
+        return (links)
+
+    show_conversation.allow_tags = True
+    show_conversation.short_description = "会话"
+
+    def order_comment(self, obj):
+        orders = Order.objects.filter(logistic_no=obj.logistic_no)
+        comments = ''
+        for order in orders:
+            if (order == None):
+                continue
+            comments = str(comments) + str(order.order_comment) + str(',')
+        return comments
+
+    order_comment.short_description = "订单备注"
+
+    def receiver_phone(self, obj):
+        order = Order.objects.filter(logistic_no=obj.logistic_no).last
+
+        return order.receiver_phone
+
+    receiver_phone.short_description = "收货人电话"
+
+    def get_list_queryset(self):
+        """批量查询订单号"""
+        queryset = super().get_list_queryset()
+
+        query = self.request.GET.get(SEARCH_VAR, '')
+
+        if (len(query) > 0):
+            queryset |= self.model.objects.filter(logistic_no__in=query.split(","))
+        return queryset
+
+    def queryset(self):
+        qs = super().queryset()
+        deal_list = ["RE_DELIVER",
+                     "RE_DELIVERING",
+                     ]
+        return qs.filter(logistic_supplier='佳成', file_status="OPEN", wait_status=False, warehouse_check="NONE",
+                         deal__in=deal_list)
+
+
 
 @xadmin.sites.register(ToBalance)
 class ToBalanceAdmin(object):

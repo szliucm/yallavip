@@ -1,17 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" autoUpload="Always" serverName="开发环境" showNewOnTargetInSync="false">
+  <component name="PublishConfigData" autoUpload="Always" serverName="dev.yallavip.com" showNewOnTargetInSync="false">
     <serverData>
-      <paths name="开发环境">
+      <paths name="dev.yallavip.com">
         <serverdata>
           <mappings>
-            <mapping deploy="/yallavip" local="$PROJECT_DIR$" web="/" />
+            <mapping deploy="/root/yallavip" local="$PROJECT_DIR$" web="/" />
           </mappings>
-          <excludedPaths>
-            <excludedPath path="/yallavip/extra_apps" />
-            <excludedPath path="/yallavip/static" />
-            <excludedPath path="/yallavip/collectedstatic" />
-          </excludedPaths>
         </serverdata>
       </paths>
     </serverData>

@@ -46,6 +46,7 @@ class Package(models.Model):
         ("RE_DELIVERING", "重新派送中"),
 
         ("REFUSED", "拒签"),
+        ("LOSTCONNECT", "无法联系"),
         #("RETURNING", "退仓中"),
         #("RETURNED", "已退到仓库"),
     )
@@ -222,6 +223,27 @@ class LogisticCustomerService(Package):
         proxy = True
 
         verbose_name = "客服物流跟踪"
+        verbose_name_plural = verbose_name
+
+
+    def __str__(self):
+        return self.logistic_no
+
+class LogisticManagerConfirm(Package):
+    class Meta:
+        proxy = True
+
+        verbose_name = "客服主管审核"
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.logistic_no
+
+class LogisticResendTrail(Package):
+    class Meta:
+        proxy = True
+
+        verbose_name = "客服物流重派跟踪"
         verbose_name_plural = verbose_name
 
 
