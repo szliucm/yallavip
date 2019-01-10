@@ -496,7 +496,7 @@ class PackageAdmin(object):
             queryset |= self.model.objects.filter(logistic_no__in=query.split(","))
         return queryset
 
-
+'''
 class LogisticSupplierResource(resources.ModelResource):
     logistic_no = fields.Field(attribute='logistic_no', column_name='单号')
     tracking_no = fields.Field(attribute='tracking_no', column_name='转单号')
@@ -547,68 +547,7 @@ class LogisticSupplierAdmin(object):
     list_filter = ("package_status","yallavip_package_status","logistic_update_status",'send_time','logistic_start_date',)
     ordering = []
 
-    '''
-    def batch_updatelogistic_trail(self, request, queryset):
-        # 定义actions函数
-        requrl = "http://api.jcex.com/JcexJson/api/notify/sendmsg"
-
-        param_data= dict()
-        param_data["customerid"] = -1
-        #param_data["waybillnumber"] = "989384782"
-        param_data["isdisplaydetail"] = "true"
-
-
-        #data_body =base64.b64encode(json.dumps(param_data).encode('utf-8'))
-        #  base64.b64encode()
-
-
-        param = dict()
-        param["service"] = 'track'
-        #param["data_body"] = data_body
-
-
-        res = requests.post(requrl,params =param)
-
-        for row in queryset:
-
-            param_data["waybillnumber"] = row.logistic_no
-            data_body = base64.b64encode(json.dumps(param_data).encode('utf-8'))
-            param["data_body"] = data_body
-            res = requests.post(requrl, params=param)
-
-            data = json.loads(res.text)
-
-            waybillnumber = data["waybillnumber"]
-            #recipientcountry = data["recipientcountry"]
-
-            statusdetail = data["displaydetail"][0]["statusdetail"]
-            if(len(statusdetail) == 0):
-                continue
-
-
-            #最新状态
-            if (len(statusdetail) > 0):
-                status_d = statusdetail[len(statusdetail)-1]
-                update_date = datetime.strptime(status_d["time"].split(" ")[0], '%Y-%m-%d').date()
-                logistic_start_date = datetime.strptime(statusdetail[0]["time"].split(" ")[0], '%Y-%m-%d').date()
-                #print("logistic_start_date", logistic_start_date)
-
-                Package.objects.filter(logistic_no=waybillnumber).update(
-
-                    logistic_update_status=status_d["status"],
-
-                    logistic_update_date=update_date,
-
-                    logistic_update_locate=status_d["locate"],
-                    logistic_start_date = logistic_start_date,
-                )
-                #else:
-                 #   print("order 无可更新")
-
-        return
-
-    batch_updatelogistic_trail.short_description = "更新物流轨迹"
-    '''
+    
     def yallavip_package_start(self, request, queryset):
         # 定义actions函数
         rows_updated = queryset.update(yallavip_package_status="START")
@@ -705,27 +644,7 @@ class OverseaPackageAdmin(object):
         # 定义actions函数
         requrl = "http://api.jcex.com/JcexJson/api/notify/sendmsg"
 
-        '''
-        #登录
-        param_login = dict()
-        param_login["service"] = 'login'
-
-        param_login_data = dict()
-        param_login_data["username"] = "SZFY6214"
-        param_login_data["password"] = "3c917d0c-6290-11e8-a277-6c92bf623ff2"
-
-
-        login_data_body = base64.b64encode(json.dumps(param_login_data).encode('utf-8'))
-        param_login["data_body"] = login_data_body
-        res_login = requests.post(requrl, params=param_login)
-
-        data_login = json.loads(res_login.text)
-        print("url", requrl)
-        print("param befor b64encode for login", json.dumps(param_login_data).encode('utf-8'))
-        print("param for login", param_login)
-        print("data_login",data_login)
-        '''
-
+       
         #货物跟踪信息
         param = dict()
         param["service"] = 'track'
@@ -836,6 +755,7 @@ class OverseaPackageAdmin(object):
         if (len(query) > 0):
             queryset |= self.model.objects.filter(logistic_no__in=query.split(","))
         return queryset
+'''
 
 class LogisticCustomerServiceResource(resources.ModelResource):
 
@@ -939,6 +859,7 @@ class LogisticCustomerServiceAdmin(object):
 
                      'feedback', 'deal', 'feedback_time',
                      'order_no','order_comment', 'receiver_phone',
+
                     'show_conversation')
     list_editable = ['feedback',  ]
 
@@ -1167,8 +1088,8 @@ class LogisticCustomerServiceAdmin(object):
                      "WAITING",
                      ]
 
-        return qs.filter(logistic_supplier='佳成',file_status="OPEN" , wait_status = False, warehouse_check= "NONE",
-                         logistic_update_status__in=error_list, deal__in = deal_list)
+        return qs.filter(file_status="OPEN" , wait_status = False, warehouse_check= "NONE",
+                         yallavip_package_status="PROBLEM", deal__in = deal_list)
 
 
 
@@ -1310,8 +1231,8 @@ class ResellAdmin(object):
 
 
 xadmin.site.register(Package,PackageAdmin)
-xadmin.site.register(LogisticSupplier,LogisticSupplierAdmin)
-xadmin.site.register(OverseaPackage,OverseaPackageAdmin)
+#xadmin.site.register(LogisticSupplier,LogisticSupplierAdmin)
+#xadmin.site.register(OverseaPackage,OverseaPackageAdmin)
 xadmin.site.register(LogisticCustomerService,LogisticCustomerServiceAdmin)
 xadmin.site.register(Resell,ResellAdmin)
 
@@ -1579,9 +1500,9 @@ class LogisticManagerConfirmAdmin(object):
                          deal__in=deal_list)
 
 @xadmin.sites.register(LogisticResendTrail)
-class LogisticTrailAdmin(object):
+class LogisticResendTrailAdmin(object):
     list_display = ('logistic_no', 'send_time', 'logistic_start_date', 'yallavip_package_status',
-
+                    'resend_date',
                     'logistic_update_date', 'logistic_update_status', 'logistic_update_locate',
 
                     'problem_type', 'response', 'feedback', 'deal', 'feedback_time',
