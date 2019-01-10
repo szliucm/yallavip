@@ -1081,11 +1081,7 @@ class LogisticCustomerServiceAdmin(object):
 
     def queryset(self):
         qs = super().queryset()
-        error_list= ["RECEIVER UNABLE TO BE CONNECTED",
-                     "receiver refused to accept the shipment",
-                     "DELIVERY INFO INCORRECT/INCOMPLETE/MISSING",
 
-                     ]
         deal_list= ["NONE",
                      "WAITING",
                      ]
@@ -1611,24 +1607,20 @@ class ToBalanceAdmin(object):
     search_fields = ['logistic_no', 'logistic_update_status',]
     list_filter = ("warehouse_check","deal",)
     ordering = ["send_time"]
-    #actions = ["batch_refund","batch_return",]
+    actions = ["batch_balanced",]
 
 
-    def batch_refund(self, request, queryset):
-        queryset.update(warehouse_check="TOREFUND", wait_status= True)
+    def batch_balanced(self, request, queryset):
+        queryset.update(warehouse_check="BALANCED", wait_status= False, file_status= True)
         return
 
-    batch_refund.short_description = "批量签收待确认"
+    batch_balanced.short_description = "批量对账确认"
 
-    def batch_return(self, request, queryset):
-        queryset.update(warehouse_check="TORETURN", wait_status= True)
-        return
 
-    batch_return.short_description = "批量退仓待确认"
 
     def queryset(self):
         qs = super().queryset()
-        return qs.filter(logistic_supplier='佳成',file_status="OPEN" , wait_status = True)
+        return qs.filter(file_status="OPEN" , wait_status = True)
 
     def get_list_queryset(self):
         """批量查询订单号"""
