@@ -858,6 +858,7 @@ class LogisticCustomerServiceAdmin(object):
                     'logistic_update_date', 'logistic_update_status', 'logistic_update_locate',
 
                      'feedback', 'deal', 'feedback_time',
+                    "waite_date",
                      'order_no','order_comment', 'receiver_phone',
 
                     'show_conversation')

@@ -220,7 +220,20 @@ class LogisticSupplier(Package):
         return self.logistic_no
 
 class LogisticCustomerService(Package):
+    def cal_waite_date(self):
+        cst_tz = timezone('Asia/Shanghai')
 
+        if self.file_status =="OPEN":
+            if self.feedback_time is not None:
+                now = datetime.now().replace(tzinfo=cst_tz)
+                return (now - self.feedback_time).days
+            else:
+                return "没有发货信息"
+        else:
+           return "已关闭"
+
+    cal_waite_date.short_description = "沟通时间(天)"
+    waite_date = property(cal_waite_date)
 
     class Meta:
         proxy = True
