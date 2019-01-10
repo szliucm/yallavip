@@ -132,10 +132,10 @@ class Package(models.Model):
 
     )
 
-    warehouse_check = models.CharField(choices=WAREHOUSE_CHECK_STATUS, max_length=50, default='NONE', verbose_name="仓库对账状态",blank=True)
-    warehouse_check_comments = models.CharField(u'仓库对账说明', default='', max_length=200, blank=True)
-    warehouse_checktime = models.DateTimeField(u'仓库对账时间', auto_now=False, blank=True, null=True)
-    warehouse_check_manager = models.CharField(u'仓库对账负责人', default='', max_length=200, blank=True)
+    warehouse_check = models.CharField(choices=WAREHOUSE_CHECK_STATUS, max_length=50, default='NONE', verbose_name="仓库核实状态",blank=True)
+    warehouse_check_comments = models.CharField(u'仓库核实说明', default='', max_length=200, blank=True)
+    warehouse_checktime = models.DateTimeField(u'仓库核实时间', auto_now=False, blank=True, null=True)
+    warehouse_check_manager = models.CharField(u'仓库核实负责人', default='', max_length=200, blank=True)
 
     def cal_total_date(self):
         cst_tz = timezone('Asia/Shanghai')

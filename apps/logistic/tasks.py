@@ -20,7 +20,7 @@ def updatelogistic_trail():
 
 
     queryset = Package.objects.filter(Q(update_trail_time__lt = (timezone.now()- timedelta(days=1)))|Q(update_trail_time__isnull = True),
-                                      logistic_supplier="佳成",
+                                      logistic_no__startswith="J",
                                       file_status= "OPEN")
 
     total = queryset.count()
