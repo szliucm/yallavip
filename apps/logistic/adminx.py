@@ -1611,7 +1611,7 @@ class ToBalanceAdmin(object):
 
 
     def batch_balanced(self, request, queryset):
-        queryset.update(warehouse_check="BALANCED", wait_status= False, file_status= True)
+        queryset.update(warehouse_check="BALANCED", wait_status= False, file_status= "CLOSED")
         return
 
     batch_balanced.short_description = "批量对账确认"
