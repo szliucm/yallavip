@@ -158,3 +158,6 @@ def my_custom_sql(mysql):
 #   update logistic_package set file_status = "CLOSED" WHERE logistic_supplier ="佳成" and file_status = "OPEN"  and logistic_no  IN  (SELECT  waybillnumber as logistic_no FROM logistic_logisticbalance  where balance_type="COD")
 
 #  update logistic_package set file_status = "CLOSED" WHERE logistic_supplier ="佳成" and file_status = "OPEN"  and logistic_no  IN  (SELECT  waybillnumber as logistic_no FROM logistic_logisticbalance  where balance_type="RETURN")
+
+##################### 没有轨迹的订单
+#      select * from logistic_package where datediff(logistic_update_date , logistic_start_date)  <6 and datediff(CURDATE(), logistic_start_date) >20 and file_status = "OPEN" and wait_status = false

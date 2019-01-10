@@ -1391,7 +1391,35 @@ class OvertimeAdmin(object):
     search_fields = ['logistic_no', 'logistic_update_status',]
     list_filter = ("warehouse_check",'logistic_update_status',)
     ordering = ["send_time"]
-    actions = ["batch_refund","batch_return","batch_filed"]
+    actions = ["batch_discard", "batch_multipackage","batch_toclear", "batch_refund","batch_return","batch_filed"]
+
+    def batch_discard(self, request, queryset):
+        queryset.update(warehouse_check="DISCARD",
+
+                        warehouse_checktime = dt.now(),
+                        warehouse_check_manager = str(self.request.user)
+                        )
+        return
+
+    def batch_multipackage(self, request, queryset):
+        queryset.update(warehouse_check="MULTIPACKAGE",
+
+                        warehouse_checktime = dt.now(),
+                        warehouse_check_manager = str(self.request.user)
+                        )
+        return
+
+    batch_multipackage.short_description = "批量多包裹"
+
+    def batch_toclear(self, request, queryset):
+        queryset.update(warehouse_check="TOCLEAR",
+                        wait_status= True,
+                        warehouse_checktime = dt.now(),
+                        warehouse_check_manager = str(self.request.user)
+                        )
+        return
+
+    batch_toclear.short_description = "批量状态不明待确认"
 
 
     def batch_refund(self, request, queryset):
@@ -1404,6 +1432,8 @@ class OvertimeAdmin(object):
 
     batch_refund.short_description = "批量签收待确认"
 
+
+
     def batch_return(self, request, queryset):
         queryset.update(warehouse_check="TORETURN", wait_status= True,
                         warehouse_checktime=dt.now(),
@@ -1414,7 +1444,11 @@ class OvertimeAdmin(object):
     batch_return.short_description = "批量退仓待确认"
 
     def batch_filed(self, request, queryset):
-        queryset.update(file_status="CLOSED", wait_status= False)
+        queryset.update(file_status="CLOSED", wait_status= False,
+                        warehouse_checktime=dt.now(),
+                        warehouse_check_manager=str(self.request.user)
+                        )
+
         return
 
     batch_filed.short_description = "批量归档"
