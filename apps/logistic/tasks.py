@@ -28,10 +28,12 @@ def updatelogistic_trail():
         print("一共还有  %d  个包裹需要更新轨迹"%(total - n ))
         n += 1
 
+        '''
         if row.update_trail_time is not None:
             if row.update_trail_time>=(timezone.now()- timedelta(days=1)):
                 print("更新时间少于一天")
                 continue
+        '''
 
         update_trail(row.logistic_no)
 
