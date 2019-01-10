@@ -1099,7 +1099,7 @@ class LogisticCustomerServiceAdmin(object):
 
     def batch_delivered(self, request, queryset):
         # 定义actions函数
-        return queryset.update(deal="DELIVERED", yallavip_package_status="DELIVERED",feedback_time=datetime.now())
+        return queryset.update(deal="DELIVERED", yallavip_package_status="DELIVERED",wait_status = True,feedback_time=datetime.now())
 
     batch_delivered.short_description = "已签收"
 
@@ -1123,7 +1123,7 @@ class LogisticCustomerServiceAdmin(object):
 
     def batch_refused(self, request, queryset):
         # 定义actions函数
-        return queryset.update(deal="REFUSED", feedback_time=datetime.now())
+        return queryset.update(deal="REFUSED", wait_status = True, feedback_time=datetime.now())
 
     batch_refused.short_description = "拒签"
 
@@ -1650,7 +1650,7 @@ class ToBalanceAdmin(object):
                     )
     list_editable = [ ]
     search_fields = ['logistic_no', 'logistic_update_status',]
-    list_filter = ("warehouse_check",)
+    list_filter = ("warehouse_check","deal",)
     ordering = ["send_time"]
     #actions = ["batch_refund","batch_return",]
 
