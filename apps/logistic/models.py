@@ -228,7 +228,7 @@ class LogisticCustomerService(Package):
                 now = datetime.now().replace(tzinfo=cst_tz)
                 return (now - self.feedback_time).days
             else:
-                return "没有发货信息"
+                return "没有沟通信息"
         else:
            return "已关闭"
 
