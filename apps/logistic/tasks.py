@@ -19,7 +19,9 @@ def updatelogistic_trail():
 
 
 
-    queryset = Package.objects.filter(Q(update_trail_time__lt = (timezone.now()- timedelta(days=1)))|Q(update_trail_time__isnull = True),
+    #queryset = Package.objects.filter(Q(update_trail_time__lt = (timezone.now()- timedelta(days=1)))|Q(update_trail_time__isnull = True),
+    queryset = Package.objects.filter(
+                                    Q(update_trail_time__isnull=True),
                                       logistic_no__startswith="J",
                                       file_status= "OPEN")
 
@@ -134,11 +136,19 @@ def sync_balance(type):
     if type == 1:
         #更新已对账的包裹的状态
         mysql = "update logistic_package set file_status = 'CLOSED' WHERE logistic_supplier ='佳成' and file_status = 'OPEN'  and logistic_no  IN  (SELECT  waybillnumber as logistic_no FROM logistic_logisticbalance  where balance_type in ('COD','RETURN') )"
-        my_custom_sql(mysql)
+
     elif type == 2:
         #将物流轨迹显示“Delivered”的包裹标记成待对账
         mysql = "update logistic_package set warehouse_check = 'TOREFUND', wait_status=TRUE WHERE logistic_supplier ='佳成' and file_status = 'OPEN'  and warehouse_check='NONE' and logistic_update_status='Delivered' "
-        my_custom_sql(mysql)
+
+    elif type == 3:
+        # 将物流轨迹显示       "RECEIVER UNABLE TO BE CONNECTED",
+        #                      "receiver refused to accept the shipment",
+        #                      "DELIVERY INFO INCORRECT/INCOMPLETE/MISSING"
+        #                      的包裹标记成问题单
+        mysql = "update logistic_package set yallavip_package_status = 'PROBLEM' where logistic_update_status in ('RECEIVER UNABLE TO BE CONNECTED','receiver refused to accept the shipment','DELIVERY INFO INCORRECT/INCOMPLETE/MISSING') "
+
+    my_custom_sql(mysql)
 
 def my_custom_sql(mysql):
     from django.db import connection, transaction
