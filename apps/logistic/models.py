@@ -22,7 +22,7 @@ class Package(models.Model):
                                               blank=True)
     logistic_update_locate = models.CharField(u'物流更新地点', max_length=100, null=True, blank=True)
 
-    update_trainl_time = models.DateTimeField(u'轨迹更新时间', auto_now=False, blank=True, null=True)
+    update_trail_time = models.DateTimeField(u'轨迹更新时间', auto_now=False, blank=True, null=True)
     # 问题件
     problem_type = models.CharField(u'问题类型', max_length=200, null=True, blank=True)
     RESPONSE = (

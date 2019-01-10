@@ -919,22 +919,25 @@ class LogisticCustomerServiceAdmin(object):
 
     actions = [
         'batch_updatelogistic_trail',
-        'batch_response',
-        'batch_deliver_response', 'batch_customer_response', 'batch_yallavip_response',
+       # 'batch_response',
+       # 'batch_deliver_response', 'batch_customer_response', 'batch_yallavip_response',
 
-        'batch_type',
-        'batch_contact', 'batch_refuse', 'batch_info_error', 'batch_lost',
+        #'batch_type',
+        #'batch_contact', 'batch_refuse', 'batch_info_error', 'batch_lost',
 
         'batch_deal',
-        'batch_delivered', 'batch_wait', 'batch_redeliver', 'batch_redelivering',
-        'batch_refused', 'batch_returning', 'batch_returned',
+         'batch_wait','batch_delivered', 'batch_redeliver','batch_refused','batch_lostconnect',
+
+        #'batch_redelivering', 'batch_returning', 'batch_returned',
+
        ]
 
-    list_display = ('logistic_no','send_time','logistic_start_date','yallavip_package_status',
+    list_display = ('logistic_no','send_time','logistic_start_date',
+                    #'yallavip_package_status','problem_type', 'response',
 
                     'logistic_update_date', 'logistic_update_status', 'logistic_update_locate',
 
-                    'problem_type', 'response', 'feedback', 'deal', 'feedback_time',
+                     'feedback', 'deal', 'feedback_time',
                      'order_no','order_comment', 'receiver_phone',
                     'show_conversation')
     list_editable = ['feedback',  ]
@@ -1124,6 +1127,12 @@ class LogisticCustomerServiceAdmin(object):
 
     batch_refused.short_description = "拒签"
 
+    def batch_lostconnect(self, request, queryset):
+        # 定义actions函数
+        return queryset.update(deal="LOSTCONNECT", feedback_time=datetime.now())
+
+    batch_lostconnect.short_description = "无法联系"
+
     def batch_returning(self, request, queryset):
         # 定义actions函数
         return queryset.update(deal="RETURNING", feedback_time=datetime.now())
@@ -1180,7 +1189,8 @@ class ResellAdmin(object):
                'batch_redelivering','batch_sellout',
          ]
 
-    list_display = ('logistic_no',  'refer_no','yallavip_package_status',
+    list_display = ('logistic_no',  'refer_no',
+                    #'yallavip_package_status',
                     'resell_status',
                     'logistic_update_date', 'logistic_update_status',
                     'sec_logistic_no',

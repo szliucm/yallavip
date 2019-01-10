@@ -19,7 +19,7 @@ def updatelogistic_trail():
 
 
 
-    queryset = Package.objects.filter(Q(update_trainl_time__lt = (timezone.now()- timedelta(days=1)))|Q(update_trainl_time__isnull = True),
+    queryset = Package.objects.filter(Q(update_trail_time__lt = (timezone.now()- timedelta(days=1)))|Q(update_trail_time__isnull = True),
                                       logistic_supplier="佳成",
                                       file_status= "OPEN")
 
@@ -29,8 +29,8 @@ def updatelogistic_trail():
         print("一共还有  %d  个包裹需要更新轨迹"%(total - n ))
         n += 1
 
-        if row.update_trainl_time is not None:
-            if row.update_trainl_time>=(timezone.now()- timedelta(days=1)):
+        if row.update_trail_time is not None:
+            if row.update_trail_time>=(timezone.now()- timedelta(days=1)):
                 print("更新时间少于一天")
                 continue
 
@@ -115,7 +115,7 @@ def update_trail(logistic_no):
         print(latest_status, logistic_no)
 
         Package.objects.filter(logistic_no = logistic_no).update(
-                                                update_trainl_time =  timezone.now(),
+                                                update_trail_time =  timezone.now(),
                                                 logistic_update_date =  datetime.strptime(latest_status["time"] , "%Y-%m-%d %H:%M:%S").replace(tzinfo=pytz.timezone('Asia/Riyadh')),
                                                 logistic_update_status=latest_status["status"],
                                                 logistic_update_locate= latest_status["locate"],)
