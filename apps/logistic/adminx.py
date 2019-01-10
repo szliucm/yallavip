@@ -1401,6 +1401,8 @@ class OvertimeAdmin(object):
                         )
         return
 
+    batch_discard.short_description = "批量废弃包裹"
+
     def batch_multipackage(self, request, queryset):
         queryset.update(warehouse_check="MULTIPACKAGE",
 
