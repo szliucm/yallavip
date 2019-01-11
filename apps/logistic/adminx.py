@@ -1383,7 +1383,7 @@ class OvertimeAdmin(object):
         return qs.filter(Q(send_time__isnull=True)
                              |Q(logistic_update_date__isnull=True)
                              |Q(send_time__lt=overtime_send)
-                             |Q(logistic_update_date__lit=overtime_update),
+                             |Q(logistic_update_date__lt=overtime_update),
                         file_status="OPEN" , wait_status = False)
 
     def get_list_queryset(self):
