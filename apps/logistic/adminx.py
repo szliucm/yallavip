@@ -1121,7 +1121,7 @@ class LogisticManagerConfirmAdmin(object):
         # 定义actions函数
         deal = "RETURNING"
         self.deal_trail(queryset,deal)
-        return queryset.update(deal=deal, feedback_time=dt.now())
+        return queryset.update(deal=deal, feedback_time=dt.now(), warehouse_check ="TORETURN" )
 
     batch_returning.short_description = "退仓中"
 
@@ -1552,7 +1552,7 @@ class OvertimeAdmin(object):
                     'logistic_update_date', 'logistic_update_status',
                     "total_date","lost_date",
                     "warehouse_check","warehouse_check_comments",
-                    "child_packages",
+
                     "warehouse_checktime","warehouse_check_manager",
 
                     )
@@ -1825,6 +1825,32 @@ class ToBalanceAdmin(object):
             queryset |= self.model.objects.filter(logistic_no__in=query.split(","))
         return queryset
 
+@xadmin.sites.register(DealTrail)
+class DealTrailAdmin(object):
+    list_display = ('waybillnumber',
+                    "deal_type", "deal_staff",
+                    'deal_time', 'deal_action',
+                    "deal_comments",
+
+                    )
+    list_editable = [ ]
+    search_fields = ['waybillnumber', ]
+    list_filter = ("deal_type","deal_staff",)
+    ordering = ["waybillnumber"]
+    actions = []
+
+
+
+    def get_list_queryset(self):
+        """批量查询订单号"""
+        queryset = super().get_list_queryset()
+
+        query = self.request.GET.get(SEARCH_VAR, '')
+
+
+        if (len(query) > 0):
+            queryset |= self.model.objects.filter(logistic_no__in=query.split(","))
+        return queryset
 
 
 
