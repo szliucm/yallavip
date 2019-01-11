@@ -6,11 +6,13 @@ from django.utils import timezone as dt
 
 # Create your models here.
 class Package(models.Model):
+    super_package = models.ForeignKey('self', null=True, on_delete=models.CASCADE,
+                                 verbose_name="父包裹")
+
     logistic_no = models.CharField(u'物流追踪号', default='', max_length=100, blank=True)
     refer_no = models.CharField(u'包裹号', max_length=50, null=True, blank=True)
     tracking_no = models.CharField(u'转单号', max_length=50, null=True, blank=True)
     send_time = models.DateTimeField(u'发货时间', auto_now=False, blank=True, null=True)
-
 
     logistic_supplier = models.CharField(u'物流供应商', max_length=50, null=True, blank=True)
     real_weight = models.CharField(u'实重', max_length=100, null=True, blank=True)
@@ -134,6 +136,7 @@ class Package(models.Model):
 
     warehouse_check = models.CharField(choices=WAREHOUSE_CHECK_STATUS, max_length=50, default='NONE', verbose_name="仓库核实状态",blank=True)
     warehouse_check_comments = models.CharField(u'仓库核实说明', default='', max_length=200, blank=True)
+    child_packages =  models.CharField(max_length=200, default='NONE', verbose_name="子包裹",blank=True)
     warehouse_checktime = models.DateTimeField(u'仓库核实时间', auto_now=False, blank=True, null=True)
     warehouse_check_manager = models.CharField(u'仓库核实负责人', default='', max_length=200, blank=True)
 

@@ -1300,21 +1300,24 @@ class LogisticBalanceAdmin(object):
 @xadmin.sites.register(Overtime)
 class OvertimeAdmin(object):
     list_display = ('logistic_no',
-                    "send_time", "logistic_start_date",
+                    "send_time",
                     'logistic_update_date', 'logistic_update_status',
-                    "total_date","total_trans_date","lost_date",
-                    "warehouse_check","warehouse_check_comments","warehouse_checktime","warehouse_check_manager",
+                    "total_date","lost_date",
+                    "warehouse_check","warehouse_check_comments",
+                    "child_packages",
+                    "warehouse_checktime","warehouse_check_manager",
 
                     )
-    list_editable = [ "warehouse_check_comments",]
+    list_editable = [ "warehouse_check_comments","child_packages",]
     search_fields = ['logistic_no', 'logistic_update_status',]
     list_filter = ("warehouse_check",'logistic_update_status',)
     ordering = ["send_time"]
-    actions = ["batch_discard", "batch_multipackage","batch_toclear", "batch_refund","batch_return","batch_filed"]
+    actions = ["batch_discard", "batch_multipackage","batch_toclear", "batch_refund","batch_return",]
 
     def batch_discard(self, request, queryset):
         queryset.update(warehouse_check="DISCARD",
-
+                        file_status="CLOSED",
+                        wait_status=False,
                         warehouse_checktime = dt.now(),
                         warehouse_check_manager = str(self.request.user)
                         )
@@ -1323,8 +1326,17 @@ class OvertimeAdmin(object):
     batch_discard.short_description = "批量废弃包裹"
 
     def batch_multipackage(self, request, queryset):
+        for row in queryset:
+            for logistic_no in row.child_packages.split(','):
+                Package.objects.update_or_create(
+                    super_package = row,
+                    logistic_no = logistic_no,
+                    defaults={
+                        'send_time' : row.send_time,
+                    }
+                )
         queryset.update(warehouse_check="MULTIPACKAGE",
-
+                        file_status="CLOSED",
                         warehouse_checktime = dt.now(),
                         warehouse_check_manager = str(self.request.user)
                         )
@@ -1364,6 +1376,7 @@ class OvertimeAdmin(object):
 
     batch_return.short_description = "批量退仓待确认"
 
+    '''
     def batch_filed(self, request, queryset):
         queryset.update(file_status="CLOSED", wait_status= False,
                         warehouse_checktime=dt.now(),
@@ -1373,6 +1386,7 @@ class OvertimeAdmin(object):
         return
 
     batch_filed.short_description = "批量归档"
+    '''
 
     #没有物流轨迹，没有发货时间，交运时间超过10天的，最后更新时间超过3天的，都会出现在此
     def queryset(self):
