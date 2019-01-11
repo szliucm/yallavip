@@ -423,6 +423,9 @@ class ToBalance(Package):
 
 
 class DealTrail(models.Model):
+    package = models.ForeignKey(Package, related_name='package_dealtrail', null=True, on_delete=models.SET_NULL,
+                              verbose_name="包裹")
+
     waybillnumber = models.CharField(u'物流追踪号', default='', max_length=100, blank=True)
     deal_type  = models.CharField(u'处理类型', default='', max_length=500, blank=True)
     deal_staff = models.CharField(u'处理人', default='', max_length=500, blank=True)

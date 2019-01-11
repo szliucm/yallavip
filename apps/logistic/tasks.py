@@ -134,11 +134,11 @@ def sync_balance(type):
     '''
     if type == 1:
         #更新已对账的包裹的状态
-        mysql = "update logistic_package set file_status = 'CLOSED' WHERE logistic_supplier ='佳成' and file_status = 'OPEN'  and logistic_no  IN  (SELECT  waybillnumber as logistic_no FROM logistic_logisticbalance  where balance_type in ('COD','RETURN') )"
+        mysql = "update logistic_package set file_status = 'CLOSED' WHERE file_status = 'OPEN'  and logistic_no  IN  (SELECT  waybillnumber as logistic_no FROM logistic_logisticbalance  where balance_type in ('COD','RETURN') )"
 
     elif type == 2:
         #将物流轨迹显示“Delivered”的包裹标记成待对账
-        mysql = "update logistic_package set warehouse_check = 'TOREFUND', wait_status=TRUE WHERE logistic_supplier ='佳成' and file_status = 'OPEN'  and warehouse_check='NONE' and logistic_update_status='Delivered' "
+        mysql = "update logistic_package set warehouse_check = 'TOREFUND', wait_status=TRUE WHERE file_status = 'OPEN'  and warehouse_check='NONE' and logistic_update_status='Delivered' "
 
     elif type == 3:
         # 将物流轨迹显示       "RECEIVER UNABLE TO BE CONNECTED",

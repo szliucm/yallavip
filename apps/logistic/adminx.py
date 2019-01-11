@@ -775,6 +775,7 @@ class LogisticCustomerServiceAdmin(object):
     def deal_trail(self,queryset,deal):
         for row in queryset:
             DealTrail.objects.create(
+                package = row,
                 waybillnumber = row.logistic_no,
                 deal_type = "客服",
                 deal_staff = str(self.request.user),
@@ -1109,6 +1110,7 @@ class LogisticManagerConfirmAdmin(object):
     def deal_trail(self,queryset,deal):
         for row in queryset:
             DealTrail.objects.create(
+                package= row,
                 waybillnumber = row.logistic_no,
                 deal_type = "客服",
                 deal_staff = str(self.request.user),
@@ -1234,6 +1236,17 @@ class LogisticResendTrailAdmin(object):
     actions = [
         'batch_redelivering',
     ]
+    def deal_trail(self,queryset,deal):
+        for row in queryset:
+            DealTrail.objects.create(
+                package = row,
+                waybillnumber = row.logistic_no,
+                deal_type = "客服",
+                deal_staff = str(self.request.user),
+                deal_time = dt.now(),
+                deal_action = deal,
+                deal_comments = row.feedback
+            )
 
     def batch_redelivering(self, request, queryset):
         # 定义actions函数
