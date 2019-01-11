@@ -7,7 +7,7 @@ import time
 import base64
 import operator
 
-from django.utils import timezone
+from django.utils import timezone as dt
 
 from io import BytesIO
 
@@ -31,7 +31,7 @@ from orders.models import Order,OrderConversation,OrderDetail
 from product.models import Product
 from django.db import models
 
-from datetime import datetime
+from datetime import datetime,timedelta
 import urllib
 import random
 from django.db.models import Q
@@ -1374,9 +1374,17 @@ class OvertimeAdmin(object):
 
     batch_filed.short_description = "批量归档"
 
+    #没有物流轨迹，没有发货时间，交运时间超过10天的，最后更新时间超过3天的，都会出现在此
     def queryset(self):
         qs = super().queryset()
-        return qs.filter(file_status="OPEN" , wait_status = False)
+        overtime_send = dt.now() - timedelta(days=10)
+        overtime_update = dt.now() - timedelta(days=3)
+
+        return qs.filter(Q(send_time__isnull=True)
+                             |Q(logistic_update_date__isnull=True)
+                             |Q(send_time__lt=overtime_send)
+                             |Q(logistic_update_date__lit=overtime_update),
+                        file_status="OPEN" , wait_status = False)
 
     def get_list_queryset(self):
         """批量查询订单号"""
@@ -1395,6 +1403,10 @@ class OvertimeAdmin(object):
         obj.warehouse_checktime = timezone.now()
 
         obj.save()
+
+
+
+
 
 @xadmin.sites.register(LogisticManagerConfirm)
 class LogisticManagerConfirmAdmin(object):
