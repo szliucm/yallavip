@@ -1732,7 +1732,7 @@ class ReminderAdmin(object):
     def queryset(self):
         qs = super().queryset()
         return qs.filter(warehouse_check ="TOCLEAR",
-                         file_status="OPEN", wait_status=False)
+                         file_status="OPEN", wait_status=True)
 
     def get_list_queryset(self):
         """批量查询订单号"""
