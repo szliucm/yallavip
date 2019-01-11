@@ -1337,7 +1337,7 @@ class OvertimeAdmin(object):
                     }
                 )
         queryset.update(warehouse_check="MULTIPACKAGE",
-                        file_status="CLOSED",
+
                         warehouse_checktime = dt.now(),
                         warehouse_check_manager = str(self.request.user)
                         )
@@ -1399,6 +1399,7 @@ class OvertimeAdmin(object):
                              |Q(logistic_update_date__isnull=True)
                              |Q(send_time__lt=overtime_send)
                              |Q(logistic_update_date__lt=overtime_update),
+                        warehouse_check = "NONE",
                         file_status="OPEN" , wait_status = False)
 
     def get_list_queryset(self):
@@ -1512,7 +1513,7 @@ class MultiPackageAdmin(object):
                     }
                 )
         queryset.update(warehouse_check="MULTIPACKAGE",
-                        file_status="CLOSED",
+                        #file_status="CLOSED",
                         warehouse_checktime = dt.now(),
                         warehouse_check_manager = str(self.request.user)
                         )
