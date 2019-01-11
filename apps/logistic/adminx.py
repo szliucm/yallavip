@@ -26,7 +26,8 @@ import xadmin
 from django.shortcuts import get_object_or_404, get_list_or_404, render
 from import_export import resources, fields
 from import_export.widgets import ForeignKeyWidget
-from .models import Package, LogisticSupplier,LogisticCustomerService,OverseaPackage,Resell,LogisticBalance,Overtime,ToBalance,LogisticManagerConfirm,LogisticResendTrail
+from .models import Package, LogisticSupplier,LogisticCustomerService,OverseaPackage,Resell,\
+        LogisticBalance,Overtime,ToBalance,LogisticManagerConfirm,LogisticResendTrail,Reminder, MultiPackage
 from orders.models import Order,OrderConversation,OrderDetail
 from product.models import Product
 from django.db import models
@@ -1414,13 +1415,125 @@ class OvertimeAdmin(object):
     def save_models(self):
         obj = self.new_obj
         obj.warehouse_check_manager = str(self.request.user)
-        obj.warehouse_checktime = timezone.now()
+        obj.warehouse_checktime = dt.now()
 
         obj.save()
 
+####################催单
+@xadmin.sites.register(Reminder)
+class ReminderAdmin(object):
+    list_display = ('logistic_no',
+                    "send_time",
+                    'logistic_update_date', 'logistic_update_status',
+                    "total_date","lost_date",
+                    "warehouse_check","warehouse_check_comments",
+                    "child_packages",
+                    "warehouse_checktime","warehouse_check_manager",
+
+                    )
+    list_editable = [ "warehouse_check_comments","child_packages",]
+    search_fields = ['logistic_no', 'logistic_update_status',]
+    list_filter = ("warehouse_check",'logistic_update_status',)
+    ordering = ["send_time"]
+    actions = ["batch_refund","batch_return","batch_lost",]
+
+    def batch_refund(self, request, queryset):
+        queryset.update(warehouse_check="TOREFUND",
+                        wait_status= True,
+                        warehouse_checktime = dt.now(),
+                        warehouse_check_manager = str(self.request.user)
+                        )
+        return
+
+    batch_refund.short_description = "批量签收待确认"
 
 
 
+    def batch_return(self, request, queryset):
+        queryset.update(warehouse_check="TORETURN", wait_status= True,
+                        warehouse_checktime=dt.now(),
+                        warehouse_check_manager=str(self.request.user)
+                        )
+        return
+
+    batch_return.short_description = "批量退仓待确认"
+
+    def batch_lost(self, request, queryset):
+        queryset.update(warehouse_check="TOLOST", wait_status= True,
+                        warehouse_checktime=dt.now(),
+                        warehouse_check_manager=str(self.request.user)
+                        )
+        return
+
+    batch_lost.short_description = "批量丢件待确认"
+
+    # 状态不明，没有关闭的订单，都会出现在此
+    def queryset(self):
+        qs = super().queryset()
+        return qs.filter(warehouse_check ="TOCLEAR",
+                         file_status="OPEN", wait_status=False)
+
+    def get_list_queryset(self):
+        """批量查询订单号"""
+        queryset = super().get_list_queryset()
+
+        query = self.request.GET.get(SEARCH_VAR, '')
+
+        if (len(query) > 0):
+            queryset |= self.model.objects.filter(logistic_no__in=query.split(","))
+        return queryset
+
+####################多包裹
+@xadmin.sites.register(MultiPackage)
+class MultiPackageAdmin(object):
+    list_display = ('logistic_no',
+                    "send_time",
+                    'logistic_update_date', 'logistic_update_status',
+                    "total_date","lost_date",
+                    "warehouse_check","warehouse_check_comments",
+                    "child_packages",
+                    "warehouse_checktime","warehouse_check_manager",
+
+                    )
+    list_editable = [ "warehouse_check_comments","child_packages",]
+    search_fields = ['logistic_no', 'logistic_update_status',]
+    list_filter = ("warehouse_check",'logistic_update_status',)
+    ordering = ["send_time"]
+    actions = ["batch_multipackage",]
+
+    def batch_multipackage(self, request, queryset):
+        for row in queryset:
+            for logistic_no in row.child_packages.split(','):
+                Package.objects.update_or_create(
+                    super_package = row,
+                    logistic_no = logistic_no,
+                    defaults={
+                        'send_time' : row.send_time,
+                    }
+                )
+        queryset.update(warehouse_check="MULTIPACKAGE",
+                        file_status="CLOSED",
+                        warehouse_checktime = dt.now(),
+                        warehouse_check_manager = str(self.request.user)
+                        )
+        return
+
+    # 多包裹，但是没有子单号的，都会出现在此
+    def queryset(self):
+        qs = super().queryset()
+        return qs.filter(warehouse_check ="MULTIPACKAGE",
+                         child_packages="NONE",
+                         file_status="OPEN")
+
+    def get_list_queryset(self):
+        """批量查询订单号"""
+        queryset = super().get_list_queryset()
+
+        query = self.request.GET.get(SEARCH_VAR, '')
+
+        if (len(query) > 0):
+            queryset |= self.model.objects.filter(logistic_no__in=query.split(","))
+        return queryset
 
 @xadmin.sites.register(LogisticManagerConfirm)
 class LogisticManagerConfirmAdmin(object):

@@ -130,6 +130,7 @@ class Package(models.Model):
         ("TOCLEAR", "状态不明待确认"),
         ("TOREFUND", "签收待确认"),
         ("TORETURN", "退仓待确认"),
+        ("TOLOST", "丢件待确认"),
         ("BALANCED", "已对账"),
 
     )
@@ -380,6 +381,28 @@ class Overtime(Package):
         proxy = True
 
         verbose_name = "超时订单"
+        verbose_name_plural = verbose_name
+
+
+    def __str__(self):
+        return self.logistic_no
+
+class Reminder(Package):
+    class Meta:
+        proxy = True
+
+        verbose_name = "物流催单"
+        verbose_name_plural = verbose_name
+
+
+    def __str__(self):
+        return self.logistic_no
+
+class MultiPackage(Package):
+    class Meta:
+        proxy = True
+
+        verbose_name = "待处理多包裹"
         verbose_name_plural = verbose_name
 
 
