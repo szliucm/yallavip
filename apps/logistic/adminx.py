@@ -1235,17 +1235,6 @@ class LogisticResendTrailAdmin(object):
         'batch_redelivering',
     ]
 
-    def deal_trail(self,queryset,deal):
-        for row in queryset:
-            DealTrail.objects.create(
-                waybillnumber = row.logistic_no,
-                deal_type = "客服",
-                deal_staff = str(self.request.user),
-                deal_time = dt.now(),
-                deal_action = deal,
-                deal_comments = row.feedback
-            )
-
     def batch_redelivering(self, request, queryset):
         # 定义actions函数
         deal = "RE_DELIVERING"
@@ -1754,9 +1743,9 @@ class MultiPackageAdmin(object):
                     "warehouse_checktime","warehouse_check_manager",
 
                     )
-    list_editable = [ "child_packages",]
-    search_fields = ['logistic_no',]
-    list_filter = ("child_packages")
+    list_editable = [ "warehouse_check_comments","child_packages",]
+    search_fields = ['logistic_no', ]
+    list_filter = ("child_packages",)
     ordering = ["send_time"]
     actions = ["batch_multipackage",]
 
@@ -1783,7 +1772,6 @@ class MultiPackageAdmin(object):
     def queryset(self):
         qs = super().queryset()
         return qs.filter(warehouse_check ="MULTIPACKAGE")
-        #                 child_packages="NONE")
                          #file_status="OPEN")
 
     def get_list_queryset(self):
