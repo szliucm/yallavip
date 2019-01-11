@@ -420,13 +420,21 @@ class ToBalance(Package):
     def __str__(self):
         return self.logistic_no
 
-class Filed(Package):
-    class Meta:
-        proxy = True
 
-        verbose_name = "已归档包裹"
+
+class DealTrail(models.Model):
+    waybillnumber = models.CharField(u'物流追踪号', default='', max_length=100, blank=True)
+    deal_type  = models.CharField(u'处理类型', default='', max_length=500, blank=True)
+    deal_staff = models.CharField(u'处理人', default='', max_length=500, blank=True)
+    deal_time = models.DateTimeField(u'处理时间', auto_now=True, blank=True, null=True)
+    deal_action = models.CharField(u'处理动作', default='', max_length=100, blank=True)
+    deal_comments= models.CharField(u'处理备注', default='', max_length=100, blank=True)
+
+
+    class Meta:
+        verbose_name = "处理日志"
         verbose_name_plural = verbose_name
 
 
     def __str__(self):
-        return self.logistic_no
+        return self.waybillnumber + "_" + self.deal_comments
