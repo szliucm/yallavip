@@ -1497,7 +1497,7 @@ class MultiPackageAdmin(object):
                     )
     list_editable = [ "warehouse_check_comments","child_packages",]
     search_fields = ['logistic_no', 'logistic_update_status',]
-    list_filter = ("warehouse_check",'logistic_update_status',)
+    list_filter = ("warehouse_check",'logistic_update_status','file_status')
     ordering = ["send_time"]
     actions = ["batch_multipackage",]
 
@@ -1518,12 +1518,14 @@ class MultiPackageAdmin(object):
                         )
         return
 
+    batch_multipackage.short_description = "批量多包裹"
+
     # 多包裹，但是没有子单号的，都会出现在此
     def queryset(self):
         qs = super().queryset()
         return qs.filter(warehouse_check ="MULTIPACKAGE",
-                         child_packages="NONE",
-                         file_status="OPEN")
+                         child_packages="NONE")
+                         #file_status="OPEN")
 
     def get_list_queryset(self):
         """批量查询订单号"""
