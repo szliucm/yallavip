@@ -1847,7 +1847,6 @@ class DealTrailAdmin(object):
 
         query = self.request.GET.get(SEARCH_VAR, '')
 
-
         if (len(query) > 0):
             queryset |= self.model.objects.filter(logistic_no__in=query.split(","))
         return queryset
