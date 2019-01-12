@@ -1688,11 +1688,11 @@ class ReminderAdmin(object):
                     'logistic_update_date', 'logistic_update_status',
                     "total_date","lost_date",
                     "warehouse_check","warehouse_check_comments",
-                    "child_packages",
+                    #"child_packages",
                     "warehouse_checktime","warehouse_check_manager",
 
                     )
-    list_editable = [ "warehouse_check_comments","child_packages",]
+    list_editable = [ "warehouse_check_comments",]
     search_fields = ['logistic_no', 'logistic_update_status',]
     list_filter = ("warehouse_check",'logistic_update_status',)
     ordering = ["send_time"]
