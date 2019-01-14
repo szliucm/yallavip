@@ -1547,7 +1547,7 @@ class LogisticBalanceAdmin(object):
 
 
 
-    actions = [ ]
+    #actions = [ ]
 
 
     list_display = (  'waybillnumber','balance_type','batch','charge_weight','cod',
