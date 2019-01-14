@@ -431,7 +431,7 @@ class DealTrail(models.Model):
     deal_staff = models.CharField(u'处理人', default='', max_length=500, blank=True)
     deal_time = models.DateTimeField(u'处理时间', auto_now=True, blank=True, null=True)
     deal_action = models.CharField(u'处理动作', default='', max_length=100, blank=True)
-    deal_comments= models.CharField(u'处理备注', default='', max_length=100, blank=True)
+    deal_comments= models.CharField(u'处理备注', default='', max_length=100, blank=True,null=True)
 
 
     class Meta:
