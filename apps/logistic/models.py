@@ -265,13 +265,13 @@ class LogisticResendTrail(Package):
         cst_tz = timezone('Asia/Shanghai')
 
         if self.file_status =="OPEN":
-            if self.send_time is not None:
+            if self.feedback_time is not None:
                 now = datetime.now().replace(tzinfo=cst_tz)
                 return (now - self.feedback_time).days
             else:
                 return "没有发货信息"
         else:
-            if self.logistic_update_date is not None and self.send_time is not None:
+            if self.logistic_update_date is not None and self.feedback_time is not None:
                 return (self.logistic_update_date - self.feedback_time.date()).days
             else:
                 return "没有轨迹信息"
