@@ -269,12 +269,12 @@ class LogisticResendTrail(Package):
                 now = datetime.now().replace(tzinfo=cst_tz)
                 return (now - self.feedback_time).days
             else:
-                return "没有发货信息"
+                return "没有时间信息"
         else:
             if self.logistic_update_date is not None and self.feedback_time is not None:
                 return (self.logistic_update_date - self.feedback_time.date()).days
             else:
-                return "没有轨迹信息"
+                return "没有时间信息"
 
     cal_resend_date.short_description = "重新派送时间(天)"
     resend_date = property(cal_resend_date)
