@@ -15,13 +15,15 @@ from django.utils import timezone
 from django.db.models import Q
 
 @shared_task
-def updatelogistic_trail():
+def updatelogistic_trail(type=None):
 
+    if type == 1:
+        queryset = Package.objects.filter(file_status="OPEN")
 
-    queryset = Package.objects.filter(Q(update_trail_time__lt = (timezone.now()- timedelta(days=1)))|Q(update_trail_time__isnull = True),file_status= "OPEN")
-
-
-    #queryset = Package.objects.filter(file_status= "OPEN")
+    else:
+        queryset = Package.objects.filter(
+            Q(update_trail_time__lt=(timezone.now() - timedelta(days=1))) | Q(update_trail_time__isnull=True),
+            file_status="OPEN")
 
     total = queryset.count()
     n=0
