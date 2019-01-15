@@ -36,6 +36,8 @@ class Package(models.Model):
     response = models.CharField(choices=RESPONSE, max_length=20, default='NONE', verbose_name="责任")
     feedback = models.CharField(verbose_name="反馈原因", max_length=100, null=True, blank=True)
     feedback_time = models.DateTimeField(u'反馈时间', auto_now=False, null=True, blank=True)
+    resend_start_time = models.DateTimeField(u'重派启动时间', auto_now=False, null=True, blank=True)
+
 
     DEAL = (
         ("NONE", "待定"),
