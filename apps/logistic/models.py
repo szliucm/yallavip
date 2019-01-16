@@ -2,6 +2,7 @@ from django.db import models
 from django.utils.html import format_html
 from pytz import timezone
 from datetime import  datetime
+from orders.models import  Order
 from django.utils import timezone as dt
 
 
@@ -414,16 +415,33 @@ class OverseaPackage(Package):
         return self.logistic_no
 
 
-class Resell(Package):
-    class Meta:
-        proxy = True
+class Resell(models.Model):
+    package = models.ForeignKey(Package, null=True, on_delete=models.CASCADE,verbose_name="原包裹")
+    order = models.ForeignKey(Order, null=True, on_delete=models.CASCADE,verbose_name="原订单")
 
+    logistic_no = models.CharField(u'物流追踪号', default='', max_length=100, blank=True)
+
+    STATUS = (
+        ("NONE", "待处理"),
+
+
+        ("RETURNED", "海外仓"),
+        ("RETURNING", "退仓中"),
+
+        ("REDELIVERING", "二次销售派送中"),
+        ("RESELLOUT", "二次售罄"),
+    )
+
+    resell_status = models.CharField(choices=STATUS, max_length=50, default='NONE', verbose_name="海外仓销售状态",
+                                      blank=True)
+
+    class Meta:
         verbose_name = "海外仓销售"
         verbose_name_plural = verbose_name
 
 
     def __str__(self):
-        return self.logistic_no
+        return self.package.logistic_no
 
 class LogisticTrail(models.Model):
     waybillnumber = models.CharField(u'物流追踪号', default='', max_length=100, blank=True)

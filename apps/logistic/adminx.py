@@ -1352,130 +1352,22 @@ class LogisticResendTrailAdmin(object):
 
 
 
-
+@xadmin.sites.register(Resell)
 class ResellAdmin(object):
-    def order_no(self, obj):
-        orders = Order.objects.filter(logistic_no=obj.logistic_no)
-        order_nos = ''
-        for order in orders:
-            if (order == None):
-                continue
-            order_nos = str(order_nos) + str(order.order_no) + str(',')
-        return order_nos
 
-    order_no.short_description = "订单号"
 
-    actions = ['batch_listing','batch_unlisting','batch_sellout','batch_destroyed',
-               'batch_redelivering','batch_sellout',
-         ]
+    actions = []
 
-    list_display = ('logistic_no',  'refer_no',
+    list_display = ('package',  'order',
                     #'yallavip_package_status',
                     'resell_status',
-                    'logistic_update_date', 'logistic_update_status',
-                    'sec_logistic_no',
-                    'order_no',
+                    'logistic_no',
 
                     )
-    list_editable = [ 'sec_logistic_no']
-    search_fields = ['logistic_no']
-    list_filter = ( 'yallavip_package_status','resell_status')
-    ordering = ['-logistic_no']
-
-    def puzzle_skus(self, skus):
-        try:
-            img_src = "https://cdn.shopify.com/s/files/1/2729/0740/product/8738586671_437606724_415.jpg?v=1539846787"
-            response = requests.get(img_src)
-            print(response)
-            im = Image.open(BytesIO(response.content))
-            print("im")
-
-
-
-        except:
-            return None
-
-        if len(skus) < 3:
-
-            out_img = clipResizeImg_new(im, 900, 900)
-        else:
-            out_img = clipResizeImg_new(im, 900, 900)
-
-        return out_img
-
-
-    def batch_listing(self, request, queryset):
-
-
-        for row in queryset:
-            orders = Order.objects.filter(logistic_no = row.logistic_no)
-            dest_shop = "yallavip-saudi"
-            create_product(dest_shop, orders )
-
-
-            for order in orders:
-                    '''
-                #订单详情先不管
-                order_amount = order.order_amount       #订单金额
-                skus = []
-                orderdetails= order.order_orderdetail.all()
-
-                for orderdetail in orderdetails:
-                    try:
-                        sku = Product.objects.get(sku = orderdetail.sku)
-                    except:
-                        continue
-
-                    sku_info = {
-                        'sku' : orderdetail.sku,
-                        'sku_product_quantity' : orderdetail.product_quantity,
-                        'sku_price': orderdetail.price,
-                        'sku_value': float(orderdetail.product_quantity) *  float(orderdetail.price),
-                        'sku_ref_price': sku.ref_price,
-                        'sku_img': sku.img,
-                    }
-                    skus.append(sku_info)
-                skus = sorted(skus, key=operator.itemgetter('sku_value'),reverse=True)
-                print("sorted skus", skus)
-
-                img = self.puzzle_skus(skus)
-                print("img", img)
-                '''
-
-
-
-
-
-        queryset.update(resell_status="LISTING")
-        return
-
-    batch_listing.short_description = "批量上架"
-
-    def batch_unlisting(self, request, queryset):
-        queryset.update(resell_status="UNLISTING")
-        return
-
-    batch_unlisting.short_description = "批量下架"
-
-    def batch_redelivering(self, request, queryset):
-        queryset.update(package_status="REDELIVERING")
-        return
-
-    batch_redelivering.short_description = "批量派送中"
-
-    def batch_redelivering(self, request, queryset):
-        queryset.update(resell_status="REDELIVERING",yallavip_package_status="REDELIVERING")
-        return
-
-    batch_redelivering.short_description = "批量二次销售派送中"
-
-    def batch_sellout(self, request, queryset):
-        queryset.update(resell_status="SELLOUT",yallavip_package_status="SELLOUT")
-        return
-
-    batch_sellout.short_description = "批量售罄"
-
-
+    list_editable = []
+    search_fields = ['package__logistic_no']
+    list_filter = ( )
+    ordering = []
 
     def get_list_queryset(self):
         """批量查询订单号"""
@@ -1493,7 +1385,7 @@ xadmin.site.register(Package,PackageAdmin)
 #xadmin.site.register(LogisticSupplier,LogisticSupplierAdmin)
 #xadmin.site.register(OverseaPackage,OverseaPackageAdmin)
 xadmin.site.register(LogisticCustomerService,LogisticCustomerServiceAdmin)
-xadmin.site.register(Resell,ResellAdmin)
+#xadmin.site.register(Resell,ResellAdmin)
 
 
 class LogisticBalanceResource(resources.ModelResource):
