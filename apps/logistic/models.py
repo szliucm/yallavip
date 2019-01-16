@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.html import format_html
 from pytz import timezone
 from datetime import  datetime
 from django.utils import timezone as dt
@@ -231,16 +232,6 @@ class LogisticCustomerService(Package):
     def cal_waite_date(self):
         cst_tz = timezone('Asia/Shanghai')
 
-        if supply_status == "NORMAL":
-            color_code = 'green'
-        else:
-            color_code = 'red'
-
-        return format_html(
-            '<span style="color:{};">{}</span>',
-            color_code,
-            supply_status,
-        )
 
 
         if self.file_status =="OPEN":
