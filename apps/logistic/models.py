@@ -283,7 +283,7 @@ class LogisticCustomerService(Package):
             return "已关闭"
 
     cal_problem_date.short_description = "问题单累计处理时间"
-    cal_problem_date = property(cal_problem_date)
+    problem_date = property(cal_problem_date)
 
     def cal_waite_date(self):
         cst_tz = timezone('Asia/Shanghai')

@@ -869,7 +869,7 @@ class LogisticCustomerServiceAdmin(object):
                     #'yallavip_package_status','problem_type', 'response',
 
                     'logistic_update_date', 'logistic_update_status', 'logistic_update_locate',
-
+                    'problem_date','problem_trail',
                      'feedback', 'deal', 'feedback_time',
                     "total_date", "lost_date","waite_date",
 
