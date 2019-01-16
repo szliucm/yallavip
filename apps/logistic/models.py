@@ -240,12 +240,15 @@ class LogisticCustomerService(Package):
                 days = (now - self.feedback_time).days
                 if days >= 3:
                     color_code = 'red'
+                    days =  str(days) +"  (超时!)"
+
                 else:
                     color_code = 'greed'
 
                 return format_html(
                     '<span style="color:{};">{}</span>',
                     color_code,
+
                     days,
                 )
             else:
