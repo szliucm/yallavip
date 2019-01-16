@@ -1373,8 +1373,7 @@ class ResellAdmin(object):
         deal_list = ["RETURNED",
                      "REDELIVERING",
                      ]
-        return qs.filter( file_status="OPEN",
-                          yallavip_package_status__in=deal_list)
+        return qs.filter( yallavip_package_status__in=deal_list)
 
     def get_list_queryset(self):
         """批量查询订单号"""
