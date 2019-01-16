@@ -1358,16 +1358,23 @@ class ResellAdmin(object):
 
     actions = []
 
-    list_display = ('package',  'order',
+    list_display = ('logistic_no',  'yallavip_package_status',
                     #'yallavip_package_status',
                     'resell_status',
-                    'logistic_no',
 
                     )
     list_editable = []
-    search_fields = ['package__logistic_no']
+    search_fields = ['logistic_no']
     list_filter = ( )
     ordering = []
+
+    def queryset(self):
+        qs = super().queryset()
+        deal_list = ["RETURNED",
+                     "REDELIVERING",
+                     ]
+        return qs.filter( file_status="OPEN",
+                          yallavip_package_status__in=deal_list)
 
     def get_list_queryset(self):
         """批量查询订单号"""
@@ -1676,8 +1683,7 @@ class MultiPackageAdmin(object):
     # 多包裹，但是没有子单号的，都会出现在此
     def queryset(self):
         qs = super().queryset()
-        return qs.filter(warehouse_check ="MULTIPACKAGE")
-                         #file_status="OPEN")
+        return qs.filter(warehouse_check ="MULTIPACKAGE",child_packages="NONE")
 
     def get_list_queryset(self):
         """批量查询订单号"""

@@ -415,7 +415,8 @@ class OverseaPackage(Package):
         return self.logistic_no
 
 
-class Resell(models.Model):
+class Resell(Package):
+    '''
     package = models.ForeignKey(Package, null=True, on_delete=models.CASCADE,verbose_name="原包裹")
     order = models.ForeignKey(Order, null=True, on_delete=models.CASCADE,verbose_name="原订单")
 
@@ -434,14 +435,16 @@ class Resell(models.Model):
 
     resell_status = models.CharField(choices=STATUS, max_length=50, default='NONE', verbose_name="海外仓销售状态",
                                       blank=True)
+    '''
 
     class Meta:
+        proxy = True
         verbose_name = "海外仓销售"
         verbose_name_plural = verbose_name
 
 
     def __str__(self):
-        return self.package.logistic_no
+        return self.logistic_no
 
 class LogisticTrail(models.Model):
     waybillnumber = models.CharField(u'物流追踪号', default='', max_length=100, blank=True)

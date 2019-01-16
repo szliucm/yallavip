@@ -137,10 +137,11 @@ def sync_balance(type):
 
     packages_to_sync.objects.update(file_status="CLOSED")
     '''
-    if type == 1:
+    if type == "DELIVERED":
         #更新已对账的包裹的状态
-        mysql = "update logistic_package set file_status = 'CLOSED' WHERE file_status = 'OPEN'  and logistic_no  IN  (SELECT  waybillnumber as logistic_no FROM logistic_logisticbalance  where balance_type in ('COD','RETURN') )"
-
+        mysql = "update logistic_package set file_status = 'CLOSED' , yallavip_package_status = 'DELIVERED' WHERE file_status = 'OPEN'  and logistic_no  IN  (SELECT  waybillnumber as logistic_no FROM logistic_logisticbalance  where balance_type in ('COD') )"
+    elif type == "RETURNED":
+        mysql = "update logistic_package set file_status = 'CLOSED' , yallavip_package_status = 'RETURNED' WHERE file_status = 'OPEN'  and logistic_no  IN  (SELECT  waybillnumber as logistic_no FROM logistic_logisticbalance  where balance_type in ('RETURN') )"
     elif type == 2:
         #将物流轨迹显示“Delivered”的包裹标记成待对账
         mysql = "update logistic_package set warehouse_check = 'TOREFUND', wait_status=TRUE WHERE file_status = 'OPEN'  and warehouse_check='NONE' and logistic_update_status='Delivered' "
@@ -159,6 +160,7 @@ def sync_balance(type):
                 "'delivery info incorrect/incomplete/missing'," \
                 "'unsendable - incomplete/incorrect delivery address'"\
                 ") "%(dt.now().strftime("%Y-%m-%d %H:%M:%S"))
+
 
     my_custom_sql(mysql)
 
@@ -204,3 +206,6 @@ def sync_logistic_sendtime():
         order = Order.objects.filter(logistic_no=row.logistic_no,).first()
         if order is not None:
             Package.objects.filter(pk=row.pk).update(send_time = order.send_time)
+
+
+
