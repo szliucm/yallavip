@@ -187,7 +187,7 @@ def sync_logistic_problem():
     queryset = Package.objects.all()
     for row in queryset:
         trail = LogisticTrail.objects.filter(waybillnumber=row.logistic_no,
-                                             logistic_update_status__in =[
+                                             trail_status__in =[
                         'delivery address corrected/changed - delivery rescheduled as per customer request',
                         'receiver unable to be connected',
                         'receiver refused to accept the shipment',
