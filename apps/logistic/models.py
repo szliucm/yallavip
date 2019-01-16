@@ -327,7 +327,8 @@ class LogisticResendTrail(Package):
                     color_code = 'red'
                     days = "还没开始重派"
                 else:
-                    color_code = 'greed'
+                    color_code = 'green'
+                    days = days + " 物流有更新"
 
                 return format_html(
                     '<span style="color:{};">{}</span>',
