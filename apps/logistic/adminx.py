@@ -1257,11 +1257,11 @@ class LogisticResendTrailAdmin(object):
 
     batch_redelivering.short_description = "重新派送中"
 
-    list_display = ('logistic_no', 'send_time', 'logistic_start_date', 'yallavip_package_status',
-                    'resend_date',
-                    'logistic_update_date', 'logistic_update_status', 'logistic_update_locate',
+    list_display = ('logistic_no', 'send_time',
 
-                    'problem_type', 'response', 'feedback', 'deal', 'feedback_time',
+                    'logistic_update_date', 'logistic_update_status', 'logistic_update_locate',
+                    'feedback', 'deal', 'feedback_time',
+                    'resend_date',"resend_stat",
                     'order_no', 'order_comment', 'receiver_phone',
                     'show_conversation')
     list_editable = ['feedback', ]

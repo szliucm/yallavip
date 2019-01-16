@@ -170,7 +170,19 @@ class Package(models.Model):
         if self.file_status =="OPEN":
             if self.logistic_start_date is not None:
                 now = datetime.now().replace(tzinfo=cst_tz)
-                return (now.date() - self.logistic_start_date).days
+                days = (now.date() - self.logistic_start_date).days
+
+                if days > 40:
+                    color_code = 'red'
+                    days = days + " (超时了！)"
+                else:
+                    color_code = 'greed'
+
+                return format_html(
+                    '<span style="color:{};">{}</span>',
+                    color_code,
+                    days,
+                )
             else:
                 return "没有轨迹信息"
         else:
@@ -301,8 +313,38 @@ class LogisticResendTrail(Package):
             else:
                 return "没有时间信息"
 
-    cal_resend_date.short_description = "重新派送时间(天)"
+    cal_resend_date.short_description = "反馈重派时间(天)"
     resend_date = property(cal_resend_date)
+
+    def cal_resend_stat(self):
+        cst_tz = timezone('Asia/Shanghai')
+
+        if self.file_status =="OPEN":
+            if self.feedback_time is not None and self.logistic_update_date is not None:
+                days = (self.logistic_update_date - self.feedback_time.date()).days
+
+                if days <0 :
+                    color_code = 'red'
+                    days = "还没开始重派"
+                else:
+                    color_code = 'greed'
+
+                return format_html(
+                    '<span style="color:{};">{}</span>',
+                    color_code,
+                    days,
+                )
+
+            else:
+                return "没有时间信息"
+        else:
+            if self.logistic_update_date is not None and self.feedback_time is not None:
+                return (self.logistic_update_date - self.feedback_time.date()).days
+            else:
+                return "没有时间信息"
+
+    cal_resend_stat.short_description = "重派动态"
+    resend_stat = property(cal_resend_stat)
 
     class Meta:
         proxy = True
