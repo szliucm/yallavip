@@ -254,10 +254,39 @@ class LogisticSupplier(Package):
         return self.logistic_no
 
 class LogisticCustomerService(Package):
+    def cal_problem_date(self):
+        cst_tz = timezone('Asia/Shanghai')
+        if self.file_status == "OPEN":
+            if self.problem_time is not None:
+                now = datetime.now().replace(tzinfo=cst_tz)
+                days = (now - self.problem_time).days
+                if days >= 3:
+                    color_code = 'red'
+                    days = str(days) + "  (超时!)"
+                else:
+                    color_code = 'greed'
+
+                return format_html(
+                    '<span style="color:{};">{}</span>',
+                    color_code,
+
+                    days,
+                )
+            else:
+                return format_html(
+                    '<span style="color:{};">{}</span>',
+                    'red',
+                    "没有问题单时间",
+                )
+
+        else:
+            return "已关闭"
+
+    cal_problem_date.short_description = "问题单累计处理时间"
+    cal_problem_date = property(cal_problem_date)
+
     def cal_waite_date(self):
         cst_tz = timezone('Asia/Shanghai')
-
-
 
         if self.file_status =="OPEN":
             if self.feedback_time is not None:
