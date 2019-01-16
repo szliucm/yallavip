@@ -35,25 +35,37 @@ class Package(models.Model):
         ("YALLAVIP", "YallaVIP"),
     )
     response = models.CharField(choices=RESPONSE, max_length=20, default='NONE', verbose_name="责任")
+
+    problem_time = models.DateTimeField(u'问题单发生时间', auto_now=False, null=True, blank=True)
+
     feedback = models.CharField(verbose_name="反馈原因", max_length=100, null=True, blank=True)
     feedback_time = models.DateTimeField(u'反馈时间', auto_now=False, null=True, blank=True)
     resend_start_time = models.DateTimeField(u'重派启动时间', auto_now=False, null=True, blank=True)
 
 
     DEAL = (
+        #未处理和处理中
         ("NONE", "待定"),
         ("WAITING", "沟通中"),
 
-
+        #转到仓库待对账
         ("DELIVERED", "已签收"),
-        ("REFUSED", "拒签"),
-        ("RE_DELIVER", "重新派送"),
-        ("LOSTCONNECT", "无法联系"),
 
+        #处理结果待经理确认
+        ("REFUSED", "拒签"),
+        ("LOSTCONNECT", "无法联系"),
         ("LOST", "丢件"),
+
+        #转入重派跟踪
+        ("RE_DELIVER", "重新派送"),
+
+        #向物流公司提交重派，跟踪重派动态
         ("RE_DELIVERING", "重新派送中"),
 
-
+        #重派结果：成功，失败，没有重派
+        ("RE_SUCCESS", "重新成功"),
+        ("RE_FAIL", "重新失败"),
+        ("RE_NODO", "没有重新"),
 
         #("RETURNING", "退仓中"),
         #("RETURNED", "已退到仓库"),

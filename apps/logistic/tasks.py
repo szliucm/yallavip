@@ -2,6 +2,7 @@
 from __future__ import absolute_import, unicode_literals
 import numpy as np, re
 from celery import shared_task,task
+from django.utils import timezone as dt
 
 
 import requests
@@ -149,13 +150,14 @@ def sync_balance(type):
         #                      "DELIVERY INFO INCORRECT/INCOMPLETE/MISSING"
         #                      的包裹标记成问题单
 
-        mysql = "update logistic_package set yallavip_package_status = 'PROBLEM' where logistic_update_status in (" \
+        mysql = "update logistic_package set yallavip_package_status = 'PROBLEM' ,problem_time = %s " \
+                " where deal = 'NONE' and logistic_update_status in (" \
                 "'delivery address corrected/changed - delivery rescheduled as per customer request',"\
                 "'receiver unable to be connected'," \
                 "'receiver refused to accept the shipment'," \
                 "'delivery info incorrect/incomplete/missing'," \
                 "'unsendable - incomplete/incorrect delivery address'"\
-                ") "
+                ") "%(dt.now())
 
     my_custom_sql(mysql)
 
