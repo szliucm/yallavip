@@ -194,5 +194,5 @@ def sync_logistic_problem():
                         'delivery info incorrect/incomplete/missing',
                         'unsendable - incomplete/incorrect delivery address']
                                              ).order_by("trail_time").first()
-        Package.objects.filter(pk=row.pk).update(yallavip_package_status = 'PROBLEM' ,problem_trail = row.trail_status, problem_time = trail.trail_time)
+        Package.objects.filter(pk=row.pk).update(yallavip_package_status = 'PROBLEM' ,problem_trail = trail.trail_status, problem_time = trail.trail_time)
 
