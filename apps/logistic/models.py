@@ -249,7 +249,12 @@ class LogisticCustomerService(Package):
                     days,
                 )
             else:
-                return "没有沟通信息"
+                return format_html(
+                    '<span style="color:{};">{}</span>',
+                    'red',
+                    "没有沟通",
+                )
+
         else:
            return "已关闭"
 
