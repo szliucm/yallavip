@@ -61,7 +61,7 @@ class Package(models.Model):
         ("RE_DELIVER", "重新派送"),
 
         #向物流公司提交重派，跟踪重派动态
-        ("RE_DELIVERING", "重新派送中"),
+        ("RE_DELIVERING", "已通知物流重派"),
 
         #重派结果：成功，失败，没有重派
         ("RE_SUCCESS", "重新成功"),
@@ -187,7 +187,7 @@ class Package(models.Model):
 
                 if days > 40:
                     color_code = 'red'
-                    days = days + " (超时了！)"
+                    days = str(days) + " (超时了！)"
                 else:
                     color_code = 'greed'
 

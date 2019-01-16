@@ -1255,7 +1255,7 @@ class LogisticResendTrailAdmin(object):
         return queryset.update(deal=deal, feedback_time=dt.now())
 
 
-    batch_redelivering.short_description = "重新派送中"
+    batch_redelivering.short_description = "已通知物流重派"
 
     list_display = ('logistic_no', 'send_time',
 
