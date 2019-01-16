@@ -150,14 +150,14 @@ def sync_balance(type):
         #                      "DELIVERY INFO INCORRECT/INCOMPLETE/MISSING"
         #                      的包裹标记成问题单
 
-        mysql = "update logistic_package set yallavip_package_status = 'PROBLEM' ,problem_time = %s " \
+        mysql = "update logistic_package set yallavip_package_status = 'PROBLEM' ,problem_time = '%s' " \
                 " where deal = 'NONE' and logistic_update_status in (" \
                 "'delivery address corrected/changed - delivery rescheduled as per customer request',"\
                 "'receiver unable to be connected'," \
                 "'receiver refused to accept the shipment'," \
                 "'delivery info incorrect/incomplete/missing'," \
                 "'unsendable - incomplete/incorrect delivery address'"\
-                ") "%(dt.now())
+                ") "%(dt.now().strftime("%Y-%m-%d %H:%M:%S"))
 
     my_custom_sql(mysql)
 
@@ -182,3 +182,17 @@ def my_custom_sql(mysql):
 
 ##################### 没有轨迹的订单
 #      select * from logistic_package where datediff(logistic_update_date , logistic_start_date)  <6 and datediff(CURDATE(), logistic_start_date) >20 and file_status = "OPEN" and wait_status = false
+
+def sync_logistic_problem():
+    queryset = Package.objects.all()
+    for row in queryset:
+        trail = LogisticTrail.objects.filter(waybillnumber=row.logistic_no,
+                                             logistic_update_status__in =[
+                        'delivery address corrected/changed - delivery rescheduled as per customer request',
+                        'receiver unable to be connected',
+                        'receiver refused to accept the shipment',
+                        'delivery info incorrect/incomplete/missing',
+                        'unsendable - incomplete/incorrect delivery address']
+                                             ).order_by("trail_time").first()
+        Package.objects.filter(pk=row.pk).update(yallavip_package_status = 'PROBLEM' ,problem_time = trail.trail_time)
+
