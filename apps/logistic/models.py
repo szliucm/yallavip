@@ -41,17 +41,19 @@ class Package(models.Model):
 
     DEAL = (
         ("NONE", "待定"),
+        ("WAITING", "沟通中"),
 
-        ("LOST", "丢件"),
 
         ("DELIVERED", "已签收"),
-
-        ("WAITING", "沟通中"),
+        ("REFUSED", "拒签"),
         ("RE_DELIVER", "重新派送"),
+        ("LOSTCONNECT", "无法联系"),
+
+        ("LOST", "丢件"),
         ("RE_DELIVERING", "重新派送中"),
 
-        ("REFUSED", "拒签"),
-        ("LOSTCONNECT", "无法联系"),
+
+
         #("RETURNING", "退仓中"),
         #("RETURNED", "已退到仓库"),
     )
@@ -229,10 +231,32 @@ class LogisticCustomerService(Package):
     def cal_waite_date(self):
         cst_tz = timezone('Asia/Shanghai')
 
+        if supply_status == "NORMAL":
+            color_code = 'green'
+        else:
+            color_code = 'red'
+
+        return format_html(
+            '<span style="color:{};">{}</span>',
+            color_code,
+            supply_status,
+        )
+
+
         if self.file_status =="OPEN":
             if self.feedback_time is not None:
                 now = datetime.now().replace(tzinfo=cst_tz)
-                return (now - self.feedback_time).days
+                days = (now - self.feedback_time).days
+                if days >= 3:
+                    color_code = 'red'
+                else:
+                    color_code = 'greed'
+
+                return format_html(
+                    '<span style="color:{};">{}</span>',
+                    color_code,
+                    days,
+                )
             else:
                 return "没有沟通信息"
         else:

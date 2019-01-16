@@ -148,7 +148,14 @@ def sync_balance(type):
         #                      "receiver refused to accept the shipment",
         #                      "DELIVERY INFO INCORRECT/INCOMPLETE/MISSING"
         #                      的包裹标记成问题单
-        mysql = "update logistic_package set yallavip_package_status = 'PROBLEM' where logistic_update_status in ('RECEIVER UNABLE TO BE CONNECTED','receiver refused to accept the shipment','DELIVERY INFO INCORRECT/INCOMPLETE/MISSING') "
+
+        mysql = "update logistic_package set yallavip_package_status = 'PROBLEM' where logistic_update_status in (" \
+                "'delivery address corrected/changed - delivery rescheduled as per customer request',"\
+                "'receiver unable to be connected'," \
+                "'receiver refused to accept the shipment'," \
+                "'delivery info incorrect/incomplete/missing'," \
+                "'unsendable - incomplete/incorrect delivery address'"\
+                ") "
 
     my_custom_sql(mysql)
 

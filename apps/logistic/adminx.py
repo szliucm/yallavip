@@ -858,7 +858,7 @@ class LogisticCustomerServiceAdmin(object):
         #'batch_type',
         #'batch_contact', 'batch_refuse', 'batch_info_error', 'batch_lost',
 
-        'batch_deal',
+        #'batch_deal',
          'batch_wait','batch_delivered', 'batch_redeliver','batch_refused','batch_lostconnect',
 
         #'batch_redelivering', 'batch_returning', 'batch_returned',
