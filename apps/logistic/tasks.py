@@ -12,6 +12,7 @@ from _datetime import datetime,timedelta
 import  pytz
 #from django.utils import timezone as datetime
 from .models import Package, LogisticTrail
+from orders.models import  Order
 from django.utils import timezone
 from django.db.models import Q
 
@@ -197,3 +198,9 @@ def sync_logistic_problem():
         if trail is not None:
             Package.objects.filter(pk=row.pk).update(yallavip_package_status = 'PROBLEM' ,problem_trail = trail.trail_status, problem_time = trail.trail_time)
 
+def sync_logistic_sendtime():
+    queryset = Package.objects.all()
+    for row in queryset:
+        order = Order.objects.filter(logistic_no=row.logistic_no,).first()
+        if order is not None:
+            Package.objects.filter(pk=row.pk).update(send_time = order.send_time)
