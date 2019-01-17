@@ -1252,7 +1252,7 @@ class LogisticResendTrailAdmin(object):
         # 定义actions函数
         deal = "RE_DELIVERING"
         self.deal_trail(queryset, deal)
-        return queryset.update(deal=deal, feedback_time=dt.now())
+        return queryset.update(deal=deal, resend_start_time=dt.now())
 
 
     batch_redelivering.short_description = "已通知物流重派"
@@ -1262,7 +1262,7 @@ class LogisticResendTrailAdmin(object):
                     'logistic_update_date', 'logistic_update_status', 'logistic_update_locate',
                     "problem_date",
                     'feedback', 'deal', 'feedback_time',
-                    'resend_date',"resend_stat",
+                    'resend_date',"resend_stat","resend_start_time",
                     'order_no', 'order_comment', 'receiver_phone',
                     'show_conversation')
     list_editable = ['feedback', ]
