@@ -1260,6 +1260,7 @@ class LogisticResendTrailAdmin(object):
     list_display = ('logistic_no', 'send_time',
 
                     'logistic_update_date', 'logistic_update_status', 'logistic_update_locate',
+                    "problem_date",
                     'feedback', 'deal', 'feedback_time',
                     'resend_date',"resend_stat",
                     'order_no', 'order_comment', 'receiver_phone',
