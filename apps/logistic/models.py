@@ -421,26 +421,11 @@ class OverseaPackage(Package):
 
 
 class Resell(Package):
-    '''
-    package = models.ForeignKey(Package, null=True, on_delete=models.CASCADE,verbose_name="原包裹")
-    order = models.ForeignKey(Order, null=True, on_delete=models.CASCADE,verbose_name="原订单")
+    def cal_order(self):
+        return  Order.objects.filter(logistic_no = self.logistic_no)
 
-    logistic_no = models.CharField(u'物流追踪号', default='', max_length=100, blank=True)
-
-    STATUS = (
-        ("NONE", "待处理"),
-
-
-        ("RETURNED", "海外仓"),
-        ("RETURNING", "退仓中"),
-
-        ("REDELIVERING", "二次销售派送中"),
-        ("RESELLOUT", "二次售罄"),
-    )
-
-    resell_status = models.CharField(choices=STATUS, max_length=50, default='NONE', verbose_name="海外仓销售状态",
-                                      blank=True)
-    '''
+    cal_order.short_description = "相关订单"
+    order = property(cal_order)
 
     class Meta:
         proxy = True
