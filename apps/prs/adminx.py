@@ -19,6 +19,8 @@ import os,requests
 from django.conf import settings
 from apps.fb.fb_dev import get_token
 
+from .cate_action import SelectCategory
+
 @xadmin.sites.register(MyProduct)
 class MyProductAdmin(object):
     list_display = [ ]
@@ -435,7 +437,7 @@ class AliProductResource(resources.ModelResource):
         skip_unchanged = True
         report_skipped = True
         import_id_fields = ('offer_id',)
-        fields = ('created_time','created','offer_id','title_zh', 'price_range',"trade_info","sales_count",
+        fields = ('priority','created_time','created','offer_id','title_zh', 'price_range',"trade_info","sales_count",
                   'sku_info', 'sku_detail', 'params',"images", "shipping_from", "score",
                   'comments_count', "sid", "company_name",)
         # exclude = ()
@@ -480,7 +482,7 @@ class AliProductAdmin(object):
     list_filter = ["created","published","stopped",]
     list_editable = ["price_rate",]
     readonly_fields = ()
-    actions = ["reset_aliproduct","batch_stop",]
+    actions = ["reset_aliproduct","batch_stop",SelectCategory]
 
     def reset_aliproduct(self, request, queryset):
 
