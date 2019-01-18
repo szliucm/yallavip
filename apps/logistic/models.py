@@ -42,6 +42,8 @@ class Package(models.Model):
 
     feedback = models.CharField(verbose_name="反馈原因", max_length=100, null=True, blank=True)
     feedback_time = models.DateTimeField(u'反馈时间', auto_now=False, null=True, blank=True)
+
+    resend_commnet = models.CharField(verbose_name="重派", max_length=100, null=True, blank=True)
     resend_start_time = models.DateTimeField(u'重派启动时间', auto_now=False, null=True, blank=True)
 
 

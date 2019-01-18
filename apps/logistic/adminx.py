@@ -1262,10 +1262,10 @@ class LogisticResendTrailAdmin(object):
                     'logistic_update_date', 'logistic_update_status', 'logistic_update_locate',
                     "problem_date",
                     'feedback', 'deal', 'feedback_time',
-                    'resend_date',"resend_stat","resend_start_time",
+                    "resend_start_time","resend_commnet",'resend_date',"resend_stat",
                     'order_no', 'order_comment', 'receiver_phone',
                     'show_conversation')
-    list_editable = ['feedback', ]
+    list_editable = ['resend_commnet']
 
     search_fields = ['logistic_no']
     list_filter = ('logistic_start_date', 'logistic_update_date', 'logistic_update_status', 'deal', 'package_status',
