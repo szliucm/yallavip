@@ -178,6 +178,53 @@ def rejected_package():
 
     return  True
 
+#对过账，已退仓的上架二次销售
+#把拒签且未上架的产品发布到主站
+@shared_task
+def returned_package():
+
+    from logistic.models import  Package
+
+    from .shop_action import create_package_sku
+
+    dest_shop = "yallasale-com"
+    discount = 0.9
+    min_product_no = 999999999999999
+
+    packages = Package.objects.filter(yallavip_package_status = 'RETURNED', resell_status = "NONE" )
+    n=0
+
+    for package in packages:
+        order = Order.objects.filter(logistic_no=package.waybillnumber).first()
+        print("order",  order)
+        if not order:
+            print("cannot find the order",package.logistic_no )
+            continue
+
+        product_no,sku_created = create_package_sku(dest_shop, order, discount)
+        print(order,"created", product_no)
+
+
+        if sku_created:
+            if product_no < min_product_no:
+                min_product_no = product_no
+
+
+
+            Package.objects.filter(logistic_no=package.waybillnumber).update(resell_status="LISTING")
+        '''
+        n =n+1
+        if n>10:
+            break
+        else:
+            print("******", n)
+        '''
+
+    # 上传完后整体更新目标站数据
+    sync_shop(dest_shop, min_product_no)
+
+
+    return  True
 
 #生成海外仓包裹的视频
 @shared_task
@@ -576,7 +623,7 @@ def post_ali_shopify():
     # sync_shop(ori_shop)
     sync_shop(dest_shop)
 
-    aliproducts = AliProduct.objects.filter(created = True, published=False)
+    aliproducts = AliProduct.objects.filter(created = True, published=False,stopped=False)
     print("一共有%d 个1688产品信息待发布" % (aliproducts.count()))
     for aliproduct in aliproducts:
         post_to_shopify.delay(aliproduct.pk)

@@ -282,16 +282,6 @@ class MyProductResourcesAdmin(object):
         obj.save()
 
 
-@xadmin.sites.register(MyProductPackage)
-class MyProductPackageAdmin(object):
-    list_display = [ "shopifyvariant","order_no",  ]
-
-
-    search_fields = ["shopifyvariant","order_no" ,]
-    list_filter = []
-    list_editable = []
-    readonly_fields = ("shopifyvariant",)
-    actions = []
 
 
 @xadmin.sites.register(MyProductFb)

@@ -151,29 +151,7 @@ class MyProductShopify(MyProduct):
         return self.handle
 
 
-class MyProductPackage(MyProduct):
 
-    #shopifyvariant = models.ForeignKey('shop.ShopifyVariant', null=True, blank=True, verbose_name="shopify变体",
-     #                          related_name="variant_pacakge", on_delete=models.CASCADE)
-    order_no = models.CharField( default='', max_length=100, null=True, blank=True,
-                                verbose_name="原包裹号")
-    #skus = models.CharField( default='', max_length=100, null=True, blank=True,
-     #                           verbose_name="原包裹号")
-
-    class Meta:
-        verbose_name = "海外仓包裹"
-        verbose_name_plural = verbose_name
-
-    '''
-    def __init__(self):
-        self.obj_type = "OVERSEAS"
-        super().__init__(**kwargs)
-    '''
-
-
-    def __str__(self):
-
-        return str(self.id)
 
 class MyProductFb(models.Model):
     OBJ_TYPE = (
