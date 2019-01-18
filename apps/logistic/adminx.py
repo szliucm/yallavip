@@ -1261,7 +1261,7 @@ class LogisticResendTrailAdmin(object):
 
                     'logistic_update_date', 'logistic_update_status', 'logistic_update_locate',
                     "problem_date",
-                    'feedback', 'deal', 'feedback_time',
+                    #'feedback', 'deal', 'feedback_time',
                     "resend_start_time","resend_commnet",'resend_date',"resend_stat",
                     'order_no', 'order_comment', 'receiver_phone',
                     'show_conversation')
