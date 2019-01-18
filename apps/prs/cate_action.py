@@ -104,7 +104,7 @@ class SelectCategory(BaseActionView):
                 obj, created = AliProduct.objects.update_or_create(
                                 pk= aliproduct.pk,
                                 defaults={
-                                    'cate_code': category
+                                    'cate_code': category.code
                                 },
 
                             )
