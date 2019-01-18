@@ -1263,7 +1263,8 @@ class LogisticResendTrailAdmin(object):
                     "problem_date",
                     #'feedback', 'deal', 'feedback_time',
                     "resend_start_time","resend_commnet",'resend_date',"resend_stat",
-                    'order_no', 'order_comment', 'receiver_phone',
+                    'order_no', 'order_comment',
+                    # 'receiver_phone',
                     'show_conversation')
     list_editable = ['resend_commnet']
 
