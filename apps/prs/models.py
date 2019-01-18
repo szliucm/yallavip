@@ -329,7 +329,7 @@ class MyFbProduct(models.Model):
 
 class AliProduct(models.Model):
     offer_id = models.CharField(default='',max_length=300, null=True, blank=True, verbose_name="编号")
-    cate_code = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="品类")
+    cate_code = models.CharField(default='NONE', max_length=300, null=True, blank=True, verbose_name="品类")
 
     priority = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="优先级")
 
