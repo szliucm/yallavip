@@ -479,7 +479,7 @@ class AliProductAdmin(object):
     # 'sku_name','img',
 
     search_fields = ["offer_id","handle","sku_info"]
-    list_filter = ["created","published","stopped","cate_code",]
+    list_filter = ["created","published","stopped","cate_code","priority",]
     list_editable = ["price_rate",]
     readonly_fields = ()
     actions = ["reset_aliproduct","batch_stop",SelectCategory]
