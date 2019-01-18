@@ -431,12 +431,13 @@ def ali_list_get_info_shenjian():
 
 
         aliproducts = AliProduct_vendor.objects.filter(got=False)[:100]
-
+        url_list = []
 
         if  aliproducts.exists():
-            url_list = aliproducts.values_list('ali_url', flat=True)
-            print("#########",url_list)
+            #url_list = aliproducts.values_list('ali_url', flat=True)
+
             for aliproduct in aliproducts:
+                url_list.append(aliproduct.ali_url)
                 AliProduct_vendor.objects.filter(pk=aliproduct.pk).update(got=True)
 
         else:
