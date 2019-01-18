@@ -540,5 +540,30 @@ class AliProductAdmin(object):
 
 
 
+class AliProduct_vendorResource(resources.ModelResource):
+    ali_url = fields.Field(attribute='ali_url', column_name='链接')
+    vendor = fields.Field(attribute='vendor',column_name='供应商')
+    cate_code = fields.Field(attribute='cate_code', column_name='品类')
+
+    class Meta:
+        model = AliProduct_vendor
+        skip_unchanged = True
+        report_skipped = True
+        import_id_fields = ('ali_url',)
+        fields = ('ali_url','vendor','cate_code',)
+        # exclude = ()
 
 
+@xadmin.sites.register(AliProduct_vendor)
+class AliProduct_vendorAdmin(object):
+    import_export_args = {"import_resource_class": AliProduct_vendorResource,
+                          "export_resource_class": AliProduct_vendorResource}
+
+    list_display = [ "ali_url", "vendor","cate_code", "got", ]
+    # 'sku_name','img',
+
+    search_fields = ["ali_url",]
+    list_filter = ["vendor","got",]
+    list_editable = []
+    readonly_fields = ()
+    actions = []

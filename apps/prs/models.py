@@ -401,3 +401,19 @@ class Proxy(models.Model):
 
     def __str__(self):
         return str(self.ip)
+
+#单独抓取ali链接上新
+class AliProduct_vendor(models.Model):
+
+    ali_url = models.CharField(default='',max_length=300, null=True, blank=True, verbose_name="产品链接")
+    #priority = models.CharField(default='',max_length=300, null=True, blank=True, verbose_name="优先级")
+    vendor = models.CharField(default='',max_length=300, null=True, blank=True, verbose_name="供应商")
+    cate_code = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="品类")
+    got = models.BooleanField(default=False, null=True, blank=True, verbose_name="已抓取")
+
+    class Meta:
+        verbose_name = "供应商上新链接"
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return str(self.ip)
