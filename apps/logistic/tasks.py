@@ -42,6 +42,8 @@ def updatelogistic_trail(type=None):
 
         update_trail(row.logistic_no)
 
+    sync_balance(2)
+    sync_balance(3)
 
 
     return
