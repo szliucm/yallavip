@@ -427,19 +427,90 @@ def ali_list_get_info_shenjian():
 
     if status == "stopped":
         print("爬虫已停止, 准备开始新一轮爬取")
-        aliproducts = AliProduct.objects.filter(created = False, started=False)[:100]
+        #先抓供应商提供的产品列表
 
 
-        #print("一共有%d 个1688产品信息待抓取"%(aliproducts.count()))
+        aliproducts = AliProduct_vendor.objects.filter(got=False)[:100]
 
-        url_list = []
-        for aliproduct in aliproducts:
-            url_list.append("https://detail.1688.com/offer/%s.html"%(aliproduct.offer_id))
-            AliProduct.objects.filter(pk=aliproduct.pk).update(started=True)
+
+        if  aliproducts.exists():
+            url_list = aliproducts.values_list('ali_url', flat=True)
+            aliproducts.update(got=True)
+        else:
+            print("供应商提供的产品列表没有需要爬取的了")
+
+
+            #抓类目生成的列表
+            aliproducts = AliProduct.objects.filter(created = False, started=False)[:100]
+
+            #print("一共有%d 个1688产品信息待抓取"%(aliproducts.count()))
+            url_list = []
+            for aliproduct in aliproducts:
+                url_list.append("https://detail.1688.com/offer/%s.html"%(aliproduct.offer_id))
+                AliProduct.objects.filter(pk=aliproduct.pk).update(started=True)
+
+
+
         params= {}
 
         #params["crawlType"] = 3
         params["productUrl[]"] = url_list
+        #params["crawlDetail"] = False
+
+        # 创建爬虫类shenjian.Crawler
+        crawler = shenjian.Crawler(user_key, user_secret, appID)
+        try:
+            print("自定义设置")
+            result = crawler.config_custom(params)
+        except Exception as e:
+            print("自定义设置出错",str(e))
+            return  False
+
+
+        print("爬虫自定义设置结果", result)
+
+        result = crawler.start()
+        print("爬虫启动", result)
+    else:
+        print("爬取中，等待")
+
+    return  True
+
+#根据1688产品列表抓取产品详细信息（标题，规格，图片，价格）
+@shared_task
+def ali_url_get_info_shenjian():
+    import shenjian
+
+    user_key = "2aaa34471b-NjVhNDllMj"
+    user_secret = "kyYWFhMzQ0NzFiNj-63e08890b765a49"
+    appID = 3166948
+
+    #service = shenjian.Service(user_key, user_secret)
+
+    # 创建爬虫类shenjian.Crawler
+    crawler = shenjian.Crawler(user_key, user_secret, appID)
+
+    # 获取爬虫状态
+    result = crawler.get_status()
+    if result.get("code") == 0:
+        status = result["data"]["status"]
+    else:
+        status = "error"
+        reason = result["reason"]
+
+    if status == "stopped":
+        print("爬虫已停止, 准备开始新一轮爬取")
+        ali_urls = AliProduct_vendor.objects.filter(got = False).values_list('ali_url', flat=True)[:100]
+        if not ali_urls.exists():
+            print("没有需要爬取的了")
+            return False
+
+        #print("一共有%d 个1688产品信息待抓取"%(aliproducts.count()))
+
+        params= {}
+
+        #params["crawlType"] = 3
+        params["productUrl[]"] = ali_urls
         #params["crawlDetail"] = False
 
         # 创建爬虫类shenjian.Crawler
