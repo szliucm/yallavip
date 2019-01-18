@@ -416,4 +416,4 @@ class AliProduct_vendor(models.Model):
         verbose_name_plural = verbose_name
 
     def __str__(self):
-        return str(self.ip)
+        return str(self.ali_url)
