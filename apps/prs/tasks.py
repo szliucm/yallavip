@@ -192,7 +192,7 @@ def returned_package():
     min_product_no = 999999999999999
 
     packages = Package.objects.filter(yallavip_package_status = 'RETURNED', resell_status = "NONE" )
-    n=0
+    print("packages is ", packages)
 
     for package in packages:
         order = Order.objects.filter(logistic_no=package.waybillnumber).first()
