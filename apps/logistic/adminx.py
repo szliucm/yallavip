@@ -1241,11 +1241,11 @@ class LogisticResendTrailAdmin(object):
             DealTrail.objects.create(
                 package = row,
                 waybillnumber = row.logistic_no,
-                deal_type = "客服",
+                deal_type = "物流重派跟踪",
                 deal_staff = str(self.request.user),
                 deal_time = dt.now(),
                 deal_action = deal,
-                deal_comments = row.feedback
+                deal_comments = row.resend_commnet
             )
 
     def batch_redelivering(self, request, queryset):
