@@ -20,7 +20,7 @@ from django.db.models import Q
 def updatelogistic_trail(type=None):
 
     if type == 1:
-        queryset = Package.objects.filter(file_status="OPEN")
+        queryset = Package.objects.filter(file_status="OPEN").order_by("-send_time")
 
     else:
         queryset = Package.objects.filter(
