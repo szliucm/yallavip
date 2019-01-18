@@ -1361,12 +1361,12 @@ class ResellAdmin(object):
     actions = []
 
     list_display = ('logistic_no',  'yallavip_package_status',
-                    "order",
+                    "order_no","photos",
                     'resell_status',
 
                     )
     list_editable = []
-    search_fields = ['logistic_no']
+    search_fields = ['logistic_no',]
     list_filter = ( )
     ordering = []
 

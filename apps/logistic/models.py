@@ -3,7 +3,9 @@ from django.utils.html import format_html
 from pytz import timezone
 from datetime import  datetime
 from orders.models import  Order
+from fb.models import  MyPhoto
 from django.utils import timezone as dt
+from django.utils.safestring import mark_safe
 
 
 # Create your models here.
@@ -422,10 +424,35 @@ class OverseaPackage(Package):
 
 class Resell(Package):
     def cal_order(self):
-        return  Order.objects.filter(logistic_no = self.logistic_no)
+        orders = Order.objects.filter(logistic_no=self.logistic_no)
+
+        return  orders.first().order_no
 
     cal_order.short_description = "相关订单"
-    order = property(cal_order)
+    order_no = property(cal_order)
+
+    def cal_photo(self):
+        order_no = Order.objects.filter(logistic_no=self.logistic_no).first().order_no
+
+        if order_no is not None and order_no != "":
+            photos = MyPhoto.objects.filter(name__icontains=order_no)
+            img = ''
+
+            for photo in photos:
+                try:
+                    img = img +  '<a href="%s" target="view_window"><img src="%s" width="100px"></a>' % (photo.link, photo.picture)
+                except Exception as e:
+                    print("获取图片出错",e)
+
+            return mark_safe(img)
+
+        else:
+            photos = "没有订单"
+
+        return photos
+
+    cal_photo.short_description = "相关图片"
+    photos = property(cal_photo)
 
     class Meta:
         proxy = True
