@@ -413,6 +413,7 @@ class MyFbProductAdmin(object):
                     published_time = None)
 
 class AliProductResource(resources.ModelResource):
+    priority = fields.Field(attribute='priority', column_name='优先级')
     created_time = fields.Field(attribute='created_time', column_name='爬取时间(__time)')
     created = fields.Field(attribute='created',column_name='created')
     offer_id = fields.Field(attribute='offer_id', column_name='商品ID(pid)')
