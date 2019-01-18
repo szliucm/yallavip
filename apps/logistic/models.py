@@ -139,7 +139,7 @@ class Package(models.Model):
 
 
     )
-    resell_status = models.CharField(choices=RESELL_STATUS, max_length=50, default='UNLISTING', verbose_name="二次销售状态",
+    resell_status = models.CharField(choices=RESELL_STATUS, max_length=50, default='NONE', verbose_name="二次销售状态",
                                    blank=True)
 
     sec_logistic_no = models.CharField(u'二次物流追踪号', default='', max_length=100, blank=True)

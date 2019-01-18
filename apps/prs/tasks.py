@@ -195,7 +195,7 @@ def returned_package():
     print("packages is ", packages)
 
     for package in packages:
-        order = Order.objects.filter(logistic_no=package.waybillnumber).first()
+        order = Order.objects.filter(logistic_no=package.logistic_no).first()
         print("order",  order)
         if not order:
             print("cannot find the order",package.logistic_no )
@@ -211,7 +211,7 @@ def returned_package():
 
 
 
-            Package.objects.filter(logistic_no=package.waybillnumber).update(resell_status="LISTING")
+            Package.objects.filter(pk=package.pk).update(resell_status="LISTING")
         '''
         n =n+1
         if n>10:
