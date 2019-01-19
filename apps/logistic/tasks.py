@@ -188,6 +188,8 @@ def my_custom_sql(mysql):
 ##################### 没有轨迹的订单
 #      select * from logistic_package where datediff(logistic_update_date , logistic_start_date)  <6 and datediff(CURDATE(), logistic_start_date) >20 and file_status = "OPEN" and wait_status = false
 
+############更新包裹表对应的订单号
+#       update logistic_package l, orders_order o set l.ref_order_id  = o.id where l.logistic_no = o.logistic_no and l.ref_order_id is null
 def sync_logistic_problem():
     queryset = Package.objects.all()
     for row in queryset:

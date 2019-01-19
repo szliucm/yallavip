@@ -16,6 +16,7 @@ class Package(models.Model):
     ref_order = models.ForeignKey(Order, null=True, on_delete=models.CASCADE,
                                  verbose_name="相关订单")
 
+
     logistic_no = models.CharField(u'物流追踪号', default='', max_length=100, blank=True)
     refer_no = models.CharField(u'包裹号', max_length=50, null=True, blank=True)
     tracking_no = models.CharField(u'转单号', max_length=50, null=True, blank=True)
@@ -426,13 +427,6 @@ class OverseaPackage(Package):
 
 
 class Resell(Package):
-    def cal_order(self):
-        orders = Order.objects.filter(logistic_no=self.logistic_no)
-
-        return  orders.first().order_no
-
-    cal_order.short_description = "相关订单"
-    order_no = property(cal_order)
 
     def cal_photo(self):
         order_no = Order.objects.filter(logistic_no=self.logistic_no).first().order_no

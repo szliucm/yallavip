@@ -1361,7 +1361,9 @@ class ResellAdmin(object):
     actions = []
 
     list_display = ('logistic_no',  'yallavip_package_status',
-                    "order_no","photos",
+                    "ref_order",
+                    "ref_order__order_no","ref_order__order_amount",
+                    "photos",
                     'resell_status',
 
                     )
