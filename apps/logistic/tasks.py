@@ -209,5 +209,12 @@ def sync_logistic_sendtime():
         if order is not None:
             Package.objects.filter(pk=row.pk).update(send_time = order.send_time)
 
+def sync_logistic_order():
+    queryset = Package.objects.filter(ref_order__isnull=True)
+    for row in queryset:
+        order = Order.objects.filter(logistic_no=row.logistic_no,).first()
+        if order is not None:
+            Package.objects.filter(pk=row.pk).update(ref_order = order)
+
 
 

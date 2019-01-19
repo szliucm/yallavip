@@ -13,6 +13,9 @@ class Package(models.Model):
     super_package = models.ForeignKey('self', null=True, on_delete=models.CASCADE,
                                  verbose_name="父包裹")
 
+    ref_order = models.ForeignKey(Order, null=True, on_delete=models.CASCADE,
+                                 verbose_name="相关订单")
+
     logistic_no = models.CharField(u'物流追踪号', default='', max_length=100, blank=True)
     refer_no = models.CharField(u'包裹号', max_length=50, null=True, blank=True)
     tracking_no = models.CharField(u'转单号', max_length=50, null=True, blank=True)
