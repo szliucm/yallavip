@@ -1549,7 +1549,7 @@ class ClientServiceAdmin(object):
 
     def order_logistic_update_status(self, obj):
 
-        package = Package.objects.get(logistic_no=obj.order.logistic_no)
+        package = Package.objects.filter(logistic_no=obj.order.logistic_no).first()
 
         return package.logistic_update_status
         #return obj.order.logistic_update_status
