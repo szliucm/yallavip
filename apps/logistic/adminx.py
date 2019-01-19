@@ -1369,7 +1369,7 @@ class ResellAdmin(object):
                     )
     list_editable = []
     search_fields = ['logistic_no',"ref_order__order_no",]
-    list_filter = ( )
+    list_filter = ('resell_status',"ref_order__order_amount", )
     ordering = []
 
     def queryset(self):
