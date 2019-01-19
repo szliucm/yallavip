@@ -1362,13 +1362,13 @@ class ResellAdmin(object):
 
     list_display = ('logistic_no',  'yallavip_package_status',
                     "ref_order",
-                    "ref_order__order_no","ref_order__order_amount",
+                    "order_amount",
                     "photos",
                     'resell_status',
 
                     )
     list_editable = []
-    search_fields = ['logistic_no',]
+    search_fields = ['logistic_no',"ref_order__order_no",]
     list_filter = ( )
     ordering = []
 

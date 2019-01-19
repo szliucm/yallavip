@@ -427,6 +427,12 @@ class OverseaPackage(Package):
 
 
 class Resell(Package):
+    def cal_order_amount(self):
+        order_amount =self.ref_order.order_amount
+        return order_amount
+
+    cal_order_amount.short_description = "相关订单金额"
+    order_amount = property(cal_order_amount)
 
     def cal_photo(self):
         order_no = Order.objects.filter(logistic_no=self.logistic_no).first().order_no
