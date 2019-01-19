@@ -1365,12 +1365,13 @@ class ResellAdmin(object):
                     "order_amount",
                     "photos",
                     'resell_status',
+                    'image_created',
 
                     )
-    list_editable = []
+    list_editable = [ 'image_created',]
     search_fields = ['logistic_no',"ref_order__order_no",]
     list_filter = ('resell_status',"ref_order__order_amount", )
-    ordering = []
+    ordering = ["-ref_order",]
 
     def queryset(self):
         qs = super().queryset()

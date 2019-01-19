@@ -15,7 +15,9 @@ class Package(models.Model):
 
     ref_order = models.ForeignKey(Order, null=True, on_delete=models.CASCADE,
                                  verbose_name="相关订单")
+    image_created = models.BooleanField(default=False, verbose_name="包裹图片已处理")
 
+    #package_image = models.ImageField(u'包裹图片', upload_to='package/', default="", null=True, blank=True)
 
     logistic_no = models.CharField(u'物流追踪号', default='', max_length=100, blank=True)
     refer_no = models.CharField(u'包裹号', max_length=50, null=True, blank=True)
