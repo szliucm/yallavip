@@ -353,6 +353,7 @@ class Verify(models.Model):
 
     CITY = (
         ("未知", "未知"),
+
         ("abha", "Abha"),
         ("abqaiq", "Abqaiq"),
         ("abu areish", "Abu Areish"),
