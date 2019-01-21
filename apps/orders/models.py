@@ -352,7 +352,7 @@ class Verify(models.Model):
     conversation_link = models.CharField(u'会话链接', max_length=200, null=True, blank=True)
 
     CITY = (
-        ("未知", "未知"),
+#        ("未知", "未知"),
 
         ("abha", "Abha"),
         ("abqaiq", "Abqaiq"),

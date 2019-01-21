@@ -1232,7 +1232,7 @@ class VerifyAdmin(object):
 
     ordering = ['-order__order_time']
     list_editable = ['phone_1', 'phone_2','verify_comments','city',]
-    search_fields = ['order__order_no','verify_comments','cs_reply',"phone_1", ]
+    search_fields = ['order__order_no','verify_comments','cs_reply',"phone_1", "city",]
     list_filter = ('order__order_status','verify_status', 'sms_status', 'error_contact',"city",)
 
     model_icon = 'fa fa-address-book-o'
@@ -1614,15 +1614,17 @@ class ClientServiceAdmin(object):
 
     ordering = ['-order__order_time']
     list_display = ('order', 'order_time','order_status','order_logistic_update_status','supply_status', 'colored_verify_status', \
+                    'receiver_city', 'city',
                     'colored_sms_status',
+
                     #'cancel', 'error_money', 'error_contact', \
                     #'error_address', 'error_cod', 'error_note','error_timeout',
                      'receiver_phone', 'phone_1', 'phone_2','verify_comments', 'cs_reply', \
                     'facebook_user_name', 'sales', 'show_conversation')
 
-    list_editable = ['phone_1', 'phone_2', 'cs_reply',  ]
+    list_editable = ['phone_1', 'phone_2', 'cs_reply',  'city',]
     search_fields = ['order__order_no','verify_comments', 'phone_1','phone_2','facebook_user_name']
-    list_filter = ('verify_status','supply_status', 'sms_status', 'error_money', 'order__order_status','sales')
+    list_filter = ('verify_status','supply_status', 'sms_status', 'error_money', 'order__order_status','sales','city',)
     actions = ['batch_stop', 'batch_pause', 'batch_normal', ]
 
     '''
