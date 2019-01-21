@@ -546,6 +546,7 @@ class Verify(models.Model):
         ("udhaliyah", "Udhaliyah"),
         ("um aljamajim", "Um Aljamajim"),
         ("umluj", "Umluj"),
+        ("unayzah","Unayzah"),
         ("uqlat al suqur", "Uqlat Al Suqur"),
         ("uyun", "Uyun"),
         ("wadeien", "Wadeien"),
