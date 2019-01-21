@@ -1545,6 +1545,10 @@ class VerifyAdmin(object):
     '''
 
 class ClientServiceAdmin(object):
+    def receiver_city(self, obj):
+        return obj.order.receiver_city
+
+    receiver_city.short_description = "收货人城市"
 
     def order_status(self, obj):
         return obj.order.order_status
