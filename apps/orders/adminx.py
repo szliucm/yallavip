@@ -1199,10 +1199,10 @@ class VerifyAdmin(object):
 
     order_amount.short_description = "订单金额"
 
-    def receiver_country(self, obj):
-        return obj.order.receiver_country
+    def receiver_addr(self, obj):
+        return obj.order.receiver_addr1
 
-    receiver_country.short_description = "收货人国家"
+    receiver_addr.short_description = "收货人地址"
 
     def receiver_city(self, obj):
         return obj.order.receiver_city
@@ -1223,7 +1223,7 @@ class VerifyAdmin(object):
     readonly_fields = ('order', 'order_time',)
     list_display = ('order','order_sku_count','order_time', 'order_status','colored_verify_status', \
                     'colored_sms_status',
-                    'receiver_city','city',
+                    'receiver_city','city','receiver_addr',
 
                     'receiver_phone','phone_1', 'phone_2','warhouse_comment', 'verify_comments','verify_time','wait_status','cs_reply',\
                    'facebook_user_name', 'sales','show_conversation',)
@@ -1550,6 +1550,11 @@ class ClientServiceAdmin(object):
 
     receiver_city.short_description = "收货人城市"
 
+    def receiver_addr(self, obj):
+        return obj.order.receiver_addr1
+
+    receiver_addr.short_description = "收货人地址"
+
     def order_status(self, obj):
         return obj.order.order_status
     order_status.short_description = "订单状态"
@@ -1618,7 +1623,7 @@ class ClientServiceAdmin(object):
 
     ordering = ['-order__order_time']
     list_display = ('order', 'order_time','order_status','order_logistic_update_status','supply_status', 'colored_verify_status', \
-                    'receiver_city', 'city',
+                    'receiver_city', 'city','receiver_addr',
                     'colored_sms_status',
 
                     #'cancel', 'error_money', 'error_contact', \
@@ -1627,7 +1632,7 @@ class ClientServiceAdmin(object):
                     'facebook_user_name', 'sales', 'show_conversation')
 
     list_editable = ['phone_1', 'phone_2', 'cs_reply',  'city',]
-    search_fields = ['order__order_no','verify_comments', 'phone_1','phone_2','facebook_user_name']
+    search_fields = ['order__order_no','verify_comments', 'phone_1','phone_2','facebook_user_name','order__receiver_city']
     list_filter = ('verify_status','supply_status', 'sms_status', 'error_money', 'order__order_status','sales','city',)
     actions = ['batch_stop', 'batch_pause', 'batch_normal', ]
 
