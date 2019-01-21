@@ -151,12 +151,15 @@ class VerifyAdmin(object):
     def _order_status(self, obj):
         return obj.order.order_status
 
+    def _order_status(self, obj):
+        return obj.order.order_status
+
     def _buyer_name(self, obj):
         return obj.order.buyer_name
 
 
     readonly_fields = ('order_no', 'order_time',)
-    list_display = ('order', 'colored_verify_status', \
+    list_display = ('order', 'colored_verify_status', "city",\
                     'colored_sms_status', 'cancel', 'ori_phone', 'phone_1', 'phone_2', \
                     'error_money', 'error_contact', 'error_address', 'error_cod', 'error_note', \
                     'order_time','_order_status','_buyer_name')

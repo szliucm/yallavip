@@ -1222,15 +1222,18 @@ class VerifyAdmin(object):
 
     readonly_fields = ('order', 'order_time',)
     list_display = ('order','order_sku_count','order_time', 'order_status','colored_verify_status', \
-                    'colored_sms_status', 'receiver_phone','phone_1', 'phone_2','warhouse_comment', 'verify_comments','verify_time','wait_status','cs_reply',\
+                    'colored_sms_status',
+                    'receiver_city','city',
+
+                    'receiver_phone','phone_1', 'phone_2','warhouse_comment', 'verify_comments','verify_time','wait_status','cs_reply',\
                    'facebook_user_name', 'sales','show_conversation',)
 
     #'cancel', 'error_money', 'error_contact', \    'error_address', 'error_cod', 'error_note',
 
     ordering = ['-order__order_time']
-    list_editable = ['phone_1', 'phone_2','verify_comments']
+    list_editable = ['phone_1', 'phone_2','verify_comments','city',]
     search_fields = ['order__order_no','verify_comments','cs_reply',"phone_1", ]
-    list_filter = ('order__order_status','verify_status', 'sms_status', 'error_contact')
+    list_filter = ('order__order_status','verify_status', 'sms_status', 'error_contact',"city",)
 
     model_icon = 'fa fa-address-book-o'
 
