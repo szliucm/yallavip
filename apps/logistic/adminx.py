@@ -1704,9 +1704,9 @@ class MultiPackageAdmin(object):
 @xadmin.sites.register(ToBalance)
 class ToBalanceAdmin(object):
     list_display = ('logistic_no',
-                    "send_time", "logistic_start_date",
+                    "send_time",
                     'logistic_update_date', 'logistic_update_status',
-                    "total_date","cal_total_trans_date","lost_date",
+                    "total_date","lost_date",
                     "warehouse_check","warehouse_check_comments","warehouse_checktime","warehouse_check_manager",
 
                     )
