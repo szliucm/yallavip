@@ -1172,3 +1172,5 @@ def complete_aliproduct_shopify():
 
 
 
+# 更新相册对应的主页外键
+#update fb_myalbum a , fb_mypage p set a.mypage_id = p.id where p.page_no = a.page_no

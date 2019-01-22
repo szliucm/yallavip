@@ -1,22 +1,26 @@
 from django.db import models
-from fb.models import MyPhoto,MyFeed,MyAd
+from fb.models import MyPhoto,MyFeed,MyAd,MyAlbum
 
 from datetime import datetime
 
 
 # Create your models here.
 
-class MyProductCategory(models.Model):
+class MyCategory(models.Model):
     """
     商品类别
     """
+    super_cate = models.ForeignKey('self', blank=True,null=True, on_delete=models.CASCADE,
+                                 verbose_name="父品类")
     code = models.CharField(u'code', default='', max_length=256, null=True, blank=True)
+    '''
     cate_1 = models.CharField(u'cate_1', default='', max_length=256, null=True, blank=True)
     cate_2 = models.CharField(u'cate_2', default='', max_length=256, null=True, blank=True)
     cate_3 = models.CharField(u'cate_3', default='', max_length=256, null=True, blank=True)
-    album_name = models.CharField(u'相册名', default='', max_length=256, null=True, blank=True)
+    '''
+
     class Meta:
-        verbose_name = "商品类别"
+        verbose_name = "商品品类"
         verbose_name_plural = verbose_name
 
         app_label = 'prs'
@@ -61,8 +65,8 @@ class MyProductAli(models.Model):
 
     #myproduct = models.ForeignKey('MyProduct', null=True, blank=True, verbose_name="产品",
      #                           related_name="ali_product", on_delete=models.CASCADE)
-    myproductcate = models.ForeignKey('MyProductCategory', null=True, blank=False, verbose_name="产品类目",
-                                  related_name="ali_productcate", on_delete=models.CASCADE)
+    #myproductcate = models.ForeignKey('MyProductCategory', null=True, blank=False, verbose_name="产品类目",
+     #                             related_name="ali_productcate", on_delete=models.CASCADE)
     vendor_no = models.CharField(default='unknow', max_length=200,  null=True, blank=True, verbose_name="供应商编号")
 
 
@@ -108,8 +112,8 @@ class MyProductShopify(MyProduct):
 
     product_no = models.BigIntegerField(u'产品编号', default=0, null=True, blank=True)
 
-    myproductcate = models.ForeignKey('MyProductCategory', null=True, blank=False, verbose_name="产品类目",
-                                      related_name="shopify_productcate", on_delete=models.CASCADE)
+    #myproductcate = models.ForeignKey('MyProductCategory', null=True, blank=False, verbose_name="产品类目",
+     #                                 related_name="shopify_productcate", on_delete=models.CASCADE)
     myproductali = models.ForeignKey('MyProductAli', null=True, blank=True, verbose_name="货源",
                                   related_name="shop_ali", on_delete=models.CASCADE)
 
@@ -368,6 +372,34 @@ class AliProduct(models.Model):
     def __str__(self):
 
         return  self.offer_id
+
+class MyFbAlbumCate(models.Model):
+
+    myalbum = models.ForeignKey('fb.MyAlbum', null=False, blank=False, verbose_name="相册",
+                               related_name="myfbalbum_page", on_delete=models.CASCADE)
+
+
+    mycategory = models.ForeignKey(MyCategory, null=False, blank=False, verbose_name="品类",
+                               related_name="myfbalbum_cate", on_delete=models.CASCADE)
+
+    #cate_code = models.CharField(default='', max_length=100, null=True, blank=True, verbose_name="品类代码")
+    #album_name = models.CharField(default='', max_length=100, null=True, blank=True, verbose_name="相册")
+    #album_no = models.CharField(default='', max_length=100, null=True, blank=True, verbose_name="相册编码")
+
+    #published = models.BooleanField(default=False, verbose_name="发布状态")
+    #publish_error = models.CharField(default='',max_length=256, null=True, blank=True, verbose_name="发布错误(或图片数量)")
+    #published_time = models.DateTimeField(null=True, blank=True, verbose_name="发布时间")
+
+    cate_active = models.BooleanField(default=True, verbose_name="品类活跃状态")
+
+    class Meta:
+        verbose_name = "相册品类关联"
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+
+        return  self.myalbum.name
+
 
 class Proxy(models.Model):
     ip = models.CharField(default='',max_length=300, null=True, blank=True, verbose_name="ip")

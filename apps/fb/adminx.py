@@ -792,10 +792,14 @@ class MyAlbumAdmin(object):
     page_url_field.allow_tags = True
     page_url_field.short_description = 'Page'
 
+    def mypage(self, obj):
+        return obj.myalbum.mypage.page
 
-    list_display = [ "album_no","page_no","created_time", "name", "count", "like_count", "comment_count",]
-    search_fields = ['album_no', "page_no",]
-    list_filter = ("page_no", )
+    mypage.short_description = "主页"
+
+    list_display = [ "album_no","mypage","created_time", "name", "count", "like_count", "comment_count",]
+    search_fields = ['album_no', ]
+    list_filter = ("mypage","active", )
     ordering = ["-count"]
     actions = ["batch_update_albums", ]
 

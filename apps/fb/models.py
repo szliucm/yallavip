@@ -151,6 +151,8 @@ class MyFeed(models.Model):
         return  self.feed_no
 
 class MyAlbum(models.Model):
+    mypage = models.ForeignKey(MyPage, null=True, blank=True, verbose_name="主页",
+                               related_name="myalbum_page", on_delete=models.CASCADE)
     page_no = models.CharField(max_length=30, null=True, blank=True, verbose_name="PageID")
     album_no = models.CharField(default='', unique=True, max_length=50, blank=True, verbose_name="album_no")
     created_time = models.DateTimeField(null=True, blank=True, verbose_name="创建时间")

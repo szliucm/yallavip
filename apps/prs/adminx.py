@@ -4,6 +4,7 @@ __author__ = 'Aaron'
 import  json
 import xadmin
 from import_export import resources, fields
+from import_export.widgets import ForeignKeyWidget
 from django.db.models import Count
 import  re
 from django.utils.safestring import mark_safe
@@ -20,6 +21,36 @@ from django.conf import settings
 from apps.fb.fb_dev import get_token
 
 from .cate_action import SelectCategory
+
+
+class MyCategoryResource(resources.ModelResource):
+    super_cate = fields.Field(
+        column_name='super_cate',
+        attribute='super_cate',
+        widget=ForeignKeyWidget(MyCategory, 'code'))
+    code = fields.Field(attribute='code', column_name='code')
+
+    class Meta:
+        model = MyCategory
+        skip_unchanged = True
+        report_skipped = True
+        import_id_fields = ('code',)
+        fields = ('code',)
+        # exclude = ()
+
+@xadmin.sites.register(MyCategory)
+class MyCategoryAdmin(object):
+    import_export_args = {"import_resource_class": MyCategoryResource,
+                          "export_resource_class": MyCategoryResource}
+
+    list_display = ["super_cate", "code", ]
+
+
+    search_fields = ["code", ]
+    list_filter = [ ]
+    list_editable = []
+    readonly_fields = ()
+    actions = []
 
 @xadmin.sites.register(MyProduct)
 class MyProductAdmin(object):
@@ -530,6 +561,23 @@ class AliProductAdmin(object):
             queryset |= self.model.objects.filter(offer_id__in=query.split(","))
 
         return queryset
+
+
+@xadmin.sites.register(MyFbAlbumCate)
+class MyFbAlbumCateAdmin(object):
+    def mypage(self, obj):
+        return obj.myalbum.mypage.page
+
+    mypage.short_description = "主页"
+
+    list_display = ["mypage", "myalbum", "mycategory",  "cate_active", ]
+
+
+    search_fields = ["myalbum", ]
+    list_filter = ["myalbum__mypage","mycategory","cate_active", ]
+    list_editable = []
+    readonly_fields = ()
+    actions = []
 
 
 
