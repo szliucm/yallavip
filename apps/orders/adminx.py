@@ -236,6 +236,12 @@ class OrderAdmin(object):
             package = {}
             total_amount = 0
 
+            city = row.verify.city
+
+            if city == "暂不支持" or city is None:
+                print("城市暂不支持")
+                continue
+
             for orderdetail in orderdetails:
                 sku = orderdetail.sku.lower()
                 if sku.find("zh") ==0:
@@ -275,8 +281,8 @@ class OrderAdmin(object):
                                     print("product", product, cat, values)
 
 
-
-                elif sku.find("a") ==0:
+                else:
+                #elif sku.find("a") ==0:
                     #常规商品
 
                     variant = ShopifyVariant.objects.filter(sku = orderdetail.sku).first()
@@ -297,9 +303,11 @@ class OrderAdmin(object):
                                 values["amount"] = int(values.get("amount", "0")) + int(float(orderdetail.product_quantity) * float(orderdetail.price))
                                 package[cat]=  values
                                 print("product", product, cat, values, len(cat), type(cat))
+                '''
                 else:
                     print("暂不支持")
                     continue
+                '''
 
             invoiceinformation_list = []
             item_list = []
@@ -406,6 +414,7 @@ class OrderAdmin(object):
                                     "recipientcountry": "SA",
                                     "recipientpostcode": "",
                                     "recipientcity": row.receiver_city,
+                                    "recipientcity": city,
                                     "recipientstate": "",
                                     "recipienttown": "",
                                     "recipienthousenumber": "",

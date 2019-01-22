@@ -352,7 +352,7 @@ class Verify(models.Model):
     conversation_link = models.CharField(u'会话链接', max_length=200, null=True, blank=True)
 
     CITY = (
-        ("未知", "未知"),
+        ("暂不支持", "暂不支持"),
 
         ("abha", "Abha"),
         ("abqaiq", "Abqaiq"),
@@ -561,7 +561,27 @@ class Verify(models.Model):
         ("zahban ", "Zahban "),
         ("zulfi", "Zulfi"),
 
+
     )
+
+    #高签收地区，备用
+    '''
+           ("riyadh", "Riyadh"),
+           ("jeddah", "Jeddah"),
+           ("khobar", "Khobar"),
+           ("dammam", "Dammam"),
+           ("madinah", "Madinah"),
+           ("makkah", "Makkah"),
+           ("taif", "Taif"),
+           ("hofuf", "Hofuf"),
+           ("hail", "Hail"),
+           ("jubail", "Jubail"),
+           ("tabuk", "Tabuk"),
+           ("qatif", "Qatif"),
+           ("dhahran", "Dhahran"),
+           ("gizan", "Gizan"),
+
+    '''
 
     city = models.CharField(u'城市', choices=CITY,max_length=100, null=True, blank=True)
     class Meta:
