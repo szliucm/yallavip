@@ -374,9 +374,11 @@ class AliProduct(models.Model):
         return  self.offer_id
 
 class MyFbAlbumCate(models.Model):
+    mypage = models.ForeignKey('fb.MyPage', null=True, blank=True, verbose_name="主页",
+                               related_name="myfbalbum_page", on_delete=models.CASCADE)
 
     myalbum = models.ForeignKey('fb.MyAlbum', null=False, blank=False, verbose_name="相册",
-                               related_name="myfbalbum_page", on_delete=models.CASCADE)
+                               related_name="myfbalbum_album", on_delete=models.CASCADE)
 
 
     mycategory = models.ForeignKey(MyCategory, null=False, blank=False, verbose_name="品类",

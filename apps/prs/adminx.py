@@ -12,6 +12,7 @@ from xadmin.filters import manager as filter_manager, FILTER_PREFIX, SEARCH_VAR,
     RelatedFieldSearchFilter
 
 from .models import *
+from fb.models import MyPage,MyAlbum
 from shop.models import Shop,ShopifyProduct, ShopifyImage,ShopifyVariant,ShopifyOptions
 from .choose_target import ChoosePage
 
@@ -562,9 +563,60 @@ class AliProductAdmin(object):
 
         return queryset
 
+class MyFbAlbumCateResource(resources.ModelResource):
+    mypage = fields.Field(
+        column_name='mypage',
+        attribute='mypage',
+        widget=ForeignKeyWidget(MyPage, 'page'))
+
+    '''
+    myalbum = fields.Field(
+        column_name='myalbum',
+        attribute='myalbum',
+        widget=ForeignKeyWidget(MyAlbum, 'name'))
+    '''
+
+    mycategory = fields.Field(
+        column_name='mycategory',
+        attribute='mycategory',
+        widget=ForeignKeyWidget(MyCategory, 'code'))
+
+    '''
+    def get_diff_headers(self):
+        return ['myalbum__mypage', 'myalbum', 'mycategory']
+
+
+    def clean_dataset_data(self, data):
+        data = super().clean_dataset_data(data)
+        clean_data = []
+        for index, row in enumerate(data):
+            _index = index + 2
+            _row = self.get_clean_row(row)
+
+            album = self.clean_dataset_album((_row[0], _row[1]), _index, row)
+            clean_data.append([album] + _row[2:])
+        return clean_data
+
+    def clean_dataset_album(self, myalbum, index, row):
+        try:
+            return MyAlbum.objects.get(mypage__page=myalbum[0],name=myalbum[1])
+        except MyAlbum.DoesNotExist:
+            raise self.get_error(u'相册', index, row)
+    '''
+
+    class Meta:
+        model = MyFbAlbumCate
+        skip_unchanged = True
+        report_skipped = True
+        import_id_fields = ['mypage','myalbum','mycategory']
+        fields = ('mypage','myalbum','mycategory',)
+        # exclude = ()
 
 @xadmin.sites.register(MyFbAlbumCate)
 class MyFbAlbumCateAdmin(object):
+    import_export_args = {"import_resource_class": MyFbAlbumCateResource,
+                          "export_resource_class": MyFbAlbumCateResource}
+
     def mypage(self, obj):
         return obj.myalbum.mypage.page
 
@@ -597,6 +649,8 @@ class AliProduct_vendorResource(resources.ModelResource):
 
 @xadmin.sites.register(AliProduct_vendor)
 class AliProduct_vendorAdmin(object):
+
+
     import_export_args = {"import_resource_class": AliProduct_vendorResource,
                           "export_resource_class": AliProduct_vendorResource}
 
