@@ -1010,8 +1010,11 @@ class OrderDetailAdmin(object):
         try:
             #img = mark_safe('<img src="%s" width="100px" />' % (obj.logo.url,))
             variant =  ShopifyVariant.objects.get(sku=obj.sku)
+            if variant is not None:
 
-            handle = ShopifyProduct.objects.get(product_no=variant.product_no).handle
+                handle = ShopifyProduct.objects.get(product_no=variant.product_no).handle
+            else:
+                handle = obj.sku.partition('-')[0]
             print("###################", handle)
 
             image_filename = "1_"+handle+".jpg"
@@ -2901,7 +2904,7 @@ class OverseaOrderAdmin(object):
 
     list_display = ('logistic_no', 'order_no', 'order_amount','photo', )
     list_editable = []
-    search_fields = ['order_orderdetail__sku' ]
+    search_fields = ['order_orderdetail__sku','order_no', ]
 
     #ordering = ['-order_no']
     '''
@@ -2922,4 +2925,4 @@ class OverseaOrderAdmin(object):
         deal_list = ["RETURNED",
                      #"REDELIVERING",
                      ]
-        return qs.filter(order_package__yallavip_package_status__in=deal_list, order_amount__lt=200)
+        return qs.filter(order_package__yallavip_package_status__in=deal_list)
