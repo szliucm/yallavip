@@ -969,7 +969,7 @@ class OrderDetailAdmin(object):
 
                 #print(os.path.join(root, name))
         # print(filelist)
-        #print('...........................................', filelist)
+        print('...........................................', filelist)
         for i in filelist:
 
             if os.path.isfile(i):
