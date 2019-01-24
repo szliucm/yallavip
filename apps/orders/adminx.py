@@ -930,6 +930,23 @@ class OrderDetailResource(resources.ModelResource):
 
 
 class OrderDetailAdmin(object):
+
+    def fb_photo(self, obj):
+
+        sku = obj.sku
+        variant = ShopifyVariant.objects.filter(sku=sku).first()
+        handle = ShopifyProduct.objects.filter(product_no=variant.product_no).first().handle
+        photo = MyPhoto.objects.filter(name__icontains=handle).first()
+        try:
+            img = '<a href="%s" target="view_window"><img src="%s" width="150px"></a>' % (
+            photo.link, photo.picture)
+        except Exception as e:
+            print("获取图片出错", e)
+
+        return mark_safe(img)
+
+    fb_photo.short_description = "fb photo"
+
     def show_image(self, obj):
         handle = ""
         img = ""
@@ -1044,7 +1061,7 @@ class OrderDetailAdmin(object):
 
     import_export_args = {"import_resource_class": OrderDetailResource, "export_resource_class": OrderDetailResource}
 
-    list_display = ['order', 'sku',"show_image", 'show_local_image', 'product_quantity',  'price','order_status','show_supply_status','alternative', ]
+    list_display = ['order', 'sku',"fb_photo","show_image", 'show_local_image', 'product_quantity',  'price','order_status','show_supply_status','alternative', ]
 
     search_fields = ["order__order_no",'sku',"order__logistic_no" ]
 
