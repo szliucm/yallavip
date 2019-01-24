@@ -936,12 +936,14 @@ class OrderDetailAdmin(object):
         sku = obj.sku
         variant = ShopifyVariant.objects.filter(sku=sku).first()
         handle = ShopifyProduct.objects.filter(product_no=variant.product_no).first().handle
-        photo = MyPhoto.objects.filter(name__icontains=handle).first()
-        try:
-            img = '<a href="%s" target="view_window"><img src="%s" width="150px"></a>' % (
-            photo.link, photo.picture)
-        except Exception as e:
-            print("获取图片出错", e)
+        img = ""
+        for photo in MyPhoto.objects.filter(name__icontains=handle):
+            #photo = MyPhoto.objects.filter(name__icontains=handle).first()
+            try:
+                img += '<a href="%s" target="view_window"><img src="%s" width="150px"></a>' % (
+                photo.link, photo.picture)
+            except Exception as e:
+                print("获取图片出错", e)
 
         return mark_safe(img)
 
