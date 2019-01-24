@@ -1078,6 +1078,7 @@ def unlisting_overseas_package():
     # 订单状态已付款， 订单明细sku名字中含overseas的订单找出来
 
     order_details = OrderDetail.objects.filter(~Q(order__order_status="已退款"), sku__istartswith="overseas")
+    print("####### 已销售海外仓包裹总数", order_details.count())
     n = 0
     for order_detail in order_details:
         sku = order_detail.sku
