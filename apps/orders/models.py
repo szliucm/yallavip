@@ -178,6 +178,7 @@ class Order(models.Model):
     RESELL_STTUS = (
         ("LISTING", "上架中"),
         ("UNLISTING", "下架中"),
+        ("SELLING", "二次售出"),
         ("SELLOUT", "二次售罄"),
         ("DESTROYED", "销毁"),
 

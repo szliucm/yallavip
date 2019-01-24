@@ -2926,4 +2926,4 @@ class OverseaOrderAdmin(object):
         deal_list = ["RETURNED",
                      #"REDELIVERING",
                      ]
-        return qs.filter(order_package__yallavip_package_status__in=deal_list)
+        return qs.filter(~Q(resell_status = 'SELLING'),order_package__yallavip_package_status__in=deal_list)

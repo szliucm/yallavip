@@ -1127,6 +1127,9 @@ def unlisting_overseas_package():
 
             ShopifyVariant.objects.filter(sku=sku).update(supply_status="STOP", listing_status=False)
 
+            Order.objects.filter(pk = order_detail.order.pk).update(resell_status = 'SELLING')
+
+
 def unlisting_overseas_package_new():
     from fb.models import  MyPhoto
 
@@ -1185,7 +1188,7 @@ def unlisting_overseas_package_new():
             myphotos.update(listing_status=False)
 
             ShopifyVariant.objects.filter(sku=sku).update(supply_status="STOP", listing_status=False)
-
+            Order.objects.filter(pk = order_detail.order.pk).update(resell_status = 'SELLING')
 
 
 def sync_aliproduct_shopify():
