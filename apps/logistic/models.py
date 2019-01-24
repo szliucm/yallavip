@@ -13,7 +13,7 @@ class Package(models.Model):
     super_package = models.ForeignKey('self', null=True, on_delete=models.CASCADE,
                                  verbose_name="父包裹")
 
-    ref_order = models.ForeignKey(Order, null=True, on_delete=models.CASCADE,
+    ref_order = models.ForeignKey(Order, related_name='order_package',null=True, on_delete=models.CASCADE,
                                  verbose_name="相关订单")
     image_created = models.BooleanField(default=False, verbose_name="包裹图片已处理")
 
@@ -426,6 +426,9 @@ class OverseaPackage(Package):
 
     def __str__(self):
         return self.logistic_no
+
+
+
 
 
 class Resell(Package):

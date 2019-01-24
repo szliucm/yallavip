@@ -12,9 +12,10 @@ from django.shortcuts import get_object_or_404, get_list_or_404, render
 from import_export import resources, fields
 from import_export.widgets import ForeignKeyWidget
 from .models import Order, OrderDetail,Verify, OrderConversation,ClientService,Verification,\
-        Logistic_winlink,Logistic_jiacheng,Logistic_status,Logistic_trail, Sms,Logistic, OrderTrack,\
-        LogisticAccount
+        Logistic_winlink,Logistic_jiacheng,Logistic_status,Logistic_trail, Sms,\
+        LogisticAccount,OverseaOrder
 from shop.models import ShopifyProduct, ShopifyVariant,Combination,ShopifyImage
+from fb.models import MyPhoto
 
 from conversations.models import Conversation
 from logistic.models import Package
@@ -929,10 +930,15 @@ class OrderDetailAdmin(object):
 
         try:
             #img = mark_safe('<img src="%s" width="100px" />' % (obj.logo.url,))
-            image_no = ShopifyVariant.objects.get(sku=obj.sku).image_no
+            variant =  ShopifyVariant.objects.get(sku=obj.sku)
+            image_no = variant.image_no
+
+            handle = ShopifyProduct.objects.get(product_no=variant.product_no).handle
+
 
             img = mark_safe(
-                '<img src="%s" width="100px"></a>' % (
+                '<a href="%s" target="view_window"><img src="%s" width="150px"></a>' % (
+                    "https://www.yallavip.com/products/"+handle,
                     ShopifyImage.objects.get(image_no=image_no).src,
                     ))
 
@@ -971,7 +977,7 @@ class OrderDetailAdmin(object):
 
     import_export_args = {"import_resource_class": OrderDetailResource, "export_resource_class": OrderDetailResource}
 
-    list_display = ['order', 'sku',"show_image", 'order_status','show_supply_status','alternative', 'product_quantity',  'price', ]
+    list_display = ['order', 'sku',"show_image",  'product_quantity',  'price','order_status','show_supply_status','alternative', ]
 
     search_fields = ["order__order_no",'sku',"order__logistic_no" ]
 
@@ -2564,308 +2570,9 @@ class SmsAdmin(object):
         return queryset
 
 
-class LogisticResource(resources.ModelResource):
-    logistic_no = fields.Field(attribute='logistic_no', column_name='单号')
-    #order_no = fields.Field(attribute='order_no', column_name='原单号')
-    logistic_status = fields.Field(attribute='logistic_status', column_name='订单状态1')
-    comments = fields.Field(attribute='comments', column_name='异常说明')
-    his_comments = fields.Field(attribute='his_comments', column_name='所有异常')
-    logistic_update = fields.Field(attribute='logistic_update', column_name='更新时间')
 
-    class Meta:
-        model = Logistic
-        skip_unchanged = True
-        report_skipped = True
-        import_id_fields = ('logistic_no',)
-        fields = ('logistic_no', 'logistic_status','comments','his_comments', 'logistic_update',)
 
-class LogisticAdmin(object):
-    import_export_args = {"import_resource_class": LogisticResource,
-                          "export_resource_class": LogisticResource}
 
-    def show_conversation(self, obj):
-        # print('orderconversation')
-        orders = Order.objects.filter(logistic_no=obj.logistic_no)
-
-        links = ''
-        for order in orders:
-
-            if (order == None):
-                continue
-
-            orderconversation = OrderConversation.objects.filter(order=order)
-            for item in orderconversation:
-                conversation = item.conversation
-
-                if (conversation != None):
-                    '''
-                    link = mark_safe(
-                        u'<a href="http://business.facebook.com%s" target="view_window">%s</a>' % (
-                            u'one', u'  ' + order.order_no))
-                    links = links + order.order_no
-                else:
-                '''
-                    link = mark_safe(
-                        u'<a href="http://business.facebook.com%s" target="view_window">%s</a>' % (
-                            conversation.link, u'  ' + order.order_no))
-                    links = links + link
-
-                # print(links)
-
-        return (links)
-
-    show_conversation.allow_tags = True
-    show_conversation.short_description = "会话"
-
-
-    actions = [
-               'batch_response',
-               'batch_deliver_response', 'batch_customer_response', 'batch_yallavip_response',
-
-                'batch_type',
-               'batch_contact', 'batch_refuse', 'batch_info_error','batch_lost',
-
-               'batch_deal',
-               'batch_delivered','batch_wait','batch_redeliver', 'batch_redelivering',
-               'batch_refused', 'batch_returning', 'batch_returned',
-               "batch_updatelogistic_trail",]
-
-
-    list_display = ('order_no','send_time', 'logistic_no',
-
-                    'logistic_update_date', 'logistic_update_status', 'logistic_update_locate',
-                    'problem_type', 'response', 'feedback', 'deal','feedback_time','order_comment','receiver_phone','show_conversation')
-    list_editable = [ 'feedback', ]
-    search_fields = ['order_no','logistic_no','order_comment', ]
-    list_filter = ("logistic_type","send_time", 'logistic_update_date','logistic_update_status','deal')
-    ordering = ['-send_time']
-
-    def batch_updatelogistic_trail(self, request, queryset):
-        # 定义actions函数
-        requrl = "http://api.jcex.com/JcexJson/api/notify/sendmsg"
-
-        param_data= dict()
-        param_data["customerid"] = -1
-        #param_data["waybillnumber"] = "989384782"
-        param_data["isdisplaydetail"] = "false"
-
-
-        #data_body =base64.b64encode(json.dumps(param_data).encode('utf-8'))
-        #  base64.b64encode()
-
-
-        param = dict()
-        param["service"] = 'track'
-        #param["data_body"] = data_body
-
-
-        res = requests.post(requrl,params =param)
-
-        for row in queryset:
-
-            param_data["waybillnumber"] = row.logistic_no
-            data_body = base64.b64encode(json.dumps(param_data).encode('utf-8'))
-            param["data_body"] = data_body
-            res = requests.post(requrl, params=param)
-
-            data = json.loads(res.text)
-            #print("data is ", data)
-            waybillnumber = data["waybillnumber"]
-            #recipientcountry = data["recipientcountry"]
-
-            statusdetail = data["displaydetail"][0]["statusdetail"]
-            if(len(statusdetail) == 0):
-                continue
-
-            order = Order.objects.filter(logistic_no=waybillnumber).last()
-
-            #不更新物流动态，只要最新信息
-            '''
-            for i in range(len(statusdetail)):
-
-                status_d = statusdetail[i]
-                update_date = datetime.strptime(status_d["time"].split(" ")[0], '%Y-%m-%d').date()
-
-                if(order.logistic_update_date is not  None):
-                    if(update_date < order.logistic_update_date  ):
-                        #print("logistic 无可更新")
-                        continue
-
-                obj, created = Logistic_trail.objects.update_or_create(
-                    logistic_no=waybillnumber, update_time=status_d["time"],
-                        defaults={
-                            'trail_status': status_d["status"],
-
-                            'update_locate': status_d["locate"]
-                             },
-
-                        )
-                #print("轨迹",status_d)
-                '''
-
-            #最新状态
-            if (len(statusdetail) > 0):
-                status_d = statusdetail[len(statusdetail)-1]
-                update_date = datetime.strptime(status_d["time"].split(" ")[0], '%Y-%m-%d').date()
-
-                Order.objects.filter(logistic_no=waybillnumber).update(
-
-                    logistic_update_status=status_d["status"],
-
-                    logistic_update_date=update_date,
-
-                    logistic_update_locate=status_d["locate"]
-                )
-                #else:
-                 #   print("order 无可更新")
-
-        return
-
-    batch_updatelogistic_trail.short_description = "更新物流轨迹"
-
-    #交付状态
-
-
-
-
-    #问题件处理
-    # 责任
-    def batch_response(self, request, queryset):
-        return
-    batch_response.short_description = "******责任******"
-
-    def batch_deliver_response(self, request, queryset):
-        # 定义actions函数
-        rows_updated = queryset.update(response="DELIVER",feedback_time=datetime.now())
-        if rows_updated == 1:
-            message_bit = '1 story was'
-        else:
-            message_bit = "%s stories were" % rows_updated
-        self.message_user(request, "%s successfully marked as error." % message_bit)
-
-    batch_deliver_response.short_description = "批量派送员责任"
-
-    def batch_customer_response(self, request, queryset):
-        # 定义actions函数
-        rows_updated = queryset.update(response="CUSTOMER",feedback_time=datetime.now())
-        if rows_updated == 1:
-            message_bit = '1 story was'
-        else:
-            message_bit = "%s stories were" % rows_updated
-        self.message_user(request, "%s successfully marked as error." % message_bit)
-
-    batch_customer_response.short_description = "批量客户责任"
-
-    def batch_yallavip_response(self, request, queryset):
-        # 定义actions函数
-        rows_updated = queryset.update(response="YALLAVIP",feedback_time=datetime.now())
-        if rows_updated == 1:
-            message_bit = '1 story was'
-        else:
-            message_bit = "%s stories were" % rows_updated
-        self.message_user(request, "%s successfully marked as error." % message_bit)
-
-    batch_yallavip_response.short_description = "批量yallavip责任"
-
-    def batch_type(self, request, queryset):
-        return
-    batch_type.short_description = "******问题类型******"
-
-    def batch_contact(self, request, queryset):
-        # 定义actions函数
-        rows_updated = queryset.update(problem_type="NORESPONSE",feedback_time=datetime.now())
-        if rows_updated == 1:
-            message_bit = '1 story was'
-        else:
-            message_bit = "%s stories were" % rows_updated
-        self.message_user(request, "%s successfully marked as error." % message_bit)
-
-    batch_contact.short_description = "联系不到客户"
-
-    def batch_refuse(self, request, queryset):
-        # 定义actions函数
-        rows_updated = queryset.update(problem_type="REFUSE",feedback_time=datetime.now())
-        if rows_updated == 1:
-            message_bit = '1 story was'
-        else:
-            message_bit = "%s stories were" % rows_updated
-        self.message_user(request, "%s successfully marked as error." % message_bit)
-
-    batch_refuse.short_description = "拒签"
-
-    def batch_info_error(self, request, queryset):
-        # 定义actions函数
-        rows_updated = queryset.update(problem_type="INFOERROR",feedback_time=datetime.now())
-        if rows_updated == 1:
-            message_bit = '1 story was'
-        else:
-            message_bit = "%s stories were" % rows_updated
-        self.message_user(request, "%s successfully marked as error." % message_bit)
-
-    batch_info_error.short_description = "信息错误"
-
-    def batch_lost(self, request, queryset):
-        # 定义actions函数
-        return queryset.update(deal="LOST",feedback_time=datetime.now())
-    batch_lost.short_description = "丢件"
-
-    def batch_deal(self, request, queryset):
-        return
-    batch_deal.short_description = "******处理******"
-
-    def batch_delivered(self, request, queryset):
-        # 定义actions函数
-        return queryset.update(deal="DELIVERED",feedback_time=datetime.now())
-    batch_delivered.short_description = "已签收"
-
-    def batch_wait(self, request, queryset):
-        # 定义actions函数
-        return queryset.update(deal="WAITING",feedback_time=datetime.now())
-    batch_wait.short_description = "沟通中"
-
-    def batch_redeliver(self, request, queryset):
-        # 定义actions函数
-        return queryset.update(deal="RE_DELIVER",feedback_time=datetime.now())
-    batch_redeliver.short_description = "重新派送"
-
-    def batch_redelivering(self, request, queryset):
-        # 定义actions函数
-        return queryset.update(deal="RE_DELIVERING",feedback_time=datetime.now())
-    batch_redelivering.short_description = "重新派送中"
-
-    def batch_refused(self, request, queryset):
-        # 定义actions函数
-        return queryset.update(deal="REFUSED",feedback_time=datetime.now())
-    batch_refused.short_description = "拒签"
-
-    def batch_returning(self, request, queryset):
-        # 定义actions函数
-        return queryset.update(deal="RETURNING",feedback_time=datetime.now())
-    batch_returning.short_description = "退仓中"
-
-    def batch_returned(self, request, queryset):
-        # 定义actions函数
-        return queryset.update(deal="RETURNED",feedback_time=datetime.now())
-    batch_returned.short_description = "已退到仓库"
-
-
-    def queryset(self):
-        qs = super(LogisticAdmin, self).queryset()
-        return qs.filter( Q(order_status='已发货') )#&  ~Q( logistic_update_status='DELIVERED' ) & ~Q(deal ='RETURNED'))
-
-
-
-    def get_list_queryset(self):
-        """批量查询订单号"""
-        queryset = super().get_list_queryset()
-
-        query = self.request.GET.get(SEARCH_VAR, '')
-
-        if (len(query) > 0):
-            queryset |= self.model.objects.filter(order_no__in=query.split(","))
-        if (len(query) > 0):
-            queryset |= self.model.objects.filter(logistic_no__in=query.split(","))
-        return queryset
 
 
 class LogisticAccountResource(resources.ModelResource):
@@ -3021,4 +2728,51 @@ xadmin.site.register(Sms,SmsAdmin)
 #xadmin.site.register(OrderTrack,OrderTrackAdmin)
 #xadmin.site.register(LogisticAccount,LogisticAccountAdmin)
 
+@xadmin.sites.register(OverseaOrder)
+class OverseaOrderAdmin(object):
+    def photo(self, obj):
+        #order_no = Order.objects.filter(logistic_no=self.logistic_no).first().order_no
+        order_no = obj.order_no
 
+        if order_no is not None and order_no != "":
+            photos = MyPhoto.objects.filter(name__icontains=order_no)
+            img = ''
+
+            for photo in photos:
+                try:
+                    img = img + '<a href="%s" target="view_window"><img src="%s" width="100px"></a>' % (
+                    photo.link, photo.picture)
+                except Exception as e:
+                    print("获取图片出错", e)
+
+            return mark_safe(img)
+
+        else:
+            photos = "no photo"
+    photo.short_description = "ref photo"
+
+
+    list_display = ('logistic_no', 'order_no', 'order_amount','photo' )
+    list_editable = []
+    search_fields = ['order_orderdetail__sku' ]
+
+    #ordering = ['-order_no']
+    '''
+    def get_list_queryset(self):
+        """批量查询订单号"""
+        queryset = super().get_list_queryset()
+
+        query = self.request.GET.get(SEARCH_VAR, '')
+
+        if (len(query) > 0):
+            queryset |= self.model.objects.filter(logistic_no__in=query.split(","))
+
+        return queryset
+    '''
+
+    def queryset(self):
+        qs = super().queryset()
+        deal_list = ["RETURNED",
+                     #"REDELIVERING",
+                     ]
+        return qs.filter(order_package__yallavip_package_status__in=deal_list)

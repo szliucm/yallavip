@@ -200,13 +200,13 @@ class Order(models.Model):
 
 class OrderDetail(models.Model):
     order = models.ForeignKey(Order, related_name='order_orderdetail', null=False, on_delete=models.CASCADE,
-                              verbose_name="订单")
+                              verbose_name="Order")
 
     sku = models.CharField(u'SKU', default='', max_length=100, blank=True)
     # product = models.CharField(u'产品名称',default='',  max_length=500,  blank=True)
-    product_quantity = models.CharField(u'产品数量', default='', max_length=50, blank=True)
+    product_quantity = models.CharField(u'Quantity', default='', max_length=50, blank=True)
     # money_type = models.CharField(u'币种缩写', default='', max_length=50, blank=True)
-    price = models.CharField(u'产品售价', default='', max_length=50, blank=True)
+    price = models.CharField(u'Unit Price', default='', max_length=50, blank=True)
 
 
     # pic_url = models.CharField(u'图片网址', default='', max_length=200, blank=True)
@@ -1091,14 +1091,14 @@ class Sms(models.Model):
         return self.phone
 
 
-class Logistic(Order):
+class OverseaOrder(Order):
     class Meta:
         proxy = True
 
-        verbose_name = "订单物流状态"
+        verbose_name = "在海外仓的包裹"
         verbose_name_plural = verbose_name
 
-        ordering = ['logistic_update_date']
+        ordering = ['order_amount']
 
     def __str__(self):
         return self.logistic_no
