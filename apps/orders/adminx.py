@@ -2887,7 +2887,7 @@ class OverseaOrderAdmin(object):
     show_images.short_description = "product photoes"
     '''
 
-    list_display = ('logistic_no', 'order_no', 'order_amount','photo', 'fb_photo',)
+    list_display = ('logistic_no', 'order_no', 'order_amount','photo', )
     list_editable = []
     search_fields = ['order_orderdetail__sku' ]
 
