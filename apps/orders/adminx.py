@@ -1011,7 +1011,14 @@ class OrderDetailAdmin(object):
 
             handle = ShopifyProduct.objects.get(product_no=variant.product_no).handle
 
-            image_filename = self.findfile(handle, root)
+            #image_filename = self.findfile(handle, root)
+            if os.path.exists("1_"+handle+".jpg"):
+                image_filename = "1_"+handle+".jpg"
+            elif os.path.exists(handle+"_1.jpg"):
+                image_filename = "1_" + handle + ".jpg"
+            else:
+                image_filename = "sale-10_dbk3GIA.png"
+
             destination_url = domain + os.path.join(settings.MEDIA_URL, "photos/", image_filename)
 
             img = mark_safe(
