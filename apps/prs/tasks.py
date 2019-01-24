@@ -1127,6 +1127,67 @@ def unlisting_overseas_package():
 
             ShopifyVariant.objects.filter(sku=sku).update(supply_status="STOP", listing_status=False)
 
+def unlisting_overseas_package_new():
+    from fb.models import  MyPhoto
+
+    from facebook_business.api import FacebookAdsApi
+    from facebook_business.adobjects.photo import Photo
+
+
+    # 订单状态已付款， 订单明细sku名字中含overseas的订单找出来
+
+    order_details = OrderDetail.objects.filter(~Q(order__order_status="已退款"), sku__istartswith="579815")
+    print("####### 已销售海外仓包裹总数", order_details.count())
+    n = 0
+    for order_detail in order_details:
+        sku = order_detail.sku
+        # 删除Facebook上的图片
+
+        sku_name = sku
+
+        print("sku is %s, sku_name is %s" % (sku, sku_name))
+
+        # 选择所有可用的page
+        mypages = MyPage.objects.filter(active=True)
+        print(mypages)
+        for mypage in mypages:
+
+
+
+            myphotos = MyPhoto.objects.filter(name__icontains=sku_name, page_no=mypage.page_no )
+
+            print("myphotos %s" % (myphotos), myphotos.count())
+            if myphotos is None or myphotos.count() == 0:
+                continue
+
+            FacebookAdsApi.init(access_token=get_token(mypage.page_no))
+            n=1
+            for myphoto in myphotos:
+
+                fields = [
+                ]
+                params = {
+
+                }
+                try:
+                    response = Photo(myphoto.photo_no).api_delete(
+                        fields=fields,
+                        params=params,
+                    )
+                    print("%s response is %s" %(n, response))
+                    n +=1
+                except:
+                    continue
+
+
+
+            # 修改数据库记录
+            myphotos.update(listing_status=False)
+
+            ShopifyVariant.objects.filter(sku=sku).update(supply_status="STOP", listing_status=False)
+
+
+
 def sync_aliproduct_shopify():
     from django.utils import timezone as datetime
 
