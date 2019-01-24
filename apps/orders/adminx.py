@@ -2916,7 +2916,8 @@ class OverseaOrderAdmin(object):
 
         if (len(query) > 0):
             queryset |= self.model.objects.filter(order_no__in=query.split(","))
-
+        if (len(query) > 0):
+            queryset |= self.model.objects.filter(logistic_no__in=query.split(","))
         return queryset
 
 
