@@ -36,6 +36,10 @@ from xadmin.filters import manager as filter_manager, FILTER_PREFIX, SEARCH_VAR,
     RelatedFieldSearchFilter
 from django.utils.html import format_html
 
+import os
+
+from django.conf import settings
+
 my_app_id = "562741177444068"
 my_app_secret = "e6df363351fb5ce4b7f0080adad08a4d"
 my_access_token = "EAAHZCz2P7ZAuQBABHO6LywLswkIwvScVqBP2eF5CrUt4wErhesp8fJUQVqRli9MxspKRYYA4JVihu7s5TL3LfyA0ZACBaKZAfZCMoFDx7Tc57DLWj38uwTopJH4aeDpLdYoEF4JVXHf5Ei06p7soWmpih8BBzadiPUAEM8Fw4DuW5q8ZAkSc07PrAX4pGZA4zbSU70ZCqLZAMTQZDZD"
@@ -927,12 +931,12 @@ class OrderDetailResource(resources.ModelResource):
 
 class OrderDetailAdmin(object):
     def show_image(self, obj):
-
+        handle = ""
+        img = ""
         try:
             #img = mark_safe('<img src="%s" width="100px" />' % (obj.logo.url,))
             variant =  ShopifyVariant.objects.get(sku=obj.sku)
             image_no = variant.image_no
-
             handle = ShopifyProduct.objects.get(product_no=variant.product_no).handle
 
 
@@ -943,10 +947,73 @@ class OrderDetailAdmin(object):
                     ))
 
         except Exception as e:
-            img = ''
+            img = mark_safe(
+                '<a href="%s" target="view_window"><img src="%s" width="150px"></a>' % (
+                    "https://www.yallavip.com/products/"+handle,
+                    'http://admin.yallavip.com/media/material/sale-10_dbk3GIA.png'
+                    ))
+
         return img
 
     show_image.short_description = "Product Photo"
+
+
+
+    def findfile(self, keyword, root):
+        print(keyword, root)
+
+        filelist = []
+        for root, dirs, files in os.walk(root):
+            for name in files:
+                filelist.append(os.path.join(root, name))
+
+                #print(os.path.join(root, name))
+        # print(filelist)
+        #print('...........................................', filelist)
+        for i in filelist:
+
+            if os.path.isfile(i):
+                # print(i)
+                filename = os.path.split(i)[1]
+                if keyword in filename:
+                    print('yes!', i)  # 绝对路径
+                    return  filename
+                # else:
+                # print('......no keyword!')
+
+    def show_local_image(self, obj):
+        domain = "http://admin.yallavip.com/"
+        handle = ""
+        img = ""
+        root = os.path.join(settings.MEDIA_ROOT, "photos/")
+
+
+        try:
+            #img = mark_safe('<img src="%s" width="100px" />' % (obj.logo.url,))
+            variant =  ShopifyVariant.objects.get(sku=obj.sku)
+
+            handle = ShopifyProduct.objects.get(product_no=variant.product_no).handle
+
+            image_filename = self.findfile(handle, root)
+            destination_url = domain + os.path.join(settings.MEDIA_URL, "photos/", image_filename)
+
+            img = mark_safe(
+                '<a href="%s" target="view_window"><img src="%s" width="150px"></a>' % (
+                    "https://www.yallavip.com/products/"+handle,
+                    destination_url,
+                    ))
+
+        except Exception as e:
+            img = mark_safe(
+                '<a href="%s" target="view_window"><img src="%s" width="150px"></a>' % (
+                    "https://www.yallavip.com/products/"+handle,
+                    'http://admin.yallavip.com/media/material/sale-10_dbk3GIA.png'
+                    ))
+
+        return img
+
+    show_local_image.short_description = "Local Photo"
+
 
     def show_supply_status(self, obj):
         supply_status = Product.objects.get(sku=obj.sku).supply_status
@@ -977,7 +1044,7 @@ class OrderDetailAdmin(object):
 
     import_export_args = {"import_resource_class": OrderDetailResource, "export_resource_class": OrderDetailResource}
 
-    list_display = ['order', 'sku',"show_image",  'product_quantity',  'price','order_status','show_supply_status','alternative', ]
+    list_display = ['order', 'sku',"show_image", 'show_local_image', 'product_quantity',  'price','order_status','show_supply_status','alternative', ]
 
     search_fields = ["order__order_no",'sku',"order__logistic_no" ]
 
@@ -2751,6 +2818,29 @@ class OverseaOrderAdmin(object):
             photos = "no photo"
     photo.short_description = "ref photo"
 
+    def fb_photo(self, obj):
+        #order_no = Order.objects.filter(logistic_no=self.logistic_no).first().order_no
+        ordetails = obj.order_orderdetail.all()
+
+        img = ""
+        for ordetail in ordetails:
+            sku = ordetail.sku
+            variant = ShopifyVariant.objects.filter(sku=sku).first()
+            handle = ShopifyProduct.objects.filter(product_no=variant.product_no).first().handle
+            photo = MyPhoto.objects.filter(name__icontains=handle).first()
+            try:
+                img += '<a href="%s" target="view_window"><img src="%s" width="100px"></a>' % (
+                photo.link, photo.picture)
+            except Exception as e:
+                print("获取图片出错", e)
+
+        return mark_safe(img)
+
+    fb_photo.short_description = "fb photo"
+
+
+
+
     '''
     def show_images(self, obj):
 
@@ -2778,7 +2868,7 @@ class OverseaOrderAdmin(object):
     show_images.short_description = "product photoes"
     '''
 
-    list_display = ('logistic_no', 'order_no', 'order_amount','photo', )
+    list_display = ('logistic_no', 'order_no', 'order_amount','photo', 'fb_photo',)
     list_editable = []
     search_fields = ['order_orderdetail__sku' ]
 
@@ -2801,4 +2891,4 @@ class OverseaOrderAdmin(object):
         deal_list = ["RETURNED",
                      #"REDELIVERING",
                      ]
-        return qs.filter(order_package__yallavip_package_status__in=deal_list)
+        return qs.filter(order_package__yallavip_package_status__in=deal_list, order_amount__lt=200)
