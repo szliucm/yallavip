@@ -1012,14 +1012,13 @@ class OrderDetailAdmin(object):
             handle = ShopifyProduct.objects.get(product_no=variant.product_no).handle
 
             #image_filename = self.findfile(handle, root)
-            if os.path.exists("1_"+handle+".jpg"):
-                image_filename = "1_"+handle+".jpg"
-            elif os.path.exists(handle+"_1.jpg"):
-                image_filename = "1_" + handle + ".jpg"
-            else:
-                image_filename = "sale-10_dbk3GIA.png"
 
-            destination_url = domain + os.path.join(settings.MEDIA_URL, "photos/", image_filename)
+            if os.path.exists( os.path.join(settings.MEDIA_ROOT, "photos/","1_"+handle+".jpg")):
+                destination_url = domain + os.path.join(settings.MEDIA_URL, "photos/", "1_"+handle+".jpg")
+            elif os.path.exists( os.path.join(settings.MEDIA_ROOT, "photos/", handle+"_1.jpg")):
+                destination_url = domain + os.path.join(settings.MEDIA_URL, "photos/", handle+"_1.jpg")
+            else:
+                destination_url = 'http://admin.yallavip.com/media/material/sale-10_dbk3GIA.png'
 
             img = mark_safe(
                 '<a href="%s" target="view_window"><img src="%s" width="150px"></a>' % (
