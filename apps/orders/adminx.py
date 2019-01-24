@@ -1016,6 +1016,9 @@ class OrderDetailAdmin(object):
 
             image_filename = "1_"+handle+".jpg"
 
+            print(os.path.join(settings.MEDIA_ROOT, "photos/", image_filename))
+
+            print(os.path.exists(os.path.join(settings.MEDIA_ROOT, "photos/", image_filename)))
 
             if os.path.exists( os.path.join(settings.MEDIA_ROOT, "photos/",image_filename)):
                 destination_url = domain + os.path.join(settings.MEDIA_URL, "photos/", image_filename)
@@ -1026,9 +1029,7 @@ class OrderDetailAdmin(object):
                 else:
                     destination_url = 'http://admin.yallavip.com/media/material/sale-10_dbk3GIA.png'
 
-            print(os.path.join(settings.MEDIA_ROOT, "photos/", image_filename))
 
-            print(os.path.exists(os.path.join(settings.MEDIA_ROOT, "photos/", image_filename)))
 
             img = mark_safe(
                 '<a href="%s" target="view_window"><img src="%s" width="150px"></a>' % (
