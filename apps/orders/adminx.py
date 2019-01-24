@@ -946,7 +946,7 @@ class OrderDetailAdmin(object):
             img = ''
         return img
 
-    show_image.short_description = "产品图"
+    show_image.short_description = "Product Photo"
 
     def show_supply_status(self, obj):
         supply_status = Product.objects.get(sku=obj.sku).supply_status
@@ -2751,8 +2751,34 @@ class OverseaOrderAdmin(object):
             photos = "no photo"
     photo.short_description = "ref photo"
 
+    '''
+    def show_images(self, obj):
 
-    list_display = ('logistic_no', 'order_no', 'order_amount','photo' )
+        img = ''
+        ordetails = obj.order_orderdetail.all()
+        for ordetail in ordetails:
+            try:
+                #img = mark_safe('<img src="%s" width="100px" />' % (obj.logo.url,))
+                variant =  ShopifyVariant.objects.get(sku=ordetail.sku)
+                image_no = variant.image_no
+
+                handle = ShopifyProduct.objects.get(product_no=variant.product_no).handle
+
+
+                img += mark_safe(
+                    '<a href="%s" target="view_window"><img src="%s" width="150px"></a>' % (
+                        "https://www.yallavip.com/products/"+handle,
+                        ShopifyImage.objects.get(image_no=image_no).src,
+                        ))
+
+            except Exception as e:
+                print("获取图片出错", e)
+        return img
+
+    show_images.short_description = "product photoes"
+    '''
+
+    list_display = ('logistic_no', 'order_no', 'order_amount','photo', )
     list_editable = []
     search_fields = ['order_orderdetail__sku' ]
 
