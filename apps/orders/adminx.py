@@ -2907,7 +2907,7 @@ class OverseaOrderAdmin(object):
     search_fields = ['order_orderdetail__sku','order_no', ]
 
     #ordering = ['-order_no']
-    '''
+
     def get_list_queryset(self):
         """批量查询订单号"""
         queryset = super().get_list_queryset()
@@ -2915,10 +2915,10 @@ class OverseaOrderAdmin(object):
         query = self.request.GET.get(SEARCH_VAR, '')
 
         if (len(query) > 0):
-            queryset |= self.model.objects.filter(logistic_no__in=query.split(","))
+            queryset |= self.model.objects.filter(order_no__in=query.split(","))
 
         return queryset
-    '''
+
 
     def queryset(self):
         qs = super().queryset()
