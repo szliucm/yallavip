@@ -1011,7 +1011,7 @@ class OrderDetailAdmin(object):
 
             handle = ShopifyProduct.objects.get(product_no=variant.product_no).handle
 
-            #image_filename = self.findfile(handle, root)
+            image_filename = os.path.join(settings.MEDIA_ROOT, "photos/","1_"+handle+".jpg")
 
             if os.path.exists( os.path.join(settings.MEDIA_ROOT, "photos/","1_"+handle+".jpg")):
                 destination_url = domain + os.path.join(settings.MEDIA_URL, "photos/", "1_"+handle+".jpg")
@@ -1027,11 +1027,7 @@ class OrderDetailAdmin(object):
                     ))
 
         except Exception as e:
-            img = mark_safe(
-                '<a href="%s" target="view_window"><img src="%s" width="150px"></a>' % (
-                    "https://www.yallavip.com/products/"+handle,
-                    'http://admin.yallavip.com/media/material/sale-10_dbk3GIA.png'
-                    ))
+            img = ''
 
         return img
 
