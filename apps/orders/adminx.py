@@ -1004,7 +1004,7 @@ class OrderDetailAdmin(object):
         domain = "http://admin.yallavip.com/"
         handle = ""
         img = ""
-        root = os.path.join(settings.MEDIA_ROOT, "photos/")
+
 
 
         try:
@@ -1012,15 +1012,23 @@ class OrderDetailAdmin(object):
             variant =  ShopifyVariant.objects.get(sku=obj.sku)
 
             handle = ShopifyProduct.objects.get(product_no=variant.product_no).handle
+            print("###################", handle)
 
-            image_filename = os.path.join(settings.MEDIA_ROOT, "photos/","1_"+handle+".jpg")
+            image_filename = "1_"+handle+".jpg"
 
-            if os.path.exists( os.path.join(settings.MEDIA_ROOT, "photos/","1_"+handle+".jpg")):
-                destination_url = domain + os.path.join(settings.MEDIA_URL, "photos/", "1_"+handle+".jpg")
-            elif os.path.exists( os.path.join(settings.MEDIA_ROOT, "photos/", handle+"_1.jpg")):
-                destination_url = domain + os.path.join(settings.MEDIA_URL, "photos/", handle+"_1.jpg")
+
+            if os.path.exists( os.path.join(settings.MEDIA_ROOT, "photos/",image_filename)):
+                destination_url = domain + os.path.join(settings.MEDIA_URL, "photos/", image_filename)
             else:
-                destination_url = 'http://admin.yallavip.com/media/material/sale-10_dbk3GIA.png'
+                image_filename = handle+"_1.jpg"
+                if os.path.exists(os.path.join(settings.MEDIA_ROOT, "photos/", image_filename)):
+                    destination_url = domain + os.path.join(settings.MEDIA_URL, "photos/", image_filename)
+                else:
+                    destination_url = 'http://admin.yallavip.com/media/material/sale-10_dbk3GIA.png'
+
+            print(os.path.join(settings.MEDIA_ROOT, "photos/", image_filename))
+
+            print(os.path.exists(os.path.join(settings.MEDIA_ROOT, "photos/", image_filename)))
 
             img = mark_safe(
                 '<a href="%s" target="view_window"><img src="%s" width="150px"></a>' % (
@@ -1029,6 +1037,7 @@ class OrderDetailAdmin(object):
                     ))
 
         except Exception as e:
+            print(e)
             img = ''
 
         return img
