@@ -20,6 +20,7 @@ class Shop(models.Model):
     def __str__(self):
         return self.shop_name
 
+
 class ShopifyProduct(models.Model):
     #myproduct = models.ForeignKey('prs.MyProduct', null=True, blank=True, verbose_name="产品",
      #                             related_name="shop_myproduct", on_delete=models.CASCADE)
@@ -437,3 +438,16 @@ class ProductResources(models.Model):
         else:
             return  self.product.shopifyvariant.sku
 '''
+
+class ShopOriOrder(models.Model):
+
+    order_id = models.CharField(u'订单id', default='', max_length=100, blank=True)
+    order_json  =  models.TextField(u'订单json', default='', null=True, blank=True)
+
+    class Meta:
+        verbose_name = "原始订单"
+        verbose_name_plural = verbose_name
+
+
+    def __str__(self):
+        return self.order_id

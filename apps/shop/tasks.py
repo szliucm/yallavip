@@ -413,3 +413,82 @@ def post_to_page():
 
 
     return
+
+def get_orders():
+    shop_name = "yallasale-com"
+    shop_obj = Shop.objects.get(shop_name=shop_name)
+
+    # 取得系统中已有的最大订单号
+
+    shoporiorder = ShopOriOrder.objects.all().order_by('-order_id').first()
+    if shoporiorder is None:
+        max_shoporiorder_no = "0"
+    else:
+        max_shoporiorder_no = shoporiorder.order_id
+
+    print("max_shoporiorder_no", max_shoporiorder_no)
+
+    # 删除所有可能重复的订单信息
+
+    ShopOriOrder.objects.filter(order_id__gt=max_shoporiorder_no).delete()
+
+
+    # 获取新订单信息
+    shop_url = "https://%s:%s@%s.myshopify.com" % (shop_obj.apikey, shop_obj.password, shop_obj.shop_name)
+    # shop_url = "https://12222a833afcad263c5cc593eca7af10:47aea3fe8f4b9430b1bac56c886c9bae@yallasale-com.myshopify.com/admin"
+    # shopify.ShopifyResource.set_site(shop_url)
+
+    url = shop_url + "/admin/orders/count.json"
+    params = {
+        "since_id": max_shoporiorder_no
+    }
+    # print("url %s params %s"%(url, params))
+    r = requests.get(url, params)
+    data = json.loads(r.text)
+
+    print("order count is ", data["count"])
+
+    total_count = data["count"]
+
+    i = 0
+    limit = 100
+
+    while True:
+        try:
+
+            if (i * limit > total_count):
+                break
+
+            i = i + 1
+
+            # products = shopify.Product.find(page=i,limit=limit,updated_at_min=shop.updated_time)
+            url = shop_url + "/admin/orders.json"
+            params = {
+                "page": i,
+                "limit": limit,
+                "since_id": max_shoporiorder_no,
+                #"fields": "id,handle,body_html,title,product_type,created_at,published_at,"
+                #          "updated_at,tags,vendor,variants,images,options",
+                # "fields": "product_id",
+            }
+            print(("params is ", params))
+
+            r = requests.get(url, params)
+            oriorders = json.loads(r.text)["orders"]
+            oriorders_list = []
+            for row in oriorders:
+                # print("row is ",row)
+                oriorder = ShopOriOrder(
+                    order_id=row["id"],
+                    order_json=row,
+                )
+                oriorders_list.append(oriorder)
+
+            ShopOriOrder.objects.bulk_create(oriorders_list)
+            #insert_product(shop.shop_name, products)
+
+
+
+        except Exception as e:
+            print("orders  completed", e)
+            continue
