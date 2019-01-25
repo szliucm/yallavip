@@ -442,6 +442,7 @@ class ProductResources(models.Model):
 class ShopOriOrder(models.Model):
 
     order_id = models.CharField(u'订单id', default='', max_length=100, blank=True)
+    created_at = models.DateTimeField(u'创建时间', auto_now=False, blank=True, null=True)
     order_json  =  models.TextField(u'订单json', default='', null=True, blank=True)
 
     class Meta:

@@ -9,6 +9,7 @@ from celery import shared_task
 from .photo_mark import  photo_mark
 from shop.models import ProductCategory,ProductCategoryMypage
 from fb.models import  MyPage,MyAlbum,MyPhoto
+from orders.models import  Order
 from .models import *
 from .shop_action import  *
 
@@ -480,6 +481,7 @@ def get_orders():
                 # print("row is ",row)
                 oriorder = ShopOriOrder(
                     order_id=row["id"],
+                    created_at = row["created_at"],
                     order_json=row,
                 )
                 oriorders_list.append(oriorder)
@@ -492,3 +494,44 @@ def get_orders():
         except Exception as e:
             print("orders  completed", e)
             continue
+
+def update_orders():
+    oriorders = ShopOriOrder.objects.all()
+
+    for row in oriorders:
+        order = Order(
+            order_no='a-'+row["order_number"],
+            order_status=row["financial_status"],
+            buyer_name=row["customer"]["first_name"]+ " " + row["customer"]["last_name"],
+            order_amount=row["total_price"],
+            order_comment=row["note"],
+            receiver_name=row["order_number"],
+            receiver_addr1=row["order_number"],
+            receiver_addr2=row["order_number"],
+            receiver_city=row["order_number"],
+            receiver_country=row["order_number"],
+            receiver_phone=row["order_number"],
+            order_time=row["order_number"],
+
+
+
+
+        )
+
+        obj, created = Order.objects.update_or_create(order_no=row["order_number"],
+                        defaults={  'order_status':row["financial_status"],
+                                    'buyer_name':row["customer"]["first_name"]+ " " + row["customer"]["last_name"],
+                                    'order_amount':row["total_price"],
+                                    'order_comment':row["note"],
+                                    'receiver_name':row["order_number"],
+                                    'receiver_addr1':row["order_number"],
+                                    'receiver_addr2':row["order_number"],
+                                    'receiver_city':row["order_number"],
+                                    'receiver_country':row["order_number"],
+                                    'receiver_phone':row["order_number"],
+                                    'order_time':row["order_number"],
+
+                                    }
+                                )
+
+
