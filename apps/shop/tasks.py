@@ -502,16 +502,26 @@ def update_orders():
         print(row.order_id)
         #order_json = row.order_json.replace("'", "\"").replace("True", "\"True\"").replace("False", "\"False\"").replace(
          #   "None", "\"None\"")
+
         order = json.loads(row.order_json)
-        print("")
+        buyer_name = order["customer"].get("first_name","")
+        if order["customer"].get("last_name","") is not None:
+            buyer_name += " " +  order["customer"].get("last_name","")
+
+        receiver_name =  order["shipping_address"].get("first_name","")
+        if order["shipping_address"].get("last_name") is not None:
+            receiver_name += " " +  order["shipping_address"].get("last_name")
+
+
+
         obj, created = Order.objects.update_or_create(order_no= "99579815-" + str(order["order_number"]),
                         defaults={
                                     'order_time': order["created_at"],
                                     'order_status':order["financial_status"],
-                                    'buyer_name':order["customer"]["first_name"]+ " " + order["customer"]["last_name"],
+                                    'buyer_name':buyer_name ,
                                     'order_amount':order["total_price"],
                                     'order_comment':order["note"],
-                                    'receiver_name':order["shipping_address"]["first_name"] +" " +order["shipping_address"]["last_name"],
+                                    'receiver_name':receiver_name,
                                     'receiver_addr1':order["shipping_address"]["address1"],
                                     'receiver_addr2':order["shipping_address"]["address2"],
                                     'receiver_city':order["shipping_address"]["city"],
@@ -520,6 +530,9 @@ def update_orders():
                                 }
                                 )
         print("####obj", obj, order["order_number"] )
+        if obj is None:
+            print("#############soemthing get wrong ",order["order_number"] )
+            continue
 
         for order_item in  order["line_items"]:
 
