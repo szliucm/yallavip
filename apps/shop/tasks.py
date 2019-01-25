@@ -9,7 +9,7 @@ from celery import shared_task
 from .photo_mark import  photo_mark
 from shop.models import ProductCategory,ProductCategoryMypage
 from fb.models import  MyPage,MyAlbum,MyPhoto
-from orders.models import  Order
+from orders.models import  Order,OrderDetail
 from .models import *
 from .shop_action import  *
 
@@ -496,14 +496,14 @@ def get_orders():
             continue
 
 def update_orders():
-    oriorders = ShopOriOrder.objects.all()
+    oriorders = ShopOriOrder.objects.all().order_by("-order_id")[:10]
 
     for row in oriorders:
         order_json = row.order_json.replace("'", "\"").replace("True", "\"True\"").replace("False", "\"False\"").replace(
             "None", "\"None\"")
         order = json.loads(order_json)
 
-        obj, created = Order.objects.update_or_create(order_no=order["order_number"],
+        obj, created = Order.objects.update_or_create(order_no= "99579815-" + order["order_number"],
                         defaults={
                                     'order_time': order["created_at"],
                                     'order_status':order["financial_status"],
@@ -516,9 +516,16 @@ def update_orders():
                                     'receiver_city':order["shipping_address"]["city"],
                                     'receiver_country':order["shipping_address"]["country"],
                                     'receiver_phone':order["shipping_address"]["phone"],
-
-
-                                    }
+                                }
                                 )
+
+        for order_item in  order["line_items"]:
+            obj, created = OrderDetail.objects.update_or_create(order=obj,
+                                                                sku = order_item["sku"],
+                                                      defaults={
+                                                          'product_quantity': order_item["quantity"],
+                                                          'price': order_item["price"],
+                                                           }
+                                                      )
 
 
