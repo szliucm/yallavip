@@ -520,6 +520,7 @@ def update_orders():
                                 )
 
         for order_item in  order["line_items"]:
+            print("####obj", obj)
             obj, created = OrderDetail.objects.update_or_create(order=obj,
                                                                 sku = order_item["sku"],
                                                       defaults={
