@@ -496,7 +496,7 @@ def get_orders():
             continue
 
 def update_orders():
-    oriorders = ShopOriOrder.objects.all().order_by("-order_id")[:10]
+    oriorders = ShopOriOrder.objects.all().order_by("-order_id")
 
     for row in oriorders:
         print(row.order_id)
@@ -514,7 +514,7 @@ def update_orders():
 
 
 
-        obj, created = Order.objects.update_or_create(order_no= "99579815-" + str(order["order_number"]),
+        obj, created = Order.objects.update_or_create(order_no= "579815-" + str(order["order_number"]),
                         defaults={
                                     'order_time': order["created_at"],
                                     'order_status':order["financial_status"],
@@ -529,14 +529,14 @@ def update_orders():
                                     'receiver_phone':order["shipping_address"]["phone"],
                                 }
                                 )
-        print("####obj", obj, order["order_number"] )
+        print("####obj", obj, type(obj) )
         if obj is None:
             print("#############soemthing get wrong ",order["order_number"] )
             continue
 
         for order_item in  order["line_items"]:
-
-            obj, created = OrderDetail.objects.update_or_create(order__pk=obj.pk,
+            print(obj, order_item["sku"],order_item["quantity"],order_item["price"])
+            obj_orderdetail, created = OrderDetail.objects.update_or_create(order=obj,
                                                                 sku = order_item["sku"],
                                                       defaults={
                                                           'product_quantity': order_item["quantity"],
