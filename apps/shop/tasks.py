@@ -503,7 +503,7 @@ def update_orders():
             "None", "\"None\"")
         order = json.loads(order_json)
 
-        obj, created = Order.objects.update_or_create(order_no= "99579815-" + order["order_number"],
+        obj, created = Order.objects.update_or_create(order_no= "99579815-" + str(order["order_number"]),
                         defaults={
                                     'order_time': order["created_at"],
                                     'order_status':order["financial_status"],
