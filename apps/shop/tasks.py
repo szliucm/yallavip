@@ -505,7 +505,7 @@ def update_orders():
 
         obj, created = Order.objects.update_or_create(order_no=order["order_number"],
                         defaults={
-                                    'created_at': order["created_at"],
+                                    'order_time': order["created_at"],
                                     'order_status':order["financial_status"],
                                     'buyer_name':order["customer"]["first_name"]+ " " + order["customer"]["last_name"],
                                     'order_amount':order["total_price"],
