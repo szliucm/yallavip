@@ -445,6 +445,7 @@ class ShopOriOrder(models.Model):
     created_at = models.DateTimeField(u'创建时间', auto_now=False, blank=True, null=True)
     order_json  =  models.TextField(u'订单json', default='', null=True, blank=True)
 
+
     class Meta:
         verbose_name = "原始订单"
         verbose_name_plural = verbose_name
