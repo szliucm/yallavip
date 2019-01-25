@@ -482,7 +482,7 @@ def get_orders():
                 oriorder = ShopOriOrder(
                     order_id=row["id"],
                     created_at = row["created_at"],
-                    order_json=row,
+                    order_json=json.loads( row),
                 )
                 oriorders_list.append(oriorder)
 
@@ -499,10 +499,11 @@ def update_orders():
     oriorders = ShopOriOrder.objects.all().order_by("-order_id")[:10]
 
     for row in oriorders:
+        print(row.order_id)
         order_json = row.order_json.replace("'", "\"").replace("True", "\"True\"").replace("False", "\"False\"").replace(
             "None", "\"None\"")
         order = json.loads(order_json)
-
+        print("")
         obj, created = Order.objects.update_or_create(order_no= "99579815-" + str(order["order_number"]),
                         defaults={
                                     'order_time': order["created_at"],
@@ -518,10 +519,11 @@ def update_orders():
                                     'receiver_phone':order["shipping_address"]["phone"],
                                 }
                                 )
+        print("####obj", obj, order["order_number"] )
 
         for order_item in  order["line_items"]:
-            print("####obj", obj)
-            obj, created = OrderDetail.objects.update_or_create(order=obj,
+
+            obj, created = OrderDetail.objects.update_or_create(order__pk=obj.pk,
                                                                 sku = order_item["sku"],
                                                       defaults={
                                                           'product_quantity': order_item["quantity"],
