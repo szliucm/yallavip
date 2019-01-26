@@ -509,16 +509,20 @@ def update_orders():
 
         order = json.loads(row.order_json)
         customer = order.get("customer")
-        if customer is not None:
+
+        if customer is not None :
             buyer_name = order["customer"].get("first_name","")
             if order["customer"].get("last_name","") is not None:
                 buyer_name += " " +  order["customer"].get("last_name","")
+        else:
+            buyer_name = ""
 
+        shipping_address = order.get("shipping_address")
+        if shipping_address is not None:
             receiver_name =  order["shipping_address"].get("first_name","")
             if order["shipping_address"].get("last_name") is not None:
                 receiver_name += " " +  order["shipping_address"].get("last_name")
         else:
-            buyer_name = ""
             receiver_name = ""
 
 
