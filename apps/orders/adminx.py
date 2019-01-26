@@ -13,7 +13,7 @@ from import_export import resources, fields
 from import_export.widgets import ForeignKeyWidget
 from .models import Order, OrderDetail,Verify, OrderConversation,ClientService,Verification,\
         Logistic_winlink,Logistic_jiacheng,Logistic_status,Logistic_trail, Sms,\
-        LogisticAccount,OverseaOrder
+        LogisticAccount,OverseaOrder,OverseaSkuRank
 from shop.models import ShopifyProduct, ShopifyVariant,Combination,ShopifyImage
 from fb.models import MyPhoto
 
