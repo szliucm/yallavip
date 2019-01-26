@@ -208,7 +208,7 @@ class OrderDetail(models.Model):
     order = models.ForeignKey(Order, related_name='order_orderdetail', null=False, on_delete=models.CASCADE,
                               verbose_name="Order")
 
-    sku = models.CharField(u'SKU', default='', max_length=100, blank=True)
+    sku = models.CharField(u'SKU', default='', max_length=100, null=True, blank=True)
     # product = models.CharField(u'产品名称',default='',  max_length=500,  blank=True)
     product_quantity = models.CharField(u'Quantity', default='', max_length=50, blank=True)
     # money_type = models.CharField(u'币种缩写', default='', max_length=50, blank=True)

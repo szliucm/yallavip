@@ -543,8 +543,10 @@ def update_orders():
         for order_item in  order["line_items"]:
             print(obj, order_item["sku"],order_item["quantity"],order_item["price"])
             sku =order_item["sku"]
-            if sku == "":
+            if sku == "" or sku is None:
                 sku = order_item["variant_id"]
+                if sku == "" or sku is None:
+                    sku = order_item["id"]
             obj_orderdetail, created = OrderDetail.objects.update_or_create(order=obj,
                                                                 sku = sku,
                                                       defaults={
