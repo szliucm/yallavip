@@ -482,6 +482,7 @@ def get_orders():
                 # print("row is ",row)
                 oriorder = ShopOriOrder(
                     order_id=row["id"],
+                    order_no=row["order_number"],
                     created_at = row["created_at"],
                     order_json=json.dumps( row),
                 )
@@ -517,7 +518,9 @@ def update_orders():
         obj, created = Order.objects.update_or_create(order_no= "579815-" + str(order["order_number"]),
                         defaults={
                                     'order_time': order["created_at"],
-                                    'order_status':order["financial_status"],
+                                    'status':order["status"],
+                                    'financial_status': order["financial_status"],
+                                    'fulfillment_status': order["fulfillment_status"],
                                     'buyer_name':buyer_name ,
                                     'order_amount':order["total_price"],
                                     'order_comment':order["note"],
