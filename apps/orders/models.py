@@ -1109,7 +1109,7 @@ class OverseaOrder(Order):
     def __str__(self):
         return self.logistic_no
 
-class OverseaSkuRank(Order):
+class OverseaSkuRank(models.Model):
     sku = models.CharField(u'SKU', default='', max_length=100, null=True, blank=True)
     orders =  models.IntegerField(u'包裹数量',default=0,blank=True, null=True)
 
