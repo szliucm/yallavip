@@ -522,8 +522,20 @@ def update_orders():
             receiver_name =  order["shipping_address"].get("first_name","")
             if order["shipping_address"].get("last_name") is not None:
                 receiver_name += " " +  order["shipping_address"].get("last_name")
+
+            address1 = shipping_address.get("address1")
+            address2 = shipping_address.get("address2")
+            city = shipping_address.get("city")
+            country = shipping_address.get("country")
+            phone = shipping_address.get("phone")
+
         else:
             receiver_name = ""
+            address1 = ""
+            address2 = ""
+            city = ""
+            country = ""
+            phone = ""
 
 
 
@@ -539,11 +551,11 @@ def update_orders():
                                     'order_amount':order["total_price"],
                                     'order_comment':order["note"],
                                     'receiver_name':receiver_name,
-                                    'receiver_addr1':order["shipping_address"]["address1"],
-                                    'receiver_addr2':order["shipping_address"]["address2"],
-                                    'receiver_city':order["shipping_address"]["city"],
-                                    'receiver_country':order["shipping_address"]["country"],
-                                    'receiver_phone':order["shipping_address"]["phone"],
+                                    'receiver_addr1':address1,
+                                    'receiver_addr2':address2,
+                                    'receiver_city':city,
+                                    'receiver_country':country,
+                                    'receiver_phone':phone,
                                 }
                                 )
         print("####obj", obj, type(obj) )
