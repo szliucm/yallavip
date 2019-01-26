@@ -1121,7 +1121,6 @@ class OverseaSkuRank(models.Model):
     def __str__(self):
         return self.sku
 
-
 class OrderTrack(Order):
     class Meta:
         proxy = True
