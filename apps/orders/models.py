@@ -1109,6 +1109,19 @@ class OverseaOrder(Order):
     def __str__(self):
         return self.logistic_no
 
+class OverseaSkuRank(Order):
+    sku = models.CharField(u'SKU', default='', max_length=100, null=True, blank=True)
+    orders =  models.IntegerField(u'包裹数量',default=0,blank=True, null=True)
+
+    class Meta:
+        verbose_name = "在海外仓的爆款"
+        verbose_name_plural = verbose_name
+
+        ordering = ['order_amount']
+
+    def __str__(self):
+        return self.logistic_no
+
 class OrderTrack(Order):
     class Meta:
         proxy = True
