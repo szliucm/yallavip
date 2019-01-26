@@ -468,6 +468,7 @@ def get_orders():
                 "page": i,
                 "limit": limit,
                 "since_id": max_shoporiorder_no,
+                "status ":"any",
                 #"fields": "id,handle,body_html,title,product_type,created_at,published_at,"
                 #          "updated_at,tags,vendor,variants,images,options",
                 # "fields": "product_id",
@@ -500,8 +501,7 @@ def update_orders():
 
     for row in oriorders:
         print(row.order_id)
-        #order_json = row.order_json.replace("'", "\"").replace("True", "\"True\"").replace("False", "\"False\"").replace(
-         #   "None", "\"None\"")
+
 
         order = json.loads(row.order_json)
         buyer_name = order["customer"].get("first_name","")
