@@ -441,7 +441,8 @@ def get_orders():
 
     url = shop_url + "/admin/orders/count.json"
     params = {
-        "since_id": max_shoporiorder_no
+        "since_id": max_shoporiorder_no,
+        "status ": "any",
     }
     # print("url %s params %s"%(url, params))
     r = requests.get(url, params)
