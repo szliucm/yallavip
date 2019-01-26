@@ -1117,6 +1117,7 @@ class OverseaSkuRank(models.Model):
         verbose_name = "在海外仓的爆款"
         verbose_name_plural = verbose_name
 
+        ordering = ['-orders']
 
     def __str__(self):
         return self.sku

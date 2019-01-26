@@ -2928,3 +2928,9 @@ class OverseaOrderAdmin(object):
                      #"REDELIVERING",
                      ]
         return qs.filter(~Q(resell_status = 'SELLING'),order_package__yallavip_package_status__in=deal_list)
+
+@xadmin.sites.register(OverseaSkuRank)
+class OverseaSkuRankAdmin(object):
+    list_display = ('sku', 'orders', )
+    list_editable = []
+    search_fields = ['sku', ]
