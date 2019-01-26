@@ -1117,10 +1117,9 @@ class OverseaSkuRank(models.Model):
         verbose_name = "在海外仓的爆款"
         verbose_name_plural = verbose_name
 
-        ordering = ['order_amount']
 
     def __str__(self):
-        return self.logistic_no
+        return self.sku
 
 class OrderTrack(Order):
     class Meta:
