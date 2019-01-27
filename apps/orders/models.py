@@ -82,7 +82,10 @@ class Order(models.Model):
     order_amount = models.CharField(u'订单金额', default='', max_length=50, blank=True)
 
     def cal_real_amount(self):
-        return  self.verify.real_amount
+        if self.verify.real_amount == "":
+            return  self.order_amount
+        else:
+            return  self.verify.real_amount
 
     cal_real_amount.short_description = "实收金额"
     real_amount = property(cal_real_amount)

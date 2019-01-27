@@ -167,7 +167,7 @@ class OrderResource(resources.ModelResource):
         skip_unchanged = True
         report_skipped = True
         import_id_fields = ('order_no',)
-        fields = ('order_no', 'order_status', 'buyer_name',  'order_amount', 'order_comment',
+        fields = ('order_no', 'order_status', 'buyer_name',  'order_amount','real_amount', 'order_comment',
                   'warhouse_comment', 'cs_comment', 'receiver_name', 'receiver_addr1', 'receiver_addr2',
                   'receiver_city', 'receiver_country', 'receiver_phone', 'package_no','logistic_type',
                   'order_time','send_time')
@@ -214,7 +214,7 @@ class OrderAdmin(object):
 
     import_export_args = {"import_resource_class": OrderResource, "export_resource_class": OrderResource}
 
-    list_display = ["order_no", "order_status","weight","package_status", "order_time","send_time","verify_time", "logistic_no","waybillnumber","order_comment"]
+    list_display = ["order_no", "order_status","weight","package_status", "order_amount", "real_amount","order_time","send_time","verify_time", "logistic_no","waybillnumber","order_comment"]
     list_editable = ["weight"]
     # list_display_links = ["show_conversation"]
     search_fields = ["order_no",'logistic_no', ]
@@ -454,7 +454,8 @@ class OrderAdmin(object):
                             "specialservice": [
                                 {
                                     "servicename": "W7",
-                                    "costamount": row.order_amount.split(".")[0],
+                                    #"costamount": row.order_amount.split(".")[0],
+                                    "costamount": row.real_amount.split(".")[0],
                                     "costcurrency": "SAR",
                                     "description": ""
                                 }
