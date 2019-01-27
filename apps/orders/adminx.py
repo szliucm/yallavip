@@ -1749,7 +1749,7 @@ class ClientServiceAdmin(object):
 
     list_editable = ['phone_1', 'phone_2', 'cs_reply',  'city',"deal_outofstock","real_amount",]
     search_fields = ['order__order_no','verify_comments', 'phone_1','phone_2','facebook_user_name','order__receiver_city']
-    list_filter = ('verify_status','supply_status', 'sms_status', 'error_money', 'order__order_status','sales','city',)
+    list_filter = ('verify_status','supply_status', 'sms_status', 'error_money', 'order__order_status','sales','city',"deal_outofstock",)
     actions = ['batch_stop', 'batch_pause', 'batch_normal', ]
 
     '''
