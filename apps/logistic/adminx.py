@@ -1261,7 +1261,7 @@ class LogisticResendTrailAdmin(object):
         # 定义actions函数
         deal = "RE_FAIL"
         self.deal_trail(queryset, deal)
-        return queryset.update(deal=deal, resend_start_time=dt.now())
+        return queryset.update(deal=deal,  wait_status = True)
 
     batch_fail.short_description = "重派失败"
 
@@ -1269,7 +1269,7 @@ class LogisticResendTrailAdmin(object):
         # 定义actions函数
         deal = "RE_SUCCESS"
         self.deal_trail(queryset, deal)
-        return queryset.update(deal=deal, resend_start_time=dt.now())
+        return queryset.update(deal=deal, wait_status = True)
 
     batch_success.short_description = "重派成功"
 
@@ -1277,7 +1277,7 @@ class LogisticResendTrailAdmin(object):
         # 定义actions函数
         deal = "RE_NODO"
         self.deal_trail(queryset, deal)
-        return queryset.update(deal=deal, resend_start_time=dt.now())
+        return queryset.update(deal=deal, wait_status = True)
 
     batch_nodo.short_description = "没有重派"
 
