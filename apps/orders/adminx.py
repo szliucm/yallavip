@@ -1747,7 +1747,7 @@ class ClientServiceAdmin(object):
                      'receiver_phone', 'phone_1', 'phone_2','verify_comments', 'cs_reply', \
                     'facebook_user_name', 'sales', 'show_conversation')
 
-    list_editable = ['phone_1', 'phone_2', 'cs_reply',  'city',"real_amount",]
+    list_editable = ['phone_1', 'phone_2', 'cs_reply',  'city',"deal_outofstock","real_amount",]
     search_fields = ['order__order_no','verify_comments', 'phone_1','phone_2','facebook_user_name','order__receiver_city']
     list_filter = ('verify_status','supply_status', 'sms_status', 'error_money', 'order__order_status','sales','city',)
     actions = ['batch_stop', 'batch_pause', 'batch_normal', ]
