@@ -82,6 +82,7 @@ class Order(models.Model):
 
     # product_quantity = models.CharField(u'产品数量', default='', max_length=50, blank=True)
     order_amount = models.CharField(u'订单金额', default='', max_length=50, blank=True)
+    real_amount = models.CharField(u'实收金额', default='', max_length=50, blank=True)
 
     order_comment = models.CharField(u'订单备注', max_length=500, default='', null=True, blank=True)
     warhouse_comment = models.CharField(u'拣货备注', max_length=500, default='', null=True, blank=True)
@@ -346,6 +347,15 @@ class Verify(models.Model):
     wait_status = models.CharField(choices=WAIT_STATUS, max_length=20, default='NOSTART', verbose_name="处理状态")
     cs = models.CharField(u'客服', max_length=50, default='')
     reply_time = models.CharField(u'回复时间', max_length=50, default='', null=True)
+
+    OUT_OF_STOCK = (
+        ("NONE", "NONE"),
+        ("AGREE", "同意"),
+        ("REFUSE", "不同意"),
+        ("NOREPLY", "无反应"),
+    )
+    deal_outofstock = models.CharField(choices=OUT_OF_STOCK, max_length=20, default='NONE', verbose_name="缺货处理")
+    real_amount = models.CharField(u'实收金额', default='', max_length=50, blank=True)
 
     start_time = models.DateTimeField(u'开始审核时间', auto_now=True, null=True)
     start_staff = models.CharField(u'开始审核人', max_length=50, null=True)

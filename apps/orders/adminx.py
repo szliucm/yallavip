@@ -397,8 +397,8 @@ class OrderAdmin(object):
                             "inputtime": "",
                             "senderinformation": [
                                 {
-                                    "sendername": "LiuPeng",
-                                    "senderchinesename": "刘鹏",
+                                    "sendername": "Yallavip.com",
+                                    "senderchinesename": "Yallavip.com",
                                     "sendercompany": "Yallavip.com",
                                     "senderphone": "86-157-6887-9089",
                                     "sendercountry": "CN",
@@ -1741,13 +1741,13 @@ class ClientServiceAdmin(object):
     list_display = ('order', 'order_time','order_status','order_logistic_update_status','supply_status', 'colored_verify_status', \
                     'receiver_city', 'city','receiver_addr',
                     'colored_sms_status',
-
+                    "deal_outofstock","real_amount",
                     #'cancel', 'error_money', 'error_contact', \
                     #'error_address', 'error_cod', 'error_note','error_timeout',
                      'receiver_phone', 'phone_1', 'phone_2','verify_comments', 'cs_reply', \
                     'facebook_user_name', 'sales', 'show_conversation')
 
-    list_editable = ['phone_1', 'phone_2', 'cs_reply',  'city',]
+    list_editable = ['phone_1', 'phone_2', 'cs_reply',  'city',"real_amount",]
     search_fields = ['order__order_no','verify_comments', 'phone_1','phone_2','facebook_user_name','order__receiver_city']
     list_filter = ('verify_status','supply_status', 'sms_status', 'error_money', 'order__order_status','sales','city',)
     actions = ['batch_stop', 'batch_pause', 'batch_normal', ]

@@ -1373,7 +1373,7 @@ class LogisticResendTrailAdmin(object):
         deal_list = ["RE_DELIVER",
                      "RE_DELIVERING",
                      ]
-        return qs.filter(logistic_supplier='佳成', file_status="OPEN", wait_status=False, warehouse_check="NONE",
+        return qs.filter( file_status="OPEN", wait_status=False, warehouse_check="NONE",
                          deal__in=deal_list)
 
 
