@@ -67,8 +67,6 @@ class Order(models.Model):
         ("FEE", "运费"),
     )
 
-
-
     order_no = models.CharField(u'订单号', default='', max_length=50, blank=True)
 
     #shopify 订单状态
@@ -82,7 +80,13 @@ class Order(models.Model):
 
     # product_quantity = models.CharField(u'产品数量', default='', max_length=50, blank=True)
     order_amount = models.CharField(u'订单金额', default='', max_length=50, blank=True)
-    real_amount = models.CharField(u'实收金额', default='', max_length=50, blank=True)
+
+    def cal_real_amount(self):
+        return  self.verify.real_amount
+
+    cal_real_amount.short_description = "实收金额"
+    real_amount = property(cal_real_amount)
+
 
     order_comment = models.CharField(u'订单备注', max_length=500, default='', null=True, blank=True)
     warhouse_comment = models.CharField(u'拣货备注', max_length=500, default='', null=True, blank=True)

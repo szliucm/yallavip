@@ -138,6 +138,7 @@ class OrderResource(resources.ModelResource):
 
     #product_quantity = fields.Field(attribute='product_quantity', column_name='产品数量')
     order_amount = fields.Field(attribute='order_amount', column_name='订单金额')
+    real_amount = fields.Field(attribute='real_amount', column_name='实收金额')
 
     order_comment = fields.Field(attribute='order_comment', column_name='订单备注')
     warhouse_comment = fields.Field(attribute='warhouse_comment', column_name='拣货备注')
