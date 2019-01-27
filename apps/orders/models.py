@@ -349,6 +349,7 @@ class Verify(models.Model):
     reply_time = models.CharField(u'回复时间', max_length=50, default='', null=True)
 
     OUT_OF_STOCK = (
+        ("NONE", "未处理"),
         ("ASKED", "已发送话术"),
         ("AGREE", "同意"),
         ("REFUSE", "不同意"),
