@@ -1279,7 +1279,7 @@ class LogisticResendTrailAdmin(object):
         self.deal_trail(queryset, deal)
         return queryset.update(deal=deal, resend_start_time=dt.now())
 
-    batch_fail.short_description = "没有重派"
+    batch_nodo.short_description = "没有重派"
 
     list_display = ('logistic_no', 'send_time',
 

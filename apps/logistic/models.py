@@ -77,7 +77,7 @@ class Package(models.Model):
         #重派结果：成功，失败，没有重派
         ("RE_SUCCESS", "重新成功"),
         ("RE_FAIL", "重新失败"),
-        ("RE_NODO", "没有重新"),
+        ("RE_NODO", "没有重新派送"),
 
         #("RETURNING", "退仓中"),
         #("RETURNED", "已退到仓库"),
