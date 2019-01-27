@@ -1234,7 +1234,7 @@ class LogisticManagerConfirmAdmin(object):
 @xadmin.sites.register(LogisticResendTrail)
 class LogisticResendTrailAdmin(object):
     actions = [
-        'batch_redelivering',
+        'batch_redelivering','batch_fail','batch_success','batch_nodo',
     ]
     def deal_trail(self,queryset,deal):
         for row in queryset:
@@ -1256,6 +1256,30 @@ class LogisticResendTrailAdmin(object):
 
 
     batch_redelivering.short_description = "已通知物流重派"
+
+    def batch_fail(self, request, queryset):
+        # 定义actions函数
+        deal = "RE_FAIL"
+        self.deal_trail(queryset, deal)
+        return queryset.update(deal=deal, resend_start_time=dt.now())
+
+    batch_fail.short_description = "重派失败"
+
+    def batch_success(self, request, queryset):
+        # 定义actions函数
+        deal = "RE_SUCCESS"
+        self.deal_trail(queryset, deal)
+        return queryset.update(deal=deal, resend_start_time=dt.now())
+
+    batch_success.short_description = "重派成功"
+
+    def batch_nodo(self, request, queryset):
+        # 定义actions函数
+        deal = "RE_NODO"
+        self.deal_trail(queryset, deal)
+        return queryset.update(deal=deal, resend_start_time=dt.now())
+
+    batch_fail.short_description = "没有重派"
 
     list_display = ('logistic_no', 'send_time',
 
