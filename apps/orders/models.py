@@ -359,6 +359,7 @@ class Verify(models.Model):
         ("NONE", "未处理"),
         ("ASKED", "已发送话术"),
         ("AGREE", "同意"),
+        ("WAIT", "愿意等货"),
         ("REFUSE", "不同意"),
         ("NOREPLY", "无反应"),
     )
