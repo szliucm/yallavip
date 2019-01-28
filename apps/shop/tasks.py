@@ -4,7 +4,8 @@ import numpy as np, re
 
 from celery import shared_task
 
-
+from datetime import datetime,timedelta
+from django.utils import timezone as dt
 
 from .photo_mark import  photo_mark
 from shop.models import ProductCategory,ProductCategoryMypage
@@ -501,7 +502,7 @@ def get_orders():
             continue
 
 def update_orders():
-    oriorders = ShopOriOrder.objects.all().order_by("-order_id")
+    oriorders = ShopOriOrder.objects.filter(Q(created_at__gt=(dt.now() - timedelta(days=30)))).order_by("-order_id")
 
     for row in oriorders:
         print(row.order_id)
@@ -546,9 +547,6 @@ def update_orders():
             phone = ""
 
 
-
-
-
         obj, created = Order.objects.update_or_create(order_no= "579815-" + str(order["order_number"]),
                         defaults={
                                     'order_time': order["created_at"],
@@ -571,19 +569,20 @@ def update_orders():
             print("#############soemthing get wrong ",order["order_number"] )
             continue
 
-        for order_item in  order["line_items"]:
-            print(obj, order_item["sku"],order_item["quantity"],order_item["price"])
-            sku =order_item["sku"]
-            if sku == "" or sku is None:
-                sku = order_item["variant_id"]
+        if created :
+            for order_item in  order["line_items"]:
+                print(obj, order_item["sku"],order_item["quantity"],order_item["price"])
+                sku =order_item["sku"]
                 if sku == "" or sku is None:
-                    sku = order_item["id"]
-            obj_orderdetail, created = OrderDetail.objects.update_or_create(order=obj,
-                                                                sku = sku,
-                                                      defaults={
-                                                          'product_quantity': order_item["quantity"],
-                                                          'price': order_item["price"],
-                                                           }
-                                                      )
+                    sku = order_item["variant_id"]
+                    if sku == "" or sku is None:
+                        sku = order_item["id"]
+                obj_orderdetail, created = OrderDetail.objects.update_or_create(order=obj,
+                                                                    sku = sku,
+                                                          defaults={
+                                                              'product_quantity': order_item["quantity"],
+                                                              'price': order_item["price"],
+                                                               }
+                                                          )
 
 

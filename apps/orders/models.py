@@ -378,8 +378,30 @@ class Verify(models.Model):
 
     CITY = (
         ("暂不支持", "暂不支持"),
+        ("riyadh", "Riyadh"),
+        ("jeddah", "Jeddah"),
+        ("khobar", "Khobar"),
+        ("dammam", "Dammam"),
+        ("madinah", "Madinah"),
+        ("medina", "Medina"),
+        ("makkah", "Makkah"),
+        ("taif", "Taif"),
+        ("hofuf", "Hofuf"),
+        ("hail", "Hail"),
+        ("jubail", "Jubail"),
+        ("tabuk", "Tabuk"),
+        ("qatif", "Qatif"),
+        ("dhahran", "Dhahran"),
+        ("gizan", "Gizan"),
 
-        ("abha", "Abha"),
+
+
+
+    )
+
+    #所有地区，备用
+    '''
+           ("abha", "Abha"),
         ("abqaiq", "Abqaiq"),
         ("abu areish", "Abu Areish"),
         ("afif", "Afif"),
@@ -821,25 +843,6 @@ class Verify(models.Model):
         ("wadi dawaserwadi addawasir", "Wadi Dawaserwadi Addawasir"),
         ("wajh", "Wajh"),
         ("zalom", "Zalom"),
-
-    )
-
-    #高签收地区，备用
-    '''
-           ("riyadh", "Riyadh"),
-           ("jeddah", "Jeddah"),
-           ("khobar", "Khobar"),
-           ("dammam", "Dammam"),
-           ("madinah", "Madinah"),
-           ("makkah", "Makkah"),
-           ("taif", "Taif"),
-           ("hofuf", "Hofuf"),
-           ("hail", "Hail"),
-           ("jubail", "Jubail"),
-           ("tabuk", "Tabuk"),
-           ("qatif", "Qatif"),
-           ("dhahran", "Dhahran"),
-           ("gizan", "Gizan"),
 
     '''
 
