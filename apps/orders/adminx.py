@@ -640,7 +640,7 @@ class OrderAdmin(object):
 
             obj, created = Package.objects.update_or_create(
                 logistic_no=row.logistic_no,
-                ref_order = row.pk,
+                ref_order = row,
                 defaults={
                     'send_time': row.send_time,
                 },
