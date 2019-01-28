@@ -533,7 +533,10 @@ def update_orders():
                 receiver_name += " " +  shipping_address.get("last_name","")
 
             address1 = shipping_address.get("address1","")
+
             address2 = shipping_address.get("address2","")
+            if address2 is None:
+                address2 = ""
             city = shipping_address.get("city","")
             country = shipping_address.get("country","")
             phone = shipping_address.get("phone","")
