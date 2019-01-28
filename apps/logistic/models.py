@@ -12,6 +12,7 @@ from django.utils.safestring import mark_safe
 class Package(models.Model):
     super_package = models.ForeignKey('self', null=True, on_delete=models.CASCADE,
                                  verbose_name="父包裹")
+    from_warehouse = models.CharField(u'发货仓库', default='', max_length=100, blank=True)
 
     ref_order = models.ForeignKey(Order, related_name='order_package',null=True, on_delete=models.CASCADE,
                                  verbose_name="相关订单")
