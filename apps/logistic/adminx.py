@@ -1056,7 +1056,7 @@ class LogisticCustomerServiceAdmin(object):
         deal = "RE_DELIVER"
         self.deal_trail(queryset, deal)
 
-        return queryset.update(deal=deal, feedback_time=dt.now())
+        return queryset.update(deal=deal,wait_status=False, feedback_time=dt.now())
 
     batch_redeliver.short_description = "重新派送"
 
@@ -1373,7 +1373,7 @@ class LogisticResendTrailAdmin(object):
         deal_list = ["RE_DELIVER",
                      "RE_DELIVERING",
                      ]
-        return qs.filter( file_status="OPEN", wait_status=False, warehouse_check="NONE",
+        return qs.filter( file_status="OPEN", wait_status=False, #warehouse_check="NONE",
                          deal__in=deal_list)
 
 
