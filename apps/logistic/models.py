@@ -362,7 +362,11 @@ class LogisticResendTrail(Package):
 
                 return (now - self.resend_start_time).days
             else:
-                return (now - self.feedback_time).days
+                if self.feedback_time is not None:
+                    return (now - self.feedback_time).days
+                else:
+                    return "没有时间信息"
+
         else:
             if self.logistic_update_date is not None and self.resend_start_time is not None:
                 return (self.logistic_update_date - self.resend_start_time.date()).days
