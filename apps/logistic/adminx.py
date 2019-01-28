@@ -1731,12 +1731,13 @@ class ToBalanceAdmin(object):
                     "send_time",
                     'logistic_update_date', 'logistic_update_status',
                     "total_date","lost_date",
+                    "resend_commnet",
                     "warehouse_check","warehouse_check_comments","warehouse_checktime","warehouse_check_manager",
 
                     )
     list_editable = [ ]
     search_fields = ['logistic_no', 'logistic_update_status',]
-    list_filter = ("warehouse_check","deal",)
+    list_filter = ("warehouse_check","deal","deal", )
     ordering = ["send_time"]
     actions = ["batch_balanced",]
 
@@ -1792,4 +1793,28 @@ class DealTrailAdmin(object):
 
 
 
+@xadmin.sites.register(OverseaPackage)
+class OverseaPackageAdmin(object):
+    list_display = ('waybillnumber',
+                    )
+    list_editable = [ ]
+    search_fields = ['waybillnumber', ]
+    list_filter = ()
+    ordering = []
+    actions = []
 
+
+
+    def get_list_queryset(self):
+        """批量查询订单号"""
+        queryset = super().get_list_queryset()
+
+        query = self.request.GET.get(SEARCH_VAR, '')
+
+        if (len(query) > 0):
+            queryset |= self.model.objects.filter(logistic_no__in=query.split(","))
+        return queryset
+
+    def queryset(self):
+        qs = super().queryset()
+        return qs.filter(file_status="OPEN" , wait_status = True)
