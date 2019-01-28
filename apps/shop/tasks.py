@@ -526,11 +526,11 @@ def update_orders():
         else:
             buyer_name = ""
 
-        shipping_address = order.get("shipping_address","")
+        shipping_address = order.get("shipping_address")
         if shipping_address is not None:
-            receiver_name =  order["shipping_address"].get("first_name","")
-            if order["shipping_address"].get("last_name","") is not None:
-                receiver_name += " " +  order["shipping_address"].get("last_name","")
+            receiver_name =  shipping_address.get("first_name","")
+            if shipping_address.get("last_name","") is not None:
+                receiver_name += " " +  shipping_address.get("last_name","")
 
             address1 = shipping_address.get("address1","")
             address2 = shipping_address.get("address2","")
