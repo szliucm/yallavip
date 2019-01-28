@@ -1795,10 +1795,10 @@ class DealTrailAdmin(object):
 
 @xadmin.sites.register(OverseaPackage)
 class OverseaPackageAdmin(object):
-    list_display = ('waybillnumber',
+    list_display = ('logistic_no',
                     )
     list_editable = [ ]
-    search_fields = ['waybillnumber', ]
+    search_fields = ['logistic_no', ]
     list_filter = ()
     ordering = []
     actions = []
@@ -1817,4 +1817,4 @@ class OverseaPackageAdmin(object):
 
     def queryset(self):
         qs = super().queryset()
-        return qs.filter(file_status="OPEN" , wait_status = True)
+        return qs.filter(file_status="OPEN" , wait_status = False, from_warehouse = "海外仓")
