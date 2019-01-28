@@ -1795,7 +1795,7 @@ class DealTrailAdmin(object):
 
 @xadmin.sites.register(OverseaPackage)
 class OverseaPackageAdmin(object):
-    list_display = ('ref_order', 'logistic_no','logistic_update_date', 'logistic_update_status','logistic_update_locate',
+    list_display = ('ref_order', 'send_time','logistic_no','logistic_update_date', 'logistic_update_status','logistic_update_locate',
                     )
     list_editable = [ 'logistic_no', ]
     search_fields = ['logistic_no', ]
