@@ -420,9 +420,10 @@ def get_orders():
     shop_name = "yallasale-com"
     shop_obj = Shop.objects.get(shop_name=shop_name)
 
-    # 取得系统中已有的最大订单号
+    # 取得系统中30天内最早的订单号
 
-    shoporiorder = ShopOriOrder.objects.all().order_by('-order_id').first()
+
+    shoporiorder = ShopOriOrder.objects.filter(Q(created_at__gt=(dt.now() - timedelta(days=30)))).order_by("order_id").first()
     if shoporiorder is None:
         max_shoporiorder_no = "0"
     else:
