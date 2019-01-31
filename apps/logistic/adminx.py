@@ -1281,7 +1281,14 @@ class LogisticResendTrailAdmin(object):
 
     batch_nodo.short_description = "没有重派"
 
-    list_display = ('logistic_no', 'send_time',
+    def receiver_phone(self, obj):
+        order = Order.objects.filter(logistic_no=obj.logistic_no).last
+
+        return order.receiver_phone
+
+    receiver_phone.short_description = "收货人电话"
+
+    list_display = ('logistic_no', 'send_time','receiver_phone',
 
                     'logistic_update_date', 'logistic_update_status', 'logistic_update_locate',
                     "problem_date",
