@@ -382,7 +382,6 @@ class Verify(models.Model):
         ("jeddah", "Jeddah"),
         ("dammam", "Dammam"),
         ("al khobar", "Al Khobar"),
-
         ("hofuf", "Hofuf"),
         ("jubail", "Jubail"),
         ("dhahran", "Dhahran"),
