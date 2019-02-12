@@ -1150,7 +1150,7 @@ class VerifyAdmin(object):
     def order_status(self, obj):
         return obj.order.order_status
 
-    order_status.short_description = "订单状态"
+    order_status.short_description = "店小秘订单状态"
 
     def order_financial_status(self, obj):
         return obj.order.financial_status
@@ -1190,7 +1190,7 @@ class VerifyAdmin(object):
     '''
 
     readonly_fields = ('order', 'order_time',)
-    list_display = ('order','order_sku_count','order_time', 'order_financial_status','order_fulfillment_status','colored_verify_status', \
+    list_display = ('order','order_sku_count','order_time', 'order_status','order_financial_status','order_fulfillment_status','colored_verify_status', \
                     'colored_sms_status',
                     'receiver_city','city','receiver_addr',
 
@@ -1202,7 +1202,7 @@ class VerifyAdmin(object):
     ordering = ['-order__order_time']
     list_editable = ['phone_1', 'phone_2','verify_comments','city',]
     search_fields = ['order__order_no','verify_comments','cs_reply',"phone_1", "order__receiver_city",]
-    list_filter = ('order__financial_status','order__fulfillment_status','verify_status', 'sms_status', 'error_contact',"city",)
+    list_filter = ('order__order_status','order__financial_status','order__fulfillment_status','verify_status', 'sms_status', 'error_contact',"city",)
 
     model_icon = 'fa fa-address-book-o'
 
