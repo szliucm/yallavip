@@ -380,22 +380,17 @@ class Verify(models.Model):
         ("暂不支持", "暂不支持"),
         ("riyadh", "Riyadh"),
         ("jeddah", "Jeddah"),
-        ("khobar", "Khobar"),
         ("dammam", "Dammam"),
-        ("madinah", "Madinah"),
-        ("medina", "Medina"),
-        ("makkah", "Makkah"),
-        ("taif", "Taif"),
+        ("al khobar", "Al Khobar"),
+
         ("hofuf", "Hofuf"),
-        ("hail", "Hail"),
         ("jubail", "Jubail"),
-        ("tabuk", "Tabuk"),
-        ("qatif", "Qatif"),
         ("dhahran", "Dhahran"),
-        ("gizan", "Gizan"),
-
-
-
+        ("tabuk", "Tabuk"),
+        ("buraydah", "Buraydah"),
+        ("al hassa", "Al Hassa"),
+        ("jizan", "Jizan"),
+        ("qatif", "Qatif"),
 
     )
 
