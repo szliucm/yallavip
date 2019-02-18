@@ -2126,8 +2126,10 @@ def get_lightin_product_info(SPU, url):
     price_div = htmlEmt.xpath('//strong[contains(@class,"sale-price")]')
 
     if price_div:
+
         price = price_div[0].text.split()
         sale_price = price[0].replace("$","")
+        print(price_div[0].text, price, sale_price)
     else:
         print("price is empty",url)
         return "price is empty", False
