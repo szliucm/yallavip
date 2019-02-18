@@ -433,6 +433,7 @@ class AliProduct_vendor(models.Model):
 
 class Lightin_SPU(models.Model):
     SPU = models.CharField(default='',max_length=300, null=True, blank=True, verbose_name="SPU")
+
     en_name = models.CharField(default='',max_length=300, null=True, blank=True, verbose_name="en_name")
     cn_name = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="cn_name")
     cate_1 = models.CharField(u'cate_1', default='', max_length=256, null=True, blank=True)
@@ -443,6 +444,13 @@ class Lightin_SPU(models.Model):
     vendor_supply_price = models.FloatField(verbose_name="供方采购价", default=0)
     link = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="link")
 
+    title = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="title")
+    sale_price = models.FloatField(verbose_name="供方实际销售价", default=0)
+    images = models.TextField(default='', null=True, blank=True, verbose_name="图片字典")
+
+    got = models.BooleanField(default=False, verbose_name="获取状态")
+    got_error = models.CharField(default='无', max_length=100, null=True, blank=True, verbose_name="获取错误")
+    got_time = models.DateTimeField(null=True, blank=True, verbose_name="更新时间")
 
     class Meta:
         verbose_name = "兰亭SPU"

@@ -7,6 +7,7 @@ import requests
 import json
 import random
 from django.utils import timezone as datetime
+from django.utils import timezone as dt
 
 
 
@@ -1222,11 +1223,33 @@ def complete_aliproduct_shopify():
 
 
 
+# 抓取lightin页面数据
+@shared_task
+def get_lightin():
+    from .ali import get_lightin_product_info
+    from django.utils import timezone as dt
+
+    lightinproducts = Lightin_SPU.objects.filter(got=False,got_error="无" )
+    print("一共有%d 个lightin链接待处理"%(lightinproducts.count()))
 
 
 
+    for aliproduct in lightinproducts:
 
+        message,status=get_lightin_product_info(aliproduct.SPU, aliproduct.link)
+        if status:
+            print("成功！")
+        else:
+            print("失败！！！", message)
+            # 更新产品记录
+            Lightin_SPU.objects.update_or_create(
+                SPU=aliproduct.SPU,
+                defaults={
+                    "got_error":message,
+                    "got_time": dt.now()
 
+                }
+            )
 
 
 
