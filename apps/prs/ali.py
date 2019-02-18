@@ -2022,3 +2022,329 @@ def create_variant_shenjian(aliproduct, shopifyproduct):
 
 
 
+def get_lingtin_page():
+    import time
+    import traceback
+    from requests.packages import urllib3
+    urllib3.disable_warnings()
+    r = requests.session()
+    n = 0
+
+    url = ('https://www.lightinthebox.com/p/_p6636997.html')
+    #url = (
+     #   'https://www.lightinthebox.com/en/p/men-s-athletic-shoes-comfort-pu-tulle-spring-fall-outdoor-athletic-running-lace-up-flat-heel-black-red-gray-dark-blue-under-1in_p5885959.html')
+    while ( n < 20):
+        try:
+
+            #proxy = get_proxies()
+            #proxies = {'https': proxy}
+            #print("当前使用的代理是",proxies)
+            #proxies= None
+
+            res = r.get(url,    headers=header(), allow_redirects=True)#,proxies=proxies,verify=False,)
+            if res.status_code == 200:
+                print(res, res.status_code)
+                return  res.content
+
+            else:
+
+                print(res, res.status_code, res.headers['Location'])
+                #Proxy.objects.filter(ip=proxy).update(active=False)
+                '''
+                n += 1
+                time.sleep(1)
+                continue
+                '''
+                return None
+
+        except Exception as e:  #(ProxyError, ConnectTimeout, SSLError, ReadTimeout, ConnectionError):
+            print("代理错误")
+            '''
+            print('str(Exception):\t', str(Exception))
+            print("str(e)", str(e))
+            print("repr(e)", repr(e))
+            print("traceback.print_exc()", traceback.print_exc())
+            print("traceback.format_exc()", traceback.format_exc())
+            Proxy.objects.filter(ip=proxy).update(active=False)
+            time.sleep(1)
+            n += 1
+            continue
+            '''
+
+
+
+    return  None
+
+
+# 获取1688产品信息
+def get_lightin_product_info():
+    from .models import AliProduct
+
+    print("开始抓取lightin产品信息 ")
+
+
+
+    res = get_lingtin_page()
+    if res is None:
+        return "获取页面失败", False
+
+    # debug用
+    with open('lightin.txt', 'wb') as f:
+        f.write(res)
+
+
+    f = open("lightin.txt", "rb")
+
+    res = f.read()
+
+    htmlEmt = etree.HTML(res)
+
+    #print(htmlEmt)
+    #result = etree.tostring(htmlEmt)
+    #print(result.decode('utf-8'))
+
+
+
+    # 标题
+    #title_ori = htmlEmt.xpath('//h1[@class="d-title"]/text()')
+    #title_ori = htmlEmt.xpath('//title/text()')
+    title_ori = htmlEmt.xpath('//div[@class="widget prod-info-title"]/h1')
+    if title_ori:
+
+        print("here")
+        print(type(title_ori), title_ori, title_ori[0].text)
+        item_id = title_ori[0].xpath('.//span[@class="item-id"]')
+        print(type(item_id), item_id, item_id[0].text)
+
+
+
+    else:
+        #print("title is empty", offer_id)
+        print("title is empty")
+        return "title is empty", False
+
+
+
+    # 取主图
+    # imgs_list = []
+    images_list = []
+    image_no = 0
+
+    divs = htmlEmt.xpath('//div[@class="viewport"]')
+#    print(etree.tostring(divs[0]))
+
+    imgs = divs[0].xpath('.//img')
+
+    # image_no = 0
+    for row in imgs:
+        #print(etree.tostring(row))
+
+        img = row.attrib.get('data-normal')
+        src = row.attrib.get('src')
+        attribute_id = row.attrib.get('attribute_id')
+
+
+        print(img, src,  attribute_id)
+
+    return
+
+    option_list = []
+    option_zh_list = []
+
+    # 取leading
+    option1_list = []
+    option1_zh_list = []
+    img_dict = {}
+    div_leadings = htmlEmt.xpath('//div[@class="obj-leading"]')
+    # 有两种情况，有leading 和没有leading
+    if not div_leadings:
+        leading = False
+    else:
+        leading = True
+
+        div_leading = div_leadings[0]
+        option1 = div_leading.find('.//div[@class="obj-header"]/span').text
+
+        option1_content = div_leading.xpath('.//div[@class="obj-content"]/ul/li/div')
+        # print("option1_content *****************", etree.tostring(option1_content))
+        for div in option1_content:
+            # print("div *****************", etree.tostring(div))
+
+            data_name_div = div.attrib.get('data-unit-config')
+            if data_name_div:
+                data_name = json.loads(data_name_div)
+                option1_name_zh = data_name["name"]
+                option1_name_en = fanyi(option1_name_zh)
+                # print("option1_name is ", option1_name_zh, option1_name_en)
+            else:
+                continue
+
+            if option1_name_en in option_list:
+                option1_name_en = option1_name_en + "_" + str(len(option_list))
+            option1_list.append(option1_name_en)
+            option1_zh_list.append(option1_name_zh)
+
+            data_imgs = div.attrib.get('data-imgs')
+            if data_imgs:
+                data_imgs = json.loads(data_imgs)
+                option1_img = data_imgs["original"]
+                # print("image is ", option1_img)
+
+                # 规格图片如果不在主图里，也插进列表
+                if option1_img not in images_list:
+                    images_list.append(option1_img)
+                    '''
+                    image = {
+                        "src": option1_img,
+                        "image_no": image_no
+                    }
+                    imgs_list.append(image)
+                    option_image_no = image_no
+                    image_no += 1
+                else:
+                    option_image_no = images_list.index(option1_img)
+                '''
+                # 规格-图片地址 字典
+                img_dict[option1_name_en] = images_list.index(option1_img)
+
+
+            else:
+                option1_img = None
+                print("no data image")
+
+        option = {
+            "name": fanyi(option1),
+            "values": option1_list
+        }
+        # 插入规格
+        option_list.append(option)
+        # print("option1 \n", option_list)
+
+        ################插入中文版，便于理解
+        option_zh = {
+            "name": option1,
+            "values": option1_zh_list
+        }
+        # 插入规格
+        option_zh_list.append(option_zh)
+        # print("option1 \n", option_list)
+
+    # 取sku
+    option2_list = []
+    option2_zh_list = []
+    price_dict = {}
+
+    div_sku = htmlEmt.xpath('//div[@class="obj-sku"]')
+    if div_sku:
+        print(div_sku, "\n\n")
+        div_sku = div_sku[0]
+
+        option2 = div_sku.find('.//div[@class="obj-header"]/span').text
+
+        option2_content = div_sku.xpath('.//tr')
+        # print("option2_content *****************", etree.tostring(option2_content))
+        for div in option2_content:
+            # print("type  div", type(div), etree.tostring(div))
+            # 有两种情况，一种是名字含图片(not leading )，一种是不含图片的(有leading)
+            option2_img = None
+            if leading:
+                option2_name = div.find('.//td[@class="name"]/span').text
+                option2_img = None
+            else:
+                option2_name = div.find('.//td[@class="name"]/span').attrib.get('title')
+
+                option2_imgs = div.find('.//td[@class="name"]/span').attrib.get('data-imgs')
+                if option2_imgs:
+                    data_imgs = json.loads(option2_imgs)
+                    option2_img = data_imgs["original"]
+                    # print("image is ", option2_img)
+
+                    # 规格图片如果不在主图里，也插进列表
+                    if option2_img not in images_list:
+                        images_list.append(option2_img)
+                        '''
+                        image = {
+                            "src": option2_img,
+                            "image_no": image_no
+                        }
+                        imgs_list.append(image)
+                        image_no += 1
+                        '''
+
+            # 不管有没有leading，都有名字要处理，但是只有无leading的，才有规格图片字典
+            if option2_name:
+                if option2_name.isdigit():
+                    option2_name_en = option2_name
+                else:
+                    option2_name_en = fanyi(option2_name)
+            else:
+                print("没有规格")
+                continue
+
+            # print("###############", option2_name_en, option2_list)
+            if option2_name_en in option2_list:
+                option2_name_en = option2_name_en + "_" + str(len(option2_list))
+
+            option2_list.append(option2_name_en)
+            option2_zh_list.append(option2_name)
+
+            # 规格-图片地址 字典
+            if option2_img is not None:
+                img_dict[option2_name_en] = images_list.index(option2_img)
+
+            price = div.find('.//td[@class="price"]/span/em').text
+            count = div.find('.//td[@class="count"]/span/em[1]').text
+
+            if not count or int(count) == 0:
+                print("没有库存", offer_id)
+                continue
+
+            price_dict[option2_name_en] = price
+
+        option = {
+            "name": fanyi(option2),
+            "values": option2_list
+        }
+
+        # 插入规格
+        option_list.append(option)
+        # print("option_list \n", option_list)
+
+        #######中文版
+        option_zh = {
+            "name": option2,
+            "values": option2_zh_list
+        }
+
+        # 插入规格
+        option_zh_list.append(option_zh)
+        # print("option_list \n", option_zh_list)
+    else:
+        print("obj-sku is empty")
+        # return "obj-sku is empty", False
+
+    # 找到最大价格
+    maxprice = 0
+    for price in price_dict.values():
+        if float(price) > maxprice:
+            maxprice = float(price)
+
+    AliProduct.objects.update_or_create(
+        offer_id=offer_id,
+        defaults={
+            'title': title,
+            'cate_code': cate_code,
+            'images': json.dumps(images_list),
+            'options': json.dumps(option_list),
+            'options_zh': json.dumps(option_zh_list),
+            'image_dict': json.dumps(img_dict),
+            'price_dict': json.dumps(price_dict),
+            "maxprice": maxprice,
+            'price_rate': random.uniform(3, 4),
+            "created": True,
+            "created_error": "",
+            "created_time": datetime.now()
+
+        }
+    )
+    return "", True

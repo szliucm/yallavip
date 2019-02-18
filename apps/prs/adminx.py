@@ -662,3 +662,42 @@ class AliProduct_vendorAdmin(object):
     list_editable = []
     readonly_fields = ()
     actions = []
+
+class Lightin_SPUResource(resources.ModelResource):
+    '''
+    SPU = fields.Field(attribute='SPU', column_name='SPU')
+    en_name = fields.Field(attribute='en_name', column_name='SPU')
+    cn_name = fields.Field(attribute='cn_name', column_name='cn_name')
+    cate_1 = fields.Field(attribute='cate_1', column_name='SPU')
+    cate_2 = fields.Field(attribute='cate_2', column_name='SPU')
+    cate_3 = fields.Field(attribute='cate_3', column_name='SPU')
+    vendor_sale_price = fields.Field(attribute='vendor_sale_price', column_name='SPU')
+    vendor_supply_price = fields.Field(attribute='vendor_supply_price', column_name='SPU')
+    link = fields.Field(attribute='link', column_name='SPU')
+    '''
+
+
+
+    class Meta:
+        model = Lightin_SPU
+        skip_unchanged = True
+        report_skipped = True
+        import_id_fields = ('SPU',)
+        fields = ("SPU", "en_name","cn_name", "cate_1","cate_2","cate_3","vendor_sale_price","vendor_supply_price","link", )
+        # exclude = ()
+
+@xadmin.sites.register(Lightin_SPU)
+class Lightin_SPUAdmin(object):
+
+
+    import_export_args = {"import_resource_class": Lightin_SPUResource,
+                          "export_resource_class": Lightin_SPUResource}
+
+    list_display = [ "SPU", "en_name","cn_name", "cate_1","cate_2","cate_3","vendor_sale_price","vendor_supply_price","link", ]
+    # 'sku_name','img',
+
+    search_fields = ["SPU",]
+    list_filter = ["cate_1","cate_2","cate_3"]
+    list_editable = []
+    readonly_fields = ()
+    actions = []

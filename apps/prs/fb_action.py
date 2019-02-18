@@ -118,6 +118,7 @@ def post_creative_feed_page(page):
 
     from django.utils import timezone as datetime
 
+    print("page is ", page.page)
 
     fbs = MyProductFb.objects.filter(published=False, obj_type='FEED', mypage__page_no=page.page_no, publish_error="").order_by( 'myresource__created_time')
 

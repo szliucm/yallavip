@@ -429,3 +429,24 @@ class AliProduct_vendor(models.Model):
 
     def __str__(self):
         return str(self.ali_url)
+
+
+class Lightin_SPU(models.Model):
+    SPU = models.CharField(default='',max_length=300, null=True, blank=True, verbose_name="SPU")
+    en_name = models.CharField(default='',max_length=300, null=True, blank=True, verbose_name="en_name")
+    cn_name = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="cn_name")
+    cate_1 = models.CharField(u'cate_1', default='', max_length=256, null=True, blank=True)
+    cate_2 = models.CharField(u'cate_2', default='', max_length=256, null=True, blank=True)
+    cate_3 = models.CharField(u'cate_3', default='', max_length=256, null=True, blank=True)
+
+    vendor_sale_price = models.FloatField(verbose_name="供方销售价",default=0)
+    vendor_supply_price = models.FloatField(verbose_name="供方采购价", default=0)
+    link = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="link")
+
+
+    class Meta:
+        verbose_name = "兰亭SPU"
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.SPU
