@@ -2080,7 +2080,7 @@ def get_lingtin_page(url):
 def get_lightin_product_info(SPU, url):
     from .models import AliProduct
 
-    print("开始抓取lightin产品信息 ")
+    print("开始抓取lightin产品信息 ", url)
 
 
 
