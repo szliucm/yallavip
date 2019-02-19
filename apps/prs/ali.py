@@ -2080,7 +2080,7 @@ def get_lingtin_page(url):
 def get_lightin_product_info(SPU, url):
     from .models import AliProduct
 
-    print("开始抓取lightin产品信息 ")
+    print("开始抓取lightin产品信息 ", url)
 
 
 
@@ -2126,8 +2126,10 @@ def get_lightin_product_info(SPU, url):
     price_div = htmlEmt.xpath('//strong[contains(@class,"sale-price")]')
 
     if price_div:
+
         price = price_div[0].text.split()
-        sale_price = price[0].replace("$","")
+        sale_price = price[0].replace("$","").replace(",","")
+        print(price_div[0].text, price, sale_price)
     else:
         print("price is empty",url)
         return "price is empty", False
