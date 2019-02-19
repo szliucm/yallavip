@@ -2297,26 +2297,27 @@ def create_variant_lightin(lightin_spu):
         option3 = ""
 
         for option_set in option_sets:
-            option_name, option_value = option_set.split("=")
+            if option_set.find("="):
+                option_name, option_value = option_set.split("=")
 
-            find_flag = 0
-            for row in shopify_option_list:
-                if option_name == row.get("name"):
-                    values = row.get("values")
-                    if option_value not in values:
+                find_flag = 0
+                for row in shopify_option_list:
+                    if option_name == row.get("name"):
+                        values = row.get("values")
+                        if option_value not in values:
 
-                        values.append(option_value)
-                    find_flag=1
-                    break
+                            values.append(option_value)
+                        find_flag=1
+                        break
 
-            if  find_flag == 0:
-                values = []
-                values.append(option_value)
-                option = {
-                    "name" : option_name,
-                    "values" : values
-                }
-                shopify_option_list.append(option)
+                if  find_flag == 0:
+                    values = []
+                    values.append(option_value)
+                    option = {
+                        "name" : option_name,
+                        "values" : values
+                    }
+                    shopify_option_list.append(option)
 
             if n == 1:
                 option1 = option_value
