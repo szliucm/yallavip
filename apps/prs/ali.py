@@ -2319,14 +2319,14 @@ def create_variant_lightin(lightin_spu):
                     }
                     shopify_option_list.append(option)
 
-            if n == 1:
-                option1 = option_value
-            elif n == 2:
-                option2 = option_value
-            elif n == 3:
-                option3 = option_value
+                if n == 1:
+                    option1 = option_value
+                elif n == 2:
+                    option2 = option_value
+                elif n == 3:
+                    option3 = option_value
 
-            n += 1
+                n += 1
 
 
         variant_item = {
