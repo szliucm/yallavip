@@ -1265,9 +1265,14 @@ def post_lightin_shopify():
 
     lightinproducts = Lightin_SPU.objects.filter(got = True, published=False,publish_error="无")
     print("一共有%d 个lightin产品信息待发布" % (lightinproducts.count()))
+    n = 0
     for lightinproduct in lightinproducts:
         #post_to_shopify_lightin.delay(lightinproduct.pk)
         post_to_shopify_lightin(lightinproduct.pk)
+        n += 1
+        if n>10:
+            break
+
 
 @task
 def post_to_shopify_lightin(lightinproduct_pk ):
