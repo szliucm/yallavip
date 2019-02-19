@@ -126,13 +126,23 @@ def post_product_main(shop_url, handle_new, product, imgs_list):
 
 
 def post_product_variant(shop_url, product_no,variants_list, option_list ):
-    params = {
-        "product": {
-            "variants": variants_list,
-            "options": option_list,
 
+    if len(option_list)>0:
+        params = {
+            "product": {
+                "variants": variants_list,
+                "options": option_list,
+
+            }
         }
-    }
+    else:
+        params = {
+            "product": {
+                "variants": variants_list,
+
+
+            }
+        }
     headers = {
         "Content-Type": "application/json",
         "charset": "utf-8",
