@@ -1252,6 +1252,88 @@ def get_lightin():
             )
 
 
+#3,将1688产品详细信息发布到shopfiy店铺
+@shared_task
+def post_lightin_shopify():
+
+
+    dest_shop = "yallasale-com"
+    # ori_shop = "yallavip-saudi"
+
+    # sync_shop(ori_shop)
+    sync_shop(dest_shop)
+
+    lightinproducts = Lightin_SPU.objects.filter(got = True, published=False,publish_error="无")
+    print("一共有%d 个lightin产品信息待发布" % (lightinproducts.count()))
+    for lightinproduct in lightinproducts:
+        #post_to_shopify_lightin.delay(lightinproduct.pk)
+        post_to_shopify_lightin(lightinproduct.pk)
+
+@task
+def post_to_shopify_lightin(lightinproduct_pk ):
+    from .ali import create_body_lightin, create_variant_lightin
+    from django.utils import timezone as datetime
+    dest_shop = "yallasale-com"
+
+    lightin_spu = Lightin_SPU.objects.get(pk=lightinproduct_pk)
+
+    vendor_no = lightin_spu.SPU
+    print("vendor_no", vendor_no)
+
+    dest_products = ShopifyProduct.objects.filter(shop_name=dest_shop, vendor=vendor_no)
+
+    if dest_products:
+        print("这个产品已经发布过了！！！！", vendor_no)
+        #把以前的删了重新发布
+        shop_obj = Shop.objects.get(shop_name=dest_shop)
+        # 初始化SDK
+        shop_url = "https://%s:%s@%s.myshopify.com" % (shop_obj.apikey, shop_obj.password, shop_obj.shop_name)
+        for product in dest_products:
+            # delete a product
+
+            product_no = product.product_no
+            if product_no is None:
+                continue
+            else:
+                url = shop_url + "/admin/products/%s.json" % (product_no)
+
+                headers = {
+                    "Content-Type": "application/json",
+                    "charset": "utf-8",
+
+                }
+
+                r = requests.delete(url, headers=headers)
+                print("response is ", r)
+            # 删除本地数据库记录
+            ShopifyProduct.objects.filter(pk=product.pk).delete()
+            ShopifyVariant.objects.filter(product_no=product_no).delete()
+            ShopifyImage.objects.filter(product_no=product_no).delete()
+            ShopifyOptions.objects.filter(product_no=product_no).delete()
+
+    #shop_obj = Shop.objects.get(shop_name=dest_shop)
+    #max_id = shop_obj.max_id + 1
+
+    shopifyproduct = create_body_lightin(lightin_spu )
+    if shopifyproduct is not None:
+        posted = create_variant_lightin(lightin_spu)
+        if posted is not None:
+            print("创建新产品成功")
+            Lightin_SPU.objects.filter(pk=lightin_spu.pk).update(published=True, handle=posted.get("handle"),
+
+
+                                                               product_no=posted.get("product_no"),
+                                                               published_time=datetime.now())
+        else:
+            print("创建新产品变体失败")
+            Lightin_SPU.objects.filter(pk=lightin_spu.pk).update(publish_error="创建新产品变体失败",
+                                                               published_time=datetime.now())
+            return
+
+    else:
+        print("创建新产品失败")
+        Lightin_SPU.objects.filter(pk=lightin_spu.pk).update(publish_error="创建新产品失败", published_time=datetime.now())
+        return
 
 
 

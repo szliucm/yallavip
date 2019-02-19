@@ -452,6 +452,13 @@ class Lightin_SPU(models.Model):
     got_error = models.CharField(default='无', max_length=100, null=True, blank=True, verbose_name="获取错误")
     got_time = models.DateTimeField(null=True, blank=True, verbose_name="更新时间")
 
+    published = models.BooleanField(default=False, verbose_name="发布到shopify状态")
+    publish_error = models.CharField(default='无', max_length=100, null=True, blank=True, verbose_name="发布错误")
+    published_time = models.DateTimeField(null=True, blank=True, verbose_name="发布时间")
+
+    product_no = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="shopify product_no")
+    handle = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="handle")
+
     class Meta:
         verbose_name = "兰亭SPU"
         verbose_name_plural = verbose_name
