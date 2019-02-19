@@ -2297,7 +2297,7 @@ def create_variant_lightin(lightin_spu):
         option3 = ""
 
         for option_set in option_sets:
-            if option_set.find("="):
+            if option_set.find("=")>0:
                 option_name, option_value = option_set.split("=")
 
                 find_flag = 0
