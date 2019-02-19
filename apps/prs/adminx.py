@@ -689,15 +689,57 @@ class Lightin_SPUResource(resources.ModelResource):
 @xadmin.sites.register(Lightin_SPU)
 class Lightin_SPUAdmin(object):
 
+    def photo(self, obj):
+        if obj.images is not None and len(obj.images)>0 :
+            photos = json.loads(obj.images)
+            img = ''
+
+            for photo in photos:
+                try:
+                    img = img + '<a><img src="%s" width="100px"></a>' % (photo)
+                except Exception as e:
+                    print("获取图片出错", e)
+
+            return mark_safe(img)
+
+        else:
+            photos = "no photo"
+
+    photo.short_description = "图片"
 
     import_export_args = {"import_resource_class": Lightin_SPUResource,
                           "export_resource_class": Lightin_SPUResource}
 
-    list_display = [ "SPU", "en_name","cn_name", "cate_1","cate_2","cate_3","vendor_sale_price","vendor_supply_price","link", "title","sale_price","images","got","got_time", ]
+    list_display = [ "SPU", "en_name","cn_name", "cate_1","cate_2","cate_3","vendor_sale_price","vendor_supply_price","link", "title","sale_price","photo","got","got_time", ]
     # 'sku_name','img',
 
     search_fields = ["SPU",]
-    list_filter = ["cate_1","cate_2","cate_3"]
+    list_filter = ["cate_1","cate_2","cate_3","got","got_time","got_error",]
+    list_editable = []
+    readonly_fields = ()
+    actions = []
+
+class Lightin_SKUResource(resources.ModelResource):
+
+    class Meta:
+        model = Lightin_SKU
+        skip_unchanged = True
+        report_skipped = True
+        import_id_fields = ('SKU',)
+        fields = ("SPU", "SKU","quantity", "vendor_sale_price","vendor_supply_price","weight", "length","width","height","skuattr",)
+        # exclude = ()
+
+@xadmin.sites.register(Lightin_SKU)
+class Lightin_SKUAdmin(object):
+
+    import_export_args = {"import_resource_class": Lightin_SKUResource,
+                          "export_resource_class": Lightin_SKUResource}
+
+    list_display = ["SPU", "SKU","quantity", "vendor_sale_price","vendor_supply_price","weight", "length","width","height","skuattr",]
+    # 'sku_name','img',
+
+    search_fields = ["SKU",]
+    list_filter = ["SPU"]
     list_editable = []
     readonly_fields = ()
     actions = []

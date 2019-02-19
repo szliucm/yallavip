@@ -458,3 +458,29 @@ class Lightin_SPU(models.Model):
 
     def __str__(self):
         return self.SPU
+
+class Lightin_SKU(models.Model):
+    SPU = models.CharField(default='',max_length=300, null=True, blank=True, verbose_name="SPU")
+
+    SKU = models.CharField(default='',max_length=300, null=True, blank=True, verbose_name="SKU")
+
+    quantity = models.IntegerField(u'数量', default=0, blank=True, null=True)
+
+    vendor_sale_price = models.FloatField(verbose_name="供方销售价",default=0)
+    vendor_supply_price = models.FloatField(verbose_name="供方采购价", default=0)
+
+
+
+    weight = models.FloatField(verbose_name="weight", default=0)
+    length = models.FloatField(verbose_name="length", default=0)
+    width = models.FloatField(verbose_name="width", default=0)
+    height = models.FloatField(verbose_name="height", default=0)
+
+    skuattr = models.TextField(default='', null=True, blank=True, verbose_name="skuattr")
+
+    class Meta:
+        verbose_name = "兰亭SKU"
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.SPU

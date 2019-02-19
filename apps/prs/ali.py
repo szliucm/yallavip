@@ -54,7 +54,7 @@ def header():
     }
     return headers
 
-from .models import Proxy, Lightin_SPU
+from .models import Proxy, Lightin_SPU,Lightin_SKU
 
 def new_proxies():
     #return  {'http':'49.70.223.4:3217'}
@@ -2157,3 +2157,221 @@ def get_lightin_product_info(SPU, url):
         }
     )
     return "", True
+
+
+#这一版是从神箭手转化数据
+#即使自己抓，也可以转化成神箭手的格式，后话了
+##################################################
+def create_body_lightin(lightin_spu):
+ ################################
+    ##############################
+    ############可以发布主产品了
+    #############################
+    from shop.models import Shop, ShopifyProduct
+    from prs.shop_action import post_product_main,   update_or_create_product
+    from .models import AliProduct
+
+    dest_shop = "yallasale-com"
+    shop_obj = Shop.objects.get(shop_name=dest_shop)
+
+    shop_url = "https://%s:%s@%s.myshopify.com" % (shop_obj.apikey, shop_obj.password, shop_obj.shop_name)
+
+    handle_new = 'l' + str(lightin_spu.pk).zfill(6)
+
+    if lightin_spu.title:
+        title = lightin_spu.title
+    else:
+        title = lightin_spu.en_name
+
+    #生成shopify图
+    shopify_images = []
+
+    if lightin_spu.images :
+        image_list =  json.loads(lightin_spu.images)
+        for image in image_list:
+            image = {
+                "src": image,
+                #"image_no": image_no
+            }
+            shopify_images.append(image)
+
+
+
+
+    params = {
+        "product": {
+            "handle": handle_new,
+            "title": title,
+            "body_html": title,
+            "vendor": lightin_spu.SPU,
+            "product_type": "auto",
+            "tags": "%s,%s,%s" %(lightin_spu.cate_1, lightin_spu.cate_2,lightin_spu.cate_3),
+            "images": shopify_images,
+            # "variants": variants_list,
+            #"options": json.loads(aliproduct.options),
+        }
+    }
+    headers = {
+        "Content-Type": "application/json",
+        "charset": "utf-8",
+
+    }
+    # 初始化SDK
+    # shop_obj = Shop.objects.get(shop_name=shop_name)
+
+
+    url = shop_url + "/admin/products.json"
+
+
+    print("开始创建主体")
+    print(url, json.dumps(params))
+
+
+
+    r = requests.post(url, headers=headers, data=json.dumps(params))
+    if r.text is None:
+        return None
+    try:
+        data = json.loads(r.text)
+        print("创建的新产品",r, data)
+    except:
+        print("创建产品主体失败")
+        print(url, json.dumps(params))
+        print(r)
+        print(r.text)
+        return None
+    # print("r is ", r)
+    # print("r.text is ", r.text)
+
+    # data = demjson.decode(r.text)
+    new_product = data.get("product")
+
+    if new_product:
+        products = []
+        products.append(new_product)
+        # 插入到系统数据库
+        #insert_product(shop_obj.shop_name, products)
+        update_or_create_product(shop_obj.shop_name, products)
+        # 修改handle最大值
+        #Shop.objects.filter(shop_name=shop_obj.shop_name).update(max_id=max_id)
+        #AliProduct.objects.filter(pk=aliproduct.pk).update(title=title,handle = handle_new,publish_error="产品主体发布成功" )
+        print("产品主体发布成功！！！！")
+
+        #print(type(new_product),  new_product)
+        return new_product
+
+    else:
+
+        print("产品主体发布失败！！！！")
+        print(data)
+        return None
+
+def create_variant_lightin(lightin_spu):
+
+    from prs.shop_action import post_product_variant,update_or_create_product
+    from shop.models import Shop, ShopifyProduct
+
+
+    lightin_skus = Lightin_SKU.objects.filter(SPU = lightin_spu.SPU)
+    shopifyproduct = ShopifyProduct.objects.get(vendor = lightin_spu.SPU )
+
+    ###################################
+    # 创建变体
+    ###################################
+
+
+
+    shopify_option_list = []
+    variants_list =[]
+    position = 0
+
+    for sku in lightin_skus:
+        print(sku.skuattr)
+
+        option_sets = sku.skuattr.split(";")
+        n=1
+        option1 = ""
+        option2 = ""
+        option3 = ""
+
+        for option_set in option_sets:
+            option_name, option_value = option_set.split("=")
+
+            find_flag = 0
+            for row in shopify_option_list:
+                if option_name == row.get("name"):
+                    values = row.get("values")
+                    if option_value not in values:
+
+                        values.append(option_value)
+                    find_flag=1
+                    break
+
+            if  find_flag == 0:
+                values = []
+                values.append(option_value)
+                option = {
+                    "name" : option_name,
+                    "values" : values
+                }
+                shopify_option_list.append(option)
+
+            if n == 1:
+                option1 = option_value
+            elif n == 2:
+                option2 = option_value
+            elif n == 3:
+                option3 = option_value
+
+            n += 1
+
+
+        variant_item = {
+            "option1": option1,
+            "option2": option2,
+            "option3": option3,
+            "price": int(sku.vendor_supply_price * 5.63),
+            "compare_at_price": int(sku.vendor_sale_price * 5.63 ),
+            "sku": sku.SKU,
+            "position": position,
+
+            "grams": sku.weight,
+
+            "taxable": "true",
+            "inventory_management": "shopify",
+            "fulfillment_service": "manual",
+            "inventory_policy": "continue",
+
+            "inventory_quantity": sku.quantity,
+            "requires_shipping": "true",
+            "weight": sku.weight,
+            "weight_unit": "kg",
+
+        }
+        print("variant_item", variant_item)
+        variants_list.append(variant_item)
+        position += 1
+
+
+    dest_shop = "yallasale-com"
+    shop_obj = Shop.objects.get(shop_name=dest_shop)
+
+    shop_url = "https://%s:%s@%s.myshopify.com" % (shop_obj.apikey, shop_obj.password, shop_obj.shop_name)
+    new_product = post_product_variant(shop_url, shopifyproduct.product_no, variants_list, shopify_option_list)
+    if new_product:
+        products = []
+        products.append(new_product)
+        # 插入到系统数据库
+        #insert_product(shop_obj.shop_name, products)
+        update_or_create_product(shop_obj.shop_name, products)
+
+
+        print("产品变体发布成功！！！！")
+        print(type(new_product),  new_product.get("id"))
+        return new_product
+
+    else:
+
+        print("产品变体发布失败！！！！")
+        return None
+
