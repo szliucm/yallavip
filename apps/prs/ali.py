@@ -2157,18 +2157,18 @@ def get_lightin_product_info(SPU, url):
     divs = htmlEmt.xpath('//div[@class="viewport"]')
     if divs:
         img_div = divs[0].xpath('.//div/div')
+        if not img_div:
+            img_div = divs[0].xpath('.//ul/li')
 
         for row in img_div:
-
             image_id = row.attrib.get("id").split("_")[1]
             img = row.xpath('.//img')[0].attrib.get('data-normal')
             images_dict[image_id] = img
             images_list.append(img)
 
-
-
         #src = row.attrib.get('src')
         #attribute_id = row.attrib.get('attribute_id')
+    print(images_list, images_dict)
 
     # 取sku图
     divs = htmlEmt.xpath('//li[contains(@class,"attr-v-show-img")]')
