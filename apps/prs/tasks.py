@@ -1269,10 +1269,11 @@ def post_lightin_shopify():
     for lightinproduct in lightinproducts:
         #post_to_shopify_lightin.delay(lightinproduct.pk)
         post_to_shopify_lightin(lightinproduct.pk)
+        '''
         n += 1
         if n>10:
             break
-
+        '''
 
 @task
 def post_to_shopify_lightin(lightinproduct_pk ):
