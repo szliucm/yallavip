@@ -2168,7 +2168,7 @@ def get_lightin_product_info(SPU, url):
 
         #src = row.attrib.get('src')
         #attribute_id = row.attrib.get('attribute_id')
-    print(images_list, images_dict)
+
 
     # 取sku图
     divs = htmlEmt.xpath('//li[contains(@class,"attr-v-show-img")]')
