@@ -2120,30 +2120,67 @@ def get_lightin_product_info(SPU, url):
         print("title is empty",url)
         return "title is empty", False
 
+    #取面包屑
+    breadcrumb_divs = htmlEmt.xpath('//ul[contains(@class,"breadcrumb")]/li')
+    breadcrumb_list = []
+    for row in breadcrumb_divs:
+        #print(etree.tostring(row))
+        breadcrumb = row.xpath('.//a/text()')
+        if breadcrumb:
+            breadcrumb_list.append( " ".join(breadcrumb[0].split()))
+
+
+
     # 取销售价
+    currency_div = htmlEmt.xpath('//dl[contains(@class,"prod-i-c-s")]/dt/a/text()')
+
 
 
     price_div = htmlEmt.xpath('//strong[contains(@class,"sale-price")]')
+
+
 
     if price_div:
 
         price = price_div[0].text.split()
         sale_price = price[0].replace("$","").replace(",","")
-        print(price_div[0].text, price, sale_price)
+
     else:
         print("price is empty",url)
         return "price is empty", False
 
+
     # 取主图
 
     images_list = []
+    images_dict = {}
     divs = htmlEmt.xpath('//div[@class="viewport"]')
-    imgs = divs[0].xpath('.//img')
-    for row in imgs:
-        img = row.attrib.get('data-normal')
-        images_list.append(img)
+    if divs:
+        img_div = divs[0].xpath('.//div/div')
+
+        for row in img_div:
+
+            image_id = row.attrib.get("id").split("_")[1]
+            img = row.xpath('.//img')[0].attrib.get('data-normal')
+            images_dict[image_id] = img
+            images_list.append(img)
+
+
+
         #src = row.attrib.get('src')
         #attribute_id = row.attrib.get('attribute_id')
+
+    # 取sku图
+    divs = htmlEmt.xpath('//li[contains(@class,"attr-v-show-img")]')
+    attr_image_dict = {}
+    if divs:
+        sku_divs = divs[0].xpath('.//div/span')
+        for sku_div in sku_divs:
+            image_id = sku_div.attrib.get("image-id")
+            attr = sku_div.xpath('string()').split()[0]
+            attr_image_dict[attr] = image_id
+
+
 
     #更新产品记录
     Lightin_SPU.objects.update_or_create(
@@ -2151,6 +2188,10 @@ def get_lightin_product_info(SPU, url):
         defaults={
             'title': title,
             'images': json.dumps(images_list),
+            'images_dict': json.dumps(images_dict),
+            'attr_image_dict': json.dumps(attr_image_dict),
+            'breadcrumb': json.dumps(breadcrumb_list),
+            'currency': currency_div[0],
             "sale_price": sale_price,
 
             "got": True,

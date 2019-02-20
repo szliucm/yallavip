@@ -445,8 +445,14 @@ class Lightin_SPU(models.Model):
     link = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="link")
 
     title = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="title")
+    breadcrumb = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="breadcrumb")
+
+    currency = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="currency")
+
     sale_price = models.FloatField(verbose_name="供方实际销售价", default=0)
-    images = models.TextField(default='', null=True, blank=True, verbose_name="图片字典")
+    images = models.TextField(default='', null=True, blank=True, verbose_name="图片")
+    images_dict = models.TextField(default='', null=True, blank=True, verbose_name="图片字典")
+    attr_image_dict = models.TextField(default='', null=True, blank=True, verbose_name="属性图片字典")
 
     got = models.BooleanField(default=False, verbose_name="获取状态")
     got_error = models.CharField(default='无', max_length=100, null=True, blank=True, verbose_name="获取错误")
