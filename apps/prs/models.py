@@ -458,6 +458,8 @@ class Lightin_SPU(models.Model):
     got_error = models.CharField(default='无', max_length=100, null=True, blank=True, verbose_name="获取错误")
     got_time = models.DateTimeField(null=True, blank=True, verbose_name="更新时间")
 
+    shopify_price = models.IntegerField(u'shopify售价', default=0, blank=True, null=True)
+
     published = models.BooleanField(default=False, verbose_name="发布到shopify状态")
     publish_error = models.CharField(default='无', max_length=100, null=True, blank=True, verbose_name="发布错误")
     published_time = models.DateTimeField(null=True, blank=True, verbose_name="发布时间")
@@ -497,3 +499,33 @@ class Lightin_SKU(models.Model):
 
     def __str__(self):
         return self.SPU
+
+class LightinAlbum(models.Model):
+    OBJ_TYPE = (
+        ("PHOTO", "相册"),
+        ("FEED", "帖子"),
+        ("AD", "广告"),
+        ("GROUP", "社群"),
+
+    )
+    lightin_spu = models.ForeignKey(Lightin_SPU, null=True, blank=True, verbose_name="SPU",
+                                related_name="myfb_product", on_delete=models.SET_NULL)
+
+
+    myalbum = models.ForeignKey('fb.MyAlbum', null=True, blank=True, verbose_name="相册",
+                                  related_name="lightin_myalbum", on_delete=models.SET_NULL)
+
+    fb_id = models.CharField(default='',max_length=100, null=True, blank=True, verbose_name="接触点代码")
+
+
+    published = models.BooleanField(default=False, verbose_name="发布状态")
+    publish_error = models.CharField(default='',max_length=256, null=True, blank=True, verbose_name="发布错误(或图片数量)")
+    published_time = models.DateTimeField(null=True, blank=True, verbose_name="发布时间")
+
+    class Meta:
+        verbose_name = "Lightin 相册"
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+
+        return  self.lightin_spu.SPU

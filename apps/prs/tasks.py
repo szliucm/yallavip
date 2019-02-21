@@ -14,7 +14,7 @@ from django.utils import timezone as dt
 from .models import *
 from shop.models import  Shop, ShopifyProduct, ShopifyVariant, ShopifyImage, ShopifyOptions
 from shop.models import ProductCategoryMypage
-from fb.models import MyPage
+from fb.models import MyPage, MyAlbum
 from .shop_action import sync_shop
 from orders.models import Order, OrderDetail
 
@@ -1342,6 +1342,86 @@ def post_to_shopify_lightin(lightinproduct_pk ):
         return
 
 
+
+@shared_task
+def prepare_lightin_album():
+    from django.db import connection, transaction
+    cursor = connection.cursor()
+    # 找出所有活跃的page
+    pages = MyPage.objects.filter(active=True)
+    for page in pages:
+        #遍历page对应的相册
+        print("page is ",page)
+        albums = MyAlbum.objects.filter(Q(cates__isnull=False)|Q(prices__isnull=False)|Q(attrs__isnull=False), mypage__pk = page.pk, )
+        print("albums is ", albums)
+        for album in albums:
+            print("album is ", album)
+
+            #拼接相册的筛选产品的条件
+            q_cate = Q()
+            q_cate.connector = 'OR'
+            if album.cates:
+                for cate in album.cates.split(","):
+                    q_cate.children.append(('breadcrumb__contains',cate))
+
+            q_price = Q()
+            q_cate.connector = 'AND'
+            if album.prices:
+                prices = album.prices.split(",")
+                q_price.children.append(('vendor_sale_price__gt',prices[0]))
+                q_price.children.append(('vendor_sale_price__lt', prices[1]))
+            '''
+            q_attr = Q()
+            q_attr.connector = 'OR'
+            if album.attrs:
+                for attr in album.attrs.split(","):
+                    q_attr.children.append(('skuattr__contains',attr))
+            '''
+
+            con = Q()
+            con.add(q_cate, 'AND')
+            con.add(q_price, 'AND')
+            #con.add(q_attr, 'AND')
+
+
+
+
+            # 根据品类找已经上架到shopify 但还未添加到相册的产品
+
+            cursor.execute('SELECT * FROM prs_lightin_spu  A WHERE '
+                                                         ' published = TRUE  '  
+                                                         'and id  NOT  IN  ( SELECT  B.lightin_spu_id FROM prs_lightinalbum B where myalbum_id=%s and B.lightin_spu_id is not NULL) ',[cate_sql,album.pk], )
+            row = cursor.fetchone()
+
+            print("products_to_add #########", row)
+
+
+
+            continue
+
+            myfbproduct_list = []
+            for product_to_add in products_to_add:
+                #n += 1
+                #print("     %d is %s" % (n, product_to_add))
+
+                myfbproduct = MyFbProduct(
+                    myaliproduct=AliProduct.objects.get(pk=product_to_add.pk),
+                    #myproduct=ShopifyProduct.objects.filter(vendor=product_to_add.offer_id).first(),
+                    mypage=MyPage.objects.get(pk=page.pk),
+                    obj_type="PHOTO",
+                    cate_code = cate_code,
+                    album_name = album_name,
+                    album_no=album_no,
+
+
+
+                )
+#                print(myfbproduct, AliProduct.objects.get(pk=product_to_add.pk),MyPage.objects.get(pk=page.pk),cate_code,album_name, )
+                myfbproduct_list.append(myfbproduct)
+
+
+            print(myfbproduct_list)
+            MyFbProduct.objects.bulk_create(myfbproduct_list)
 
 
 
