@@ -2177,8 +2177,10 @@ def get_lightin_product_info(SPU, url):
         sku_divs = divs[0].xpath('.//div/span')
         for sku_div in sku_divs:
             image_id = sku_div.attrib.get("image-id")
-            attr = sku_div.xpath('string()').split()[0]
-            attr_image_dict[attr] = image_id
+            attr_string = sku_div.xpath('string()')
+            if attr_string:
+                attr = attr_string.split()[0]
+                attr_image_dict[attr] = image_id
 
 
 
