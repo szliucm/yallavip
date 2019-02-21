@@ -617,6 +617,9 @@ class MyFbAlbumCateAdmin(object):
     import_export_args = {"import_resource_class": MyFbAlbumCateResource,
                           "export_resource_class": MyFbAlbumCateResource}
 
+
+
+
     def mypage(self, obj):
         return obj.myalbum.mypage.page
 

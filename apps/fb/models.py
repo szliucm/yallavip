@@ -163,7 +163,13 @@ class MyAlbum(models.Model):
     like_count = models.CharField(max_length=100, null=True, blank=True, verbose_name="like_count")
     comment_count = models.CharField(max_length=100,null=True, blank=True, verbose_name="comment_count")
     updated_time = models.DateTimeField(null=True, blank=True, verbose_name="更新时间")
-    active = active = models.BooleanField(u"相册状态",default=False)
+    active = models.BooleanField(u"相册状态",default=False)
+
+    cates = models.CharField(max_length=300,null=True, blank=True, verbose_name="关联品类",help_text="多个品类用逗号隔开")
+    prices = models.CharField(max_length=300, null=True, blank=True, verbose_name="价格区间",help_text="最低价最高价，用逗号隔开")
+    attrs = models.CharField(max_length=300, null=True, blank=True, verbose_name="规格",help_text="多个规格用逗号隔开")
+
+    album_promte = models.ImageField(u'相册促销标', upload_to='material/', default="", null=True, blank=True)
 
     class Meta:
         verbose_name = "Album"

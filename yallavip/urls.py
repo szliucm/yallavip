@@ -18,11 +18,14 @@ from django.urls import path
 from django.conf.urls.static import static
 from django.conf import settings
 import  xadmin
+from prs.views import  SelectView
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('xadmin/', xadmin.site.urls),
+    # 二级联动页面请求
+    path('select/mypage_myalbum/', SelectView.as_view(), name='mypage_myalbum'),
     #path('ueditor/', include('DjangoUeditor.urls')),
     #url(r'^media/(?P<path>.*)', serve, {"document_root":MEDIA_ROOT}),
 ]
@@ -30,3 +33,8 @@ urlpatterns = [
 #	urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 urlpatterns += static(settings.MEDIA_URL , document_root=settings.MEDIA_ROOT)
+
+
+
+
+

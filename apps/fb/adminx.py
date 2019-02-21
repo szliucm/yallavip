@@ -797,7 +797,19 @@ class MyAlbumAdmin(object):
 
     mypage.short_description = "主页"
 
-    list_display = [ "album_no","mypage","created_time", "name", "count", "like_count", "comment_count",]
+    def show_album_promte(self, obj):
+
+        try:
+            img = mark_safe('<img src="%s" width="100px" />' % (obj.album_promte.url))
+        except Exception as e:
+            img = ''
+        return img
+
+    show_album_promte.short_description = '相册促销标'
+    show_album_promte.allow_tags = True
+
+    list_display = [ "album_no","mypage", "name","cates", "prices","attrs","show_album_promte", "count", "like_count", "comment_count","created_time",]
+    list_editable = ["cates", "prices","attrs",]
     search_fields = ['album_no', ]
     list_filter = ("mypage","active", )
     ordering = ["-count"]

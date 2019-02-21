@@ -2251,7 +2251,7 @@ def create_body_lightin(lightin_spu):
             "vendor": lightin_spu.SPU,
             "product_type": "auto",
             "tags": "%s,%s,%s" %(lightin_spu.cate_1, lightin_spu.cate_2,lightin_spu.cate_3),
-            "images": shopify_images,
+            #"images": shopify_images,
             # "variants": variants_list,
             #"options": json.loads(aliproduct.options),
         }
