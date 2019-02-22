@@ -1452,7 +1452,7 @@ def prepare_lightin_album_material():
 
             #价格
             price1 = int(spu.shopify_price)
-            price2 = int(price1 * random.uniform(2, 3))
+            price2 = int(price1 * random.uniform(5, 6))
             name = name + "\n\nPrice:  " + str(price1) + "SAR"
 
             # 准备图片
