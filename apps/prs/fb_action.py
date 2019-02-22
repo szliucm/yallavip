@@ -880,3 +880,55 @@ def post_photo_to_album(targer_page,album_no,aliproduct ):
 
     #print("new_photo saved ", obj, created)
     return  "成功", photo["id"]
+
+#直接从aliproduct发布到相册
+def post_lightin_album(lightinalbum):
+    page_no = lightinalbum.myalbum.page_no
+    album_no = lightinalbum.myalbum.album_no
+    product_no = lightinalbum.lightin_spu.product_no
+
+    adobjects = FacebookAdsApi.init(my_app_id, my_app_secret, access_token=get_token(page_no), debug=True)
+    fields = ["id","name","created_time", "updated_time","picture","link",
+                      "likes.summary(true)","comments.summary(true)"
+    ]
+    params = {
+        "published": "true",
+
+        "url": lightinalbum.image_marked,
+
+        "name": lightinalbum.name,
+        "qn":lightinalbum.lightin_spu.handle
+
+    }
+    try:
+        photo = Album(album_no).create_photo(
+            fields=fields,
+            params=params,
+        )
+    except Exception as e:
+        error = str(e)
+        return error, None
+
+    obj, created = MyPhoto.objects.update_or_create(photo_no=photo["id"],
+                                                    defaults={
+                                                            'page_no': page_no,
+                                                                'album_no': album_no,
+                                                              "product_no": product_no,
+                                                                'listing_status':True,
+                                                              'created_time':
+                                                                  photo["created_time"],#.split('+')[0],
+                                                              'updated_time':
+                                                                  photo["updated_time"],#.split('+')[0],
+
+                                                              'name': photo.get("name"),
+                                                              'picture': photo["picture"],
+                                                              'link': photo["link"],
+                                                              'like_count': photo["likes"]["summary"]["total_count"],
+                                                              'comment_count': photo["comments"]["summary"][
+                                                                  "total_count"]
+
+                                                              }
+                                                    )
+
+    #print("new_photo saved ", obj, created)
+    return  "成功", photo["id"]

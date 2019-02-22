@@ -1362,7 +1362,7 @@ def prepare_lightin_album():
             q_cate.connector = 'OR'
             if album.cates:
                 for cate in album.cates.split(","):
-                    q_cate.children.append(('breadcrumb__contains',cate))
+                    q_cate.children.append(('breadcrumb__contains', cate))
 
 
             q_price = Q()
@@ -1378,10 +1378,6 @@ def prepare_lightin_album():
                 for attr in album.attrs.split(","):
                     q_attr.children.append(('spu_sku__skuattr__contains',attr))
 
-            print(q_cate)
-            print(q_price)
-            print(q_attr)
-
             con = Q()
             con.add(q_cate, 'AND')
             con.add(q_price, 'AND')
@@ -1391,11 +1387,7 @@ def prepare_lightin_album():
 
 
             # 根据品类找已经上架到shopify 但还未添加到相册的产品
-            '''
-            cursor.execute('SELECT * FROM prs_lightin_spu  A WHERE '
-                                                         ' published = TRUE  '  
-                                                         'and id  NOT  IN  ( SELECT  B.lightin_spu_id FROM prs_lightinalbum B where myalbum_id=%s and B.lightin_spu_id is not NULL) ',[cate_sql,album.pk], )
-            '''
+
             print(con)
             products_to_add = Lightin_SPU.objects.filter(con,published=True).exclude(id__in =
                                                                    LightinAlbum.objects.filter(myalbum__pk = album.pk, lightin_spu__isnull=False ).values_list('lightin_spu__id',flat=True)  ).distinct()
@@ -1426,9 +1418,10 @@ def prepare_lightin_album_material():
 
     #分相册随机选产品
 
-    lightinalbums_all = LightinAlbum.objects.filter(published= False,publish_error="无" )
+    lightinalbums_all = LightinAlbum.objects.filter(published= False,publish_error="无",material_error ="无", batch_no=0 )
 
-    albums_list  = lightinalbums_all.values_list('myalbum', flat=True)
+    albums_list  = lightinalbums_all.distinct().values_list('myalbum', flat=True)
+    print("albums_list is ", albums_list)
 
     for album in albums_list:
         lightinalbums = lightinalbums_all.filter(myalbum__pk=album).order_by('?')[:9]
@@ -1436,6 +1429,7 @@ def prepare_lightin_album_material():
 
         for lightinalbum in lightinalbums:
             spu = lightinalbum.lightin_spu
+            error = ""
             # 准备文字
             # 标题
             title = spu.title
@@ -1463,25 +1457,78 @@ def prepare_lightin_album_material():
 
             # 准备图片
             #先取第一张，以后考虑根据实际有库存的sku的图片（待优化）
-            image = json.loads(spu.images_dict).values()
-            if image and len(image)>0:
-                image = list(image)[0].replace("384x500","800x800")
+            if spu.images_dict:
+                image = json.loads(spu.images_dict).values()
+                if image and len(image)>0:
+                    image = list(image)[0].replace("384x500","800x800")
+                # 打水印
+                # logo， page促销标
+                # 如果有相册促销标，就打相册促销标，否则打价格标签
 
-            #打水印
-            #logo， page促销标
-            #如果有相册促销标，就打相册促销标，否则打价格标签
+                image_marked, iamge_marked_url = lightin_mark_image(image, spu.handle, str(price1), str(price2),
+                                                                    lightinalbum)
+                if not image_marked:
+                    error = "打水印失败"
 
+            else:
+                print(album, spu.SPU, "没有图片")
+                error = "没有图片"
 
-            image_marked, iamge_marked_url = lightin_mark_image(image, spu.handle, str(price1), str(price2), lightinalbum)
-            if not image_marked:
-                error = "打水印失败"
-                return error, None
-
-            LightinAlbum.objects.filter(pk = lightinalbum.pk ).update(
-                    name=name,
-                    image_marked=iamge_marked_url,
-                    batch_no=batch_no
+            if error == "":
+                LightinAlbum.objects.filter(pk = lightinalbum.pk ).update(
+                        name=name,
+                        image_marked=iamge_marked_url,
+                        batch_no=batch_no,
+                        material = True
+                    )
+            else:
+                LightinAlbum.objects.filter(pk=lightinalbum.pk).update(
+                    material_error =  error
                 )
+
+@shared_task
+def sync_lightin_album():
+    from django.db.models import Min
+    from .fb_action import post_lightin_album
+    #把有未发布的图片的，最小批次号作为当前批次
+    batch_no = LightinAlbum.objects.filter(published=False, publish_error="无",material =True).aggregate(Min('batch_no')).get("batch_no__min")
+
+    # 将当前批次下未发布的图片，发布到Facebook
+    #分相册 处理
+    lightinalbums_all = LightinAlbum.objects.filter(published=False, publish_error="无", material =True,batch_no=batch_no)
+
+    albums_list = lightinalbums_all.distinct().values_list('myalbum', flat=True)
+
+    for album in albums_list:
+        lightinalbums = lightinalbums_all.filter(myalbum__pk=album)
+        for lightinalbum in lightinalbums:
+            error, posted = post_lightin_album(lightinalbum)
+
+            #更新Facebook图片数据库记录
+
+            if posted is not None:
+                LightinAlbum.objects.filter(pk=lightinalbum.pk).update(
+
+                    fb_id=posted,
+                    published=True,
+                    published_time=dt.now()
+                )
+                print("发布新产品到相册成功 LightinAlbum %s" % (lightinalbum.pk))
+            else:
+                print(
+                    "发布新产品到相册失败 LightinAlbum %s   error   %s" % (lightinalbum.pk, error))
+                LightinAlbum.objects.filter(pk=lightinalbum.pk).update(
+
+                    published=False,
+                    publish_error=error[:90],
+                    published_time=dt.now()
+                )
+
+    #把比当前批次号小 20 的批次的图片 还在发布状态的从Facebook删除
+
+    #更新Facebook图片数据库记录
+
+
 
 
 # 更新相册对应的主页外键

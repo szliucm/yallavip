@@ -2379,6 +2379,7 @@ def create_variant_lightin(lightin_spu):
             "price": int(sku.vendor_supply_price * 5.63),
             "compare_at_price": int(sku.vendor_sale_price * 5.63 ),
             "sku": sku.SKU,
+            "barcode": sku.barcode,
             "position": position,
 
             "grams": sku.weight,

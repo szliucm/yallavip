@@ -95,7 +95,7 @@ class ShopifyVariant(models.Model):
                                  verbose_name="商品")
     product_no = models.CharField(u'product_no',  max_length=100,default='', blank=True, null=True)
     variant_no = models.CharField(u'id', default='', max_length=100, blank=True)
-    barcode  =  models.CharField(u'handle', default='', max_length=100, blank=True)
+    barcode  =  models.CharField(u'barcode', default='', max_length=100, blank=True)
     compare_at_price = models.CharField(u'原价', default='', max_length=100, blank=True)
     created_at = models.DateTimeField(u'创建时间', auto_now=False, null=True, blank=True)
     updated_at = models.DateTimeField(u'更新时间', auto_now=False, null=True, blank=True)
@@ -123,7 +123,7 @@ class ShopifyVariant(models.Model):
 
     tax_code = models.CharField(u'tax_code', default='', max_length=200, blank=True)
     title = models.CharField(u'title', default='', max_length=500,  null=True,blank=True)
-    sku = models.CharField(u'title', default='', max_length=100,  null=True,blank=True)
+    sku = models.CharField(u'sku', default='', max_length=100,  null=True,blank=True)
 
     listing_status = models.BooleanField(u'发布到Facebook', default=False)
     supply_status = models.CharField(u'供应状态', choices=SUPPLY_STATUS, max_length=50, default='NORMAL', blank=True)

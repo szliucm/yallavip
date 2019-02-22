@@ -153,7 +153,7 @@ class OrderResource(resources.ModelResource):
 
     package_no = fields.Field(attribute='package_no', column_name='包裹号')
     #weight = fields.Field(attribute='weight', column_name='称重重量(g)')
-    #logistic_no = fields.Field(attribute='logistic_no', column_name='物流追踪号') #物流号由运营系统直接从佳成系统取，不用店小秘生成的，合联的如果需要，就另外做个入口
+    logistic_no = fields.Field(attribute='logistic_no', column_name='物流追踪号') #物流号由运营系统直接从佳成系统取，不用店小秘生成的，合联的如果需要，就另外做个入口
     logistic_type = fields.Field(attribute='logistic_type', column_name='物流方式')
 
     order_time = fields.Field(attribute='order_time', column_name='下单时间')#,widget=TzDateTimeWidget())
@@ -169,7 +169,7 @@ class OrderResource(resources.ModelResource):
         import_id_fields = ('order_no',)
         fields = ('order_no', 'order_status', 'buyer_name',  'order_amount','real_amount', 'order_comment',
                   'warhouse_comment', 'cs_comment', 'receiver_name', 'receiver_addr1', 'receiver_addr2',
-                  'receiver_city', 'receiver_country', 'receiver_phone', 'package_no','logistic_type',
+                  'receiver_city', 'receiver_country', 'receiver_phone', 'package_no','logistic_no','logistic_type',
                   'order_time','send_time')
         # exclude = ()
     '''
@@ -218,7 +218,7 @@ class OrderAdmin(object):
     list_editable = ["weight"]
     # list_display_links = ["show_conversation"]
     search_fields = ["order_no",'logistic_no', ]
-    list_filter = ( "order_status","package_status", "verify_time","order_time","send_time")
+    list_filter = ( "order_status","package_status", "verify_time","order_time","send_time","verify__verify_status","verify__sms_status",)
     ordering = ['-order_time']
     #data_charts = {
     #    "order_count": {'title': u"订单统计","x-field": "order_time", "y-field": ("order_no", ), "order": ('order_time',)},
@@ -752,7 +752,7 @@ class OrderDetailResource(resources.ModelResource):
     sku = fields.Field(attribute='sku', column_name='SKU')
 
     #product = fields.Field(attribute='product', column_name='产品名称')
-
+    barcode = fields.Field(attribute='barcode', column_name='barcode')
     product_quantity = fields.Field(attribute='product_quantity', column_name='产品数量')
     #money_type = fields.Field(attribute='money_type', column_name='币种缩写')
     price = fields.Field(attribute='price', column_name='产品售价')
@@ -766,7 +766,7 @@ class OrderDetailResource(resources.ModelResource):
         skip_unchanged = True
         report_skipped = True
         import_id_fields = ('order','sku')
-        fields = ('order', 'sku', 'product_quantity',  'price', )
+        fields = ('order', 'sku','barcode', 'product_quantity',  'price', )
         # exclude = ()
 
 
@@ -921,12 +921,14 @@ class OrderDetailAdmin(object):
 
     import_export_args = {"import_resource_class": OrderDetailResource, "export_resource_class": OrderDetailResource}
 
-    list_display = ['order', 'sku',"fb_photo","show_image", 'show_local_image', 'product_quantity',  'price','order_status','show_supply_status','alternative', ]
+    #为了快速做海外仓包裹，所以把可能的图片显示出来
+    #"fb_photo", "show_image", 'show_local_image',
+    list_display = ['order', 'sku','barcode', 'product_quantity',  'price','order_status','show_supply_status','alternative', ]
 
     search_fields = ["order__order_no",'sku',"order__logistic_no" ]
 
     ordering = ['-order__order_no']
-    list_filter = ("order__order_status", )
+    list_filter = ("order__order_status","order__verify__verify_status","order__verify__sms_status",)
 
     actions = ["batch_overseas_stop",]
 

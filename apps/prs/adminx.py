@@ -729,7 +729,7 @@ class Lightin_SKUResource(resources.ModelResource):
         skip_unchanged = True
         report_skipped = True
         import_id_fields = ('SKU',)
-        fields = ("SPU", "SKU","quantity", "vendor_sale_price","vendor_supply_price","weight", "length","width","height","skuattr",)
+        fields = ("SPU", "SKU","barcode","quantity", "vendor_sale_price","vendor_supply_price","weight", "length","width","height","skuattr",)
         # exclude = ()
 
 @xadmin.sites.register(Lightin_SKU)
@@ -750,11 +750,33 @@ class Lightin_SKUAdmin(object):
 @xadmin.sites.register(LightinAlbum)
 class LightinAlbumAdmin(object):
 
-    list_display = ["lightin_spu", "myalbum","fb_id", "published","publish_error","published_time",]
+    def photo(self, obj):
+        if obj.image_marked is not None and len(obj.image_marked)>0 :
+            photo = obj.image_marked
+            try:
+                img = '<a><img src="%s" width="100px"></a>' % (photo)
+            except Exception as e:
+                print("获取图片出错", e)
+                img = "no photo"
+
+            return mark_safe(img)
+
+        else:
+            return  "no photo"
+
+    photo.short_description = "图片"
+
+    def page(self, obj):
+        return  obj.myalbum.mypage
+
+    page.short_description = "page"
+
+    list_display = ["lightin_spu", "myalbum","page","batch_no","name","photo", "fb_id", "published","publish_error","published_time",]
     # 'sku_name','img',
 
     search_fields = ["lightin_spu",]
-    list_filter = ["myalbum", "published",]
+    list_filter = ["myalbum", "published","myalbum__mypage"]
     list_editable = []
     readonly_fields = ()
     actions = []
+

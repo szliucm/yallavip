@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils.html import format_html
 from conversations.models import Conversation
+from prs.models import  Lightin_SKU
 
 
 # Create your models here.
@@ -224,6 +225,11 @@ class OrderDetail(models.Model):
 
 
     # pic_url = models.CharField(u'图片网址', default='', max_length=200, blank=True)
+    def cal_barcode(self):
+        return  Lightin_SKU.objects.get(SKU = self.sku)
+
+    cal_barcode.short_description = "barcode"
+    barcode = property(cal_barcode)
 
     class Meta:
         verbose_name = "订单明细"

@@ -187,6 +187,14 @@ class MyPageAdmin(object):
 
                 print("album is ", album)
 
+        # 更新相册对应的主页外键
+        # update fb_myalbum a , fb_mypage p set a.mypage_id = p.id where p.page_no = a.page_no
+        from django.db import connection, transaction
+        cursor = connection.cursor()
+        cursor.execute("update fb_myalbum a , fb_mypage p set a.mypage_id = p.id where p.page_no = a.page_no")
+        transaction.commit()
+
+
     batch_update_albums.short_description = "批量下载相册信息"
 
     def batch_update_feed(self, request, queryset):
@@ -230,6 +238,9 @@ class MyPageAdmin(object):
                                                                 )
 
                 print("feed is ", feed)
+
+
+
 
     batch_update_feed.short_description = "批量下载feed信息"
 

@@ -481,6 +481,7 @@ class Lightin_SKU(models.Model):
     SPU = models.CharField(default='',max_length=300, null=True, blank=True, verbose_name="SPU")
 
     SKU = models.CharField(default='',max_length=300, null=True, blank=True, verbose_name="SKU")
+    barcode = models.CharField(u'barcode', default='', max_length=100, blank=True)
 
     quantity = models.IntegerField(u'数量', default=0, blank=True, null=True)
 
@@ -517,6 +518,9 @@ class LightinAlbum(models.Model):
     batch_no = models.IntegerField(u'批次号', default=0, blank=True, null=True)
     name  = models.TextField(default='', null=True, blank=True, verbose_name="文案")
     image_marked = models.CharField(default='',max_length=100, null=True, blank=True, verbose_name="水印图")
+
+    material =  models.BooleanField(default=False, verbose_name="素材准备")
+    material_error = models.CharField(default='无',max_length=256, null=True, blank=True, verbose_name="素材错误")
 
     published = models.BooleanField(default=False, verbose_name="发布状态")
     publish_error = models.CharField(default='无',max_length=256, null=True, blank=True, verbose_name="发布错误(或图片数量)")
