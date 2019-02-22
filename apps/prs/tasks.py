@@ -1234,16 +1234,16 @@ def get_lightin():
 
 
 
-    for aliproduct in lightinproducts:
+    for lightinproduct in lightinproducts:
 
-        message,status=get_lightin_product_info(aliproduct.SPU, aliproduct.link)
+        message,status=get_lightin_product_info(lightinproduct.SPU, lightinproduct.link)
         if status:
             print("成功！")
         else:
             print("失败！！！", message)
             # 更新产品记录
             Lightin_SPU.objects.update_or_create(
-                SPU=aliproduct.SPU,
+                SPU=lightinproduct.SPU,
                 defaults={
                     "got_error":message,
                     "got_time": dt.now()
@@ -1417,7 +1417,71 @@ def prepare_lightin_album():
 
 
 
+@shared_task
+def prepare_lightin_album_material():
+    from django.db.models import Max
+    from shop.photo_mark import lightin_mark_image
+    #批次号
+    batch_no = LightinAlbum.objects.all().aggregate(Max('batch_no')).get("batch_no__max") + 1
 
+    #分相册随机选产品
+
+    lightinalbums_all = LightinAlbum.objects.filter(published= False,publish_error="无" )
+
+    albums_list  = lightinalbums_all.values_list('myalbum', flat=True)
+
+    for album in albums_list:
+        lightinalbums = lightinalbums_all.filter(myalbum__pk=album).order_by('?')[:9]
+        print(lightinalbums)
+
+        for lightinalbum in lightinalbums:
+            spu = lightinalbum.lightin_spu
+            # 准备文字
+            # 标题
+            title = spu.title
+            # 货号
+            name = title + "  [" + spu.handle + "]"
+            # 规格
+            lightin_skus = Lightin_SKU.objects.filter(SPU=spu.SPU)
+            options = []
+            for sku in lightin_skus:
+                option = sku.skuattr
+                if option not in options:
+                    options.append(option)
+
+            if len(options)>0:
+                name = name + "\n\nSkus:  "
+
+            for option in options:
+                name = name + "\n\n   " + option
+
+
+            #价格
+            price1 = int(spu.shopify_price)
+            price2 = int(price1 * random.uniform(2, 3))
+            name = name + "\n\nPrice:  " + str(price1) + "SAR"
+
+            # 准备图片
+            #先取第一张，以后考虑根据实际有库存的sku的图片（待优化）
+            image = json.loads(spu.images_dict).values()
+            if image and len(image)>0:
+                image = list(image)[0].replace("384x500","800x800")
+
+            #打水印
+            #logo， page促销标
+            #如果有相册促销标，就打相册促销标，否则打价格标签
+
+
+            image_marked, iamge_marked_url = lightin_mark_image(image, spu.handle, str(price1), str(price2), lightinalbum)
+            if not image_marked:
+                error = "打水印失败"
+                return error, None
+
+            LightinAlbum.objects.filter(pk = lightinalbum.pk ).update(
+                    name=name,
+                    image_marked=iamge_marked_url,
+                    batch_no=batch_no
+                )
 
 
 # 更新相册对应的主页外键

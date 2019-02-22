@@ -514,9 +514,12 @@ class LightinAlbum(models.Model):
 
     fb_id = models.CharField(default='',max_length=100, null=True, blank=True, verbose_name="接触点代码")
 
+    batch_no = models.IntegerField(u'批次号', default=0, blank=True, null=True)
+    name  = models.TextField(default='', null=True, blank=True, verbose_name="文案")
+    image_marked = models.CharField(default='',max_length=100, null=True, blank=True, verbose_name="水印图")
 
     published = models.BooleanField(default=False, verbose_name="发布状态")
-    publish_error = models.CharField(default='',max_length=256, null=True, blank=True, verbose_name="发布错误(或图片数量)")
+    publish_error = models.CharField(default='无',max_length=256, null=True, blank=True, verbose_name="发布错误(或图片数量)")
     published_time = models.DateTimeField(null=True, blank=True, verbose_name="发布时间")
 
     class Meta:

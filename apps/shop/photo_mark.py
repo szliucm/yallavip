@@ -93,7 +93,7 @@ def fill_image(image):
     return new_image
 
 #各种打标
-def deal_image(im,logo = None ,handle = None, price = None,price1 = None, price2=None, promote = None,type="album"):
+def deal_image(im,logo = None ,handle = None, price = None,price1 = None, price2=None, promote = None,album_promote = None,type="album"):
     version = ''  # 调试用
 
 
@@ -122,9 +122,9 @@ def deal_image(im,logo = None ,handle = None, price = None,price1 = None, price2
         font = ImageFont.truetype(FONT, int(45 * scale))
         draw1 = ImageDraw.Draw(im)
         # 简单打货号
-        draw1.rectangle((int(bw / 2 - 70 * scale), int(bh - 70 * scale - 2), int(bw / 2 + 70 * scale),
+        draw1.rectangle((int(bw / 2 - 85 * scale), int(bh - 70 * scale - 2), int(bw / 2 + 85 * scale),
                          int(bh - 8 * scale)), fill='yellow')
-        draw1.text((int(bw / 2 - 70 * scale), int(bh - 70 * scale)), handle, font=font,
+        draw1.text((int(bw / 2 - 80 * scale), int(bh - 70 * scale)), handle, font=font,
                    fill=(0, 0, 0))  # 设置文字位置/内容/颜色/字体
         '''
         #两种打货号的方式：组合商品和单品
@@ -158,7 +158,13 @@ def deal_image(im,logo = None ,handle = None, price = None,price1 = None, price2
         out = Image.composite(layer, im, layer)
 
     # 价格
-    if price:
+    if album_promote:
+        mark = Image.open(album_promote)
+        lw, lh = mark.size
+
+        mark = mark.resize((int(lw * scale), int(lh * scale)), Image.ANTIALIAS)
+        layer.paste(mark, (0, bh - int(lh * scale)))
+    elif price:
         if (version == 'surprise'):  # 猜价格
             mark = Image.open('what.png')
             lw, lh = mark.size
@@ -284,3 +290,38 @@ def price_for_video(price, price1,price2,destination):
     return
 
 
+def lightin_mark_image(ori_image, handle, price1, price2, lightinalbum):
+    from django.utils import timezone as datetime
+    # 对图片进行处理
+    ################
+    targer_page = lightinalbum.myalbum.mypage
+
+    logo = targer_page.logo
+    promote = targer_page.promote
+    price = targer_page.price
+    album_promote = lightinalbum.myalbum.album_promte
+
+
+
+    print("logo %s promote %s price %s album_promote %s"%(logo,promote,price ,album_promote  ))
+
+
+    image = get_remote_image(ori_image)
+
+    image = deal_image(image, logo=logo, handle=handle, price=price, promote=promote,  price1=price1, price2=price2, album_promote=album_promote,type="album")
+
+    #################
+
+    # 处理完的图片保存到本地
+
+    image_filename = handle + '_' + str(datetime.now()) + '_'+ targer_page.page + '.jpg'
+    image_filename = image_filename.replace(' ', '')
+    destination = os.path.join(settings.MEDIA_ROOT, "product/", image_filename)
+
+    print("destination", destination)
+
+    image.save(destination,'JPEG',quality = 95)
+
+    destination_url = domain + os.path.join(settings.MEDIA_URL, "product/", image_filename)
+
+    return  destination, destination_url
