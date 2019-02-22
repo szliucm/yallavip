@@ -177,11 +177,11 @@ def deal_image(im,logo = None ,handle = None, price = None,price1 = None, price2
             # 设置所使用的字体
             font = ImageFont.truetype(FONT, int(70))
             draw = ImageDraw.Draw(mark)
-            draw.text((40 + int(30 * (3 - len(price1))), 60), price1, (255, 255, 255), font=font)  # 设置文字位置/内容/颜色/字体
+            draw.text((20 + int(30 * (3 - len(price1))), 40), price1, (255, 255, 255), font=font)  # 设置文字位置/内容/颜色/字体
             draw = ImageDraw.Draw(mark)  # Just draw it!
 
             font = ImageFont.truetype(FONT, int(30))
-            draw.text((60 + int(10 * (3 - len(price2))), 160), price2, (255, 182, 193), font=font)  # 设置文字位置/内容/颜色/字体
+            draw.text((40 + int(10 * (3 - len(price2))), 140), price2, (255, 182, 193), font=font)  # 设置文字位置/内容/颜色/字体
             draw = ImageDraw.Draw(mark)
             lw, lh = mark.size
 
