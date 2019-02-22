@@ -32,8 +32,9 @@ from import_export.widgets import ForeignKeyWidget
 from .models import  *
 
 
+
 from .page_action import ConnectPageCategory
-from  shop.models import  ProductCategory
+from  prs.models import  LightinAlbum
 
 
 APP_SCOPED_SYSTEM_USER_ID=100029952330435
@@ -819,7 +820,16 @@ class MyAlbumAdmin(object):
     show_album_promte.short_description = '相册促销标'
     show_album_promte.allow_tags = True
 
-    list_display = [ "album_no","mypage", "name","cates", "prices","attrs","show_album_promte", "count", "like_count", "comment_count","created_time",]
+    def published_count(self, obj):
+        return LightinAlbum.objects.filter(myalbum__pk = obj.pk,published= True).count()
+    published_count.short_description = "已发布图片数量"
+
+    def topublish_count(self, obj):
+        return LightinAlbum.objects.filter(myalbum__pk = obj.pk,published= False).count()
+    topublish_count.short_description = "待发布图片数量"
+
+
+    list_display = [ "album_no","mypage", "name","published_count","topublish_count", "cates", "prices","attrs","show_album_promte", "count", "like_count", "comment_count","created_time",]
     list_editable = ["cates", "prices","attrs",]
     search_fields = ['album_no', ]
     list_filter = ("mypage","active", )
