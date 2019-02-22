@@ -1460,7 +1460,12 @@ def prepare_lightin_album_material():
             if spu.images_dict:
                 image = json.loads(spu.images_dict).values()
                 if image and len(image)>0:
-                    image = list(image)[0].replace("384x500","800x800")
+                    a = "/"
+                    image_split = list(image)[0].split(a)
+
+                    image_split[4] = '800x800'
+                    image = a.join(image_split)
+
                 # 打水印
                 # logo， page促销标
                 # 如果有相册促销标，就打相册促销标，否则打价格标签
