@@ -458,7 +458,7 @@ class Lightin_SPU(models.Model):
     got_error = models.CharField(default='无', max_length=100, null=True, blank=True, verbose_name="获取错误")
     got_time = models.DateTimeField(null=True, blank=True, verbose_name="更新时间")
 
-    shopify_price = models.IntegerField(u'shopify售价', default=0, blank=True, null=True)
+    shopify_price = models.FloatField(u'shopify售价', default=0, blank=True, null=True)
 
     published = models.BooleanField(default=False, verbose_name="发布到shopify状态")
     publish_error = models.CharField(default='无', max_length=100, null=True, blank=True, verbose_name="发布错误")
@@ -475,6 +475,9 @@ class Lightin_SPU(models.Model):
         return self.SPU
 
 class Lightin_SKU(models.Model):
+    lightin_spu = models.ForeignKey(Lightin_SPU, null=True, blank=True, verbose_name="SPU外键",
+                                    related_name="spu_sku", on_delete=models.CASCADE)
+
     SPU = models.CharField(default='',max_length=300, null=True, blank=True, verbose_name="SPU")
 
     SKU = models.CharField(default='',max_length=300, null=True, blank=True, verbose_name="SKU")
@@ -501,15 +504,9 @@ class Lightin_SKU(models.Model):
         return self.SPU
 
 class LightinAlbum(models.Model):
-    OBJ_TYPE = (
-        ("PHOTO", "相册"),
-        ("FEED", "帖子"),
-        ("AD", "广告"),
-        ("GROUP", "社群"),
 
-    )
     lightin_spu = models.ForeignKey(Lightin_SPU, null=True, blank=True, verbose_name="SPU",
-                                related_name="myfb_product", on_delete=models.SET_NULL)
+                                related_name="myfb_product", on_delete=models.CASCADE)
 
 
     myalbum = models.ForeignKey('fb.MyAlbum', null=True, blank=True, verbose_name="相册",

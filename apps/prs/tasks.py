@@ -1364,64 +1364,56 @@ def prepare_lightin_album():
                 for cate in album.cates.split(","):
                     q_cate.children.append(('breadcrumb__contains',cate))
 
+
             q_price = Q()
-            q_cate.connector = 'AND'
+            q_price.connector = 'AND'
             if album.prices:
                 prices = album.prices.split(",")
-                q_price.children.append(('vendor_sale_price__gt',prices[0]))
-                q_price.children.append(('vendor_sale_price__lt', prices[1]))
-            '''
+                q_price.children.append(('shopify_price__gt',prices[0]))
+                q_price.children.append(('shopify_price__lte', prices[1]))
+
             q_attr = Q()
             q_attr.connector = 'OR'
             if album.attrs:
                 for attr in album.attrs.split(","):
-                    q_attr.children.append(('skuattr__contains',attr))
-            '''
+                    q_attr.children.append(('spu_sku__skuattr__contains',attr))
+
+            print(q_cate)
+            print(q_price)
+            print(q_attr)
 
             con = Q()
             con.add(q_cate, 'AND')
             con.add(q_price, 'AND')
-            #con.add(q_attr, 'AND')
+            con.add(q_attr, 'AND')
 
 
 
 
             # 根据品类找已经上架到shopify 但还未添加到相册的产品
-
+            '''
             cursor.execute('SELECT * FROM prs_lightin_spu  A WHERE '
                                                          ' published = TRUE  '  
                                                          'and id  NOT  IN  ( SELECT  B.lightin_spu_id FROM prs_lightinalbum B where myalbum_id=%s and B.lightin_spu_id is not NULL) ',[cate_sql,album.pk], )
-            row = cursor.fetchone()
+            '''
+            print(con)
+            products_to_add = Lightin_SPU.objects.filter(con,published=True).exclude(id__in =
+                                                                   LightinAlbum.objects.filter(myalbum__pk = album.pk, lightin_spu__isnull=False ).values_list('lightin_spu__id',flat=True)  ).distinct()
 
-            print("products_to_add #########", row)
 
 
-
-            continue
-
-            myfbproduct_list = []
+            product_list = []
             for product_to_add in products_to_add:
-                #n += 1
-                #print("     %d is %s" % (n, product_to_add))
-
-                myfbproduct = MyFbProduct(
-                    myaliproduct=AliProduct.objects.get(pk=product_to_add.pk),
-                    #myproduct=ShopifyProduct.objects.filter(vendor=product_to_add.offer_id).first(),
-                    mypage=MyPage.objects.get(pk=page.pk),
-                    obj_type="PHOTO",
-                    cate_code = cate_code,
-                    album_name = album_name,
-                    album_no=album_no,
-
-
+                product = LightinAlbum(
+                    lightin_spu=Lightin_SPU.objects.get(pk=product_to_add.pk),
+                    myalbum=MyAlbum.objects.get(pk=album.pk),
 
                 )
-#                print(myfbproduct, AliProduct.objects.get(pk=product_to_add.pk),MyPage.objects.get(pk=page.pk),cate_code,album_name, )
-                myfbproduct_list.append(myfbproduct)
+                product_list.append(product)
 
 
-            print(myfbproduct_list)
-            MyFbProduct.objects.bulk_create(myfbproduct_list)
+            print(product_list)
+            LightinAlbum.objects.bulk_create(product_list)
 
 
 

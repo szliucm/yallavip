@@ -746,3 +746,15 @@ class Lightin_SKUAdmin(object):
     list_editable = []
     readonly_fields = ()
     actions = []
+
+@xadmin.sites.register(LightinAlbum)
+class LightinAlbumAdmin(object):
+
+    list_display = ["lightin_spu", "myalbum","fb_id", "published","publish_error","published_time",]
+    # 'sku_name','img',
+
+    search_fields = ["lightin_spu",]
+    list_filter = ["myalbum", "published",]
+    list_editable = []
+    readonly_fields = ()
+    actions = []
