@@ -1529,11 +1529,58 @@ def sync_lightin_album():
                     publish_error=error[:90],
                     published_time=dt.now()
                 )
+    # 把比当前批次号小 20 的批次的图片 还在发布状态的从Facebook删除
+    delete_outdate_lightin_album(batch_no)
 
-    #把比当前批次号小 20 的批次的图片 还在发布状态的从Facebook删除
 
-    #更新Facebook图片数据库记录
+#把比当前批次号小 20 的批次的图片 还在发布状态的从Facebook删除
+def delete_outdate_lightin_album(batch_no):
+    if batch_no <20:
+        return
 
+    from facebook_business.api import FacebookAdsApi
+    from facebook_business.adobjects.photo import Photo
+
+    lightinalbums_outdate = LightinAlbum.objects.filter(published=True, batch_no=batch_no-20)
+
+
+    # 选择所有可用的page
+    pages_list = lightinalbums_outdate.values_list('myalbum__mypage__page_no', flat=True).distinct()
+
+    print(pages_list)
+    for page_no in pages_list:
+        FacebookAdsApi.init(access_token=get_token(page_no))
+
+        photo_nos = lightinalbums_outdate.filter(myalbum__mypage__page_no = page_no).values_list('fb_id', flat=True).distinct()
+
+        if photo_nos is None or len(photo_nos) == 0:
+            continue
+
+        for photo_no in photo_nos:
+
+            fields = [
+            ]
+            params = {
+
+            }
+            try:
+                response = Photo(photo_no).api_delete(
+                    fields=fields,
+                    params=params,
+                )
+
+            except:
+                continue
+            #更新Facebook图片数据库记录
+            LightinAlbum.objects.filter(fb_id=photo_no).update(
+
+                    published=False,
+                    deleted=True,
+                    delete_error=response[:90],
+                    deleted_time=dt.now()
+
+                )
+            print("删除相册图片 LightinAlbum %s %s" % (photo_no, response))
 
 
 
