@@ -1534,23 +1534,52 @@ def sync_lightin_album():
         delete_outdate_lightin_album(batch_no -20)
 
 
-#把比当前批次号小 20 的批次的图片 还在发布状态的从Facebook删除
+#把比当前批次号，且还在发布状态的从Facebook删除
 def delete_outdate_lightin_album(batch_no):
+
+    #按批次号找出子集
+    lightinalbums_outdate = LightinAlbum.objects.filter(published=True, batch_no=batch_no)
+
+    #删除子集
+    delete_out_lightin_album(lightinalbums_outdate)
+
+
+
+#把所有sku都没有库存，spu还在发布状态的从Facebook删除
+def delete_outstock_lightin_album():
+    #更新还在发布中的spu的库存
+    from django.db import connection, transaction
+
+    sql = "UPDATE prs_lightin_spu SET  quantity =(SELECT sum(k.quantity) FROM prs_lightin_sku k WHERE k.SPU = prs_lightin_spu.SPU and prs_lightin_spu.published = true)"
+
+    cursor = connection.cursor()
+    cursor.execute(sql)
+    transaction.commit()
+
+    #选出库存为零，还在发布中的spu
+    lightinalbums_outstock = LightinAlbum.objects.filter(published=True,lightin_spu__quantity__isnull=True )
+
+    # 删除子集
+    delete_out_lightin_album(lightinalbums_outstock)
+
+
+    #更新spu的发布记录
+    Lightin_SPU.objects.filter(published=True,quantity__isnull=True).update(published=False)
+
+#删除lightin_album 的某个特定子集
+def delete_out_lightin_album(lightinalbums_out):
     from facebook_business.api import FacebookAdsApi
     from facebook_business.adobjects.photo import Photo
 
-    lightinalbums_outdate = LightinAlbum.objects.filter(published=True, batch_no=batch_no)
-
-
     # 选择所有可用的page
-    pages_list = lightinalbums_outdate.values_list('myalbum__mypage__page_no', flat=True).distinct()
+    pages_list = lightinalbums_out.values_list('myalbum__mypage__page_no', flat=True).distinct()
 
     print(pages_list)
     for page_no in pages_list:
         FacebookAdsApi.init(access_token=get_token(page_no))
 
-        photo_nos = lightinalbums_outdate.filter(myalbum__mypage__page_no = page_no).values_list('fb_id', flat=True).distinct()
-
+        photo_nos = lightinalbums_out.filter(myalbum__mypage__page_no = page_no).values_list('fb_id', flat=True).distinct()
+        print(photo_nos)
         if photo_nos is None or len(photo_nos) == 0:
             continue
 
@@ -1562,14 +1591,16 @@ def delete_outdate_lightin_album(batch_no):
 
             }
             try:
+                '''
                 response = Photo(photo_no).api_delete(
                     fields=fields,
                     params=params,
                 )
-
+                '''
+                response = "delete photo_no "+ photo_no
             except:
                 continue
-            #更新Facebook图片数据库记录
+            #更新lightinalbum的发布记录
             print(response)
             LightinAlbum.objects.filter(fb_id=photo_no).update(
 
@@ -1585,3 +1616,12 @@ def delete_outdate_lightin_album(batch_no):
 
 # 更新相册对应的主页外键
 #update fb_myalbum a , fb_mypage p set a.mypage_id = p.id where p.page_no = a.page_no
+'''
+from django.db import connection, transaction
+
+    sql = "UPDATE prs_lightin_spu SET  quantity =(SELECT sum(k.quantity) FROM prs_lightin_sku k WHERE k.SPU = prs_lightin_spu.SPU and prs_lightin_spu.published = true)"
+
+    cursor = connection.cursor()
+    cursor.execute(sql)
+    transaction.commit()
+'''
