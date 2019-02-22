@@ -1570,11 +1570,12 @@ def delete_outdate_lightin_album(batch_no):
             except:
                 continue
             #更新Facebook图片数据库记录
+            print(response)
             LightinAlbum.objects.filter(fb_id=photo_no).update(
 
                     published=False,
                     deleted=True,
-                    delete_error=response[:90],
+                    #delete_error=response,
                     deleted_time=dt.now()
 
                 )
