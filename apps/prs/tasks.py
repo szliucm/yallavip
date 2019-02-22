@@ -1418,7 +1418,7 @@ def prepare_lightin_album_material():
 
     #分相册随机选产品
 
-    lightinalbums_all = LightinAlbum.objects.filter(published= False,publish_error="无",material_error ="无", batch_no=0 )
+    lightinalbums_all = LightinAlbum.objects.filter(published= False,publish_error="无",material=False,material_error ="无", batch_no=0 )
 
     albums_list  = lightinalbums_all.distinct().values_list('myalbum', flat=True)
     print("albums_list is ", albums_list)
