@@ -1453,7 +1453,8 @@ def prepare_lightin_album_material():
             #价格
             price1 = int(spu.shopify_price)
             price2 = int(price1 * random.uniform(5, 6))
-            name = name + "\n\nPrice:  " + str(price1) + "SAR"
+            #为了减少促销的麻烦，文案里不写价格了
+            #name = name + "\n\nPrice:  " + str(price1) + "SAR"
 
             # 准备图片
             #先取第一张，以后考虑根据实际有库存的sku的图片（待优化）
