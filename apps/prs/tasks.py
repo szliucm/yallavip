@@ -1557,14 +1557,17 @@ def delete_outstock_lightin_album():
     transaction.commit()
 
     #选出库存为零，还在发布中的spu
-    lightinalbums_outstock = LightinAlbum.objects.filter(published=True,lightin_spu__quantity__isnull=True )
+    lightinalbums_outstock = LightinAlbum.objects.filter(
+        Q(lightin_spu__quantity__isnull=True)|Q(lightin_spu__quantity=0),
+        lightin_spu__published=True)
+    print("库存为零的发布中的相册子集",lightinalbums_outstock)
 
     # 删除子集
     delete_out_lightin_album(lightinalbums_outstock)
 
 
     #更新spu的发布记录
-    Lightin_SPU.objects.filter(published=True,quantity__isnull=True).update(published=False)
+    Lightin_SPU.objects.filter(Q(quantity__isnull=True)|Q(quantity=0),published=True).update(published=False)
 
 #删除lightin_album 的某个特定子集
 def delete_out_lightin_album(lightinalbums_out):
@@ -1574,12 +1577,12 @@ def delete_out_lightin_album(lightinalbums_out):
     # 选择所有可用的page
     pages_list = lightinalbums_out.values_list('myalbum__mypage__page_no', flat=True).distinct()
 
-    print(pages_list)
+    print("pages_list ",pages_list)
     for page_no in pages_list:
         FacebookAdsApi.init(access_token=get_token(page_no))
 
         photo_nos = lightinalbums_out.filter(myalbum__mypage__page_no = page_no).values_list('fb_id', flat=True).distinct()
-        print(photo_nos)
+        print("photo_nos  ", photo_nos)
         if photo_nos is None or len(photo_nos) == 0:
             continue
 
@@ -1601,7 +1604,7 @@ def delete_out_lightin_album(lightinalbums_out):
             except:
                 continue
             #更新lightinalbum的发布记录
-            print(response)
+            print("facebook 返回结果",response)
             LightinAlbum.objects.filter(fb_id=photo_no).update(
 
                     published=False,
