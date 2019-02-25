@@ -308,6 +308,9 @@ def lightin_mark_image(ori_image, handle, price1, price2, lightinalbum):
 
     image = get_remote_image(ori_image)
 
+    if image is None:
+        return  None,None
+
     image = deal_image(image, logo=logo, handle=handle, price=price, promote=promote,  price1=price1, price2=price2, album_promote=album_promote,type="album")
 
     #################
