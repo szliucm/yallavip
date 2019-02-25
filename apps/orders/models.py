@@ -247,7 +247,7 @@ class OrderDetail_lightin(models.Model):
     class Meta:
         verbose_name = "订单明细_lightin"
         verbose_name_plural = verbose_name
-        # unique_together = (("order", "sku"),)
+
 
 
     def __str__(self):

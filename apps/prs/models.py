@@ -560,3 +560,18 @@ class Lightin_barcode(models.Model):
     SKU = models.CharField(default='',max_length=300, null=True, blank=True, verbose_name="SKU")
     barcode = models.CharField(u'barcode', default='', max_length=100, blank=True)
     quantity = models.IntegerField(u'数量', default=0, blank=True, null=True)
+    sellable = models.IntegerField(u'可销售库存', default=0, blank=True, null=True)
+    occupied = models.IntegerField(u'订单占用库存', default=0, blank=True, null=True)
+    unsellable = models.IntegerField(u'不可销售库存(', default=0, blank=True, null=True)
+    locked = models.IntegerField(u'锁定库存', default=0, blank=True, null=True)
+    virtual = models.IntegerField(u'虚库存', default=0, blank=True, null=True)
+    transport = models.IntegerField(u'调拨占用库存', default=0, blank=True, null=True)
+    air = models.IntegerField(u'调拨中库存', default=0, blank=True, null=True)
+
+    class Meta:
+        verbose_name = "Lightin barcode映射"
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+
+        return  self.barcode

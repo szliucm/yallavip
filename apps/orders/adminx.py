@@ -230,31 +230,83 @@ class OrderAdmin(object):
 
 
 
-    actions = ['fullfill', 'start_verify','batch_copy','start_package_track',"batch_overseas_stop"]
+    actions = ['fullfill', 'start_verify','batch_copy','start_package_track',"batch_overseas_stop", "mapping_lightin",]
 
     def mapping_lightin(self, request, queryset):
         from django.db.models import Sum
         from prs.models import  Lightin_barcode
 
+        #处理每个订单
         for row in queryset:
+            inventory_list = []
+
+
             orderdetails = row.order_orderdetail.all()
+
+            # 每个订单项
             for orderdetail in orderdetails:
                 sku = orderdetail.sku
                 if sku.find("S") == 0:
                     #兰亭的产品，需要映射到barcode
 
                     lightin_barcodes = Lightin_barcode.objects.filter(SKU=sku)
-                    quantity = orderdetail.product_quantity
-                    if quantity > lightin_barcodes.aggregate(nums = Sum('quantity')):
+                    quantity = int(orderdetail.product_quantity)
+                    if quantity > lightin_barcodes.aggregate(nums = Sum('quantity')).get("nums"):
                         #库存不足，标记订单为问题单
                         #
                         #
                         continue
 
+                    # 每个可能的条码
                     for lightin_barcode in lightin_barcodes:
-                        if quantity > lightin_barcode.quantity:
+                        if quantity == 0:
+                            break
+
+                        sellable = lightin_barcode.sellable
+                        occupied = lightin_barcode.occupied
+
+                        if quantity > lightin_barcode.sellable:
                             # 条码的库存数量比订单项所需的少
-                            quantity -= lightin_barcode.quantity
+
+                            sellable = 0
+                            occupied += lightin_barcode.sellable
+                            quantity -= lightin_barcode.sellable
+
+                        else:
+                            sellable -= quantity
+                            occupied += quantity
+                            quantity = 0
+
+
+                        inventory_list.append([lightin_barcode.pk, sellable, occupied])
+
+                        print(inventory_list)
+
+
+            #更新订单所有相关barcode数据库记录,同时插入到OrderDetail_lightin
+            '''
+            for inventory in inventory_list:
+
+                Lightin_barcode.objects.filter(pk = inventory[0]).update(
+                                                    sellable= inventory[1],
+                                                    occupied =  inventory[2]
+                                
+                                                )
+
+            '''
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
