@@ -1397,7 +1397,7 @@ def update_shopify_title_lightin(lightinproduct_pk, shop_url ):
         r = requests.put(url, headers=headers, data=json.dumps(params))
         print("r  ", r)
         if r.status_code  == 200:
-            lightin_spu.update(updated=True,title=title)
+            Lightin_SPU.objects.filter(pk=lightin_spu.pk).update(updated=True,title=title,product_no = shopify_product.product_no)
         else:
             print(r.text)
 
