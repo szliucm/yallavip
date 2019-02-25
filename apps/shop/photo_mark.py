@@ -303,7 +303,7 @@ def lightin_mark_image(ori_image, handle, price1, price2, lightinalbum):
 
 
 
-    print("logo %s promote %s price %s album_promote %s"%(logo,promote,price ,album_promote  ))
+    print("logo %s promote %s price %s lightinalbum %s"%(logo,promote,price ,lightinalbum.pk  ))
 
 
     image = get_remote_image(ori_image)
