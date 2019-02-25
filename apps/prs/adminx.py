@@ -747,6 +747,31 @@ class Lightin_SKUAdmin(object):
     readonly_fields = ()
     actions = []
 
+class Lightin_barcodeResource(resources.ModelResource):
+
+    class Meta:
+        model = Lightin_barcode
+        skip_unchanged = True
+        report_skipped = True
+        import_id_fields = ('barcode',)
+        fields = ( "SKU","barcode","quantity")
+        # exclude = ()
+
+@xadmin.sites.register(Lightin_barcode)
+class Lightin_barcodeAdmin(object):
+
+    import_export_args = {"import_resource_class": Lightin_barcodeResource,
+                          "export_resource_class": Lightin_barcodeResource}
+
+    list_display = ["SKU","barcode","quantity",]
+
+
+    search_fields = ["SKU","barcode",]
+    list_filter = ["SKU"]
+    list_editable = []
+    readonly_fields = ()
+    actions = []
+
 @xadmin.sites.register(LightinAlbum)
 class LightinAlbumAdmin(object):
 

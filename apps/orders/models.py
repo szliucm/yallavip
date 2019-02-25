@@ -224,15 +224,28 @@ class OrderDetail(models.Model):
     price = models.CharField(u'Unit Price', default='', max_length=50, blank=True)
 
 
-    # pic_url = models.CharField(u'图片网址', default='', max_length=200, blank=True)
-    def cal_barcode(self):
-        return  Lightin_SKU.objects.get(SKU = self.sku)
-
-    cal_barcode.short_description = "barcode"
-    barcode = property(cal_barcode)
 
     class Meta:
         verbose_name = "订单明细"
+        verbose_name_plural = verbose_name
+        # unique_together = (("order", "sku"),)
+
+
+    def __str__(self):
+        return self.sku
+
+class OrderDetail_lightin(models.Model):
+    order = models.ForeignKey(Order, related_name='order_orderdetail_lightin', null=False, on_delete=models.CASCADE,
+                              verbose_name="Order")
+
+    sku = models.CharField(u'SKU', default='', max_length=100, null=True, blank=True)
+
+    barcode = models.CharField(u'barcode', default='', max_length=100, blank=True)
+    quantity = models.IntegerField(u'数量', default=0, blank=True, null=True)
+    price = models.CharField(u'Unit Price', default='', max_length=50, blank=True)
+
+    class Meta:
+        verbose_name = "订单明细_lightin"
         verbose_name_plural = verbose_name
         # unique_together = (("order", "sku"),)
 

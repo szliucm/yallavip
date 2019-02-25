@@ -11,7 +11,7 @@ import xadmin
 from django.shortcuts import get_object_or_404, get_list_or_404, render
 from import_export import resources, fields
 from import_export.widgets import ForeignKeyWidget
-from .models import Order, OrderDetail,Verify, OrderConversation,ClientService,Verification,\
+from .models import Order, OrderDetail,OrderDetail_lightin, Verify, OrderConversation,ClientService,Verification,\
         Logistic_winlink,Logistic_jiacheng,Logistic_status,Logistic_trail, Sms,\
         LogisticAccount,OverseaOrder,OverseaSkuRank
 from shop.models import ShopifyProduct, ShopifyVariant,Combination,ShopifyImage
@@ -231,6 +231,32 @@ class OrderAdmin(object):
 
 
     actions = ['fullfill', 'start_verify','batch_copy','start_package_track',"batch_overseas_stop"]
+
+    def mapping_lightin(self, request, queryset):
+        from django.db.models import Sum
+        from prs.models import  Lightin_barcode
+
+        for row in queryset:
+            orderdetails = row.order_orderdetail.all()
+            for orderdetail in orderdetails:
+                sku = orderdetail.sku
+                if sku.find("S") == 0:
+                    #兰亭的产品，需要映射到barcode
+
+                    lightin_barcodes = Lightin_barcode.objects.filter(SKU=sku)
+                    quantity = orderdetail.product_quantity
+                    if quantity > lightin_barcodes.aggregate(nums = Sum('quantity')):
+                        #库存不足，标记订单为问题单
+                        #
+                        #
+                        continue
+
+                    for lightin_barcode in lightin_barcodes:
+                        if quantity > lightin_barcode.quantity:
+                            # 条码的库存数量比订单项所需的少
+                            quantity -= lightin_barcode.quantity
+
+
 
 
     def fullfill(self, request, queryset):
@@ -923,7 +949,7 @@ class OrderDetailAdmin(object):
 
     #为了快速做海外仓包裹，所以把可能的图片显示出来
     #"fb_photo", "show_image", 'show_local_image',
-    list_display = ['order', 'sku','barcode', 'product_quantity',  'price','order_status','show_supply_status','alternative', ]
+    list_display = ['order', 'sku', 'product_quantity',  'price','order_status','show_supply_status','alternative', ]
 
     search_fields = ["order__order_no",'sku',"order__logistic_no" ]
 
@@ -979,7 +1005,6 @@ class OrderDetailAdmin(object):
 
 
     batch_overseas_stop.short_description = "海外仓批量下架"
-
 
 
 
@@ -2789,3 +2814,17 @@ class OverseaSkuRankAdmin(object):
     list_display = ('sku', 'orders', )
     list_editable = []
     search_fields = ['sku', ]
+
+@xadmin.sites.register(OrderDetail_lightin)
+class OrderDetail_lightinAdmin(object):
+    def order_status(self, obj):
+        return obj.order.order_status
+
+    list_display = ['order',  'sku',"barcode", 'quantity', 'price', 'order_status', ]
+
+    search_fields = ["order__order_no", 'sku', "barcode",]
+
+    ordering = ['-order__order_no']
+    list_filter = ("order__order_status", "order__verify__verify_status", "order__verify__sms_status",)
+
+    actions = [ ]

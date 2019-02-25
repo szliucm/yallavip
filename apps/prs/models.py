@@ -478,15 +478,26 @@ class Lightin_SPU(models.Model):
         return self.SPU
 
 class Lightin_SKU(models.Model):
+
+
     lightin_spu = models.ForeignKey(Lightin_SPU, null=True, blank=True, verbose_name="SPU外键",
                                     related_name="spu_sku", on_delete=models.CASCADE)
 
     SPU = models.CharField(default='',max_length=300, null=True, blank=True, verbose_name="SPU")
 
     SKU = models.CharField(default='',max_length=300, null=True, blank=True, verbose_name="SKU")
-    barcode = models.CharField(u'barcode', default='', max_length=100, blank=True)
+    #barcode = models.CharField(u'barcode', default='', max_length=100, blank=True)
 
-    quantity = models.IntegerField(u'数量', default=0, blank=True, null=True)
+    #quantity = models.IntegerField(u'数量', default=0, blank=True, null=True)
+
+    def cal_quantity(self):
+        from django.db.models import Sum
+        total = Lightin_barcode.objects.filter(SKU=self.SKU).aggregate(nums = Sum('quantity'))
+        return total["nums"]
+
+    cal_quantity.short_description = "数量小计"
+    quantity = property(cal_quantity)
+
 
     vendor_sale_price = models.FloatField(verbose_name="供方销售价",default=0)
     vendor_supply_price = models.FloatField(verbose_name="供方采购价", default=0)
@@ -541,3 +552,11 @@ class LightinAlbum(models.Model):
     def __str__(self):
 
         return  self.lightin_spu.SPU
+
+class Lightin_barcode(models.Model):
+    lightin_sku = models.ForeignKey(Lightin_SKU, null=True, blank=True, verbose_name="SKU",
+                                    related_name="sku_barcode", on_delete=models.CASCADE)
+
+    SKU = models.CharField(default='',max_length=300, null=True, blank=True, verbose_name="SKU")
+    barcode = models.CharField(u'barcode', default='', max_length=100, blank=True)
+    quantity = models.IntegerField(u'数量', default=0, blank=True, null=True)
