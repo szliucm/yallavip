@@ -1360,7 +1360,7 @@ def update_lightin_shopify_title():
         update_shopify_title_lightin(lightinproduct.pk, shop_url)
 
         n += 1
-        if n>10:
+        if n>2:
             break
 
 
@@ -1396,6 +1396,8 @@ def update_shopify_title_lightin(lightinproduct_pk, shop_url ):
         print("r  ", r)
         if r.status_code  == 200:
             lightin_spu.update(updated=True,title=title)
+        else:
+            print(r.text)
 
 
 
