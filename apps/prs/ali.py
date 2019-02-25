@@ -2226,7 +2226,7 @@ def create_body_lightin(lightin_spu):
     if lightin_spu.title:
         title = lightin_spu.title
     else:
-        title = lightin_spu.en_name
+        title = lightin_spu.en_name + " [" + lightin_spu.handle + "]"
 
     #生成shopify图
     shopify_images = []

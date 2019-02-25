@@ -1326,9 +1326,7 @@ def post_to_shopify_lightin(lightinproduct_pk ):
         if posted is not None:
             print("创建新产品成功")
             Lightin_SPU.objects.filter(pk=lightin_spu.pk).update(published=True, handle=posted.get("handle"),
-
-
-                                                               product_no=posted.get("product_no"),
+                                                               product_no=posted.get("id"),
                                                                published_time=datetime.now())
         else:
             print("创建新产品变体失败")
@@ -1374,7 +1372,11 @@ def update_shopify_title_lightin(lightinproduct_pk, shop_url ):
 
     for lightin_spu in lightin_spus:
 
-        product_no = lightin_spu.product_no
+        shopify_product = ShopifyProduct.objects.get(vendor=lightin_spu.SPU)
+        if shopify_product is None:
+            print("找不到shopify产品")
+            continue
+
         title = lightin_spu.title + " [" + lightin_spu.handle + "]"
         print("title is ", title)
 
@@ -1390,7 +1392,7 @@ def update_shopify_title_lightin(lightinproduct_pk, shop_url ):
             "charset": "utf-8",
 
         }
-        url = shop_url + "/admin/products/%s.json" % (product_no)
+        url = shop_url + "/admin/products/%s.json" % (shopify_product.product_no)
 
         r = requests.put(url, headers=headers, data=json.dumps(params))
         print("r  ", r)
