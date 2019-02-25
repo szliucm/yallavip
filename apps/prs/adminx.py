@@ -775,7 +775,7 @@ class LightinAlbumAdmin(object):
     # 'sku_name','img',
 
     search_fields = ["lightin_spu",]
-    list_filter = ["myalbum", "published","myalbum__mypage","material"]
+    list_filter = ["myalbum", "published","myalbum__mypage","material","batch_no",]
     list_editable = []
     readonly_fields = ()
     actions = []
