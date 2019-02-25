@@ -716,7 +716,7 @@ class Lightin_SPUAdmin(object):
     list_display = [ "SPU", "en_name","cn_name", "cate_1","cate_2","cate_3","vendor_sale_price","vendor_supply_price","link", "title","sale_price","photo","got","got_time", ]
     # 'sku_name','img',
 
-    search_fields = ["SPU",]
+    search_fields = ["SPU","handle", ]
     list_filter = ["cate_1","cate_2","cate_3","got","got_time","got_error",]
     list_editable = []
     readonly_fields = ()
