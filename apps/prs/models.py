@@ -467,7 +467,7 @@ class Lightin_SPU(models.Model):
     product_no = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="shopify product_no")
     handle = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="handle")
 
-    published = models.BooleanField(default=False, verbose_name="发布状态")
+    updated = models.BooleanField(default=False, verbose_name="更新状态")
     quantity = models.IntegerField(u'数量', default=0, blank=True, null=True)
 
     class Meta:

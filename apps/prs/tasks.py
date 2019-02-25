@@ -1352,7 +1352,7 @@ def update_lightin_shopify_title():
     # 初始化SDK
     shop_url = "https://%s:%s@%s.myshopify.com" % (shop_obj.apikey, shop_obj.password, shop_obj.shop_name)
 
-    lightinproducts = Lightin_SPU.objects.filter(got = True, published=True)
+    lightinproducts = Lightin_SPU.objects.filter(got = True, published=True, updated=False)
     print("一共有%d 个lightin产品信息待更新标题" % (lightinproducts.count()))
     n = 0
     for lightinproduct in lightinproducts:
@@ -1370,13 +1370,13 @@ def update_shopify_title_lightin(lightinproduct_pk, shop_url ):
     from django.utils import timezone as datetime
 
 
-    lightin_spu = Lightin_SPU.objects.get(pk=lightinproduct_pk)
-    product_no =  lightin_spu.product_no
-    title = lightin_spu.title + " [" + lightin_spu.handle  + "]"
-    print ("title is ", title)
-    if product_no:
+    lightin_spus = Lightin_SPU.objects.filter(pk=lightinproduct_pk)
 
+    for lightin_spu in lightin_spus:
 
+        product_no = lightin_spu.product_no
+        title = lightin_spu.title + " [" + lightin_spu.handle + "]"
+        print("title is ", title)
 
         params = {
             "product": {
@@ -1393,8 +1393,9 @@ def update_shopify_title_lightin(lightinproduct_pk, shop_url ):
         url = shop_url + "/admin/products/%s.json" % (product_no)
 
         r = requests.put(url, headers=headers, data=json.dumps(params))
-        if r.text is None:
-            return None
+        if r.status_code  == 200:
+            lightin_spu.update(updated=True,title=title)
+
 
 
 
