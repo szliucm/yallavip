@@ -1356,11 +1356,11 @@ def update_lightin_shopify_title():
     for lightinproduct in lightinproducts:
 
         update_shopify_title_lightin(lightinproduct.pk, shop_url)
-
+        '''
         n += 1
         if n>2:
             break
-
+        '''
 
 @task
 def update_shopify_title_lightin(lightinproduct_pk, shop_url ):
