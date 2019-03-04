@@ -270,7 +270,7 @@ class OrderDetail(models.Model):
             return "库存锁定"
         elif self.outstock == 9999:
             return "没有映射"
-        if len(self.sku) < 13:
+        elif len(self.sku) < 13:
             return "库存锁定"
         else:
             return "缺货"
