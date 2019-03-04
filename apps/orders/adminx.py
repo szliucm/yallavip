@@ -2884,9 +2884,9 @@ class OverseaSkuRankAdmin(object):
 @xadmin.sites.register(OrderDetail_lightin)
 class OrderDetail_lightinAdmin(object):
     def order_status(self, obj):
-        return obj.order.order_status
+        return obj.order.status
 
-    list_display = ['order',  'SKU',"barcode", 'quantity', 'price', 'order_status', ]
+    list_display = ['order',  'SKU',"barcode", 'quantity', 'price', 'order__status', ]
 
     search_fields = ["order__order_no", 'SKU', "barcode",]
 
