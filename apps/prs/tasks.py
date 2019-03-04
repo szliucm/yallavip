@@ -1634,7 +1634,7 @@ def delete_outstock_lightin_album():
 
     for lightinalbum in lightinalbums:
         if  lightinalbum.lightin_spu.sellable == 0:
-            photo_list = lightinalbums_out[lightinalbum.myalbum.page_no]
+            photo_list = lightinalbums_out.get(lightinalbum.myalbum.page_no)
             if not photo_list :
                 photo_list = []
             if lightinalbum.fb_id not in photo_list:
