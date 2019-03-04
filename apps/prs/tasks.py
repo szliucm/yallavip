@@ -1641,13 +1641,15 @@ def delete_outstock_lightin_album():
                 photo_list.append(lightinalbum.fb_id)
 
             lightinalbums_out[lightinalbum.myalbum.page_no] = photo_list
+            print("lightinalbum is %s  page no is %s, photo_id is %s ",lightinalbum, lightinalbum.myalbum.page_no,lightinalbum.fb_id )
 
     # 删除子集
-    delete_out_lightin_album(lightinalbums_out)
+    #debug
+    #delete_out_lightin_album(lightinalbums_out)
 
 
     #更新spu的发布记录
-    Lightin_SPU.objects.filter(Q(quantity__isnull=True)|Q(quantity=0),published=True).update(published=False)
+    #Lightin_SPU.objects.filter(Q(quantity__isnull=True)|Q(quantity=0),published=True).update(published=False)
 
 #删除lightin_album 的某个特定子集
 def delete_out_lightin_album(lightinalbums_out):
