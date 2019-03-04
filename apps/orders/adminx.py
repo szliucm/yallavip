@@ -1609,6 +1609,10 @@ class VerifyAdmin(object):
 
         return queryset
     '''
+    def queryset(self):
+        qs = super().queryset()
+        return qs.filter(order__status="OPEN" )
+
 
 class ClientServiceAdmin(object):
     def receiver_city(self, obj):
