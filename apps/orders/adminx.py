@@ -218,7 +218,7 @@ class OrderAdmin(object):
     list_editable = []
     # list_display_links = ["show_conversation"]
     search_fields = ["order_no",'logistic_no', ]
-    list_filter = ( "order_status","package_status", "verify_time","order_time","send_time","verify__verify_status","verify__sms_status",)
+    list_filter = ( "status","financial_status","fulfillment_status", "package_status", "verify_time","order_time","send_time","verify__verify_status","verify__sms_status",)
     ordering = ['-order_time']
     #data_charts = {
     #    "order_count": {'title': u"订单统计","x-field": "order_time", "y-field": ("order_no", ), "order": ('order_time',)},
@@ -2890,7 +2890,7 @@ class OrderDetail_lightinAdmin(object):
 
     list_display = ['order',  'SKU',"barcode", 'quantity', 'price', 'order_status', ]
 
-    search_fields = ["order__order_no", 'SKU', "barcode",]
+    search_fields = ["order__order_no", 'SKU', "barcode__barcode",]
 
     ordering = ['-order__order_no']
     list_filter = ("order__status", "order__verify__verify_status", "order__verify__sms_status",)
