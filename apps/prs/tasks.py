@@ -1633,7 +1633,7 @@ def delete_outstock_lightin_album():
 
 
     for lightinalbum in lightinalbums:
-        print("%s lightinalbum.lightin_spu.sellable is %s "%(lightinalbum.lightin_spu ,lightinalbum.lightin_spu.sellable))
+        #print("%s lightinalbum.lightin_spu.sellable is %s "%(lightinalbum.lightin_spu ,lightinalbum.lightin_spu.sellable))
         if  lightinalbum.lightin_spu.sellable == 0:
             photo_list = lightinalbums_out.get(lightinalbum.myalbum.page_no)
             if not photo_list :
