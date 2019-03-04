@@ -87,6 +87,7 @@ class Order(models.Model):
 
 
     #shopify 订单状态
+
     status = models.CharField(u'shopify订单状态', max_length=30, default='', blank=True)
     financial_status = models.CharField(u'shopify订单支付状态', max_length=30, default='',null=True, blank=True)
     fulfillment_status = models.CharField(u'shopify订单仓配状态', max_length=30, default='',null=True, blank=True)
