@@ -75,6 +75,8 @@ class Order(models.Model):
         items = self.order_orderdetail.all()
 
         for item in items:
+
+
             if item.inventory_status == "缺货":
                 return  "缺货"
             elif item.inventory_status == "没有映射":
@@ -268,6 +270,8 @@ class OrderDetail(models.Model):
             return "库存锁定"
         elif self.outstock == 9999:
             return "没有映射"
+        if len(self.sku) < 13:
+            return "库存锁定"
         else:
             return "缺货"
 
