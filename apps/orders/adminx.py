@@ -821,6 +821,10 @@ class OrderAdmin(object):
             queryset |= self.model.objects.filter(logistic_no__in=query.split(","))
         return queryset
 
+    def queryset(self):
+        qs = super().queryset()
+        return qs.filter(status="OPEN" )
+
 class OrderDetailResource(resources.ModelResource):
     order = fields.Field(
         column_name='订单号',
