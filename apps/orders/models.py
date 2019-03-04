@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.html import format_html
 from conversations.models import Conversation
-from prs.models import  Lightin_SKU
+from prs.models import  Lightin_SKU,Lightin_barcode
 
 
 # Create your models here.
@@ -69,11 +69,31 @@ class Order(models.Model):
     )
 
     order_no = models.CharField(u'订单号', default='', max_length=50, blank=True)
+    #inventory_status  = models.CharField(u'库存状态', default='', max_length=50, blank=True)
+
+    def cal_inventory_status(self):
+        items = self.order_orderdetail.all()
+
+        for item in items:
+            if item.inventory_status == "缺货":
+                return  "缺货"
+            elif item.inventory_status == "没有映射":
+                return  "没有映射"
+
+        return "库存锁定"
+
+    cal_inventory_status.short_description = "库存状态"
+    inventory_status = property(cal_inventory_status)
+
 
     #shopify 订单状态
     status = models.CharField(u'shopify订单状态', max_length=30, default='', blank=True)
     financial_status = models.CharField(u'shopify订单支付状态', max_length=30, default='',null=True, blank=True)
     fulfillment_status = models.CharField(u'shopify订单仓配状态', max_length=30, default='',null=True, blank=True)
+
+    #wms 订单处理状态， C:待发货审核 W:待发货 D:已发货 H:暂存 N:异常订单 P:问题件 X:废弃
+    wms_status = models.CharField(u'wms订单状态', max_length=30, default='', blank=True)
+    #totalFee = models.DecimalField(verbose_name="费用小计",)
 
     order_status = models.CharField(u'订单状态', max_length=30, default='未知', blank=True)
 
@@ -223,7 +243,35 @@ class OrderDetail(models.Model):
     # money_type = models.CharField(u'币种缩写', default='', max_length=50, blank=True)
     price = models.CharField(u'Unit Price', default='', max_length=50, blank=True)
 
+    #inventory_status = models.CharField(u'库存状态', default='', max_length=50, blank=True)
 
+    def cal_outstock(self):
+        from django.db.models import Sum
+        from orders.models import  OrderDetail_lightin
+        from django.db.models import Q
+
+
+
+        items = OrderDetail_lightin.objects.filter(order = self.order, SKU=self.sku)
+
+        if items:
+            return int(float(self.product_quantity)) - items.aggregate(nums = Sum('quantity')).get('nums')
+        else:
+            return  9999
+
+    cal_outstock.short_description = "缺货数量"
+    outstock = property(cal_outstock)
+
+    def cal_inventory_status(self):
+        if self.outstock == 0:
+            return "库存锁定"
+        elif self.outstock == 9999:
+            return "没有映射"
+        else:
+            return "缺货"
+
+    cal_inventory_status.short_description = "库存状态"
+    inventory_status = property(cal_inventory_status)
 
     class Meta:
         verbose_name = "订单明细"
@@ -238,9 +286,12 @@ class OrderDetail_lightin(models.Model):
     order = models.ForeignKey(Order, related_name='order_orderdetail_lightin', null=False, on_delete=models.CASCADE,
                               verbose_name="Order")
 
-    sku = models.CharField(u'SKU', default='', max_length=100, null=True, blank=True)
+    SKU = models.CharField(u'SKU', default='', max_length=100, null=True, blank=True)
 
-    barcode = models.CharField(u'barcode', default='', max_length=100, blank=True)
+    #barcode = models.CharField(u'barcode', default='', max_length=100, blank=True)
+    barcode = models.ForeignKey(Lightin_barcode, related_name='barcode_orderdetail_lightin', null=False, on_delete=models.CASCADE,
+                              verbose_name="barcode")
+
     quantity = models.IntegerField(u'数量', default=0, blank=True, null=True)
     price = models.CharField(u'Unit Price', default='', max_length=50, blank=True)
 
@@ -251,7 +302,7 @@ class OrderDetail_lightin(models.Model):
 
 
     def __str__(self):
-        return self.sku
+        return self.barcode.barcode
 
 
 class OrderConversation(models.Model):
@@ -1216,6 +1267,3 @@ class LogisticAccount(models.Model):
 
     def __str__(self):
         return self.logistic_no
-
-
-

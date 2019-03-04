@@ -2203,6 +2203,135 @@ def get_lightin_product_info(SPU, url):
     )
     return "", True
 
+# 解析页面，获取产品信息
+def get_tomtop_product_info(SPU, url):
+    from .models import AliProduct
+
+    print("开始抓取tomtop产品信息 ", url)
+
+
+
+    res = get_lingtin_page(url)
+    if res is None:
+        return "获取页面失败", False
+
+    # debug用
+    '''
+    with open('tomtop.txt', 'wb') as f:
+        f.write(res)
+
+
+    f = open("lightin.txt", "rb")
+
+    res = f.read()
+    '''
+
+    htmlEmt = etree.HTML(res)
+
+    #print(htmlEmt)
+    #result = etree.tostring(htmlEmt)
+    #print(result.decode('utf-8'))
+
+    return  htmlEmt
+
+    # 标题
+
+    title_ori = htmlEmt.xpath('//div[contains(@class,"prod-info-title")]/h1')
+    if title_ori:
+        title = title_ori[0].text
+        item_id = title_ori[0].xpath('.//span[@class="item-id"]')
+
+
+    else:
+        #print("title is empty", offer_id)
+        print("title is empty",url)
+        return "title is empty", False
+
+    #取面包屑
+    breadcrumb_divs = htmlEmt.xpath('//ul[contains(@class,"breadcrumb")]/li')
+    breadcrumb_list = []
+    for row in breadcrumb_divs:
+        #print(etree.tostring(row))
+        breadcrumb = row.xpath('.//a/text()')
+        if breadcrumb:
+            breadcrumb_list.append( " ".join(breadcrumb[0].split()))
+
+
+
+    # 取销售价
+    currency_div = htmlEmt.xpath('//dl[contains(@class,"prod-i-c-s")]/dt/a/text()')
+
+
+
+    price_div = htmlEmt.xpath('//strong[contains(@class,"sale-price")]')
+
+
+
+    if price_div:
+
+        price = price_div[0].text.split()
+        sale_price = price[0].replace("$","").replace(",","")
+
+    else:
+        print("price is empty",url)
+        return "price is empty", False
+
+
+    # 取主图
+
+    images_list = []
+    images_dict = {}
+    divs = htmlEmt.xpath('//div[@class="viewport"]')
+    if divs:
+        img_div = divs[0].xpath('.//div/div')
+        if not img_div:
+            img_div = divs[0].xpath('.//ul/li')
+
+        for row in img_div:
+            image_id = row.attrib.get("id").split("_")[1]
+            img = row.xpath('.//img')[0].attrib.get('data-normal')
+            images_dict[image_id] = img
+            images_list.append(img)
+
+        #src = row.attrib.get('src')
+        #attribute_id = row.attrib.get('attribute_id')
+
+
+    # 取sku图
+    divs = htmlEmt.xpath('//li[contains(@class,"attr-v-show-img")]')
+    attr_image_dict = {}
+    if divs:
+        sku_divs = divs[0].xpath('.//div/span')
+        for sku_div in sku_divs:
+            image_id = sku_div.attrib.get("image-id")
+            attr_string = sku_div.xpath('string()')
+            if attr_string:
+                attr = attr_string.split()[0]
+                attr_image_dict[attr] = image_id
+
+
+    '''
+    #更新产品记录
+    Lightin_SPU.objects.update_or_create(
+        SPU=SPU,
+        defaults={
+            'title': title,
+            'images': json.dumps(images_list),
+            'images_dict': json.dumps(images_dict),
+            'attr_image_dict': json.dumps(attr_image_dict),
+            'breadcrumb': json.dumps(breadcrumb_list),
+            'currency': currency_div[0],
+            "sale_price": sale_price,
+
+            "got": True,
+            "got_time": dt.now()
+
+        }
+    )
+    '''
+
+    return "", True
+
 
 #这一版是从神箭手转化数据
 #即使自己抓，也可以转化成神箭手的格式，后话了

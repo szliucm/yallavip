@@ -1007,3 +1007,56 @@ def get_ali_cate():
 
 
 
+def fulfill_order_shopify(order_no, logistic_no,):
+
+    DEBUG = False
+
+    if not DEBUG:
+
+        dest_shop = "yallasale-com"
+        location_id = 11796512810
+        notify_customer = True
+    else:
+        dest_shop = "yallavip-saudi"
+        location_id = 6019153986
+        notify_customer = False
+
+    #获取店铺信息
+    shop_obj = Shop.objects.get(shop_name=dest_shop)
+    shop_url = "https://%s:%s@%s.myshopify.com" % (shop_obj.apikey, shop_obj.password, shop_obj.shop_name)
+
+    '''
+    url = shop_url + "/admin/locations.json"
+    r = requests.get(url )
+    data = json.loads(r.text)
+    print(data)
+    return 
+    '''
+
+
+
+    url = shop_url + "/admin/orders/%s/fulfillments.json"%(order_no)
+
+    params = {
+        "fulfillment": {
+                     "location_id": location_id,
+                    "tracking_number": logistic_no,
+                    "tracking_urls": [
+                        "https://t.17track.net/zh-cn#nums=%s" % (logistic_no)
+
+                    ],
+                    "notify_customer": notify_customer
+
+                }
+    }
+    headers = {
+        "Content-Type": "application/json",
+        "charset": "utf-8",
+
+    }
+    # print("url %s params %s"%(url, params))
+    r = requests.post(url, headers=headers, data=json.dumps(params))
+    data = json.loads(r.text)
+    #print(data)
+    return  data
+

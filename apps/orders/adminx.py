@@ -214,8 +214,8 @@ class OrderAdmin(object):
 
     import_export_args = {"import_resource_class": OrderResource, "export_resource_class": OrderResource}
 
-    list_display = ["order_no", "order_status","weight","package_status", "order_amount", "real_amount","order_time","send_time","verify_time", "logistic_no","waybillnumber","order_comment"]
-    list_editable = ["weight"]
+    list_display = ["order_no", "order_status","inventory_status", "order_amount", "order_time", "logistic_no","order_comment"]
+    list_editable = []
     # list_display_links = ["show_conversation"]
     search_fields = ["order_no",'logistic_no', ]
     list_filter = ( "order_status","package_status", "verify_time","order_time","send_time","verify__verify_status","verify__sms_status",)
@@ -851,6 +851,20 @@ class OrderDetailResource(resources.ModelResource):
 
 
 class OrderDetailAdmin(object):
+    def handle(self,obj):
+        from prs.models import Lightin_SKU
+
+        return Lightin_SKU.objects.get(SKU = obj.sku).lightin_spu.handle
+
+    handle.short_description = "handle"
+
+    def skuattr(self,obj):
+        from prs.models import Lightin_SKU
+
+        return Lightin_SKU.objects.get(SKU = obj.sku).skuattr
+
+    skuattr.short_description = "skuattr"
+
 
     def fb_photo(self, obj):
 
@@ -1001,7 +1015,7 @@ class OrderDetailAdmin(object):
 
     #为了快速做海外仓包裹，所以把可能的图片显示出来
     #"fb_photo", "show_image", 'show_local_image',
-    list_display = ['order', 'sku', 'product_quantity',  'price','order_status','show_supply_status','alternative', ]
+    list_display = ['order', 'sku',"handle","skuattr", 'product_quantity', 'outstock','inventory_status', 'price','order_status','show_supply_status','alternative', ]
 
     search_fields = ["order__order_no",'sku',"order__logistic_no" ]
 
@@ -2872,9 +2886,9 @@ class OrderDetail_lightinAdmin(object):
     def order_status(self, obj):
         return obj.order.order_status
 
-    list_display = ['order',  'sku',"barcode", 'quantity', 'price', 'order_status', ]
+    list_display = ['order',  'SKU',"barcode", 'quantity', 'price', 'order_status', ]
 
-    search_fields = ["order__order_no", 'sku', "barcode",]
+    search_fields = ["order__order_no", 'SKU', "barcode",]
 
     ordering = ['-order__order_no']
     list_filter = ("order__order_status", "order__verify__verify_status", "order__verify__sms_status",)

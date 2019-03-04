@@ -103,9 +103,7 @@ class ConnectPageCategory(BaseActionView):
             for category in form_selected:
                 obj, created = ProductCategoryMypage.objects.update_or_create(
                                 mypage=page, productcategory= category,
-                                defaults={
-                                   # 'productcategory': category
-                                },
+
 
                             )
 

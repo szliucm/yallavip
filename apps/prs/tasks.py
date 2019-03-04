@@ -16,12 +16,15 @@ from shop.models import  Shop, ShopifyProduct, ShopifyVariant, ShopifyImage, Sho
 from shop.models import ProductCategoryMypage
 from fb.models import MyPage, MyAlbum
 from .shop_action import sync_shop
-from orders.models import Order, OrderDetail
+from orders.models import Order, OrderDetail,OrderDetail_lightin
 
 
 my_app_id = "562741177444068"
 my_app_secret = "e6df363351fb5ce4b7f0080adad08a4d"
 my_access_token = "EAAHZCz2P7ZAuQBABHO6LywLswkIwvScVqBP2eF5CrUt4wErhesp8fJUQVqRli9MxspKRYYA4JVihu7s5TL3LfyA0ZACBaKZAfZCMoFDx7Tc57DLWj38uwTopJH4aeDpLdYoEF4JVXHf5Ei06p7soWmpih8BBzadiPUAEM8Fw4DuW5q8ZAkSc07PrAX4pGZA4zbSU70ZCqLZAMTQZDZD"
+
+warehouse_code = "TW02"
+
 def get_token(target_page,token=None):
 
 
@@ -1676,6 +1679,328 @@ def delete_out_lightin_album(lightinalbums_out):
                 )
             print("删除相册图片 LightinAlbum %s %s" % (photo_no, response))
 
+@shared_task
+def mapping_order_lightin():
+
+    from django.db.models import Sum
+    from prs.models import Lightin_barcode
+
+
+    #orders = Order.objects.raw(  'SELECT * FROM orders_order  A WHERE financial_status = "paid" and  inventory_status <> "库存锁定"')
+    orders = Order.objects.filter(financial_status = "paid")
+
+    # 处理每个订单
+    for order in orders:
+        if order.inventory_status == "库存锁定":
+            continue
+
+        #先把自己可能占用的库存释放
+        OrderDetail_lightin.objects.filter(order=order).delete()
+
+        inventory_list = []
+        error = ""
+
+        orderdetails = order.order_orderdetail.all()
+        print("当前处理订单 ", order)
+
+        # 每个订单项
+        for orderdetail in orderdetails:
+            sku = orderdetail.sku
+            price = orderdetail.price
+            quantity = int(orderdetail.product_quantity)
+
+            lightin_barcodes = Lightin_barcode.objects.filter(SKU=sku)
+
+            if lightin_barcodes is None:
+                print("找不到映射，也就意味着无法管理库存！")
+                #需要标识为异常订单
+                error = "找不到SKU"
+                continue
+
+
+
+            # 每个可能的条码
+            for lightin_barcode in lightin_barcodes:
+                if quantity == 0:
+                    break
+                if lightin_barcode.sellable == 0:
+                    continue
+
+                print("sku %s , 需求量 %s , 条码 %s , 条码可售库存 %s"%(sku,  quantity, lightin_barcode, lightin_barcode.sellable  ))
+                if quantity > lightin_barcode.sellable:
+                    # 条码的库存数量比订单项所需的少
+                    quantity -= lightin_barcode.sellable
+
+                    occupied = lightin_barcode.sellable
+                else:
+
+                    occupied = quantity
+                    quantity = 0
+
+                inventory_list.append([sku, lightin_barcode, occupied, price])
+
+            #需求没有被满足，标识订单缺货
+            print("quantity", quantity)
+            if quantity > 0:
+                error = "缺货"
+        print(inventory_list)
+
+
+        # 插入到OrderDetail_lightin
+        orderdetail_lightin_list = []
+
+        for inventory in inventory_list:
+
+            orderdetail_lightin = OrderDetail_lightin(
+                order=order,
+                SKU=inventory[0],
+                barcode=inventory[1],
+                quantity=inventory[2],
+                price = inventory[3],
+            )
+            orderdetail_lightin_list.append(orderdetail_lightin)
+
+
+        OrderDetail_lightin.objects.bulk_create(orderdetail_lightin_list)
+
+
+
+
+
+@shared_task
+def fulfill_order_lightin():
+    from suds.client import Client
+    from xml.sax.saxutils import escape
+
+    service = "createOrder"
+
+    orders = Order.objects.filter(financial_status="paid" ,
+                                  fulfillment_status__isnull = True,
+
+                                  verify__verify_status = "SUCCESS",
+                                  verify__sms_status = "CHECKED" )
+    for order in orders:
+        if not order.inventory_status == "库存锁定" :
+            continue
+
+        items = []
+
+        for order_item in order.order_orderdetail_lightin.all():
+            print(order_item)
+
+            item = {
+                    "product_sku": order_item.barcode.barcode,
+                    #"product_name_en":title,
+                    "product_declared_value": order_item.price,
+                    "quantity": order_item.quantity,
+                }
+            items.append(item)
+
+
+        param = {
+            "platform": "B2C",
+            "allocated_auto":"1",
+            "warehouse_code":warehouse_code,
+            "shipping_method":"L002-KSA-TEST",
+            "reference_no":order.order_no,
+            #"order_desc":"\u8ba2\u5355\u63cf\u8ff0",
+            "country_code":"SA",
+            "province":order.receiver_city,
+            "city":order.receiver_city,
+            "address1":order.receiver_addr1,
+            "address2":order.receiver_addr2,
+            "address3":"",
+            "zipcode":"123456",
+            "doorplate":"doorplate",
+            "company":"company",
+            "name":order.receiver_name,
+            "phone":order.receiver_phone,
+            "cell_phone":"",
+            "email": order.buyer_name.replace(" ", "") + "@yallavip.com",
+            "order_cod_price":order.order_amount,
+            "order_cod_currency":"SAR",
+            "order_age_limit":"2",
+            "is_signature":"0",
+            "is_insurance":"0",
+            "insurance_value":"0",
+            "verify":"1",
+            "items":items,
+            #"tracking_no":"123",
+            #"label":{
+            #    "file_type":"png",
+            #    "file_data":"hVJPjUP4+yHjvKErt5PuFfvRhd..."
+            #}
+        }
+        print(param)
+        result = yunwms(service, param)
+
+        print(result)
+
+
+@shared_task
+def sync_status_order_lightin():
+    param = {
+        "pageSize": "100",
+        "page": "1",
+        "order_code": "",
+        "order_status": "",
+        "order_code_arr": [],
+        "create_date_from": "",
+        "create_date_to": "",
+        "modify_date_from": "",
+        "modify_date_to": ""
+    }
+
+    service = "getOrderList"
+
+
+
+    result = yunwms(service, param)
+
+    print(result)
+
+#把wms已发货的订单同步回来
+
+#修改本地的barcode的库存数量
+#已发货的barcode，不占用库存
+
+@shared_task
+def sync_Shipped_order_lightin():
+    import  datetime
+    from django.db.models import F
+
+    today = datetime.date.today()
+    start_time = str(today - datetime.timedelta(days=1))
+
+    page = 1
+
+    while 1:
+
+        param = {
+            "pageSize": "100",
+            "page": page,
+            "order_code": "",
+            "order_status": "D",
+            "order_code_arr": [],
+            "create_date_from": start_time,
+            "create_date_to": "",
+            "modify_date_from": "",
+            "modify_date_to": ""
+        }
+
+        service = "getOrderList"
+
+        result = yunwms(service, param)
+
+        print(result)
+        if result.get("ask") == "Success":
+
+            for data in result.get("data"):
+                order_no = data.get("reference_no")
+                if not order_no :
+                    print(data)
+                    continue
+
+                order = Order.objects.get(order_no=order_no)
+                if order:
+                    if order.wms_status == "":
+                        #更新本地库存
+                        items = OrderDetail_lightin.objects.filter(order=order)
+                        for item in items:
+                            barcode = Lightin_barcode.objects.get(barcode=item.barcode)
+                            barcode.quantity = F("quantity") - item.quantity
+                            barcode.save()
+
+                        #更新本地的订单状态
+                        Order.objects.update_or_create(
+                            order_no = order_no,
+                            defaults={
+                                "wms_status": data.get("order_status"),
+                                "logistic_type":data.get("shipping_method"),
+                                "logistic_no": data.get("tracking_no"),
+                                "send_time": data.get("date_shipping"),
+                                "weight": data.get("order_weight"),
+                            },
+                        )
+
+        if result.get("nextPage") == "false":
+            break
+        else:
+            page += 1;
+
+#若wms已发货，shopify还未发货，则同步shopify发货
+@shared_task
+def sync_Shipped_order_shopify():
+    from prs.shop_action import  fulfill_order_shopify
+
+    orders = Order.objects.filter(wms_status= "D",fulfillment_status__isnull=True )
+
+    for order in orders:
+
+        # 更新shopify的发货状态
+        data = fulfill_order_shopify(order.order_no, order.tracking_no)
+
+        if data.get("errors"):
+            fulfillment_status = data.get("errors")
+        else:
+            fulfillment_status = "fulfilled"
+
+        # 更新本地的订单状态
+        Order.objects.update_or_create(
+            order_no=order.order_no,
+            defaults={
+                "fulfillment_status": fulfillment_status,
+
+            },
+        )
+
+def get_wms_quantity():
+    param = {
+        "pageSize": "100",
+        "page": "1",
+         "product_sku":"",
+        "product_sku_arr":[],
+        "warehouse_code":warehouse_code,
+        "warehouse_code_arr":[]
+    }
+
+    service = "getProductInventory"
+
+    result = yunwms(service, param)
+
+    print(result)
+    if result.get("ask") == "Success":
+        for data in result.get("data"):
+            Lightin_barcode.objects.update_or_create(
+                barcode=data.get("product_sku"),
+                defaults={
+                    "y_sellable" : data.get("sellable"),
+                    "y_reserved": data.get("reserved"),
+                    "y_shipped": data.get("shipped"),
+                    "quantity":  int(data.get("sellable")) + int(data.get("reserved"))
+
+                },
+
+
+            )
+
+
+def yunwms(service, param):
+    from suds.client import Client
+    from xml.sax.saxutils import escape
+
+    url = "http://cititrans.yunwms.com/default/svc/wsdl"
+    client = Client(url)
+
+    response = client.service.callService(appToken="85413bb8f6a270e1ff4558af80f2bef5",
+                                          appKey="9dca0be4c02bed9e37c1c4189bc1f41b",
+                                          service=service,
+                                          paramsJson=json.dumps(param)
+                                          )
+    result = json.loads(escape(response))
+    return  result
+
+
 
 
 # 更新相册对应的主页外键
@@ -1689,3 +2014,4 @@ from django.db import connection, transaction
     cursor.execute(sql)
     transaction.commit()
 '''
+
