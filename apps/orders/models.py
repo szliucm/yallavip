@@ -76,7 +76,6 @@ class Order(models.Model):
 
         for item in items:
 
-
             if item.inventory_status == "缺货":
                 return  "缺货"
             elif item.inventory_status == "没有映射":
@@ -253,6 +252,8 @@ class OrderDetail(models.Model):
         from orders.models import  OrderDetail_lightin
         from django.db.models import Q
 
+        sku_list = ["13531030880298", "price gap", "COD link", "price gap 2", ]
+        if self.sku in
 
 
         items = OrderDetail_lightin.objects.filter(order = self.order, SKU=self.sku)
@@ -260,7 +261,7 @@ class OrderDetail(models.Model):
         if items:
             return int(float(self.product_quantity)) - items.aggregate(nums = Sum('quantity')).get('nums')
         else:
-            return  9999
+            return  99999
 
     cal_outstock.short_description = "缺货数量"
     outstock = property(cal_outstock)
@@ -268,10 +269,9 @@ class OrderDetail(models.Model):
     def cal_inventory_status(self):
         if self.outstock == 0:
             return "库存锁定"
-        elif self.outstock == 9999:
+        elif self.outstock == 99999:
             return "没有映射"
-        elif len(self.sku) < 13:
-            return "库存锁定"
+
         else:
             return "缺货"
 
