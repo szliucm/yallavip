@@ -1627,7 +1627,7 @@ def delete_outstock_lightin_album():
         lightin_spu__published=True)
     print("库存为零的发布中的相册子集",lightinalbums_outstock)
     '''
-    lightinalbums = LightinAlbum.objects.filter(lightin_spu__published=True)
+    lightinalbums = LightinAlbum.objects.filter(published=True)
 
     lightinalbums_out = {}
 
