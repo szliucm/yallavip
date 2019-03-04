@@ -1707,7 +1707,7 @@ def mapping_order_lightin():
         for orderdetail in orderdetails:
             sku = orderdetail.sku
             price = orderdetail.price
-            quantity = int(orderdetail.product_quantity)
+            quantity = int(float(orderdetail.product_quantity))
 
             lightin_barcodes = Lightin_barcode.objects.filter(SKU=sku)
 
