@@ -1687,7 +1687,7 @@ def mapping_order_lightin():
 
 
     #orders = Order.objects.raw(  'SELECT * FROM orders_order  A WHERE financial_status = "paid" and  inventory_status <> "库存锁定"')
-    orders = Order.objects.filter(financial_status = "paid", fulfillment_status_isnull=False)
+    orders = Order.objects.filter(financial_status = "paid", fulfillment_status__isnull=False,status = "open")
 
     # 处理每个订单
     for order in orders:
@@ -1776,6 +1776,7 @@ def fulfill_order_lightin():
 
     orders = Order.objects.filter(financial_status="paid" ,
                                   fulfillment_status__isnull = True,
+                                  status = "open",
 
                                   verify__verify_status = "SUCCESS",
                                   verify__sms_status = "CHECKED" )
