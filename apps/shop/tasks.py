@@ -454,6 +454,10 @@ def get_orders():
         r = requests.get(url, params)
         data = json.loads(r.text)
 
+        if not data:
+            print("返回为空", data)
+            continue
+
         print("order count is ", data["count"])
 
 
