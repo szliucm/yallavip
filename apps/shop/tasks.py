@@ -477,7 +477,7 @@ def get_orders():
                     "page": i,
                     "limit": limit,
                     "since_id": max_shoporiorder_no,
-                    "status":statu,
+                    "status":stat,
                     #"fields": "id,handle,body_html,title,product_type,created_at,published_at,"
                     #          "updated_at,tags,vendor,variants,images,options",
                     # "fields": "product_id",
