@@ -441,11 +441,11 @@ def get_orders():
     # shop_url = "https://12222a833afcad263c5cc593eca7af10:47aea3fe8f4b9430b1bac56c886c9bae@yallasale-com.myshopify.com/admin"
     # shopify.ShopifyResource.set_site(shop_url)
 
-    url = shop_url + "/admin/orders/count.json"
+
     status = ["open", "closed", "cancelled"]
 
     for stat in status:
-
+        url = shop_url + "/admin/orders/count.json"
         params = {
             "since_id": max_shoporiorder_no,
             "status": stat,
@@ -459,9 +459,7 @@ def get_orders():
             continue
 
         print("order count is ", data.get("count"))
-        if not data.get("count"):
-            print("数量为空", r.text[:1000])
-            continue
+
 
 
 
