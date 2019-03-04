@@ -253,7 +253,8 @@ class OrderDetail(models.Model):
         from django.db.models import Q
 
         sku_list = ["13531030880298", "price gap", "COD link", "price gap 2", ]
-        if self.sku in
+        if self.sku in sku_list:
+            return  0
 
 
         items = OrderDetail_lightin.objects.filter(order = self.order, SKU=self.sku)
