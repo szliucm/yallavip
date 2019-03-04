@@ -442,65 +442,70 @@ def get_orders():
     # shopify.ShopifyResource.set_site(shop_url)
 
     url = shop_url + "/admin/orders/count.json"
-    params = {
-        "since_id": max_shoporiorder_no,
-        "status": "open",
-    }
-    # print("url %s params %s"%(url, params))
-    r = requests.get(url, params)
-    data = json.loads(r.text)
+    status = ["open", "closed", "cancelled"]
 
-    print("order count is ", data["count"])
+    for statu in status:
 
+        params = {
+            "since_id": max_shoporiorder_no,
+            "status": statu,
+        }
+        # print("url %s params %s"%(url, params))
+        r = requests.get(url, params)
+        data = json.loads(r.text)
 
-
-    total_count = data["count"]
-
-    i = 0
-    limit = 100
-
-    while True:
-        try:
-
-            if (i * limit > total_count):
-                break
-
-            i = i + 1
-
-            # products = shopify.Product.find(page=i,limit=limit,updated_at_min=shop.updated_time)
-            url = shop_url + "/admin/orders.json"
-            params = {
-                "page": i,
-                "limit": limit,
-                "since_id": max_shoporiorder_no,
-                "status":"any",
-                #"fields": "id,handle,body_html,title,product_type,created_at,published_at,"
-                #          "updated_at,tags,vendor,variants,images,options",
-                # "fields": "product_id",
-            }
-            print(("params is ", params))
-
-            r = requests.get(url, params)
-            oriorders = json.loads(r.text)["orders"]
-            oriorders_list = []
-            for row in oriorders:
-                # print("row is ",row)
-                oriorder = ShopOriOrder(
-                    order_id=row["id"],
-                    order_no=row["order_number"],
-                    created_at = row["created_at"],
-                    order_json=json.dumps( row),
-                )
-                oriorders_list.append(oriorder)
-
-            ShopOriOrder.objects.bulk_create(oriorders_list)
-            #insert_product(shop.shop_name, products)
+        print("order count is ", data["count"])
 
 
 
-        except Exception as e:
-            print("orders  completed", e)
-            continue
+        total_count = data["count"]
+
+        i = 0
+        limit = 100
+
+        while True:
+            try:
+
+                if (i * limit > total_count):
+                    break
+
+                i = i + 1
+
+                # products = shopify.Product.find(page=i,limit=limit,updated_at_min=shop.updated_time)
+                url = shop_url + "/admin/orders.json"
+                params = {
+                    "page": i,
+                    "limit": limit,
+                    "since_id": max_shoporiorder_no,
+                    "status":statu,
+                    #"fields": "id,handle,body_html,title,product_type,created_at,published_at,"
+                    #          "updated_at,tags,vendor,variants,images,options",
+                    # "fields": "product_id",
+                }
+                print(("params is ", params))
+
+                r = requests.get(url, params)
+                oriorders = json.loads(r.text)["orders"]
+                oriorders_list = []
+                for row in oriorders:
+                    # print("row is ",row)
+                    oriorder = ShopOriOrder(
+                        order_id=row["id"],
+                        order_no=row["order_number"],
+                        created_at = row["created_at"],
+                        statu = statu,
+                        order_json=json.dumps( row),
+                    )
+                    oriorders_list.append(oriorder)
+
+                ShopOriOrder.objects.bulk_create(oriorders_list)
+                #insert_product(shop.shop_name, products)
+
+
+
+            except Exception as e:
+                print("orders  completed", e)
+                continue
 
 def update_orders():
     oriorders = ShopOriOrder.objects.filter(Q(created_at__gt=(dt.now() - timedelta(days=30)))).order_by("-order_id")
@@ -554,7 +559,7 @@ def update_orders():
         obj, created = Order.objects.update_or_create(order_no= "579815-" + str(order["order_number"]),
                         defaults={
                                     'order_time': order["created_at"],
-                                    #'status':order["status"],
+                                    'status':row.statu,
                                     'financial_status': order["financial_status"],
                                     'fulfillment_status': order["fulfillment_status"],
                                     'buyer_name':buyer_name ,
