@@ -444,11 +444,11 @@ def get_orders():
     url = shop_url + "/admin/orders/count.json"
     status = ["open", "closed", "cancelled"]
 
-    for statu in status:
+    for stat in status:
 
         params = {
             "since_id": max_shoporiorder_no,
-            "status": statu,
+            "status": stat,
         }
         # print("url %s params %s"%(url, params))
         r = requests.get(url, params)
@@ -493,7 +493,7 @@ def get_orders():
                         order_id=row["id"],
                         order_no=row["order_number"],
                         created_at = row["created_at"],
-                        statu = statu,
+                        status = stat,
                         order_json=json.dumps( row),
                     )
                     oriorders_list.append(oriorder)
