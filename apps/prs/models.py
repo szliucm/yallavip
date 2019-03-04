@@ -471,6 +471,18 @@ class Lightin_SPU(models.Model):
     updated = models.BooleanField(default=False, verbose_name="更新状态")
     quantity = models.IntegerField(u'数量', default=0, blank=True, null=True)
 
+    def cal_sellable(self):
+        from django.db.models import Sum
+        lightin_skus = self.spu_sku.all()
+        total = 0
+        for lightin_sku in lightin_skus:
+            total  += lightin_sku.sellable
+
+        return total
+
+    cal_sellable.short_description = "可销售库存"
+    sellable = property(cal_sellable)
+
     class Meta:
         verbose_name = "兰亭SPU"
         verbose_name_plural = verbose_name

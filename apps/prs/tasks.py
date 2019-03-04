@@ -1613,21 +1613,37 @@ def delete_outdate_lightin_album(batch_no):
 def delete_outstock_lightin_album():
     #更新还在发布中的spu的库存
     from django.db import connection, transaction
-
+    '''
     sql = "UPDATE prs_lightin_spu SET  quantity =(SELECT sum(k.quantity) FROM prs_lightin_sku k WHERE k.SPU = prs_lightin_spu.SPU and prs_lightin_spu.published = true)"
 
     cursor = connection.cursor()
     cursor.execute(sql)
     transaction.commit()
-
+    
+    
     #选出库存为零，还在发布中的spu
     lightinalbums_outstock = LightinAlbum.objects.filter(
         Q(lightin_spu__quantity__isnull=True)|Q(lightin_spu__quantity=0),
         lightin_spu__published=True)
     print("库存为零的发布中的相册子集",lightinalbums_outstock)
+    '''
+    lightinalbums = LightinAlbum.objects.filter(lightin_spu__published=True)
+
+    lightinalbums_out = {}
+
+
+    for lightinalbum in lightinalbums:
+        if  lightinalbum.lightin_spu.sellable == 0:
+            photo_list = lightinalbums_out[lightinalbum.myalbum.page_no]
+            if not photo_list :
+                photo_list = []
+            if lightinalbum.fb_id not in photo_list:
+                photo_list.append(lightinalbum.fb_id)
+
+            lightinalbums_out[lightinalbum.myalbum.page_no] = photo_list
 
     # 删除子集
-    delete_out_lightin_album(lightinalbums_outstock)
+    delete_out_lightin_album(lightinalbums_out)
 
 
     #更新spu的发布记录
@@ -1639,13 +1655,11 @@ def delete_out_lightin_album(lightinalbums_out):
     from facebook_business.adobjects.photo import Photo
 
     # 选择所有可用的page
-    pages_list = lightinalbums_out.values_list('myalbum__mypage__page_no', flat=True).distinct()
 
-    print("pages_list ",pages_list)
-    for page_no in pages_list:
+    for page_no in lightinalbums_out:
         FacebookAdsApi.init(access_token=get_token(page_no))
 
-        photo_nos = lightinalbums_out.filter(myalbum__mypage__page_no = page_no).values_list('fb_id', flat=True).distinct()
+        photo_nos = lightinalbums_out[page_no]
         print("photo_nos  ", photo_nos)
         if photo_nos is None or len(photo_nos) == 0:
             continue
