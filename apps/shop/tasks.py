@@ -460,7 +460,7 @@ def get_orders():
 
         print("order count is ", data.get("count"))
         if not data.get("count"):
-            print("数量为空", data)
+            print("数量为空", r.text[:1000])
             continue
 
 
