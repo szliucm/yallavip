@@ -1993,6 +1993,7 @@ def get_wms_quantity():
     page = 1
 
     while 1:
+        print("正在处理第 %s 页"%(page))
 
         param = {
             "pageSize": "100",
@@ -2007,7 +2008,7 @@ def get_wms_quantity():
 
         result = yunwms(service, param)
 
-        print(result)
+        #print(result)
         if result.get("ask") == "Success":
             for data in result.get("data"):
                 Lightin_barcode.objects.update_or_create(

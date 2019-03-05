@@ -588,7 +588,7 @@ class Lightin_barcode(models.Model):
 
 
         items = self.barcode_orderdetail_lightin.filter(~Q(order__wms_status="D"),
-                                                            order__financial_status="paid")
+                                                            order__financial_status="paid",order__status="open")
 
         if items:
             return items.aggregate(nums = Sum('quantity')).get('nums')
