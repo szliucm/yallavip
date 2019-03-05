@@ -2017,6 +2017,17 @@ def get_wms_quantity():
 
             )
 
+def getShippingMethod():
+    param = {
+        "warehouse_code":warehouse_code,
+    }
+
+    service = "getShippingMethod"
+
+    result = yunwms(service, param)
+
+    print(result)
+
 
 def yunwms(service, param):
     from suds.client import Client
