@@ -23,14 +23,16 @@ my_app_id = "562741177444068"
 my_app_secret = "e6df363351fb5ce4b7f0080adad08a4d"
 my_access_token = "EAAHZCz2P7ZAuQBABHO6LywLswkIwvScVqBP2eF5CrUt4wErhesp8fJUQVqRli9MxspKRYYA4JVihu7s5TL3LfyA0ZACBaKZAfZCMoFDx7Tc57DLWj38uwTopJH4aeDpLdYoEF4JVXHf5Ei06p7soWmpih8BBzadiPUAEM8Fw4DuW5q8ZAkSc07PrAX4pGZA4zbSU70ZCqLZAMTQZDZD"
 
-DEBUG = True
+DEBUG = False
 
 if DEBUG:
     warehouse_code = "TW02"
+    shipping_method =  "L002-KSA-TEST",
     appToken = "85413bb8f6a270e1ff4558af80f2bef5"
     appKey = "9dca0be4c02bed9e37c1c4189bc1f41b"
 else:
     warehouse_code = "W05"
+    shipping_method =  "##############",
     appToken = "909fa3df3b98c26a9221774fe5545afd"
     appKey = "b716b7eb938e9a46ad836e20de0f8b07"
 
@@ -1826,7 +1828,7 @@ def fulfill_order_lightin():
             "platform": "B2C",
             "allocated_auto":"1",
             "warehouse_code":warehouse_code,
-            "shipping_method":"L002-KSA-TEST",
+            "shipping_method":shipping_method,
             "reference_no":order.order_no,
             #"order_desc":"\u8ba2\u5355\u63cf\u8ff0",
             "country_code":"SA",
@@ -1988,38 +1990,46 @@ def sync_Shipped_order_shopify():
         )
 
 def get_wms_quantity():
-    param = {
-        "pageSize": "100",
-        "page": "1",
-         "product_sku":"",
-        "product_sku_arr":[],
-        "warehouse_code":warehouse_code,
-        "warehouse_code_arr":[]
-    }
+    page = 1
 
-    service = "getProductInventory"
+    while 1:
 
-    result = yunwms(service, param)
+        param = {
+            "pageSize": "100",
+            "page": page,
+             "product_sku":"",
+            "product_sku_arr":[],
+            "warehouse_code":warehouse_code,
+            "warehouse_code_arr":[]
+        }
 
-    print(result)
-    if result.get("ask") == "Success":
-        for data in result.get("data"):
-            Lightin_barcode.objects.update_or_create(
-                barcode=data.get("product_sku"),
-                defaults={
-                    "y_sellable" : data.get("sellable"),
-                    "y_reserved": data.get("reserved"),
-                    "y_shipped": data.get("shipped"),
-                    "quantity":  int(data.get("sellable")) + int(data.get("reserved"))
+        service = "getProductInventory"
 
-                },
+        result = yunwms(service, param)
+
+        print(result)
+        if result.get("ask") == "Success":
+            for data in result.get("data"):
+                Lightin_barcode.objects.update_or_create(
+                    barcode=data.get("product_sku"),
+                    defaults={
+                        "y_sellable" : data.get("sellable"),
+                        "y_reserved": data.get("reserved"),
+                        "y_shipped": data.get("shipped"),
+                        "quantity":  int(data.get("sellable")) + int(data.get("reserved"))
+
+                    },
 
 
-            )
+                )
+        if result.get("nextPage") == "false":
+            break
+        else:
+            page += 1;
 
 def getShippingMethod():
     param = {
-        "warehouse_code":warehouse_code,
+        "warehouseCode":warehouse_code,
     }
 
     service = "getShippingMethod"
