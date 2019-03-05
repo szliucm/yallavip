@@ -513,7 +513,7 @@ def get_orders():
                 continue
 
 def update_orders():
-    oriorders = ShopOriOrder.objects.filter(Q(created_at__gt=(dt.now() - timedelta(days=60)))).order_by("-order_id")
+    oriorders = ShopOriOrder.objects.filter(Q(created_at__gt=(dt.now() - timedelta(days=10)))).order_by("-order_id")
 
     for row in oriorders:
         print(row.order_id)

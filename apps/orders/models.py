@@ -78,8 +78,6 @@ class Order(models.Model):
 
             if item.inventory_status == "缺货":
                 return  "缺货"
-            elif item.inventory_status == "没有映射":
-                return  "没有映射"
 
         return "库存锁定"
 
@@ -262,7 +260,7 @@ class OrderDetail(models.Model):
         if items:
             return int(float(self.product_quantity)) - items.aggregate(nums = Sum('quantity')).get('nums')
         else:
-            return  99999
+            return  int(float(self.product_quantity))
 
     cal_outstock.short_description = "缺货数量"
     outstock = property(cal_outstock)
@@ -270,9 +268,6 @@ class OrderDetail(models.Model):
     def cal_inventory_status(self):
         if self.outstock == 0:
             return "库存锁定"
-        elif self.outstock == 99999:
-            return "没有映射"
-
         else:
             return "缺货"
 
