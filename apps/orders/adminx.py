@@ -1076,7 +1076,9 @@ class OrderDetailAdmin(object):
 
     batch_overseas_stop.short_description = "海外仓批量下架"
 
-
+    def queryset(self):
+        qs = super().queryset()
+        return qs.filter(order__status="OPEN" )
 
 class OrderConverstaionResource(resources.ModelResource):
     order = fields.Field(
