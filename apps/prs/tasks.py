@@ -31,8 +31,8 @@ if DEBUG:
     appToken = "85413bb8f6a270e1ff4558af80f2bef5"
     appKey = "9dca0be4c02bed9e37c1c4189bc1f41b"
 else:
-    warehouse_code = "W07"
-    shipping_method =  "##############",
+    warehouse_code = "W05"
+    shipping_method =  "FETCHR_SAUDI_DOM",
     appToken = "909fa3df3b98c26a9221774fe5545afd"
     appKey = "b716b7eb938e9a46ad836e20de0f8b07"
 
