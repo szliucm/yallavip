@@ -67,7 +67,7 @@ class Order(models.Model):
         ("COD", "COD"),
         ("FEE", "运费"),
     )
-
+    order_id = models.CharField(u'订单id', default='', max_length=100, blank=True)
     order_no = models.CharField(u'订单号', default='', max_length=50, blank=True)
     #inventory_status  = models.CharField(u'库存状态', default='', max_length=50, blank=True)
 

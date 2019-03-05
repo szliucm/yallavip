@@ -563,6 +563,7 @@ def update_orders():
 
         obj, created = Order.objects.update_or_create(order_no= "579815-" + str(order["order_number"]),
                         defaults={
+                                    'order_id':row.order_id
                                     'order_time': order["created_at"],
                                     'status':row.status,
                                     'financial_status': order["financial_status"],
