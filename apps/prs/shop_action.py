@@ -1060,3 +1060,37 @@ def fulfill_order_shopify(order_no, logistic_no,):
     #print(data)
     return  data
 
+def get_shopify_inventory():
+
+    "GET /admin/inventory_levels.json?inventory_item_ids=808950810,39072856&location_ids=905684977,487838322"
+
+    DEBUG = False
+
+    if not DEBUG:
+
+        dest_shop = "yallasale-com"
+        location_id = 11796512810
+
+    else:
+        dest_shop = "yallavip-saudi"
+        location_id = 6019153986
+
+
+    #获取店铺信息
+    shop_obj = Shop.objects.get(shop_name=dest_shop)
+    shop_url = "https://%s:%s@%s.myshopify.com" % (shop_obj.apikey, shop_obj.password, shop_obj.shop_name)
+
+    inventory_item_ids = ShopifyVariant.objects.filter(sku__startswith="s").values_list('inventory_item_no', flat=True)
+    for inventory_item_id in inventory_item_ids:
+
+        inventory_item_ids = ""
+        url = shop_url + "/admin/inventory_levels.json?inventory_item_ids=%s&location_ids="%(inventory_item_ids,location_id)
+
+
+        # print("url %s params %s"%(url, params))
+        r = requests.get(url)
+        data = json.loads(r.text)
+        print(data)
+
+    return  data
+

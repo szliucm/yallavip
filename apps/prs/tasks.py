@@ -31,7 +31,7 @@ if DEBUG:
     appToken = "85413bb8f6a270e1ff4558af80f2bef5"
     appKey = "9dca0be4c02bed9e37c1c4189bc1f41b"
 else:
-    warehouse_code = "W05"
+    warehouse_code = "W07"
     shipping_method =  "FETCHR_SAUDI_DOM"
     appToken = "909fa3df3b98c26a9221774fe5545afd"
     appKey = "b716b7eb938e9a46ad836e20de0f8b07"
@@ -2027,6 +2027,50 @@ def get_wms_quantity():
             break
         else:
             page += 1;
+
+def get_shopify_quantity():
+
+    "GET /admin/inventory_levels.json?inventory_item_ids=808950810,39072856&location_ids=905684977,487838322"
+
+    page = 1
+
+    while 1:
+        print("正在处理第 %s 页"%(page))
+
+        param = {
+            "pageSize": "100",
+            "page": page,
+             "product_sku":"",
+            "product_sku_arr":[],
+            "warehouse_code":warehouse_code,
+            "warehouse_code_arr":[]
+        }
+
+        service = "getProductInventory"
+
+        result = yunwms(service, param)
+
+        #print(result)
+        if result.get("ask") == "Success":
+            for data in result.get("data"):
+                Lightin_barcode.objects.update_or_create(
+                    barcode=data.get("product_sku"),
+                    defaults={
+                        "y_sellable" : data.get("sellable"),
+                        "y_reserved": data.get("reserved"),
+                        "y_shipped": data.get("shipped"),
+                        "quantity":  int(data.get("sellable")) + int(data.get("reserved"))
+
+                    },
+
+
+                )
+        if result.get("nextPage") == "false":
+            break
+        else:
+            page += 1;
+
+
 
 def getShippingMethod():
     param = {
