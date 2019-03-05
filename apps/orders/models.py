@@ -91,7 +91,7 @@ class Order(models.Model):
 
     status = models.CharField(u'shopify订单状态', max_length=30, default='', blank=True)
     financial_status = models.CharField(u'shopify订单支付状态', max_length=30, default='',null=True, blank=True)
-    fulfillment_status = models.CharField(u'shopify订单仓配状态', max_length=30, default='',null=True, blank=True)
+    fulfillment_status = models.CharField(u'shopify订单仓配状态', max_length=100, default='',null=True, blank=True)
 
     #wms 订单处理状态， C:待发货审核 W:待发货 D:已发货 H:暂存 N:异常订单 P:问题件 X:废弃
     wms_status = models.CharField(u'wms订单状态', max_length=30, default='', blank=True)
