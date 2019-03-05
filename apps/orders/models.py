@@ -87,7 +87,7 @@ class Order(models.Model):
         if outstock_skus == 0:
             return "库存锁定"
         else:
-            return "缺货: %s 个sku %s 个数量  %s SAR" %(outstock_skus,outstock_quantity,int(outstock_amount))
+            return "缺货: %s 个sku %s 件  %s SAR" %(outstock_skus,outstock_quantity,int(outstock_amount))
 
     cal_inventory_status.short_description = "库存状态"
     inventory_status = property(cal_inventory_status)
