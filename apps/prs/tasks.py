@@ -1954,6 +1954,7 @@ def sync_Shipped_order_shopify():
     for order in orders:
 
         # 更新shopify的发货状态
+        print("shopify 发货 ", order.order_no, order.tracking_no)
         data = fulfill_order_shopify(order.order_no, order.tracking_no)
 
         if data.get("errors"):
