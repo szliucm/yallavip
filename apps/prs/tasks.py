@@ -23,7 +23,7 @@ my_app_id = "562741177444068"
 my_app_secret = "e6df363351fb5ce4b7f0080adad08a4d"
 my_access_token = "EAAHZCz2P7ZAuQBABHO6LywLswkIwvScVqBP2eF5CrUt4wErhesp8fJUQVqRli9MxspKRYYA4JVihu7s5TL3LfyA0ZACBaKZAfZCMoFDx7Tc57DLWj38uwTopJH4aeDpLdYoEF4JVXHf5Ei06p7soWmpih8BBzadiPUAEM8Fw4DuW5q8ZAkSc07PrAX4pGZA4zbSU70ZCqLZAMTQZDZD"
 
-DEBUG = False
+DEBUG = True
 
 if DEBUG:
     warehouse_code = "TW02"
