@@ -1957,6 +1957,8 @@ def sync_Shipped_order_shopify():
         print("shopify 发货 ", order.order_no, order.logistic_no)
         data = fulfill_order_shopify(order.order_no, order.logistic_no)
 
+        print("发货返回",data)
+
         if data.get("errors"):
             fulfillment_status = data.get("errors")
         else:
