@@ -1711,7 +1711,7 @@ def mapping_order_lightin():
 
 
     #orders = Order.objects.raw(  'SELECT * FROM orders_order  A WHERE financial_status = "paid" and  inventory_status <> "库存锁定"')
-    orders = Order.objects.filter(financial_status = "paid", fulfillment_status__isnull=True,status = "open")
+    orders = Order.objects.filter(financial_status = "paid", fulfillment_status__isnull=True,status = "open").order_by("sms_status")
 
     print("一共有 %s 个订单待处理", orders.count())
 
