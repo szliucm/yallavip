@@ -23,7 +23,16 @@ my_app_id = "562741177444068"
 my_app_secret = "e6df363351fb5ce4b7f0080adad08a4d"
 my_access_token = "EAAHZCz2P7ZAuQBABHO6LywLswkIwvScVqBP2eF5CrUt4wErhesp8fJUQVqRli9MxspKRYYA4JVihu7s5TL3LfyA0ZACBaKZAfZCMoFDx7Tc57DLWj38uwTopJH4aeDpLdYoEF4JVXHf5Ei06p7soWmpih8BBzadiPUAEM8Fw4DuW5q8ZAkSc07PrAX4pGZA4zbSU70ZCqLZAMTQZDZD"
 
-warehouse_code = "TW02"
+DEBUG = False
+
+if DEBUG:
+    warehouse_code = "TW02"
+    appToken = "85413bb8f6a270e1ff4558af80f2bef5"
+    appKey = "9dca0be4c02bed9e37c1c4189bc1f41b"
+else:
+    warehouse_code = "W05"
+    appToken = "909fa3df3b98c26a9221774fe5545afd"
+    appKey = "b716b7eb938e9a46ad836e20de0f8b07"
 
 def get_token(target_page,token=None):
 
@@ -1951,18 +1960,23 @@ def sync_Shipped_order_shopify():
 
     orders = Order.objects.filter(status = "open", wms_status= "D",logistic_no__isnull=False, fulfillment_status__isnull=True ,order_id__isnull=False)
 
+    n= orders.count()
     for order in orders:
 
         # 更新shopify的发货状态
-        print("shopify 发货 ", order.order_no,order.order_id, order.logistic_no)
-        data = fulfill_order_shopify(order.order_id, order.logistic_no)
 
-        print("发货返回",data)
+        print("shopify 发货 ", order.order_no,order.order_id, order.logistic_no)
+        n -= 1
+        print("还有 %s 待发货" % (n))
+
+        data = fulfill_order_shopify(order.order_id, order.logistic_no)
 
         if data.get("errors"):
             fulfillment_status = data.get("errors")
+
         else:
             fulfillment_status = "fulfilled"
+
 
         # 更新本地的订单状态
         Order.objects.update_or_create(
@@ -2011,8 +2025,8 @@ def yunwms(service, param):
     url = "http://cititrans.yunwms.com/default/svc/wsdl"
     client = Client(url)
 
-    response = client.service.callService(appToken="85413bb8f6a270e1ff4558af80f2bef5",
-                                          appKey="9dca0be4c02bed9e37c1c4189bc1f41b",
+    response = client.service.callService(appToken=appToken,
+                                          appKey=appKey,
                                           service=service,
                                           paramsJson=json.dumps(param)
                                           )

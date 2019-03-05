@@ -220,6 +220,7 @@ class OrderAdmin(object):
     search_fields = ["order_no",'logistic_no', ]
     list_filter = ( "status","financial_status","fulfillment_status", "package_status", "verify_time","order_time","send_time","verify__verify_status","verify__sms_status",)
     ordering = ['-order_time']
+
     #data_charts = {
     #    "order_count": {'title': u"订单统计","x-field": "order_time", "y-field": ("order_no", ), "order": ('order_time',)},
     #}
@@ -1246,10 +1247,10 @@ class VerifyAdmin(object):
 
     receiver_phone.short_description = "收货人电话"
 
-    def order_status(self, obj):
-        return obj.order.order_status
+    def inventory_status(self, obj):
+        return obj.order.inventory_status
 
-    order_status.short_description = "店小秘订单状态"
+    inventory_status.short_description = "库存状态"
 
     def order_financial_status(self, obj):
         return obj.order.financial_status
@@ -1289,7 +1290,7 @@ class VerifyAdmin(object):
     '''
 
     readonly_fields = ('order', 'order_time',)
-    list_display = ('order','order_sku_count','order_time', 'order_status','order_financial_status','order_fulfillment_status','colored_verify_status', \
+    list_display = ('order','order_sku_count','order_time', 'inventory_status','order_financial_status','order_fulfillment_status','colored_verify_status', \
                     'colored_sms_status',
                     'receiver_city','city','receiver_addr',
 
