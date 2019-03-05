@@ -1955,7 +1955,7 @@ def sync_Shipped_order_shopify():
 
         # 更新shopify的发货状态
         print("shopify 发货 ", order.order_no, order.logistic_no)
-        data = fulfill_order_shopify(order.order_no, order.logistic_no)
+        data = fulfill_order_shopify(order.order_no.partition("-")[2], order.logistic_no)
 
         print("发货返回",data)
 
