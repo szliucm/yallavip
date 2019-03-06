@@ -1616,7 +1616,7 @@ class VerifyAdmin(object):
     '''
     def queryset(self):
         qs = super().queryset()
-        return qs.filter(order__status="OPEN" )
+        return qs.filter(order__status="OPEN", order__wms_status = "")
 
 
 class ClientServiceAdmin(object):
