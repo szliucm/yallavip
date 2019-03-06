@@ -529,7 +529,7 @@ class Lightin_SKU(models.Model):
                                    )
 
         if items:
-            return items.aggregate(nums=Sum('quantity')).get('nums')
+            return items.aggregate(nums=Sum('product_quantity')).get('nums')
         else:
             return 0
 
