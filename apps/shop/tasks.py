@@ -512,6 +512,8 @@ def get_orders():
                 print("orders  completed", e)
                 continue
 
+    update_orders()
+
 def update_orders():
     oriorders = ShopOriOrder.objects.filter(Q(created_at__gt=(dt.now() - timedelta(days=5)))).order_by("-order_id")
 
