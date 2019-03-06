@@ -597,7 +597,7 @@ def get_orders(minutes=10):
                 print("orders  completed", e)
                 continue
 
-    update_orders()
+    #update_orders()
 
 def update_orders():
     oriorders = ShopOriOrder.objects.filter(updated=True)
