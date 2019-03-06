@@ -508,7 +508,7 @@ class Lightin_SKU(models.Model):
         from orders.models import OrderDetail
         from django.db.models import Q
 
-        items = Lightin_barcode.filter(SKU = self.SKU)
+        items = Lightin_barcode.objects.filter(SKU = self.SKU)
 
         if items:
             return items.aggregate(nums=Sum('quantity')).get('nums')
@@ -524,7 +524,7 @@ class Lightin_SKU(models.Model):
         from orders.models import OrderDetail
         from django.db.models import Q
 
-        items = OrderDetail.filter(~Q(order__wms_status="D"),
+        items = OrderDetail.objects.filter(~Q(order__wms_status="D"),
                                    order__financial_status="paid",
                                    order__status="open",
                                    sku=self.SKU,
@@ -543,7 +543,7 @@ class Lightin_SKU(models.Model):
 
     def cal_sellable(self):
         return  self.quantity - self.sellable
-    
+
     cal_sellable.short_description = "可销售库存"
     sellable = property(cal_sellable)
 
