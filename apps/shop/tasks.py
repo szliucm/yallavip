@@ -571,6 +571,8 @@ def get_orders(minutes=10):
 
                 r = requests.get(url, params)
                 oriorders = json.loads(r.text)["orders"]
+
+                print("oriorders ", oriorders.count())
                 oriorders_list = []
                 for row in oriorders:
                     # print("row is ",row)
