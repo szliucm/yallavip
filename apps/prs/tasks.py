@@ -1964,7 +1964,7 @@ def sync_Shipped_order_lightin():
 
                 order = Order.objects.get(order_no=order_no)
                 if order:
-                    if order.wms_status <> data.get("order_status"):
+                    if order.wms_status != data.get("order_status"):
                         #更新本地库存
                         items = OrderDetail_lightin.objects.filter(order=order)
                         for item in items:
