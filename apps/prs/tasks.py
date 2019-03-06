@@ -1399,7 +1399,7 @@ def update_shopify_title_lightin(lightinproduct_pk, shop_url ):
 
         #标题里加货号
         # title = lightin_spu.title + " [" + lightin_spu.handle + "]"
-        title = lightin_spu.title + " [" + lightin_spu.handle + "]" + " [freegift]"
+        title = lightin_spu.en_name + " [" + lightin_spu.handle + "]" + " [freegift]"
         print("title is ", title)
 
         params = {
