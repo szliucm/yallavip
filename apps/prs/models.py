@@ -492,7 +492,6 @@ class Lightin_SPU(models.Model):
 
 class Lightin_SKU(models.Model):
 
-
     lightin_spu = models.ForeignKey(Lightin_SPU, null=True, blank=True, verbose_name="SPU外键",
                                     related_name="spu_sku", on_delete=models.CASCADE)
 

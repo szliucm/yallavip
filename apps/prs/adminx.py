@@ -740,7 +740,6 @@ class Lightin_SKUAdmin(object):
 
     list_display = ["SPU", "SKU", "quantity", "occupied","sellable", "vendor_sale_price","vendor_supply_price","weight", "length","width","height","skuattr",]
     # 'sku_name','img',
-
     search_fields = ["SPU", "SKU",]
     list_filter = ["SPU"]
     list_editable = []
