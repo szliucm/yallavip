@@ -529,7 +529,7 @@ class Lightin_SKU(models.Model):
                                    )
 
         if items:
-            return items.aggregate(nums=Sum('product_quantity')).get('nums')
+            return int(items.aggregate(nums=Sum('product_quantity')).get('nums'))
         else:
             return 0
 
@@ -537,7 +537,7 @@ class Lightin_SKU(models.Model):
     occupied = property(cal_occupied)
 
     def cal_sellable(self):
-        return  self.quantity - self.occupied
+        return  int(self.quantity - self.occupied)
 
     cal_sellable.short_description = "可销售库存"
     sellable = property(cal_sellable)
