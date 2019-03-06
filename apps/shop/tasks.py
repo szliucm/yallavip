@@ -416,7 +416,7 @@ def post_to_page():
 
     return
 
-def get_orders():
+def get_orders(minutes=10):
     shop_name = "yallasale-com"
     shop_obj = Shop.objects.get(shop_name=shop_name)
     '''
@@ -528,7 +528,7 @@ def get_orders():
         url = shop_url + "/admin/orders/count.json"
         params = {
 
-            "updated_at_min": (dt.now() - timedelta(minutes=10)).strftime("%Y-%m-%dT%H:%M:%S+00:00"),
+            "updated_at_min": (dt.now() - timedelta(minutes=minutes)).strftime("%Y-%m-%dT%H:%M:%S+00:00"),
             "status": stat,
         }
         # print("url %s params %s"%(url, params))
