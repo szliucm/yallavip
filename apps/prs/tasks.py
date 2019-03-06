@@ -1621,7 +1621,7 @@ def delete_outdate_lightin_album(batch_no):
 
 
 #把所有sku都没有库存，spu还在发布状态的从Facebook删除
-def delete_outstock_lightin_album():
+def delete_outstock_lightin_album(all=False):
     #更新还在发布中的spu的库存
     from django.db import connection, transaction
     '''
@@ -1638,7 +1638,15 @@ def delete_outstock_lightin_album():
         lightin_spu__published=True)
     print("库存为零的发布中的相册子集",lightinalbums_outstock)
     '''
-    lightinalbums = LightinAlbum.objects.filter(published=True)
+    #每天更新一次所有在发布的图片，每分钟更新一次订单sku对应的图片
+    if all:
+        lightinalbums = LightinAlbum.objects.filter(published=True)
+    else:
+        lightinalbums = LightinAlbum.objects.filter(published=True,
+                                    lightin_spu__spu_sku__SKU__in =
+                                        OrderDetail.objects.filter(~Q(order__wms_status="D"),
+                                                                    order__financial_status="paid",
+                                                                    order__status="open").values_list('sku', flat=True))
 
     lightinalbums_out = {}
 
