@@ -446,7 +446,7 @@ class ShopOriOrder(models.Model):
     status = models.CharField(u'shopify订单状态', max_length=30, default='', blank=True)
     created_at = models.DateTimeField(u'创建时间', auto_now=False, blank=True, null=True)
     order_json  =  models.TextField(u'订单json', default='', null=True, blank=True)
-
+    updated = models.BooleanField(u'更新状态', default=False)
 
     class Meta:
         verbose_name = "原始订单"

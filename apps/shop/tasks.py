@@ -580,7 +580,7 @@ def get_orders(minutes=10):
                         created_at=row["created_at"],
                         status=stat,
                         order_json=json.dumps(row),
-                        new = True,
+                        updated = True,
                     )
                     oriorders_list.append(oriorder)
 
@@ -600,7 +600,7 @@ def get_orders(minutes=10):
     update_orders()
 
 def update_orders():
-    oriorders = ShopOriOrder.objects.filter(new=True)
+    oriorders = ShopOriOrder.objects.filter(updated=True)
     print("有 %s 个订单待更新"%(oriorders.count()))
 
     for row in oriorders:
@@ -688,5 +688,5 @@ def update_orders():
                                                                }
                                                           )
 
-    oriorders.update(new=False)
+    oriorders.update(updated=False)
 
