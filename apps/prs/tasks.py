@@ -1821,7 +1821,8 @@ def fulfill_order_lightin():
                                   status = "open",
 
                                   verify__verify_status = "SUCCESS",
-                                  verify__sms_status = "CHECKED" )
+                                  verify__sms_status = "CHECKED",
+                                  wms_status__isnull = True)
     for order in orders:
         if not order.inventory_status == "库存锁定" :
             continue
@@ -1878,6 +1879,22 @@ def fulfill_order_lightin():
         result = yunwms(service, param)
 
         print(result)
+        if result.get("ask") == "Success":
+            #发货成功
+            Order.objects.filter(pk = order.pk).update(
+                wms_status = result.get("order_status"),
+                logistic_no = result.get("tracking_no"),
+
+            )
+        else:
+            Order.objects.filter(pk=order.pk).update(
+                fulfill_error=result.get("message"),
+
+
+            )
+
+
+
 
 
 @shared_task
