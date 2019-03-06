@@ -83,6 +83,7 @@ class Order(models.Model):
         #outstock_amount = 0
 
         busystock_skus = 0
+        none_skus = 0
 
         for item in items:
 
@@ -92,15 +93,24 @@ class Order(models.Model):
                 #outstock_amount += item.outstock * float(item.price)
             elif item.stock == "紧张":
                 busystock_skus += 1
+            elif item.stock == "没有产品":
+                none_skus += 1
 
+        stock = "共 %s个sku " %(items.count())
 
-        if outstock_skus == 0:
-            if busystock_skus == 0:
-                return "库存锁定 共 %s个sku " %(items.count())
-            else:
-                return "共 %s个sku ;%s 个sku紧张 " %(items.count(), busystock_skus)
-        else:
-            return "共 %s个sku ; %s个sku紧张  ；%s 个sku缺货" %(items.count(), busystock_skus, outstock_skus)
+        if busystock_skus > 0:
+            stock = stock + " %s 个sku紧张 " %( busystock_skus)
+
+        if outstock_skus >0:
+            stock = stock + " %s 个sku缺货 " % (outstock_skus)
+
+        if none_skus >0:
+            stock = stock + " %s 个sku没有产品 " % (none_skus)
+
+        if busystock_skus ==0 and outstock_skus == 0 and none_skus == 0:
+            stock = stock + "库存充足"
+
+        return  stock
 
     cal_stock.short_description = "库存"
     stock = property(cal_stock)
