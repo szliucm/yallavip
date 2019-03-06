@@ -1952,7 +1952,7 @@ def sync_Shipped_order_lightin():
 
         result = yunwms(service, param)
 
-        print(result)
+        #print(result)
         if result.get("ask") == "Success":
 
             for data in result.get("data"):
@@ -1960,6 +1960,7 @@ def sync_Shipped_order_lightin():
                 if not order_no :
                     print(data)
                     continue
+                print("当前处理订单 ", order_no)
 
                 order = Order.objects.get(order_no=order_no)
                 if order:
@@ -1970,6 +1971,7 @@ def sync_Shipped_order_lightin():
                             barcode = Lightin_barcode.objects.get(barcode=item.barcode)
                             barcode.quantity = F("quantity") - item.quantity
                             barcode.save()
+                        print ("更新本地库存")
 
                         #更新本地的订单状态
                         Order.objects.update_or_create(
@@ -1982,6 +1984,7 @@ def sync_Shipped_order_lightin():
                                 "weight": data.get("order_weight"),
                             },
                         )
+                        print ("更新本地的订单状态")
 
         if result.get("nextPage") == "false":
             break
