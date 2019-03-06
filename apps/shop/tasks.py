@@ -600,7 +600,7 @@ def get_orders(minutes=10):
                 print("orders  completed", e)
                 continue
 
-    #update_orders()
+    update_orders()
 
 def update_orders():
     oriorders = ShopOriOrder.objects.filter(updated=True)
@@ -668,6 +668,7 @@ def update_orders():
                                     'receiver_city':city,
                                     'receiver_country':country,
                                     'receiver_phone':phone,
+                                    "updated": True,
                                 }
                                 )
         print("####obj", obj, type(obj) )

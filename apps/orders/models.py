@@ -69,6 +69,7 @@ class Order(models.Model):
     )
     order_id = models.CharField(u'订单id', default='', max_length=100, blank=True)
     order_no = models.CharField(u'订单号', default='', max_length=50, blank=True)
+    updated = models.BooleanField(u'更新状态', default=False)
     #inventory_status  = models.CharField(u'库存状态', default='', max_length=50, blank=True)
 
     def cal_inventory_status(self):

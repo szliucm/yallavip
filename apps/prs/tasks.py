@@ -1643,11 +1643,13 @@ def delete_outstock_lightin_album(all=False):
     if all:
         lightinalbums = LightinAlbum.objects.filter(published=True)
     else:
+        orderdetails = OrderDetail.objects.filter(~Q(order__wms_status="D"),
+                                   order__financial_status="paid",
+                                   order__updated=True,
+                                   order__status="open")
         lightinalbums = LightinAlbum.objects.filter(published=True,
                                     lightin_spu__spu_sku__SKU__in =
-                                        OrderDetail.objects.filter(~Q(order__wms_status="D"),
-                                                                    order__financial_status="paid",
-                                                                    order__status="open").values_list('sku', flat=True))
+                                        orderdetails.values_list('sku', flat=True))
 
     lightinalbums_out = {}
 
@@ -1670,6 +1672,8 @@ def delete_outstock_lightin_album(all=False):
     # 删除子集
 
     delete_out_lightin_album(lightinalbums_out)
+    if not all:
+        orderdetails.update(updated=False)
 
 #删除lightin_album 的某个特定子集
 def delete_out_lightin_album(lightinalbums_out):
