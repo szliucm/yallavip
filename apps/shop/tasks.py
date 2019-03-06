@@ -528,7 +528,7 @@ def get_orders():
         url = shop_url + "/admin/orders/count.json"
         params = {
 
-            "updated_at_min ": dt.now() - timedelta(minutes=10),
+            "updated_at_min": (dt.now() - timedelta(minutes=10)).strftime("%Y-%m-%dT%H:%M:%S+00:00"),
             "status": stat,
         }
         # print("url %s params %s"%(url, params))
