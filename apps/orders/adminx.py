@@ -1009,7 +1009,7 @@ class OrderDetailAdmin(object):
     show_supply_status.short_description = u"供应状态"
 
     def order_status(self, obj):
-        return obj.order.order_status
+        return obj.order.status
 
     order_status.short_description = u"订单状态"
 
