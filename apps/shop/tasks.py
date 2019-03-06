@@ -423,7 +423,7 @@ def get_orders():
     # 取得系统中30天内最早的订单号
 
 
-    shoporiorder = ShopOriOrder.objects.filter(Q(created_at__gt=(dt.now() - timedelta(days=5)))).order_by("order_id").first()
+    shoporiorder = ShopOriOrder.objects.filter(Q(created_at__gt=(dt.now() - timedelta(days=60)))).order_by("order_id").first()
     if shoporiorder is None:
         max_shoporiorder_no = "0"
     else:
@@ -515,7 +515,7 @@ def get_orders():
     update_orders()
 
 def update_orders():
-    oriorders = ShopOriOrder.objects.filter(Q(created_at__gt=(dt.now() - timedelta(days=5)))).order_by("-order_id")
+    oriorders = ShopOriOrder.objects.filter(Q(created_at__gt=(dt.now() - timedelta(days=60)))).order_by("-order_id")
 
     for row in oriorders:
         print(row.order_id)
