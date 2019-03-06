@@ -256,19 +256,22 @@ class OrderDetail(models.Model):
     #inventory_status = models.CharField(u'库存状态', default='', max_length=50, blank=True)
 
     def cal_stock(self):
-        from django.db.models import Sum
-        from orders.models import OrderDetail_lightin
-        from django.db.models import Q
 
         sku_list = ["13531030880298", "price gap", "COD link", "price gap 2", ]
         if self.sku in sku_list:
-            return 0
-        items = Lightin_barcode.objects.filter(SKU=self.sku)
+            return "充足"
 
-        if items:
-            return int(float(self.product_quantity)) - items.aggregate(nums=Sum('quantity')).get('nums')
+        item = Lightin_SKU.objects.get(SKU=self.sku)
+
+        if item:
+            if   item.sellable >=0:
+                return "充足"
+            elif item.quantity >= self.product_quantity :
+                return  "紧张"
+            else:
+                return  "缺货"
         else:
-            return int(float(self.product_quantity))
+            return "缺货"
 
     cal_stock.short_description = "库存状态"
     stock = property(cal_stock)
