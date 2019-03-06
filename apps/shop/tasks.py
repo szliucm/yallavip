@@ -416,6 +416,7 @@ def post_to_page():
 
     return
 
+@shared_task
 def get_orders(minutes=10):
     shop_name = "yallasale-com"
     shop_obj = Shop.objects.get(shop_name=shop_name)
