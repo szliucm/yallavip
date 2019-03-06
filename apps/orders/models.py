@@ -105,7 +105,7 @@ class Order(models.Model):
 
     cal_stock.short_description = "库存"
     stock = property(cal_stock)
-
+    '''
     def cal_barcode(self):
         from django.db.models import Sum
 
@@ -139,7 +139,7 @@ class Order(models.Model):
 
     cal_inventory_status.short_description = "库存状态"
     inventory_status = property(cal_inventory_status)
-
+    '''
 
     #shopify 订单状态
 
@@ -323,6 +323,7 @@ class OrderDetail(models.Model):
     cal_stock.short_description = "库存状态"
     stock = property(cal_stock)
 
+    '''
     def cal_outstock(self):
         from django.db.models import Sum
         from orders.models import  OrderDetail_lightin
@@ -351,6 +352,7 @@ class OrderDetail(models.Model):
 
     cal_inventory_status.short_description = "库存状态"
     inventory_status = property(cal_inventory_status)
+    '''
 
     class Meta:
         verbose_name = "订单明细"
