@@ -419,10 +419,10 @@ def post_to_page():
 def get_orders():
     shop_name = "yallasale-com"
     shop_obj = Shop.objects.get(shop_name=shop_name)
-
+    '''
     # 取得系统中30天内最早的订单号
 
-
+   
     shoporiorder = ShopOriOrder.objects.filter(Q(created_at__gt=(dt.now() - timedelta(days=60)))).order_by("order_id").first()
     if shoporiorder is None:
         max_shoporiorder_no = "0"
@@ -434,7 +434,7 @@ def get_orders():
     # 删除所有可能重复的订单信息
 
     ShopOriOrder.objects.filter(order_id__gt=max_shoporiorder_no).delete()
-
+    
 
     # 获取新订单信息
     shop_url = "https://%s:%s@%s.myshopify.com" % (shop_obj.apikey, shop_obj.password, shop_obj.shop_name)
@@ -447,6 +447,7 @@ def get_orders():
     for stat in status:
         url = shop_url + "/admin/orders/count.json"
         params = {
+            
             "since_id": max_shoporiorder_no,
             "status": stat,
         }
@@ -505,6 +506,89 @@ def get_orders():
 
                 ShopOriOrder.objects.bulk_create(oriorders_list)
                 #insert_product(shop.shop_name, products)
+
+
+
+            except Exception as e:
+                print("orders  completed", e)
+                continue
+    '''
+
+
+
+
+    # 获取新订单信息
+    shop_url = "https://%s:%s@%s.myshopify.com" % (shop_obj.apikey, shop_obj.password, shop_obj.shop_name)
+    # shop_url = "https://12222a833afcad263c5cc593eca7af10:47aea3fe8f4b9430b1bac56c886c9bae@yallasale-com.myshopify.com/admin"
+    # shopify.ShopifyResource.set_site(shop_url)
+
+    status = ["open", "closed", "cancelled"]
+
+    for stat in status:
+        url = shop_url + "/admin/orders/count.json"
+        params = {
+
+            "updated_at_min ": dt.now() - timedelta(minutes=10),
+            "status": stat,
+        }
+        # print("url %s params %s"%(url, params))
+        r = requests.get(url, params)
+        data = json.loads(r.text)
+
+        if not data:
+            print("返回为空", data)
+            continue
+
+        print("order count is ", data.get("count"))
+
+        total_count = data["count"]
+        print(stat, "共有 %s 个订单待获取" % (total_count))
+
+        i = 0
+        limit = 100
+
+        while True:
+            try:
+                order_id_list = []
+                if (i * limit > total_count):
+                    break
+
+                i = i + 1
+
+                # products = shopify.Product.find(page=i,limit=limit,updated_at_min=shop.updated_time)
+                url = shop_url + "/admin/orders.json"
+                params = {
+                    "page": i,
+                    "limit": limit,
+                    "updated_at_min ": dt.now() - timedelta(minutes=10),
+                    "status": stat,
+                    # "fields": "id,handle,body_html,title,product_type,created_at,published_at,"
+                    #          "updated_at,tags,vendor,variants,images,options",
+                    # "fields": "product_id",
+                }
+                print(("params is ", params))
+
+                r = requests.get(url, params)
+                oriorders = json.loads(r.text)["orders"]
+                oriorders_list = []
+                for row in oriorders:
+                    # print("row is ",row)
+                    order_id_list.append(row["id"])
+                    oriorder = ShopOriOrder(
+                        order_id=row["id"],
+                        order_no=row["order_number"],
+                        created_at=row["created_at"],
+                        status=stat,
+                        order_json=json.dumps(row),
+                    )
+                    oriorders_list.append(oriorder)
+
+
+                # 删除所有可能重复的订单信息
+                ShopOriOrder.objects.filter(order_id__in=order_id_list).delete()
+
+                ShopOriOrder.objects.bulk_create(oriorders_list)
+                # insert_product(shop.shop_name, products)
 
 
 

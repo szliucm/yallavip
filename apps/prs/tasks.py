@@ -1621,6 +1621,7 @@ def delete_outdate_lightin_album(batch_no):
 
 
 #把所有sku都没有库存，spu还在发布状态的从Facebook删除
+@shared_task
 def delete_outstock_lightin_album(all=False):
     #更新还在发布中的spu的库存
     from django.db import connection, transaction
