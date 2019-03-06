@@ -738,7 +738,7 @@ class Lightin_SKUAdmin(object):
     import_export_args = {"import_resource_class": Lightin_SKUResource,
                           "export_resource_class": Lightin_SKUResource}
 
-    list_display = ["SPU", "SKU", "sellable","vendor_sale_price","vendor_supply_price","weight", "length","width","height","skuattr",]
+    list_display = ["SPU", "SKU", "quantity", "occupied","sellable","vendor_sale_price","vendor_supply_price","weight", "length","width","height","skuattr",]
     # 'sku_name','img',
 
     search_fields = ["SPU", "SKU",]

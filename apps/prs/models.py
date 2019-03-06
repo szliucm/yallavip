@@ -502,16 +502,48 @@ class Lightin_SKU(models.Model):
     #barcode = models.CharField(u'barcode', default='', max_length=100, blank=True)
 
     #quantity = models.IntegerField(u'数量', default=0, blank=True, null=True)
+    def cal_quantity(self):
+
+        from django.db.models import Sum
+        from orders.models import OrderDetail
+        from django.db.models import Q
+
+        items = Lightin_barcode.filter(SKU = self.SKU)
+
+        if items:
+            return items.aggregate(nums=Sum('quantity')).get('nums')
+        else:
+            return 0
+
+    cal_quantity.short_description = "库存数量"
+    quantity = property(cal_quantity)
+
+
+    def cal_occupied(self):
+        from django.db.models import Sum
+        from orders.models import OrderDetail
+        from django.db.models import Q
+
+        items = OrderDetail.filter(~Q(order__wms_status="D"),
+                                   order__financial_status="paid",
+                                   order__status="open",
+                                   sku=self.SKU,
+                                   )
+
+        if items:
+            return items.aggregate(nums=Sum('quantity')).get('nums')
+        else:
+            return 0
+
+    cal_occupied.short_description = "订单占用库存"
+    occupied = property(cal_occupied)
+
+
+
 
     def cal_sellable(self):
-        from django.db.models import Sum
-        lightin_barcodes = Lightin_barcode.objects.filter(SKU=self.SKU)
-        total = 0
-        for lightin_barcode in lightin_barcodes:
-            total  += lightin_barcode.sellable
-
-        return total
-
+        return  self.quantity - self.sellable
+    
     cal_sellable.short_description = "可销售库存"
     sellable = property(cal_sellable)
 
