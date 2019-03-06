@@ -523,12 +523,13 @@ def get_orders(minutes=10):
     # shopify.ShopifyResource.set_site(shop_url)
 
     status = ["open", "closed", "cancelled"]
-
+    updated_at_min = (dt.now() - timedelta(minutes=minutes)).strftime("%Y-%m-%dT%H:%M:%S+00:00")
     for stat in status:
         url = shop_url + "/admin/orders/count.json"
         params = {
 
-            "updated_at_min": (dt.now() - timedelta(minutes=minutes)).strftime("%Y-%m-%dT%H:%M:%S+00:00"),
+
+            "updated_at_min": updated_at_min ,
             "status": stat,
         }
         # print("url %s params %s"%(url, params))
