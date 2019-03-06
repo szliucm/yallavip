@@ -212,9 +212,11 @@ class OrderAdmin(object):
 
     show_conversation.short_description = "会话"
 
+
+
     import_export_args = {"import_resource_class": OrderResource, "export_resource_class": OrderResource}
 
-    list_display = ["order_no", "status","inventory_status", "order_amount", "order_time", "logistic_no","order_comment"]
+    list_display = ["order_no", "status", "inventory_status", "order_amount", "order_time", "logistic_no","order_comment"]
     list_editable = []
     # list_display_links = ["show_conversation"]
     search_fields = ["order_no",'logistic_no', ]
