@@ -266,7 +266,7 @@ class OrderDetail(models.Model):
         if item:
             if   item.sellable >=0:
                 return "充足"
-            elif item.quantity >= self.product_quantity :
+            elif item.quantity >= int(float(self.product_quantity)):
                 return  "紧张"
             else:
                 return  "缺货"
