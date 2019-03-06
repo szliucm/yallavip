@@ -1822,7 +1822,7 @@ def fulfill_order_lightin():
 
                                   verify__verify_status = "SUCCESS",
                                   verify__sms_status = "CHECKED",
-                                  wms_status__isnull = True)
+                                  wms_status = "")
     for order in orders:
         if not order.inventory_status == "库存锁定" :
             continue
