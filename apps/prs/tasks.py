@@ -1355,6 +1355,7 @@ def post_to_shopify_lightin(lightinproduct_pk ):
 
 
 #更新产品标题，把货号加在后面，便于客服下单
+#把5Sar一下的产品，标题里加个[freegift]
 
 @shared_task
 def update_lightin_shopify_title():
@@ -1364,7 +1365,12 @@ def update_lightin_shopify_title():
     # 初始化SDK
     shop_url = "https://%s:%s@%s.myshopify.com" % (shop_obj.apikey, shop_obj.password, shop_obj.shop_name)
 
-    lightinproducts = Lightin_SPU.objects.filter(got = True, published=True, updated=False)
+    #为了加货号
+    #lightinproducts = Lightin_SPU.objects.filter(got = True, published=True, updated=False)
+
+    #找出5sar以下的产品
+    lightinproducts = Lightin_SPU.objects.filter(published=True, vendor_supply_price__lt=1)
+
     print("一共有%d 个lightin产品信息待更新标题" % (lightinproducts.count()))
     n = 0
     for lightinproduct in lightinproducts:
@@ -1376,7 +1382,7 @@ def update_lightin_shopify_title():
             break
         '''
 
-@task
+@shared_task
 def update_shopify_title_lightin(lightinproduct_pk, shop_url ):
     from .ali import create_body_lightin, create_variant_lightin
     from django.utils import timezone as datetime
@@ -1391,7 +1397,9 @@ def update_shopify_title_lightin(lightinproduct_pk, shop_url ):
             print("找不到shopify产品")
             continue
 
-        title = lightin_spu.title + " [" + lightin_spu.handle + "]"
+        #标题里加货号
+        # title = lightin_spu.title + " [" + lightin_spu.handle + "]"
+        title = lightin_spu.title + " [" + lightin_spu.handle + "]" + " [freegift]"
         print("title is ", title)
 
         params = {
