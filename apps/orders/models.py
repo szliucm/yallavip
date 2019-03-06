@@ -75,6 +75,9 @@ class Order(models.Model):
     #不锁定条码
     def cal_stock(self):
         items = self.order_orderdetail.all()
+        if not items:
+            return "没找到明细"
+
         outstock_skus = 0
         outstock_quantity = 0
         outstock_amount = 0
@@ -84,6 +87,7 @@ class Order(models.Model):
         for item in items:
 
             if item.stock == "缺货":
+
                 outstock_skus += 1
                 outstock_quantity += item.outstock
                 outstock_amount += item.outstock * float(item.price)
@@ -101,6 +105,18 @@ class Order(models.Model):
 
     cal_stock.short_description = "库存"
     stock = property(cal_stock)
+
+    def cal_barcode(self):
+        from django.db.models import Sum
+
+        items = self.order_orderdetail_lightin.all()
+        if items:
+            barcode_count = items.count()
+            barcode_quantity = items.aggregate(nums = Sum('quantity')).get('nums')
+            return "共 %s 个条码 %s 个pieces"%( barcode_count, barcode_quantity)
+
+    cal_barcode.short_description = "库存"
+    barcode = property(cal_barcode)
 
     #锁定条码
     def cal_inventory_status(self):

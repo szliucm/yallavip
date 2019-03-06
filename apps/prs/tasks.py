@@ -1822,6 +1822,7 @@ def fulfill_order_lightin():
                                   verify__verify_status = "SUCCESS",
                                   verify__sms_status = "CHECKED",
                                   wms_status = "")
+    print("共有%s个订单待发货"%(orders.count()))
     for order in orders:
         if not order.inventory_status == "库存锁定" :
             continue
@@ -1829,7 +1830,7 @@ def fulfill_order_lightin():
         items = []
 
         for order_item in order.order_orderdetail_lightin.all():
-            print(order_item)
+            #print(order_item)
 
             item = {
                     "product_sku": order_item.barcode.barcode,
@@ -1874,7 +1875,7 @@ def fulfill_order_lightin():
             #    "file_data":"hVJPjUP4+yHjvKErt5PuFfvRhd..."
             #}
         }
-        print(param)
+        #print(param)
         result = yunwms(service, param)
 
         print(result)
