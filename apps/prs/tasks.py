@@ -1642,8 +1642,11 @@ def delete_outstock_lightin_album():
 
     lightinalbums_out = {}
 
+    n = lightinalbums.count()
 
     for lightinalbum in lightinalbums:
+        print("一共还有%s 个图片待排查"%(n))
+        n -= 1
         #print("%s lightinalbum.lightin_spu.sellable is %s "%(lightinalbum.lightin_spu ,lightinalbum.lightin_spu.sellable))
         if  lightinalbum.lightin_spu.sellable <= 0:
             photo_list = lightinalbums_out.get(lightinalbum.myalbum.page_no)
@@ -1653,7 +1656,7 @@ def delete_outstock_lightin_album():
                 photo_list.append(lightinalbum.fb_id)
 
             lightinalbums_out[lightinalbum.myalbum.page_no] = photo_list
-            print("lightinalbum is %s  page no is %s, photo_id is %s "%(lightinalbum, lightinalbum.myalbum.page_no,lightinalbum.fb_id ))
+            #print("lightinalbum is %s  page no is %s, photo_id is %s "%(lightinalbum, lightinalbum.myalbum.page_no,lightinalbum.fb_id ))
 
     # 删除子集
 
@@ -1670,7 +1673,7 @@ def delete_out_lightin_album(lightinalbums_out):
         FacebookAdsApi.init(access_token=get_token(page_no))
 
         photo_nos = lightinalbums_out[page_no]
-        print("page %s 待删除数量 %s  ", page_no, len(photo_nos))
+        print("page %s 待删除数量 %s  "%(page_no, len(photo_nos)))
         if photo_nos is None or len(photo_nos) == 0:
             continue
 
