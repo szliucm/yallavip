@@ -1180,6 +1180,12 @@ class VerifyAdmin(object):
 
     order_sku_count.short_description = "订单sku数"
 
+
+    def fulfill_error(self, obj):
+        return  obj.order.fulfill_error
+
+    fulfill_error.short_description = "wms发货错误"
+
     def show_conversation(self, obj):
 
         return  show_conversation_tmp(obj)
@@ -1292,7 +1298,7 @@ class VerifyAdmin(object):
     '''
 
     readonly_fields = ('order', 'order_time',)
-    list_display = ('order','order_sku_count','order_time', 'inventory_status','order_financial_status','order_fulfillment_status','colored_verify_status', \
+    list_display = ('order','order_sku_count','order_time', 'inventory_status',"fulfill_error",'order_financial_status','order_fulfillment_status','colored_verify_status', \
                     'colored_sms_status',
                     'receiver_city','city','receiver_addr',
 
