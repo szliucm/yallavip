@@ -217,11 +217,11 @@ class OrderAdmin(object):
     import_export_args = {"import_resource_class": OrderResource, "export_resource_class": OrderResource}
 
     #"stock", "cal_barcode", "inventory_status",
-    list_display = ["order_no", "status", "wms_status","fulfill_error","order_amount", "order_time", "logistic_no","order_comment"]
+    list_display = ["order_no", "status", "stock", "wms_status","fulfill_error","order_amount", "order_time", "logistic_no","order_comment"]
     list_editable = ["fulfill_error"]
     # list_display_links = ["show_conversation"]
     search_fields = ["order_no",'logistic_no', ]
-    list_filter = ( "status","financial_status","fulfillment_status", "package_status", "verify_time","order_time","send_time","verify__verify_status","verify__sms_status",)
+    list_filter = ( "status","wms_status","financial_status","fulfillment_status", "package_status", "verify_time","order_time","send_time","verify__verify_status","verify__sms_status",)
     ordering = ['-order_time']
 
     #data_charts = {
