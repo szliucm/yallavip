@@ -72,6 +72,37 @@ class Order(models.Model):
     updated = models.BooleanField(u'更新状态', default=False)
     #inventory_status  = models.CharField(u'库存状态', default='', max_length=50, blank=True)
 
+    #不锁定条码
+    def cal_stock(self):
+        items = self.order_orderdetail.all()
+        outstock_skus = 0
+        outstock_quantity = 0
+        outstock_amount = 0
+
+        busystock_skus = 0
+
+        for item in items:
+
+            if item.stock == "缺货":
+                outstock_skus += 1
+                outstock_quantity += item.outstock
+                outstock_amount += item.outstock * float(item.price)
+            elif item.stock == "紧张":
+                busystock_skus += 1
+
+
+        if outstock_skus == 0:
+            if busystock_skus == 0:
+                return "库存锁定"
+            else:
+                return "共 %s个sku ;%s 个sku紧张 " %(items.count(), busystock_skus)
+        else:
+            return "共 %s个sku ; %s个sku紧张  ；%s 个sku缺货 %s 件  %s SAR ;" %(items.count(), busystock_skus, outstock_skus,outstock_quantity,int(outstock_amount))
+
+    cal_stock.short_description = "库存"
+    stock = property(cal_stock)
+
+    #锁定条码
     def cal_inventory_status(self):
         items = self.order_orderdetail.all()
         outstock_skus = 0

@@ -216,7 +216,7 @@ class OrderAdmin(object):
 
     import_export_args = {"import_resource_class": OrderResource, "export_resource_class": OrderResource}
 
-    list_display = ["order_no", "status", "inventory_status", "wms_status","fulfill_error","order_amount", "order_time", "logistic_no","order_comment"]
+    list_display = ["order_no", "status","stock", "inventory_status", "wms_status","fulfill_error","order_amount", "order_time", "logistic_no","order_comment"]
     list_editable = ["fulfill_error"]
     # list_display_links = ["show_conversation"]
     search_fields = ["order_no",'logistic_no', ]
