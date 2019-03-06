@@ -308,9 +308,10 @@ class OrderDetail(models.Model):
         if self.sku in sku_list:
             return "充足"
 
-        item = Lightin_SKU.objects.get(SKU=self.sku)
+        items = Lightin_SKU.objects.filter(SKU=self.sku)
 
-        if item:
+        if items:
+            item = items[0]
             if   item.sellable >=0:
                 return "充足"
             elif item.quantity >= int(float(self.product_quantity)):
