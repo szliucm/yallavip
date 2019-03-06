@@ -1673,7 +1673,7 @@ def delete_outstock_lightin_album(all=False):
 
     delete_out_lightin_album(lightinalbums_out)
     if not all:
-        orderdetails.update(updated=False)
+        Order.objects.filter(updated=True).update(updated=False)
 
 #删除lightin_album 的某个特定子集
 def delete_out_lightin_album(lightinalbums_out):
