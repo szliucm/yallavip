@@ -518,7 +518,6 @@ class Lightin_SKU(models.Model):
     cal_quantity.short_description = "库存数量"
     quantity = property(cal_quantity)
 
-
     def cal_occupied(self):
         from django.db.models import Sum
         from orders.models import OrderDetail
@@ -538,11 +537,8 @@ class Lightin_SKU(models.Model):
     cal_occupied.short_description = "订单占用库存"
     occupied = property(cal_occupied)
 
-
-
-
     def cal_sellable(self):
-        return  self.quantity - self.sellable
+        return  self.quantity - self.occupied
 
     cal_sellable.short_description = "可销售库存"
     sellable = property(cal_sellable)
