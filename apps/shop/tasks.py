@@ -561,7 +561,7 @@ def get_orders(minutes=10):
                 params = {
                     "page": i,
                     "limit": limit,
-                    "updated_at_min ": dt.now() - timedelta(minutes=10),
+                    "updated_at_min": updated_at_min,
                     "status": stat,
                     # "fields": "id,handle,body_html,title,product_type,created_at,published_at,"
                     #          "updated_at,tags,vendor,variants,images,options",
