@@ -1375,7 +1375,7 @@ def update_lightin_shopify_title():
     n = 0
     for lightinproduct in lightinproducts:
 
-        update_shopify_title_lightin(lightinproduct.pk, shop_url)
+        update_shopify_title_lightin(lightinproduct, shop_url)
         '''
         n += 1
         if n>2:
@@ -1383,45 +1383,36 @@ def update_lightin_shopify_title():
         '''
 
 @shared_task
-def update_shopify_title_lightin(lightinproduct_pk, shop_url ):
+def update_shopify_title_lightin(lightin_spu, shop_url ):
     from .ali import create_body_lightin, create_variant_lightin
     from django.utils import timezone as datetime
 
 
-    lightin_spus = Lightin_SPU.objects.filter(pk=lightinproduct_pk)
+    #标题里加货号
+    # title = lightin_spu.title + " [" + lightin_spu.handle + "]"
+    title = lightin_spu.en_name + " [" + lightin_spu.handle + "]" + " [freegift]"
+    print("title is ", title)
 
-    for lightin_spu in lightin_spus:
+    params = {
+        "product": {
 
-        shopify_product = ShopifyProduct.objects.get(vendor=lightin_spu.SPU)
-        if shopify_product is None:
-            print("找不到shopify产品")
-            continue
-
-        #标题里加货号
-        # title = lightin_spu.title + " [" + lightin_spu.handle + "]"
-        title = lightin_spu.en_name + " [" + lightin_spu.handle + "]" + " [freegift]"
-        print("title is ", title)
-
-        params = {
-            "product": {
-
-                "title": title,
-
-            }
-        }
-        headers = {
-            "Content-Type": "application/json",
-            "charset": "utf-8",
+            "title": title,
 
         }
-        url = shop_url + "/admin/products/%s.json" % (shopify_product.product_no)
+    }
+    headers = {
+        "Content-Type": "application/json",
+        "charset": "utf-8",
 
-        r = requests.put(url, headers=headers, data=json.dumps(params))
-        print("r  ", r)
-        if r.status_code  == 200:
-            Lightin_SPU.objects.filter(pk=lightin_spu.pk).update(updated=True,title=title,product_no = shopify_product.product_no)
-        else:
-            print(r.text)
+    }
+    url = shop_url + "/admin/products/%s.json" % (lightin_spu.product_no)
+
+    r = requests.put(url, headers=headers, data=json.dumps(params))
+    print("r  ", r)
+    if r.status_code  == 200:
+        Lightin_SPU.objects.filter(pk=lightin_spu.pk).update(updated=True,title=title)
+    else:
+        print(r.text)
 
 
 
