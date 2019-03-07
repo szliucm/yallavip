@@ -2101,7 +2101,10 @@ def get_wms_quantity():
                 Lightin_barcode.objects.update_or_create(
                     barcode=data.get("product_sku"),
                     defaults={
-                        "y_sellable" : data.get("sellable"),
+                        "y_onway" : data.get("y_onway"),
+                        "y_pending": data.get("y_pending"),
+                        "y_sellable": data.get("sellable"),
+                        "y_unsellable": data.get("y_unsellable"),
                         "y_reserved": data.get("reserved"),
                         "y_shipped": data.get("shipped"),
                         "quantity":  int(data.get("sellable")) + int(data.get("reserved"))
