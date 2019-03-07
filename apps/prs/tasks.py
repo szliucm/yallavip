@@ -1761,6 +1761,7 @@ def mapping_order_lightin(order):
         sku = orderdetail.sku
         price = orderdetail.price
         quantity = int(float(orderdetail.product_quantity))
+        print("sku %s , 需求量 %s " % (sku, quantity))
 
         lightin_barcodes = Lightin_barcode.objects.filter(SKU=sku)
 
@@ -1778,7 +1779,7 @@ def mapping_order_lightin(order):
             if lightin_barcode.sellable == 0:
                 continue
 
-            print("sku %s , 需求量 %s , 条码 %s , 条码可售库存 %s"%(sku,  quantity, lightin_barcode, lightin_barcode.sellable  ))
+
             if quantity > lightin_barcode.sellable:
                 # 条码的库存数量比订单项所需的少
                 quantity -= lightin_barcode.sellable
@@ -1787,12 +1788,14 @@ def mapping_order_lightin(order):
                 occupied = quantity
                 quantity = 0
 
+            print("        条码 %s , 条码可售库存 %s 占用 %s" % (sku, quantity, lightin_barcode, lightin_barcode.sellable, occupied))
+
             inventory_list.append([sku, lightin_barcode, occupied, price])
 
         #需求没有被满足，标识订单缺货
         print("quantity", quantity)
         if quantity > 0:
-            error = "缺货"
+            error =sku + "缺货"
             break
 
 
