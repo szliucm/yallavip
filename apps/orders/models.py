@@ -329,17 +329,7 @@ class OrderDetail(models.Model):
             else:
                 return  "缺货"
         else:
-            items = Lightin_barcode.objects.filter(SKU=self.sku)
-            if items:
-                item = items[0]
-                if item.sellable >= 0:
-                    return "充足"
-                elif item.quantity >= int(float(self.product_quantity)):
-                    return "紧张"
-                else:
-                    return "缺货"
-            else:
-                return "没有产品"
+            return "没有产品"
 
     cal_stock.short_description = "库存状态"
     stock = property(cal_stock)
