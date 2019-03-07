@@ -2106,6 +2106,7 @@ def get_wms_quantity():
                 Lightin_barcode.objects.update_or_create(
                     barcode=data.get("product_sku"),
                     defaults={
+                        "warehouse_code": data.get("warehouse_code"),
                         "y_onway" : data.get("y_onway"),
                         "y_pending": data.get("y_pending"),
                         "y_sellable": data.get("sellable"),

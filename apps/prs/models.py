@@ -643,6 +643,7 @@ class Lightin_barcode(models.Model):
     product_title = models.CharField(u'product_title', default='', max_length=100, blank=True)
     product_weight = models.CharField(u'product_weight', default='', max_length=100, blank=True)
 
+    warehouse_code = models.CharField(u'warehouse_code', default='', max_length=100, blank=True)
     y_onway = models.IntegerField(u'wms_在途数量', default=0, blank=True, null=True)
     y_pending = models.IntegerField(u'wms_待上架数量', default=0, blank=True, null=True)
     y_sellable = models.IntegerField(u'wms_可售数量', default=0, blank=True, null=True)
