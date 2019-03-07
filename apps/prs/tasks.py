@@ -2038,9 +2038,10 @@ def sync_Shipped_order_shopify():
         )
 def get_wms_product():
     page = 1
+    pages = 0
 
     while 1:
-        print("正在处理第 %s 页"%(page))
+        print("一共 %s页 正在处理第 %s 页" % (pages, page))
 
         param = {
             "pageSize": "100",
@@ -2067,6 +2068,8 @@ def get_wms_product():
 
                     },
                 )
+            if pages == 0:
+                pages = int(int(result.get("count")) / 100)
         else:
             print("获取wms库存出错", result.get("message"))
             break
@@ -2114,7 +2117,7 @@ def get_wms_quantity():
                     },
                 )
             if pages ==0:
-                pages = int(result.get("count")/100)
+                pages = int(int(result.get("count"))/100)
         else:
             print("获取wms库存出错", result.get("message"))
             break
