@@ -1836,7 +1836,7 @@ def fulfill_orders_lightin():
                                   wms_status = "")
     print("共有%s个订单待发货"%(orders.count()))
     for order in orders:
-        if order.inventory_status in [ "充足","紧张"] :
+        if order.stock in [ "充足","紧张"] :
             fulfill_order_lightin(order)
 
 def fulfill_order_lightin(order):
