@@ -71,7 +71,7 @@ class Order(models.Model):
     order_no = models.CharField(u'订单号', default='', max_length=50, blank=True)
     updated = models.BooleanField(u'更新状态', default=False)
     #inventory_status  = models.CharField(u'库存状态', default='', max_length=50, blank=True)
-
+    '''
     #不锁定条码
     def cal_stock(self):
         items = self.order_orderdetail.all()
@@ -114,7 +114,7 @@ class Order(models.Model):
 
     cal_stock.short_description = "库存"
     stock = property(cal_stock)
-    '''
+  
     def cal_barcode(self):
         from django.db.models import Sum
 
@@ -126,7 +126,7 @@ class Order(models.Model):
 
     cal_barcode.short_description = "库存"
     barcode = property(cal_barcode)
-
+ '''
     #锁定条码
     def cal_inventory_status(self):
         items = self.order_orderdetail.all()
@@ -148,7 +148,7 @@ class Order(models.Model):
 
     cal_inventory_status.short_description = "库存状态"
     inventory_status = property(cal_inventory_status)
-    '''
+
 
     #shopify 订单状态
 
@@ -310,7 +310,7 @@ class OrderDetail(models.Model):
     price = models.CharField(u'Unit Price', default='', max_length=50, blank=True)
 
     #inventory_status = models.CharField(u'库存状态', default='', max_length=50, blank=True)
-
+    '''
     def cal_stock(self):
 
         sku_list = ["13531030880298", "price gap", "COD link", "price gap 2", ]
@@ -362,7 +362,7 @@ class OrderDetail(models.Model):
 
     cal_inventory_status.short_description = "库存状态"
     inventory_status = property(cal_inventory_status)
-    '''
+
 
     class Meta:
         verbose_name = "订单明细"

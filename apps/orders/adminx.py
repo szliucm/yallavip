@@ -217,7 +217,7 @@ class OrderAdmin(object):
     import_export_args = {"import_resource_class": OrderResource, "export_resource_class": OrderResource}
 
     #"stock", "cal_barcode", "inventory_status",
-    list_display = ["order_no", "status",  "wms_status","fulfill_error","order_amount", "order_time", "logistic_no","order_comment"]
+    list_display = ["order_no", "status", "inventory_status", "wms_status","fulfill_error","order_amount", "order_time", "logistic_no","order_comment"]
     list_editable = ["fulfill_error"]
     # list_display_links = ["show_conversation"]
     search_fields = ["order_no",'logistic_no', ]
@@ -1023,7 +1023,7 @@ class OrderDetailAdmin(object):
 
     #为了快速做海外仓包裹，所以把可能的图片显示出来
     #"fb_photo", "show_image", 'show_local_image',
-    list_display = ['order', 'sku',"handle","skuattr", 'product_quantity','stock',  'price','order_status','show_supply_status','alternative', ]
+    list_display = ['order', 'sku',"handle","skuattr", 'product_quantity','outstock',  'price','order_status','show_supply_status','alternative', ]
 
     search_fields = ["order__order_no",'sku',"order__logistic_no" ]
 
