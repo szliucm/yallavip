@@ -1570,6 +1570,8 @@ def prepare_lightin_album_material():
 def sync_lightin_album():
     from django.db.models import Min
     from .fb_action import post_lightin_album
+
+    '''
     #把有未发布的图片的，最小批次号作为当前批次
     batch_no = LightinAlbum.objects.filter(published=False, publish_error="无",material =True).aggregate(Min('batch_no')).get("batch_no__min")
 
@@ -1581,6 +1583,14 @@ def sync_lightin_album():
 
     for album in albums_list:
         lightinalbums = lightinalbums_all.filter(myalbum__pk=album)
+    '''
+    #之前只考虑一次统一发一个批次，但因为各个相册建立的时间不同，批次差异很大，所以必须按相册找到当前需要发的批次
+    lightinalbums_all = LightinAlbum.objects.filter(published=False, publish_error="无", material=True)
+
+    batch_nos = lightinalbums_all.values_list('myalbum').annotate(Min('batch_no'))
+    for batch_no in batch_nos:
+        lightinalbums = lightinalbums_all.filter(myalbum__pk = batch_no[0],batch_no=batch_no[1])
+
         for lightinalbum in lightinalbums:
             error, posted = post_lightin_album(lightinalbum)
 
