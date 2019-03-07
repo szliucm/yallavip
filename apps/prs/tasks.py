@@ -1731,7 +1731,7 @@ def delete_out_lightin_album(lightinalbums_out):
             print("删除相册图片 LightinAlbum %s %s" % (photo_no, response))
 
 @shared_task
-def mapping_order_lightin():
+def mapping_orders_lightin():
 
     from django.db.models import Sum
     from prs.models import Lightin_barcode
@@ -1744,81 +1744,72 @@ def mapping_order_lightin():
 
     # 处理每个订单
     for order in orders:
-        if order.inventory_status == "库存锁定":
+        mapping_order_lightin(order)
+
+def mapping_order_lightin(order):
+    #先把自己可能占用的库存释放
+    OrderDetail_lightin.objects.filter(order=order).delete()
+
+    inventory_list = []
+    error = ""
+
+    orderdetails = order.order_orderdetail.all()
+    print("当前处理订单 ", order)
+
+    # 每个订单项
+    for orderdetail in orderdetails:
+        sku = orderdetail.sku
+        price = orderdetail.price
+        quantity = int(float(orderdetail.product_quantity))
+
+        lightin_barcodes = Lightin_barcode.objects.filter(SKU=sku)
+
+        if lightin_barcodes is None:
+            print("找不到映射，也就意味着无法管理库存！")
+            #需要标识为异常订单
+            error = "找不到SKU"
             continue
 
-        #先把自己可能占用的库存释放
-        OrderDetail_lightin.objects.filter(order=order).delete()
-
-        inventory_list = []
-        error = ""
-
-        orderdetails = order.order_orderdetail.all()
-        print("当前处理订单 ", order)
-
-        # 每个订单项
-        for orderdetail in orderdetails:
-            sku = orderdetail.sku
-            price = orderdetail.price
-            quantity = int(float(orderdetail.product_quantity))
-
-            lightin_barcodes = Lightin_barcode.objects.filter(SKU=sku)
-
-            if lightin_barcodes is None:
-                print("找不到映射，也就意味着无法管理库存！")
-                #需要标识为异常订单
-                error = "找不到SKU"
+        # 每个可能的条码
+        for lightin_barcode in lightin_barcodes:
+            if quantity == 0:
+                #已经凑齐了sku所需的数量
+                break
+            if lightin_barcode.sellable == 0:
                 continue
 
+            print("sku %s , 需求量 %s , 条码 %s , 条码可售库存 %s"%(sku,  quantity, lightin_barcode, lightin_barcode.sellable  ))
+            if quantity > lightin_barcode.sellable:
+                # 条码的库存数量比订单项所需的少
+                quantity -= lightin_barcode.sellable
+                occupied = lightin_barcode.sellable
+            else:
+                occupied = quantity
+                quantity = 0
+
+            inventory_list.append([sku, lightin_barcode, occupied, price])
+
+        #需求没有被满足，标识订单缺货
+        print("quantity", quantity)
+        if quantity > 0:
+            error = "缺货"
+    print(inventory_list)
+
+    # 插入到OrderDetail_lightin
+    orderdetail_lightin_list = []
+
+    for inventory in inventory_list:
+        orderdetail_lightin = OrderDetail_lightin(
+            order=order,
+            SKU=inventory[0],
+            barcode=inventory[1],
+            quantity=inventory[2],
+            price = inventory[3],
+        )
+        orderdetail_lightin_list.append(orderdetail_lightin)
 
 
-            # 每个可能的条码
-            for lightin_barcode in lightin_barcodes:
-                if quantity == 0:
-                    break
-                if lightin_barcode.sellable == 0:
-                    continue
-
-                print("sku %s , 需求量 %s , 条码 %s , 条码可售库存 %s"%(sku,  quantity, lightin_barcode, lightin_barcode.sellable  ))
-                if quantity > lightin_barcode.sellable:
-                    # 条码的库存数量比订单项所需的少
-                    quantity -= lightin_barcode.sellable
-
-                    occupied = lightin_barcode.sellable
-                else:
-
-                    occupied = quantity
-                    quantity = 0
-
-                inventory_list.append([sku, lightin_barcode, occupied, price])
-
-            #需求没有被满足，标识订单缺货
-            print("quantity", quantity)
-            if quantity > 0:
-                error = "缺货"
-        print(inventory_list)
-
-
-        # 插入到OrderDetail_lightin
-        orderdetail_lightin_list = []
-
-        for inventory in inventory_list:
-
-            orderdetail_lightin = OrderDetail_lightin(
-                order=order,
-                SKU=inventory[0],
-                barcode=inventory[1],
-                quantity=inventory[2],
-                price = inventory[3],
-            )
-            orderdetail_lightin_list.append(orderdetail_lightin)
-
-
-        OrderDetail_lightin.objects.bulk_create(orderdetail_lightin_list)
-
-
-
-
+    OrderDetail_lightin.objects.bulk_create(orderdetail_lightin_list)
 
 @shared_task
 def fulfill_order_lightin():
