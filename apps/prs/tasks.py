@@ -1653,9 +1653,10 @@ def delete_outstock_lightin_album(all=False):
     lightinalbums_out = {}
 
     n = lightinalbums.count()
+    print("一共有%s 个图片待排查" % (n))
 
     for lightinalbum in lightinalbums:
-        print("一共还有%s 个图片待排查"%(n))
+        print("还有%s 个图片待排查"%(n))
         n -= 1
         #print("%s lightinalbum.lightin_spu.sellable is %s "%(lightinalbum.lightin_spu ,lightinalbum.lightin_spu.sellable))
         if  lightinalbum.lightin_spu.sellable <= 0:
