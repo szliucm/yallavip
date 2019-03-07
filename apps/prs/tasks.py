@@ -1812,11 +1812,8 @@ def mapping_order_lightin(order):
     OrderDetail_lightin.objects.bulk_create(orderdetail_lightin_list)
 
 @shared_task
-def fulfill_order_lightin():
-    from suds.client import Client
-    from xml.sax.saxutils import escape
+def fulfill_orders_lightin():
 
-    service = "createOrder"
 
     orders = Order.objects.filter(financial_status="paid" ,
                                   fulfillment_status__isnull = True,
@@ -1829,72 +1826,78 @@ def fulfill_order_lightin():
     for order in orders:
         if not order.inventory_status == "库存锁定" :
             continue
+        fulfill_order_lightin(order)
 
-        items = []
+def fulfill_order_lightin(order):
+    from suds.client import Client
+    from xml.sax.saxutils import escape
 
-        for order_item in order.order_orderdetail_lightin.all():
-            #print(order_item)
+    service = "createOrder"
+    items = []
 
-            item = {
-                    "product_sku": order_item.barcode.barcode,
-                    #"product_name_en":title,
-                    "product_declared_value": order_item.price,
-                    "quantity": order_item.quantity,
-                }
-            items.append(item)
+    for order_item in order.order_orderdetail_lightin.all():
+        #print(order_item)
 
-
-        param = {
-            "platform": "B2C",
-            "allocated_auto":"1",
-            "warehouse_code":warehouse_code,
-            "shipping_method":shipping_method,
-            "reference_no":order.order_no,
-            #"order_desc":"\u8ba2\u5355\u63cf\u8ff0",
-            "country_code":"SA",
-            "province":order.receiver_city,
-            "city":order.receiver_city,
-            "address1":order.receiver_addr1,
-            "address2":order.receiver_addr2,
-            "address3":"",
-            "zipcode":"123456",
-            "doorplate":"doorplate",
-            "company":"company",
-            "name":order.receiver_name,
-            "phone":order.receiver_phone,
-            "cell_phone":"",
-            "email": order.buyer_name.replace(" ", "") + "@yallavip.com",
-            "order_cod_price":order.order_amount,
-            "order_cod_currency":"SAR",
-            "order_age_limit":"2",
-            "is_signature":"0",
-            "is_insurance":"0",
-            "insurance_value":"0",
-            "verify":"1",
-            "items":items,
-            #"tracking_no":"123",
-            #"label":{
-            #    "file_type":"png",
-            #    "file_data":"hVJPjUP4+yHjvKErt5PuFfvRhd..."
-            #}
-        }
-        #print(param)
-        result = yunwms(service, param)
-
-        print(result)
-        if result.get("ask") == "Success":
-            #发货成功
-            Order.objects.filter(pk = order.pk).update(
-                wms_status = result.get("order_status"),
-                logistic_no = result.get("tracking_no"),
-
-            )
-        else:
-            Order.objects.filter(pk=order.pk).update(
-                fulfill_error=result.get("message"),
+        item = {
+                "product_sku": order_item.barcode.barcode,
+                #"product_name_en":title,
+                "product_declared_value": order_item.price,
+                "quantity": order_item.quantity,
+            }
+        items.append(item)
 
 
-            )
+    param = {
+        "platform": "B2C",
+        "allocated_auto":"1",
+        "warehouse_code":warehouse_code,
+        "shipping_method":shipping_method,
+        "reference_no":order.order_no,
+        #"order_desc":"\u8ba2\u5355\u63cf\u8ff0",
+        "country_code":"SA",
+        "province":order.receiver_city,
+        "city":order.receiver_city,
+        "address1":order.receiver_addr1,
+        "address2":order.receiver_addr2,
+        "address3":"",
+        "zipcode":"123456",
+        "doorplate":"doorplate",
+        "company":"company",
+        "name":order.receiver_name,
+        "phone":order.receiver_phone,
+        "cell_phone":"",
+        "email": order.buyer_name.replace(" ", "") + "@yallavip.com",
+        "order_cod_price":order.order_amount,
+        "order_cod_currency":"SAR",
+        "order_age_limit":"2",
+        "is_signature":"0",
+        "is_insurance":"0",
+        "insurance_value":"0",
+        "verify":"1",
+        "items":items,
+        #"tracking_no":"123",
+        #"label":{
+        #    "file_type":"png",
+        #    "file_data":"hVJPjUP4+yHjvKErt5PuFfvRhd..."
+        #}
+    }
+    #print(param)
+    result = yunwms(service, param)
+
+    print(result)
+    if result.get("ask") == "Success":
+        #发货成功
+        Order.objects.filter(pk = order.pk).update(
+            wms_status = result.get("order_status"),
+            logistic_no = result.get("tracking_no"),
+
+        )
+    else:
+        Order.objects.filter(pk=order.pk).update(
+            fulfill_error=result.get("message"),
+
+
+        )
 
 
 
