@@ -1788,7 +1788,7 @@ def mapping_order_lightin(order):
                 occupied = quantity
                 quantity = 0
 
-            print("        条码 %s , 条码可售库存 %s 占用 %s" % (sku, quantity, lightin_barcode, lightin_barcode.sellable, occupied))
+            print("        条码 %s , 条码可售库存 %s 占用 %s" % (lightin_barcode, lightin_barcode.sellable, occupied))
 
             inventory_list.append([sku, lightin_barcode, occupied, price])
 
