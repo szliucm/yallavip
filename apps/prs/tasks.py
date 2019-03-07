@@ -1614,18 +1614,19 @@ def sync_lightin_album():
                     published_time=dt.now()
                 )
     # 把比当前批次号小 20 的批次的图片 还在发布状态的从Facebook删除
-    if batch_no >20:
-        delete_outdate_lightin_album(batch_no -20)
+
+    delete_outdate_lightin_album(batch_no)
 
 
 #把比当前批次号，且还在发布状态的从Facebook删除
 def delete_outdate_lightin_album(batch_no):
 
     #按批次号找出子集
-    lightinalbums_outdate = LightinAlbum.objects.filter(published=True, batch_no=batch_no)
+    if batch_no[1] >20:
+        lightinalbums_outdate = LightinAlbum.objects.filter(published=True, myalbum__pk = batch_no[0],batch_no=batch_no[1]-20, )
 
-    #删除子集
-    delete_out_lightin_album(lightinalbums_outdate)
+        #删除子集
+        delete_out_lightin_album(lightinalbums_outdate)
 
 
 
