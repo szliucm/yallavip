@@ -92,6 +92,8 @@ class Order(models.Model):
 
         if "没有产品" in stock_list:
             return  "没有产品"
+        elif "缺货" in stock_list:
+            return "缺货"
         elif "紧张" in stock_list:
             return "紧张"
         elif "紧张" in stock_list:

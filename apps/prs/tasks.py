@@ -1773,7 +1773,7 @@ def mapping_order_lightin(order):
             print("找不到映射，也就意味着无法管理库存！")
             #需要标识为异常订单
             error = "找不到SKU"
-            continue
+            break
 
         # 每个可能的条码
         for lightin_barcode in lightin_barcodes:
@@ -1824,6 +1824,8 @@ def mapping_order_lightin(order):
     else:
         print("映射不成功", error)
 
+    return error
+
 @shared_task
 def fulfill_orders_lightin():
 
@@ -1837,7 +1839,9 @@ def fulfill_orders_lightin():
     print("共有%s个订单待发货"%(orders.count()))
     for order in orders:
         if order.stock in [ "充足","紧张"] :
-            fulfill_order_lightin(order)
+            error = mapping_order_lightin(order)
+            if error == "":
+                fulfill_order_lightin(order)
 
 def fulfill_order_lightin(order):
     from suds.client import Client
