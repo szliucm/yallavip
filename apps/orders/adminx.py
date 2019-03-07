@@ -1299,7 +1299,7 @@ class VerifyAdmin(object):
     '''
 
     readonly_fields = ('order', 'order_time',)
-    list_display = ('order','order_sku_count','order_time', 'inventory_status',"fulfill_error",'order_financial_status','order_fulfillment_status','colored_verify_status', \
+    list_display = ('order','order_sku_count','order_time',"stock", 'inventory_status',"fulfill_error",'order_financial_status','order_fulfillment_status','colored_verify_status', \
                     'colored_sms_status',
                     'receiver_city','city','receiver_addr',
 
