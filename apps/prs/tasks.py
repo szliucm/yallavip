@@ -2036,6 +2036,45 @@ def sync_Shipped_order_shopify():
 
             },
         )
+def get_wms_product():
+    page = 1
+
+    while 1:
+        print("正在处理第 %s 页"%(page))
+
+        param = {
+            "pageSize": "100",
+            "page": page,
+             "product_sku":"",
+            "product_sku_arr":[],
+             "start_time":"2018-02-08 10:00:00",
+             #"end_time":"",
+        }
+
+        service = "getProductList"
+
+        result = yunwms(service, param)
+
+        #print(result)
+        if result.get("ask") == "Success":
+            for data in result.get("data"):
+                Lightin_barcode.objects.update_or_create(
+                    barcode=data.get("product_sku"),
+                    defaults={
+                        "product_status" : data.get("product_status"),
+                        "product_title": data.get("product_title"),
+                        "product_weight": data.get("product_weight"),
+
+                    },
+                )
+        else:
+            print("获取wms库存出错", result.get("message"))
+            break
+
+        if result.get("nextPage") == "false":
+            break
+        else:
+            page += 1;
 
 def get_wms_quantity():
     page = 1
@@ -2068,9 +2107,11 @@ def get_wms_quantity():
                         "quantity":  int(data.get("sellable")) + int(data.get("reserved"))
 
                     },
-
-
                 )
+        else:
+            print("获取wms库存出错", result.get("message"))
+            break
+
         if result.get("nextPage") == "false":
             break
         else:

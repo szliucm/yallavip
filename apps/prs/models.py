@@ -637,9 +637,16 @@ class Lightin_barcode(models.Model):
     #virtual = models.IntegerField(u'虚库存', default=0, blank=True, null=True)
     #transport = models.IntegerField(u'调拨占用库存', default=0, blank=True, null=True)
     #air = models.IntegerField(u'调拨中库存', default=0, blank=True, null=True)
+
+    #wms相关信息：产品，库存
+    product_status = models.CharField(u'product_status', default='', max_length=100, blank=True)
+    product_title = models.CharField(u'product_title', default='', max_length=100, blank=True)
+    product_weight = models.CharField(u'product_weight', default='', max_length=100, blank=True)
+
     y_sellable = models.IntegerField(u'wms_可售数量', default=0, blank=True, null=True)
     y_reserved = models.IntegerField(u'wms_待出库数量', default=0, blank=True, null=True)
     y_shipped = models.IntegerField(u'wms_历史出库数量', default=0, blank=True, null=True)
+
 
 
     class Meta:
