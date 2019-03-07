@@ -636,7 +636,7 @@ class Lightin_barcode(models.Model):
 
 
 
-        items = self.barcode_orderdetail_lightin.filter(~Q(order__wms_status="D"),
+        items = self.barcode_orderdetail_lightin.filter(order__wms_status="W",
                                                             order__financial_status="paid",order__status="open")
 
         if items:

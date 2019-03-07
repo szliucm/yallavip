@@ -217,7 +217,7 @@ class OrderAdmin(object):
     import_export_args = {"import_resource_class": OrderResource, "export_resource_class": OrderResource}
 
     #"stock", "cal_barcode", "inventory_status",
-    list_display = ["order_no", "status", "stock", "inventory_status", "wms_status","fulfill_error","order_amount", "order_time", "logistic_no","order_comment"]
+    list_display = ["order_no", "status", "stock",  "wms_status","fulfill_error","order_amount", "order_time", "logistic_no","order_comment"]
     list_editable = ["fulfill_error"]
     # list_display_links = ["show_conversation"]
     search_fields = ["order_no",'logistic_no', ]
@@ -1023,7 +1023,7 @@ class OrderDetailAdmin(object):
 
     #为了快速做海外仓包裹，所以把可能的图片显示出来
     #"fb_photo", "show_image", 'show_local_image',
-    list_display = ['order', 'sku',"handle","skuattr", 'product_quantity','stock','outstock',  'price','order_status','show_supply_status','alternative', ]
+    list_display = ['order', 'sku',"handle","skuattr", 'product_quantity','stock',  'price','order_status','show_supply_status','alternative', ]
 
     search_fields = ["order__order_no",'sku',"order__logistic_no" ]
 
@@ -1261,10 +1261,7 @@ class VerifyAdmin(object):
 
     stock.short_description = "库存"
 
-    def inventory_status(self, obj):
-        return obj.order.inventory_status
 
-    inventory_status.short_description = "库存状态"
 
     def order_financial_status(self, obj):
         return obj.order.financial_status
@@ -1304,7 +1301,7 @@ class VerifyAdmin(object):
     '''
 
     readonly_fields = ('order', 'order_time',)
-    list_display = ('order','order_sku_count','order_time',"stock", 'inventory_status',"fulfill_error",'order_financial_status','order_fulfillment_status','colored_verify_status', \
+    list_display = ('order','order_sku_count','order_time',"stock", "fulfill_error",'order_financial_status','order_fulfillment_status','colored_verify_status', \
                     'colored_sms_status',
                     'receiver_city','city','receiver_addr',
 
