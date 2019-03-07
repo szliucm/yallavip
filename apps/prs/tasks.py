@@ -1793,23 +1793,29 @@ def mapping_order_lightin(order):
         print("quantity", quantity)
         if quantity > 0:
             error = "缺货"
-    print(inventory_list)
-
-    # 插入到OrderDetail_lightin
-    orderdetail_lightin_list = []
-
-    for inventory in inventory_list:
-        orderdetail_lightin = OrderDetail_lightin(
-            order=order,
-            SKU=inventory[0],
-            barcode=inventory[1],
-            quantity=inventory[2],
-            price = inventory[3],
-        )
-        orderdetail_lightin_list.append(orderdetail_lightin)
+            break
 
 
-    OrderDetail_lightin.objects.bulk_create(orderdetail_lightin_list)
+
+    if error =="":
+        print("映射成功",  inventory_list)
+        # 插入到OrderDetail_lightin
+        orderdetail_lightin_list = []
+
+        for inventory in inventory_list:
+            orderdetail_lightin = OrderDetail_lightin(
+                order=order,
+                SKU=inventory[0],
+                barcode=inventory[1],
+                quantity=inventory[2],
+                price = inventory[3],
+            )
+            orderdetail_lightin_list.append(orderdetail_lightin)
+
+
+        OrderDetail_lightin.objects.bulk_create(orderdetail_lightin_list)
+    else:
+        print("映射不成功", error)
 
 @shared_task
 def fulfill_orders_lightin():
