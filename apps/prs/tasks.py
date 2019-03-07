@@ -1831,15 +1831,13 @@ def fulfill_orders_lightin():
     orders = Order.objects.filter(financial_status="paid" ,
                                   fulfillment_status__isnull = True,
                                   status = "open",
-
                                   verify__verify_status = "SUCCESS",
                                   verify__sms_status = "CHECKED",
                                   wms_status = "")
     print("共有%s个订单待发货"%(orders.count()))
     for order in orders:
-        if not order.inventory_status == "库存锁定" :
-            continue
-        fulfill_order_lightin(order)
+        if order.inventory_status in [ "充足","紧张"] :
+            fulfill_order_lightin(order)
 
 def fulfill_order_lightin(order):
     from suds.client import Client
