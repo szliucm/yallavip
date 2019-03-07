@@ -90,6 +90,15 @@ class Order(models.Model):
         for item in items:
             stock_list.append(item.stock)
 
+        if "没有产品" in stock_list:
+            return  "没有产品"
+        elif "紧张" in stock_list:
+            return "紧张"
+        elif "紧张" in stock_list:
+            return "紧张"
+        elif "充足" in stock_list:
+            return "充足"
+
         '''    
             if item.stock == "缺货":
                 outstock_skus += 1
@@ -114,7 +123,7 @@ class Order(models.Model):
         if busystock_skus ==0 and outstock_skus == 0 and none_skus == 0:
             stock = stock + "库存充足"
         '''
-        return  str(stock_list)
+
 
     cal_stock.short_description = "库存"
     stock = property(cal_stock)
