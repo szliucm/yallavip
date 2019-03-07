@@ -542,6 +542,25 @@ class Lightin_SKU(models.Model):
     cal_sellable.short_description = "可销售库存"
     sellable = property(cal_sellable)
 
+    def cal_reserved(self):
+        from django.db.models import Sum
+        from orders.models import OrderDetail
+        from django.db.models import Q
+
+        items = OrderDetail.objects.filter(order__wms_status="D",
+                                   order__financial_status="paid",
+                                   order__status="open",
+                                   sku=self.SKU,
+                                   )
+
+        if items:
+            return int(items.aggregate(nums=Sum('product_quantity')).get('nums'))
+        else:
+            return 0
+
+    cal_reserved.short_description = "待出库数量"
+    reserved = property(cal_reserved)
+
 
     vendor_sale_price = models.FloatField(verbose_name="供方销售价",default=0)
     vendor_supply_price = models.FloatField(verbose_name="供方采购价", default=0)
@@ -554,6 +573,9 @@ class Lightin_SKU(models.Model):
     height = models.FloatField(verbose_name="height", default=0)
 
     skuattr = models.TextField(default='', null=True, blank=True, verbose_name="skuattr")
+
+    #y_sellable = models.IntegerField(u'wms_可售数量', default=0, blank=True, null=True)
+    #y_reserved = models.IntegerField(u'wms_待出库数量', default=0, blank=True, null=True)
 
     class Meta:
         verbose_name = "兰亭SKU"
