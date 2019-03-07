@@ -86,13 +86,11 @@ class Order(models.Model):
         none_skus = 0
         stock_list =[]
 
-        stock_list.append(items[0].stock)
 
-        '''
         for item in items:
             stock_list.append(item.stock)
 
-            
+        '''    
             if item.stock == "缺货":
                 outstock_skus += 1
                 #outstock_quantity += item.outstock
