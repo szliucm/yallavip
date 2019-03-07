@@ -310,7 +310,7 @@ class OrderDetail(models.Model):
     price = models.CharField(u'Unit Price', default='', max_length=50, blank=True)
 
     #inventory_status = models.CharField(u'库存状态', default='', max_length=50, blank=True)
-    '''
+
     def cal_stock(self):
 
         sku_list = ["13531030880298", "price gap", "COD link", "price gap 2", ]
@@ -333,7 +333,7 @@ class OrderDetail(models.Model):
     cal_stock.short_description = "库存状态"
     stock = property(cal_stock)
 
-    '''
+
     def cal_outstock(self):
         from django.db.models import Sum
         from orders.models import  OrderDetail_lightin
