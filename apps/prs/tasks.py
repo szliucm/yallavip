@@ -1763,6 +1763,10 @@ def mapping_order_lightin(order):
         quantity = int(float(orderdetail.product_quantity))
         print("sku %s , 需求量 %s " % (sku, quantity))
 
+        sku_list = ["13531030880298", "price gap", "COD link", "price gap 2", ]
+        if sku in sku_list:
+            continue
+
         lightin_barcodes = Lightin_barcode.objects.filter(SKU=sku)
 
         if lightin_barcodes is None:
