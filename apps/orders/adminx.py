@@ -1256,6 +1256,11 @@ class VerifyAdmin(object):
 
     receiver_phone.short_description = "收货人电话"
 
+    def stock(self, obj):
+        return obj.order.stock
+
+    stock.short_description = "库存"
+
     def inventory_status(self, obj):
         return obj.order.inventory_status
 
