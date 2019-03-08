@@ -476,7 +476,7 @@ class Lightin_SPU(models.Model):
         lightin_skus = self.spu_sku.all()
         total = 0
         for lightin_sku in lightin_skus:
-            total  += lightin_sku.sellable
+            total  += lightin_sku.o_sellable
 
         return total
 
