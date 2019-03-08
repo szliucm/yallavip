@@ -2226,7 +2226,10 @@ def cal_reserved(overtime=24):
         sku_quantity[order_sku[0]] = order_sku[1]
 
     for draft_sku in draft_skus:
-        sku_quantity[draft_sku[0]] += draft_sku[1]
+        if sku_quantity.get(draft_sku[0]):
+            sku_quantity[draft_sku[0]] += draft_sku[1]
+        else:
+            sku_quantity[draft_sku[0]] = draft_sku[1]
 
     return sku_quantity
 
