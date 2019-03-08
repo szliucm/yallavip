@@ -2213,7 +2213,7 @@ def yunwms(service, param):
 def cal_reserved(overtime=24):
     from django.db.models import Sum
     from orders.models import OrderDetail
-    from shop.modeles import DraftItem
+    from shop.models import DraftItem
     order_skus = OrderDetail.objects.filter(order__status="open",
                                        order__order_time__gt =  dt.now() - dt.timedelta(hours=overtime),
                                        ).values_list('sku').annotate(Sum('product_quantity'))
