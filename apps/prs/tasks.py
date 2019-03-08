@@ -2238,6 +2238,7 @@ def yuntms(service, param):
     result = json.loads(escape(response))
     return  result
 
+@shared_task
 def cal_reserved(overtime=24):
     from django.db.models import Sum
     from orders.models import OrderDetail
@@ -2293,7 +2294,7 @@ def cal_reserved(overtime=24):
 
 
 
-
+    delete_outstock_lightin_album()
 
 
 
