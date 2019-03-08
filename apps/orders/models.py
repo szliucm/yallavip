@@ -1361,3 +1361,4 @@ class LogisticAccount(models.Model):
 
     def __str__(self):
         return self.logistic_no
+

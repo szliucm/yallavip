@@ -688,7 +688,7 @@ def update_orders():
                 if sku == "" or sku is None:
                     sku = order_item["variant_id"]
                     if sku == "" or sku is None:
-                        sku = order_item["id"]
+                        sku = order_item["product_id"]
                 obj_orderdetail, created = OrderDetail.objects.update_or_create(order=obj,
                                                                     sku = sku,
                                                           defaults={
@@ -787,3 +787,94 @@ def get_drafts(minutes=10):
             except Exception as e:
                 print("drafts  completed", e)
                 continue
+
+def update_drafts():
+    oriorders = ShopOriDraft.objects.filter(updated=True)
+    print("有 %s 个草稿待更新"%(oriorders.count()))
+
+    for row in oriorders:
+        print(row.order_id)
+        order = json.loads(row.order_json)
+
+        '''
+        #客户信息先不处理
+        customer = order.get("customer")
+
+        if customer is not None :
+
+            buyer_name = ""
+            first_name = order["customer"].get("first_name","")
+            last_name = order["customer"].get("last_name", "")
+            if first_name is not None :
+                buyer_name += first_name
+            if last_name is not None :
+                buyer_name += last_name
+
+
+
+        else:
+            buyer_name = ""
+
+        shipping_address = order.get("shipping_address")
+        if shipping_address is not None:
+            receiver_name =  shipping_address.get("first_name","")
+            if shipping_address.get("last_name","") is not None:
+                receiver_name += " " +  shipping_address.get("last_name","")
+
+            address1 = shipping_address.get("address1","")
+
+            address2 = shipping_address.get("address2","")
+            if address2 is None:
+                address2 = ""
+            city = shipping_address.get("city","")
+            country = shipping_address.get("country","")
+            phone = shipping_address.get("phone","")
+
+        else:
+            receiver_name = ""
+            address1 = ""
+            address2 = ""
+            city = ""
+            country = ""
+            phone = ""
+        '''
+
+
+        obj, created = Draft.objects.update_or_create(order_no= str(row.order_no),
+                        defaults={
+                                'order_id':row.order_id,
+
+                                'status':row.status,
+                                'created_at': row.created_at,
+                                'updated_at': row.updated_at,
+                                'completed_at': row.completed_at,
+                                "updated": True,
+                                }
+                                )
+        print("####obj", obj, type(obj) )
+        if obj is None:
+            print("#############soemthing get wrong ",order["order_number"] )
+            continue
+
+        if created :
+            for order_item in  order["line_items"]:
+
+                sku =order_item["sku"]
+                if sku == "" or sku is None:
+                    sku = order_item["variant_id"]
+                    if sku == "" or sku is None:
+                        sku = order_item["product_id"]
+                obj_orderdetail, created = DraftItem.objects.update_or_create(
+                                                                    order=obj,
+                                                                    sku = sku,
+                                                          defaults={
+                                                              'quantity': order_item["quantity"],
+                                                              'price': order_item["price"],
+                                                               }
+                                                          )
+
+                if not created:
+                    print("#############soemthing get wrong ", order["order_number"], order_item)
+                    continue
+
+    oriorders.update(updated=False)

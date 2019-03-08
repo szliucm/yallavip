@@ -474,3 +474,22 @@ class ShopOriDraft(models.Model):
 
     def __str__(self):
         return self.order_id
+
+class Draft(models.Model):
+    order_id = models.CharField(u'订单id', default='', max_length=100, blank=True)
+    order_no = models.CharField(u'订单号', default='', max_length=50, blank=True)
+    status = models.CharField(u'shopify订单状态', max_length=30, default='', blank=True)
+
+    created_at = models.DateTimeField(u'创建时间', auto_now=False, blank=True, null=True)
+    updated_at = models.DateTimeField(u'更新时间', auto_now=False, blank=True, null=True)
+    completed_at = models.DateTimeField(u'完成时间', auto_now=False, blank=True, null=True)
+
+class DraftItem(models.Model):
+    draft = models.ForeignKey(Draft, related_name='draft_item', null=False, on_delete=models.CASCADE,
+                              verbose_name="Draft")
+    sku = models.CharField(u'SKU', default='', max_length=100, null=True, blank=True)
+
+    quantity = models.CharField(u'Quantity', default='', max_length=50, blank=True)
+
+    price = models.CharField(u'Unit Price', default='', max_length=50, blank=True)
+
