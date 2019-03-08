@@ -1669,7 +1669,9 @@ def delete_outstock_lightin_album():
         n -= 1
 
         if  Lightin_SPU.objects.get(pk = spu["lightin_spu"]).sellable <= 0:
+            print(spu["lightin_spu"], "可售库存小于0 ")
             lightinalbums = lightinalbums.filter(lightin_spu__pk = spu["lightin_spu"])
+            print(lightinalbums)
             for lightinalbum in lightinalbums:
                 photo_list = lightinalbums_out.get(lightinalbum.myalbum.page_no)
                 if not photo_list :
@@ -1680,6 +1682,9 @@ def delete_outstock_lightin_album():
 
                 lightinalbums_out[lightinalbum.myalbum.page_no] = photo_list
             #print("lightinalbum is %s  page no is %s, photo_id is %s "%(lightinalbum, lightinalbum.myalbum.page_no,lightinalbum.fb_id ))
+        else:
+            print(spu["lightin_spu"], "可售库存大于0 ")
+
 
     # 删除子集
     print("共有 %s 个 图片待删除"%(m))
