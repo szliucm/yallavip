@@ -2236,11 +2236,14 @@ def cal_reserved(overtime=24):
 
     print("有%s个sku需要更新"%(len(sku_quantity)))
     for sku in sku_quantity:
-        lightin_sku = Lightin_SKU.objects.get(SKU = sku)
-        lightin_sku.o_reserved = sku_quantity[sku]
-        lightin_sku.o_sellable = lightin_sku.o_quantity - sku_quantity[sku]
-        lightin_sku.save()
-        print(lightin_sku, lightin_sku.o_reserved, lightin_sku.o_sellable )
+        try:
+            lightin_sku = Lightin_SKU.objects.get(SKU = sku)
+            lightin_sku.o_reserved = sku_quantity[sku]
+            lightin_sku.o_sellable = lightin_sku.o_quantity - sku_quantity[sku]
+            lightin_sku.save()
+            print(lightin_sku, lightin_sku.o_reserved, lightin_sku.o_sellable )
+        except Exception as e:
+            print("更新出错",sku, e)
 
 
 
