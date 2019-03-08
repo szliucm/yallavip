@@ -1632,7 +1632,7 @@ def delete_outdate_lightin_album(batch_no):
 
 #把所有sku都没有库存，spu还在发布状态的从Facebook删除
 @shared_task
-def delete_outstock_lightin_album(sku_list=None):
+def delete_outstock_lightin_album():
     #更新还在发布中的spu的库存
     from django.db import connection, transaction
     '''
@@ -1652,13 +1652,7 @@ def delete_outstock_lightin_album(sku_list=None):
     '''
 
     #每天更新一次所有在发布的图片，每分钟更新一次订单sku对应的图片
-    if not sku_list:
-        lightinalbums = LightinAlbum.objects.filter(published=True)
-    else:
-
-        lightinalbums = LightinAlbum.objects.filter(published=True,
-                                    lightin_spu__spu_sku__SKU__in = sku_list)
-
+    lightinalbums = LightinAlbum.objects.filter(published=True,lightin_spu__sellable__lte=0)
 
     spus = lightinalbums.values("lightin_spu").distinct()
     n = spus.count()
@@ -2216,13 +2210,17 @@ def cal_reserved(overtime=24):
     from orders.models import OrderDetail
     from shop.models import DraftItem
 
+
     sku_quantity = {}
+    sku_list = []
     # 计算订单
     order_skus = OrderDetail.objects.filter(order__status="open",
                                        order__order_time__gt =  dt.now() - dt.timedelta(hours=overtime),
                                        ).values_list('sku').annotate(Sum('product_quantity'))
     for order_sku in order_skus:
         sku_quantity[order_sku[0]] = order_sku[1]
+        if order_sku[0] not in sku_list:
+            sku_list.append(order_sku[0])
 
     # 计算草稿
     draft_skus = DraftItem.objects.filter(draft__status="open",
@@ -2234,9 +2232,11 @@ def cal_reserved(overtime=24):
             sku_quantity[draft_sku[0]] += draft_sku[1]
         else:
             sku_quantity[draft_sku[0]] = draft_sku[1]
+        if draft_sku[0] not in sku_list:
+            sku_list.append(draft_sku[0])
 
     print("有%s个sku需要更新"%(len(sku_quantity)))
-    sku_list = []
+
     for sku in sku_quantity:
         try:
             lightin_sku = Lightin_SKU.objects.get(SKU = sku)
@@ -2246,16 +2246,22 @@ def cal_reserved(overtime=24):
 
             print(lightin_sku, lightin_sku.o_reserved, lightin_sku.o_sellable)
 
-            #无库存的sku加入列表，准备删除图片
-            if lightin_sku.o_sellable == 0:
-                sku_list.append(sku)
-
         except Exception as e:
             print("更新出错",sku, e)
 
 
-    #删除无库存sku的图片
-    delete_outstock_lightin_album(sku_list)
+    #更新对应的spu
+    lightin_spus = Lightin_SPU.objects.filter(spu_sku__SKU__in = sku_list)
+    for lightin_spu in lightin_spus:
+        lightin_spu.sellable = Lightin_SKU.objects.filter(lightin_spu=spu.pk).aggregate(nums = Sum('o_sellable')).get("nums")
+        lightin_spu.save()
+
+
+
+
+
+
+
 
 
 
