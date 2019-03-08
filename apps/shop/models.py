@@ -483,6 +483,16 @@ class Draft(models.Model):
     created_at = models.DateTimeField(u'创建时间', auto_now=False, blank=True, null=True)
     updated_at = models.DateTimeField(u'更新时间', auto_now=False, blank=True, null=True)
     completed_at = models.DateTimeField(u'完成时间', auto_now=False, blank=True, null=True)
+    updated = models.BooleanField(u'更新状态', default=False)
+
+    class Meta:
+        verbose_name = "草稿"
+        verbose_name_plural = verbose_name
+
+
+    def __str__(self):
+        return self.order_id
+
 
 class DraftItem(models.Model):
     draft = models.ForeignKey(Draft, related_name='draft_item', null=False, on_delete=models.CASCADE,
@@ -492,4 +502,12 @@ class DraftItem(models.Model):
     quantity = models.CharField(u'Quantity', default='', max_length=50, blank=True)
 
     price = models.CharField(u'Unit Price', default='', max_length=50, blank=True)
+
+    class Meta:
+        verbose_name = "草稿明细"
+        verbose_name_plural = verbose_name
+
+
+    def __str__(self):
+        return self.sku
 
