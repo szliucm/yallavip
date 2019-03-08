@@ -1313,7 +1313,7 @@ class VerifyAdmin(object):
     ordering = ['-order__order_time']
     list_editable = ['phone_1', 'phone_2','verify_comments','city',]
     search_fields = ['order__order_no','verify_comments','cs_reply',"phone_1", "order__receiver_city",]
-    list_filter = ('order__order_status','order__financial_status','order__fulfillment_status','verify_status', 'sms_status', 'error_contact',"city",)
+    list_filter = ('order__order_status','order__financial_status','order__fulfillment_status',"order__wms_status", 'verify_status', 'sms_status', 'error_contact',"city",)
 
     model_icon = 'fa fa-address-book-o'
 
@@ -1625,7 +1625,7 @@ class VerifyAdmin(object):
     '''
     def queryset(self):
         qs = super().queryset()
-        return qs.filter(order__status="OPEN", order__wms_status = "")
+        return qs.filter(order__status="OPEN")
 
 
 class ClientServiceAdmin(object):

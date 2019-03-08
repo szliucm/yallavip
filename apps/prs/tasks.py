@@ -1881,7 +1881,7 @@ def fulfill_order_lightin(order):
         "name":order.receiver_name,
         "phone":order.receiver_phone,
         "cell_phone":"",
-        "email": order.buyer_name.replace(" ", "") + "@yallavip.com",
+        "email": "na@yallavip.com",
         "order_cod_price":order.order_amount,
         "order_cod_currency":"SAR",
         "order_age_limit":"2",
