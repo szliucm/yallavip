@@ -510,7 +510,7 @@ class Lightin_SKU(models.Model):
         items = Lightin_barcode.objects.filter(SKU = self.SKU)
 
         if items:
-            return items.aggregate(nums=Sum('quantity')).get('nums')
+            return items.aggregate(nums=Sum('y_sellable')).get('nums')
         else:
             return 0
 
