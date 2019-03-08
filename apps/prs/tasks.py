@@ -2210,6 +2210,56 @@ def yunwms(service, param):
     result = json.loads(escape(response))
     return  result
 
+def cal_reserved(overtime=24):
+    from django.db.models import Sum
+    from orders.models import OrderDetail
+    from shop.modeles import DraftItem
+    order_skus = OrderDetail.objects.filter(order__status="open",
+                                       order__order_time__gt =  dt.now() - dt.timedelta(hours=overtime),
+                                       ).values_list('sku').annotate(Sum('product_quantity'))
+
+    draft_skus = DraftItem.objects.filter(draft__status="open",
+                                     draft__created_at__gt=dt.now() - dt.timedelta(hours=overtime),
+                                       ).values_list('sku').annotate(Sum('quantity'))
+    sku_quantity = {}
+    for order_sku in order_skus:
+        sku_quantity[order_sku[0]] = order_sku[1]
+
+    for draft_sku in draft_skus:
+        sku_quantity[draft_sku[0]] += draft_sku[1]
+
+    return sku_quantity
+
+
+def cal_reserved_sku(sku, overtime=24):
+    from django.db.models import Sum
+    from orders.models import OrderDetail
+    from shop.modeles import  DraftItem
+    from django.db.models import Q
+
+    reserved = 0
+
+    #计算订单
+    items = OrderDetail.objects.filter(order__status="open",
+                                       order__order_time__gt =  dt.now() - dt.timedelta(hours=overtime),
+                                       sku=sku,
+                                       )
+
+    if items:
+        reserved += int(items.aggregate(nums=Sum('product_quantity')).get('nums'))
+
+
+    # 计算草稿
+    items = DraftItem.objects.filter(draft__status="open",
+                                     draft__created_at__gt=dt.now() - dt.timedelta(hours=overtime),
+                                       sku=sku,
+                                       )
+    if items:
+        reserved += int(items.aggregate(nums=Sum('product_quantity')).get('nums'))
+
+    return  reserved
+
+
 
 
 
