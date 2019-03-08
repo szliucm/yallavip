@@ -738,7 +738,7 @@ class Lightin_SKUAdmin(object):
     import_export_args = {"import_resource_class": Lightin_SKUResource,
                           "export_resource_class": Lightin_SKUResource}
 
-    list_display = ["SPU", "SKU", "quantity", "occupied","sellable", "vendor_sale_price","vendor_supply_price","weight", "length","width","height","skuattr",]
+    list_display = ["SPU", "SKU", "o_quantity", "o_reserved","o_sellable", "vendor_sale_price","vendor_supply_price","weight", "length","width","height","skuattr",]
     # 'sku_name','img',
     search_fields = ["SPU", "SKU",]
     list_filter = ["SPU"]
@@ -762,7 +762,7 @@ class Lightin_barcodeAdmin(object):
     import_export_args = {"import_resource_class": Lightin_barcodeResource,
                           "export_resource_class": Lightin_barcodeResource}
 
-    list_display = ["SKU","barcode","quantity","occupied","sellable","y_sellable","y_reserved","y_shipped",]
+    list_display = ["SKU","barcode","o_quantity","o_sellable","o_reserved","o_shipped","y_sellable","y_reserved","y_shipped",]
 
 
     search_fields = ["SKU","barcode",]

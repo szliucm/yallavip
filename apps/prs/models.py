@@ -497,65 +497,7 @@ class Lightin_SKU(models.Model):
 
 
 
-    def cal_quantity(self):
 
-        from django.db.models import Sum
-        from orders.models import OrderDetail
-        from django.db.models import Q
-
-        items = Lightin_barcode.objects.filter(SKU = self.SKU)
-
-        if items:
-            return items.aggregate(nums=Sum('y_sellable')).get('nums')
-        else:
-            return 0
-
-    cal_quantity.short_description = "库存数量"
-    quantity = property(cal_quantity)
-
-    def cal_occupied(self):
-        from django.db.models import Sum
-        from orders.models import OrderDetail
-        from django.db.models import Q
-
-        items = OrderDetail.objects.filter(~Q(order__wms_status="D"),
-                                   order__financial_status="paid",
-                                   order__status="open",
-                                   sku=self.SKU,
-                                   )
-
-        if items:
-            return int(items.aggregate(nums=Sum('product_quantity')).get('nums'))
-        else:
-            return 0
-
-    cal_occupied.short_description = "订单占用库存"
-    occupied = property(cal_occupied)
-
-    def cal_sellable(self):
-        return  int(self.quantity - self.occupied)
-
-    cal_sellable.short_description = "可销售库存"
-    sellable = property(cal_sellable)
-
-    def cal_reserved(self):
-        from django.db.models import Sum
-        from orders.models import OrderDetail
-        from django.db.models import Q
-
-        items = OrderDetail.objects.filter(order__wms_status="D",
-                                   order__financial_status="paid",
-                                   order__status="open",
-                                   sku=self.SKU,
-                                   )
-
-        if items:
-            return int(items.aggregate(nums=Sum('product_quantity')).get('nums'))
-        else:
-            return 0
-
-    cal_reserved.short_description = "待出库数量"
-    reserved = property(cal_reserved)
 
 
     vendor_sale_price = models.FloatField(verbose_name="供方销售价",default=0)
@@ -629,31 +571,6 @@ class Lightin_barcode(models.Model):
     o_reserved = models.IntegerField(u'oms_待出库数量', default=0, blank=True, null=True)
 
     o_shipped = models.IntegerField(u'oms_历史出库数量', default=0, blank=True, null=True)
-
-    def cal_occupied(self):
-        from django.db.models import Sum
-        from orders.models import  OrderDetail_lightin
-        from django.db.models import Q
-
-
-
-        items = self.barcode_orderdetail_lightin.filter(order__wms_status="W",
-                                                            order__financial_status="paid",order__status="open")
-
-        if items:
-            return items.aggregate(nums = Sum('quantity')).get('nums')
-        else:
-            return  0
-
-    cal_occupied.short_description = "订单占用库存"
-    occupied = property(cal_occupied)
-
-    def cal_sellable(self):
-        #还没有想好，先这么做
-        return self.y_sellable - self.occupied
-
-    cal_sellable.short_description = "可销售库存"
-    sellable = property(cal_sellable)
 
     #unsellable = models.IntegerField(u'不可销售库存(', default=0, blank=True, null=True)
     locked = models.IntegerField(u'锁定库存', default=0, blank=True, null=True)
