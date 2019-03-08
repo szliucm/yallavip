@@ -757,8 +757,8 @@ def get_drafts(minutes=10):
                 r = requests.get(url, params)
                 oriorders = json.loads(r.text)["draft_orders"]
 
-                print("oriorders ", len(oriorders))
-                continue
+                print("oriorders ", oriorders)
+                break
 
                 oriorders_list = []
                 for row in oriorders:
