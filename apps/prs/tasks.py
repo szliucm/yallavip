@@ -2227,8 +2227,8 @@ def yuntms(service, param):
     url = "http://toms.cititrans.com/default/svc/wsdl"
     client = Client(url)
 
-    response = client.service.callService(appToken=appToken,
-                                          appKey=appKey,
+    response = client.service.callService(tms_appToken=appToken,
+                                          tms_appKey=appKey,
                                           service=service,
                                           paramsJson=json.dumps(param)
                                           )
