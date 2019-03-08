@@ -628,6 +628,9 @@ class Lightin_barcode(models.Model):
     quantity = models.IntegerField(u'数量', default=0, blank=True, null=True)
     #sellable = models.IntegerField(u'可销售库存', default=0, blank=True, null=True)
     #occupied = models.IntegerField(u'订单占用库存', default=0, blank=True, null=True)
+    o_sellable = models.IntegerField(u'wms_可售数量', default=0, blank=True, null=True)
+    o_reserved = models.IntegerField(u'wms_待出库数量', default=0, blank=True, null=True)
+    o_shipped = models.IntegerField(u'wms_历史出库数量', default=0, blank=True, null=True)
 
     def cal_occupied(self):
         from django.db.models import Sum
