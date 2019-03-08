@@ -1656,9 +1656,9 @@ def delete_outstock_lightin_album():
     '''
 
     #每天更新一次所有在发布的图片，每分钟更新一次订单sku对应的图片
-    lightinalbums = LightinAlbum.objects.filter(published=True,lightin_spu__sellable__lte=0)
+    lightinalbums_all = LightinAlbum.objects.filter(published=True,lightin_spu__sellable__lte=0)
 
-    spus = lightinalbums.values("lightin_spu").distinct()
+    spus = lightinalbums_all.values("lightin_spu").distinct()
     n = spus.count()
     print("一共有%s 个spu待排查" % (n))
     m = 0
@@ -1670,7 +1670,7 @@ def delete_outstock_lightin_album():
 
         if  Lightin_SPU.objects.get(pk = spu["lightin_spu"]).sellable <= 0:
             print(spu["lightin_spu"], "可售库存小于0 ")
-            lightinalbums = lightinalbums.filter(lightin_spu__pk = spu["lightin_spu"])
+            lightinalbums = lightinalbums_all.filter(lightin_spu__pk = spu["lightin_spu"])
             print(lightinalbums)
             for lightinalbum in lightinalbums:
                 photo_list = lightinalbums_out.get(lightinalbum.myalbum.page_no)
