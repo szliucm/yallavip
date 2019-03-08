@@ -1665,6 +1665,7 @@ def delete_outstock_lightin_album(all=False):
 
     n = lightinalbums.count()
     print("一共有%s 个图片待排查" % (n))
+    m = 0
 
     for lightinalbum in lightinalbums:
         print("还有%s 个图片待排查"%(n))
@@ -1676,12 +1677,13 @@ def delete_outstock_lightin_album(all=False):
                 photo_list = []
             if lightinalbum.fb_id not in photo_list:
                 photo_list.append(lightinalbum.fb_id)
+            m += 1
 
             lightinalbums_out[lightinalbum.myalbum.page_no] = photo_list
             #print("lightinalbum is %s  page no is %s, photo_id is %s "%(lightinalbum, lightinalbum.myalbum.page_no,lightinalbum.fb_id ))
 
     # 删除子集
-
+    print("共有 %s 个 图片待删除"%(m))
     delete_out_lightin_album(lightinalbums_out)
     if not all:
         Order.objects.filter(updated=True).update(updated=False)
