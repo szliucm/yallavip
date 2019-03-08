@@ -865,7 +865,7 @@ def update_drafts():
                     if sku == "" or sku is None:
                         sku = order_item["product_id"]
                 obj_orderdetail, created = DraftItem.objects.update_or_create(
-                                                                    order=obj,
+                                                                    draft=obj,
                                                                     sku = sku,
                                                           defaults={
                                                               'quantity': order_item["quantity"],
