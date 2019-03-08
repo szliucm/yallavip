@@ -757,14 +757,14 @@ def get_drafts(minutes=10):
                 r = requests.get(url, params)
                 oriorders = json.loads(r.text)["draft_orders"]
 
-                print("oriorders ", oriorders)
-                break
+                #print("oriorders ", oriorders)
+
 
                 oriorders_list = []
                 for row in oriorders:
                     # print("row is ",row)
                     order_id_list.append(row["id"])
-                    oriorder = ShopOriOrder(
+                    oriorder = ShopOriDraft(
                         order_id=row["id"],
                         order_no=row["name"],
                         created_at=row["created_at"],
