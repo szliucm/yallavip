@@ -430,15 +430,14 @@ def get_orders(minutes=10):
     # shopify.ShopifyResource.set_site(shop_url)
 
     status = ["open", "closed", "cancelled"]
-    updated_at_min = (dt.now() - timedelta(minutes=minutes)).strftime("%Y-%m-%dT%H:%M:%S+00:00")
+    params = {}
+    if minutes > 0:
+        updated_at_min = (dt.now() - timedelta(minutes=minutes)).strftime("%Y-%m-%dT%H:%M:%S+00:00")
+        params["updated_at_min"] = updated_at_min
+
     for stat in status:
         url = shop_url + "/admin/orders/count.json"
-        params = {
-
-
-            "updated_at_min": updated_at_min ,
-            "status": stat,
-        }
+        params["status"] = stat
         # print("url %s params %s"%(url, params))
         r = requests.get(url, params)
         data = json.loads(r.text)
@@ -454,7 +453,7 @@ def get_orders(minutes=10):
 
         i = 0
         limit = 100
-
+        params["limit"] = limit
         while True:
             try:
                 order_id_list = []
@@ -465,15 +464,7 @@ def get_orders(minutes=10):
 
                 # products = shopify.Product.find(page=i,limit=limit,updated_at_min=shop.updated_time)
                 url = shop_url + "/admin/orders.json"
-                params = {
-                    "page": i,
-                    "limit": limit,
-                    "updated_at_min": updated_at_min,
-                    "status": stat,
-                    # "fields": "id,handle,body_html,title,product_type,created_at,published_at,"
-                    #          "updated_at,tags,vendor,variants,images,options",
-                    # "fields": "product_id",
-                }
+                params["page"] = i
                 print(("params is ", params))
 
                 r = requests.get(url, params)

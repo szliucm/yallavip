@@ -2298,12 +2298,12 @@ def cal_reserved(overtime=24):
 
 
 @shared_task
-def sync_shopify():
+def sync_shopify(minutes=10):
     from shop.tasks import  get_orders,update_orders,get_drafts,update_drafts
-    get_orders(minutes=10)
+    get_orders(minutes=minutes)
     update_orders()
 
-    get_drafts(minutes=10)
+    get_drafts(minutes=minutes)
     update_drafts()
 
     cal_reserved(overtime=24)
