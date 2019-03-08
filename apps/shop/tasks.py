@@ -418,7 +418,7 @@ def post_to_page():
 
 @shared_task
 def get_orders(minutes=10):
-    from prs.tasks import  cal_reserved
+    #from prs.tasks import  cal_reserved
     # delete_outstock_lightin_album
 
     shop_name = "yallasale-com"
@@ -507,10 +507,10 @@ def get_orders(minutes=10):
                 print("orders  completed", e)
                 continue
 
-    update_orders()
+    #update_orders()
 
     #delete_outstock_lightin_album()
-    cal_reserved()
+    #cal_reserved()
 
 def update_orders():
     oriorders = ShopOriOrder.objects.filter(updated=True)

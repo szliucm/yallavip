@@ -2294,7 +2294,23 @@ def cal_reserved(overtime=24):
 
 
 
+
+
+
+@shared_task
+def sync_shopify():
+    from shop.tasks import  get_orders,update_orders,get_drafts,update_drafts
+    get_orders(minutes=10)
+    update_orders()
+
+    get_drafts(minutes=10)
+    update_drafts()
+
+    cal_reserved(overtime=24)
+
     delete_outstock_lightin_album()
+
+
 
 
 
