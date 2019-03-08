@@ -1670,7 +1670,7 @@ def delete_outstock_lightin_album(sku_list=None):
         print("还有%s 个spu待排查"%(n))
         n -= 1
 
-        if  Lightin_SPU.objects.get(pk = spu).sellable <= 0:
+        if  Lightin_SPU.objects.get(pk = spu["lightin_spu"]).sellable <= 0:
             lightinalbums = lightinalbums.filter(lightin_spu__pk = spu)
             for lightinalbum in lightinalbums:
                 photo_list = lightinalbums_out.get(lightinalbum.myalbum.page_no)
