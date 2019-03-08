@@ -74,6 +74,9 @@ class Order(models.Model):
 
     #不锁定条码
     def cal_stock(self):
+        if not self.status == 'open' or self.wms_status == 'W':
+            return  "已处理"
+
         items = self.order_orderdetail.all()
         if not items:
             return "没找到明细"
