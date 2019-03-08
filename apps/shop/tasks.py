@@ -699,3 +699,89 @@ def update_orders():
 
     oriorders.update(updated=False)
 
+
+@shared_task
+def get_drafts(minutes=10):
+    from prs.tasks import delete_outstock_lightin_album
+
+    shop_name = "yallasale-com"
+    shop_obj = Shop.objects.get(shop_name=shop_name)
+
+
+    # 获取新草稿信息
+    shop_url = "https://%s:%s@%s.myshopify.com" % (shop_obj.apikey, shop_obj.password, shop_obj.shop_name)
+    # shop_url = "https://12222a833afcad263c5cc593eca7af10:47aea3fe8f4b9430b1bac56c886c9bae@yallasale-com.myshopify.com/admin"
+    # shopify.ShopifyResource.set_site(shop_url)
+
+    status = ["open", "invoice_sent", "completed"]
+    params = {}
+    if minutes > 0:
+        updated_at_min = (dt.now() - timedelta(minutes=minutes)).strftime("%Y-%m-%dT%H:%M:%S+00:00")
+        params["updated_at_min"] = updated_at_min
+
+    for stat in status:
+        url = shop_url + "/admin/draft_orders/count.json"
+        params["status"] = stat
+
+        # print("url %s params %s"%(url, params))
+        r = requests.get(url, params)
+        data = json.loads(r.text)
+
+        if not data:
+            print("返回为空", data)
+            continue
+
+        print("draft count is ", data.get("count"))
+
+        total_count = data["count"]
+        print(stat, "共有 %s 个草稿待获取" % (total_count))
+
+        i = 0
+        limit = 100
+        params["limit"] = limit
+
+        while True:
+            try:
+                order_id_list = []
+                if (i * limit > total_count):
+                    break
+
+                i = i + 1
+
+                # products = shopify.Product.find(page=i,limit=limit,updated_at_min=shop.updated_time)
+                url = shop_url + "/admin/draft_orders.json"
+                params["page"] = i
+
+                print(("params is ", params))
+
+                r = requests.get(url, params)
+                oriorders = json.loads(r.text)["draft_orders"]
+
+                print("oriorders ", len(oriorders))
+                oriorders_list = []
+                for row in oriorders:
+                    # print("row is ",row)
+                    order_id_list.append(row["id"])
+                    oriorder = ShopOriOrder(
+                        order_id=row["id"],
+                        order_no=row["name"],
+                        created_at=row["created_at"],
+                        updated_at=row["updated_at"],
+                        completed_at=row["completed_at"],
+                        status=stat,
+                        order_json=json.dumps(row),
+                        updated=True,
+                    )
+                    oriorders_list.append(oriorder)
+
+                # 删除所有可能重复的订单信息
+                ShopOriDraft.objects.filter(order_id__in=order_id_list).delete()
+
+                ShopOriDraft.objects.bulk_create(oriorders_list)
+                # insert_product(shop.shop_name, products)
+
+
+
+            except Exception as e:
+                print("drafts  completed", e)
+                continue

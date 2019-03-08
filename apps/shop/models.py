@@ -455,3 +455,22 @@ class ShopOriOrder(models.Model):
 
     def __str__(self):
         return self.order_id
+
+class ShopOriDraft(models.Model):
+
+    order_id = models.CharField(u'订单id', default='', max_length=100, blank=True)
+    order_no = models.CharField(u'订单号', default='', max_length=50, blank=True)
+    status = models.CharField(u'shopify订单状态', max_length=30, default='', blank=True)
+    created_at = models.DateTimeField(u'创建时间', auto_now=False, blank=True, null=True)
+    updated_at = models.DateTimeField(u'更新时间', auto_now=False, blank=True, null=True)
+    completed_at = models.DateTimeField(u'完成时间', auto_now=False, blank=True, null=True)
+    order_json  =  models.TextField(u'订单json', default='', null=True, blank=True)
+    updated = models.BooleanField(u'更新状态', default=False)
+
+    class Meta:
+        verbose_name = "原始草稿"
+        verbose_name_plural = verbose_name
+
+
+    def __str__(self):
+        return self.order_id
