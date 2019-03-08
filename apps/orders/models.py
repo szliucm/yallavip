@@ -324,9 +324,9 @@ class OrderDetail(models.Model):
 
         if items:
             item = items[0]
-            if   item.sellable >=0:
+            if   item.o_sellable >=0:
                 return "充足"
-            elif item.quantity >= int(float(self.product_quantity)):
+            elif item.o_quantity >= int(float(self.product_quantity)):
                 return  "紧张"
             else:
                 return  "缺货"
@@ -335,36 +335,6 @@ class OrderDetail(models.Model):
 
     cal_stock.short_description = "库存状态"
     stock = property(cal_stock)
-
-
-    def cal_outstock(self):
-        from django.db.models import Sum
-        from orders.models import  OrderDetail_lightin
-        from django.db.models import Q
-
-        sku_list = ["13531030880298", "price gap", "COD link", "price gap 2", ]
-        if self.sku in sku_list:
-            return  0
-
-
-        items = OrderDetail_lightin.objects.filter(order = self.order, SKU=self.sku)
-
-        if items:
-            return int(float(self.product_quantity)) - items.aggregate(nums = Sum('quantity')).get('nums')
-        else:
-            return  int(float(self.product_quantity))
-
-    cal_outstock.short_description = "缺货数量"
-    outstock = property(cal_outstock)
-
-    def cal_inventory_status(self):
-        if self.outstock == 0:
-            return "库存锁定"
-        else:
-            return "缺货"
-
-    cal_inventory_status.short_description = "库存状态"
-    inventory_status = property(cal_inventory_status)
 
 
     class Meta:
