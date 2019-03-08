@@ -1734,14 +1734,15 @@ def delete_out_lightin_album(lightinalbums_out):
 
             }
             try:
-                '''
+
                 response = Photo(photo_no).api_delete(
                     fields=fields,
                     params=params,
                 )
-                '''
-                response = "delete photo_no "+ photo_no
-            except:
+
+                #response = "delete photo_no "+ photo_no
+            except Exception as e:
+                print("删除图片出错",photo_no, e)
                 continue
             #更新lightinalbum的发布记录
             print("facebook 返回结果",response)
