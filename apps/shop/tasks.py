@@ -789,7 +789,7 @@ def get_drafts(minutes=10):
                 continue
 
 def update_drafts():
-    oriorders = ShopOriDraft.objects.filter(updated=True)
+    oriorders = ShopOriDraft.objects.filter(updated=True, status="open")
     print("有 %s 个草稿待更新"%(oriorders.count()))
 
     for row in oriorders:
