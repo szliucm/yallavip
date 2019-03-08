@@ -315,6 +315,8 @@ class OrderDetail(models.Model):
     #inventory_status = models.CharField(u'库存状态', default='', max_length=50, blank=True)
 
     def cal_stock(self):
+        if not self.order.status == 'open':
+            return  self.order.status
 
         sku_list = ["13531030880298", "price gap", "COD link", "price gap 2", ]
         if self.sku in sku_list:
