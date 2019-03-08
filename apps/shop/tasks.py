@@ -752,12 +752,14 @@ def get_drafts(minutes=10):
                 url = shop_url + "/admin/draft_orders.json"
                 params["page"] = i
 
-                print(("params is ", params))
+                print("params is ", params)
 
                 r = requests.get(url, params)
                 oriorders = json.loads(r.text)["draft_orders"]
 
                 print("oriorders ", len(oriorders))
+                continue
+
                 oriorders_list = []
                 for row in oriorders:
                     # print("row is ",row)
