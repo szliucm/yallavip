@@ -1671,7 +1671,7 @@ def delete_outstock_lightin_album(sku_list=None):
         n -= 1
 
         if  Lightin_SPU.objects.get(pk = spu["lightin_spu"]).sellable <= 0:
-            lightinalbums = lightinalbums.filter(lightin_spu__pk = spu)
+            lightinalbums = lightinalbums.filter(lightin_spu__pk = spu["lightin_spu"])
             for lightinalbum in lightinalbums:
                 photo_list = lightinalbums_out.get(lightinalbum.myalbum.page_no)
                 if not photo_list :
