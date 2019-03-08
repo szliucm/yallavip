@@ -36,6 +36,10 @@ else:
     appToken = "909fa3df3b98c26a9221774fe5545afd"
     appKey = "b716b7eb938e9a46ad836e20de0f8b07"
 
+    tms_appToken = "883b3289a5e3b55ceaddb2093834c13a"
+    tms_appKey = "883b3289a5e3b55ceaddb2093834c13a574fda321ae620e2aa43c2117abb7553"
+
+
 def get_token(target_page,token=None):
 
 
@@ -2205,6 +2209,32 @@ def yunwms(service, param):
     result = json.loads(escape(response))
     return  result
 
+def getTrack(logistic_list):
+    param = {
+        "codes": logistic_list,
+    }
+
+    service = "getCargoTrack"
+
+    result = yunwms(service, param)
+
+    print(result)
+
+def yuntms(service, param):
+    from suds.client import Client
+    from xml.sax.saxutils import escape
+
+    url = "http://toms.cititrans.com/default/svc/wsdl"
+    client = Client(url)
+
+    response = client.service.callService(appToken=appToken,
+                                          appKey=appKey,
+                                          service=service,
+                                          paramsJson=json.dumps(param)
+                                          )
+    result = json.loads(escape(response))
+    return  result
+
 def cal_reserved(overtime=24):
     from django.db.models import Sum
     from orders.models import OrderDetail
@@ -2253,7 +2283,7 @@ def cal_reserved(overtime=24):
     #更新对应的spu
     lightin_spus = Lightin_SPU.objects.filter(spu_sku__SKU__in = sku_list)
     for lightin_spu in lightin_spus:
-        lightin_spu.sellable = Lightin_SKU.objects.filter(lightin_spu=lightin_spu.pk).aggregate(nums = Sum('o_sellable')).get("nums")
+        lightin_spu.sellable = Lightin_SKU.objects.filter(lightin_spu__pk=lightin_spu.pk).aggregate(nums = Sum('o_sellable')).get("nums")
         lightin_spu.save()
 
 
