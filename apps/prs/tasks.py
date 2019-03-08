@@ -1656,8 +1656,29 @@ def delete_outstock_lightin_album():
     '''
 
     #每天更新一次所有在发布的图片，每分钟更新一次订单sku对应的图片
-    lightinalbums_all = LightinAlbum.objects.filter(published=True,lightin_spu__sellable__lte=0)
+    lightinalbums_all = LightinAlbum.objects.filter(published=True,lightin_spu__sellable__lte=0).values_list("myalbum__page_no", "fb_id").order_by("myalbum__page_no")
+    print("一共有%s 个图片待删除" % (lightinalbums_all.count()))
 
+    lightinalbums_out = {}
+    m = 0
+    for lightinalbum in lightinalbums_all:
+        page_no = lightinalbum[0]
+        fb_id = lightinalbum[1]
+        photo_list = lightinalbums_out.get(page_no)
+        if not photo_list:
+            photo_list = []
+
+        if fb_id not in photo_list:
+            photo_list.append(fb_id)
+
+        lightinalbums_out[page_no] = photo_list
+
+        m += 1
+
+
+
+
+    '''
     spus = lightinalbums_all.values("lightin_spu").distinct()
     n = spus.count()
     print("一共有%s 个spu待排查" % (n))
@@ -1681,7 +1702,7 @@ def delete_outstock_lightin_album():
 
             lightinalbums_out[lightinalbum.myalbum.page_no] = photo_list
             #print("lightinalbum is %s  page no is %s, photo_id is %s "%(lightinalbum, lightinalbum.myalbum.page_no,lightinalbum.fb_id ))
-
+    '''
 
 
     # 删除子集
