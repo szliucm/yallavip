@@ -2253,7 +2253,7 @@ def cal_reserved(overtime=24):
     #更新对应的spu
     lightin_spus = Lightin_SPU.objects.filter(spu_sku__SKU__in = sku_list)
     for lightin_spu in lightin_spus:
-        lightin_spu.sellable = Lightin_SKU.objects.filter(lightin_spu=spu.pk).aggregate(nums = Sum('o_sellable')).get("nums")
+        lightin_spu.sellable = Lightin_SKU.objects.filter(lightin_spu=lightin_spu.pk).aggregate(nums = Sum('o_sellable')).get("nums")
         lightin_spu.save()
 
 
