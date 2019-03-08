@@ -2216,7 +2216,7 @@ def getTrack(logistic_list):
 
     service = "getCargoTrack"
 
-    result = yunwms(service, param)
+    result = yuntms(service, param)
 
     print(result)
 
@@ -2227,8 +2227,8 @@ def yuntms(service, param):
     url = "http://toms.cititrans.com/default/svc/wsdl"
     client = Client(url)
 
-    response = client.service.callService(tms_appToken=appToken,
-                                          tms_appKey=appKey,
+    response = client.service.callService(appToken=tms_appToken,
+                                          appKey=tms_appKey,
                                           service=service,
                                           paramsJson=json.dumps(param)
                                           )
