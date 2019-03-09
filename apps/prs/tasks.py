@@ -1724,6 +1724,7 @@ def delete_out_lightin_album(lightinalbums_out):
                 )
             print("删除相册图片 LightinAlbum %s %s" % (photo_no, response))
 
+
 @shared_task
 def mapping_orders_lightin():
 
