@@ -1836,7 +1836,7 @@ def fulfill_orders_lightin():
                                   status = "open",
                                   verify__verify_status = "SUCCESS",
                                   verify__sms_status = "CHECKED",
-                                  wms_status = "")
+                                  wms_status__in = ["","F"])
     print("共有%s个订单待发货"%(orders.count()))
     order_list = []
     for order in orders:
