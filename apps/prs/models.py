@@ -609,13 +609,13 @@ class Lightin_barcode(models.Model):
         else:
             return 0
 
-    cal_occupied.short_description = "占用存"
+    cal_occupied.short_description = "占用库存"
     occupied = property(cal_occupied)
 
     def cal_sellable(self):
 
 
-        return  self.o_quantity - self.occupied
+        return  self.o_sellable - self.occupied
 
 
     cal_sellable.short_description = "可售库存"
