@@ -1660,7 +1660,7 @@ def delete_outstock_lightin_album():
     print("一共有%s 个图片待删除" % (lightinalbums_all.count()))
 
     lightinalbums_out = {}
-    m = 0
+
     for lightinalbum in lightinalbums_all:
         page_no = lightinalbum[0]
         fb_id = lightinalbum[1]
@@ -1673,40 +1673,8 @@ def delete_outstock_lightin_album():
 
         lightinalbums_out[page_no] = photo_list
 
-        m += 1
-
-
-
-
-    '''
-    spus = lightinalbums_all.values("lightin_spu").distinct()
-    n = spus.count()
-    print("一共有%s 个spu待排查" % (n))
-    m = 0
-    lightinalbums_out = {}
-
-    for spu in spus:
-        print("还有%s 个spu待排查"%(n))
-        n -= 1
-
-
-        lightinalbums = lightinalbums_all.filter(lightin_spu__pk = spu["lightin_spu"]).distinct()
-        print(lightinalbums)
-        for lightinalbum in lightinalbums:
-            photo_list = lightinalbums_out.get(lightinalbum.myalbum.page_no)
-            if not photo_list :
-                photo_list = []
-            if lightinalbum.fb_id not in photo_list:
-                photo_list.append(lightinalbum.fb_id)
-            m += 1
-
-            lightinalbums_out[lightinalbum.myalbum.page_no] = photo_list
-            #print("lightinalbum is %s  page no is %s, photo_id is %s "%(lightinalbum, lightinalbum.myalbum.page_no,lightinalbum.fb_id ))
-    '''
-
-
     # 删除子集
-    print("共有 %s 个 图片待删除"%(m))
+
     delete_out_lightin_album(lightinalbums_out)
     if not all:
         Order.objects.filter(updated=True).update(updated=False)
@@ -1764,7 +1732,13 @@ def mapping_orders_lightin():
 
 
     #orders = Order.objects.raw(  'SELECT * FROM orders_order  A WHERE financial_status = "paid" and  inventory_status <> "库存锁定"')
-    orders = Order.objects.filter(financial_status = "paid", fulfillment_status__isnull=True,status = "open").order_by("verify__sms_status")
+    #orders = Order.objects.filter(financial_status = "paid", fulfillment_status__isnull=True,status = "open").order_by("verify__sms_status")
+    orders = Order.objects.filter(financial_status="paid",
+                                  fulfillment_status__isnull=True,
+                                  status="open",
+                                  verify__verify_status="SUCCESS",
+                                  verify__sms_status="CHECKED",
+                                  wms_status="")
 
     print("一共有 %s 个订单待处理", orders.count())
 
@@ -1863,11 +1837,31 @@ def fulfill_orders_lightin():
                                   verify__sms_status = "CHECKED",
                                   wms_status = "")
     print("共有%s个订单待发货"%(orders.count()))
+    order_list = []
     for order in orders:
         if order.stock in [ "充足","紧张"] :
             error = mapping_order_lightin(order)
             if error == "":
-                fulfill_order_lightin(order)
+                result = fulfill_order_lightin(order)
+                if result:
+                    order_list.append(order)
+
+    #提交仓库准备发货成功的，要更新本地库存
+    update_stock(order_list, "W")
+
+def update_stock(order_list, action):
+    #SKU 库存
+    update_sku_stock(order_list, action)
+    #barco 库存
+    update_barcode_stock(order_list,action)
+
+def update_sku_stock(order_list, action):
+    from django.db.models import Sum
+    OrderDetail.objects.filter(order__in=order_list).values_list("sku").
+    return  True
+
+def update_barcode_stock(order_list, action):
+    return  True
 
 def fulfill_order_lightin(order):
     from suds.client import Client
@@ -1931,14 +1925,17 @@ def fulfill_order_lightin(order):
         Order.objects.filter(pk = order.pk).update(
             wms_status = result.get("order_status"),
             logistic_no = result.get("tracking_no"),
-
+            fulfill_error="",
         )
+        return  True
     else:
         Order.objects.filter(pk=order.pk).update(
+            wms_status= "F",
             fulfill_error=result.get("message"),
 
 
         )
+        return False
 
 
 
@@ -1972,12 +1969,12 @@ def sync_status_order_lightin():
 #已发货的barcode，不占用库存
 
 @shared_task
-def sync_Shipped_order_lightin():
+def sync_Shipped_order_lightin(days=1):
     import  datetime
     from django.db.models import F
 
     today = datetime.date.today()
-    start_time = str(today - datetime.timedelta(days=1))
+    start_time = str(today - datetime.timedelta(days=days))
 
     page = 1
 
