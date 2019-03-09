@@ -595,7 +595,7 @@ class Lightin_barcode(models.Model):
         from orders.models import  OrderDetail_lightin
         from django.db.models import Sum
 
-        return  OrderDetail_lightin.objects.filter(
+        orderdetail_lightins = OrderDetail_lightin.objects.filter(
             order__financial_status="paid" ,
             order__fulfillment_status__isnull = True,
             order__status = "open",
@@ -603,7 +603,11 @@ class Lightin_barcode(models.Model):
             order__verify__sms_status = "CHECKED",
             order__wms_status__in = ["","W"],
             barcode__barcode = self.barcode
-                                   ).aggregate(nums = Sum('quantity')).get("nums")
+                                   )
+        if orderdetail_lightins:
+            return orderdetail_lightins.aggregate(nums = Sum('quantity')).get("nums")
+        else:
+            return 0
 
     cal_occupied.short_description = "占用存"
     occupied = property(cal_occupied)
