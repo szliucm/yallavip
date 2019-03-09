@@ -592,7 +592,7 @@ class Lightin_barcode(models.Model):
     y_shipped = models.IntegerField(u'wms_历史出库数量', default=0, blank=True, null=True)
 
     def cal_occupied(self):
-        from orders.model import  OrderDetail_lightin
+        from orders.models import  OrderDetail_lightin
         from django.db.models import Sum
 
         return  OrderDetail_lightin.objects.filter(
@@ -609,8 +609,7 @@ class Lightin_barcode(models.Model):
     occupied = property(cal_occupied)
 
     def cal_sellable(self):
-        from orders.model import  OrderDetail_lightin
-        from django.db.models import Sum
+
 
         return  self.o_quantity - self.occupied
 
