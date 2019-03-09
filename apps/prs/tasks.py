@@ -1986,7 +1986,7 @@ def sync_Shipped_order_lightin(days=1):
             "pageSize": "100",
             "page": page,
             "order_code": "",
-            "order_status": "D",
+            #"order_status": "D",
             "order_code_arr": [],
             "create_date_from": start_time,
             "create_date_to": "",
