@@ -1858,7 +1858,7 @@ def update_stock(order_list, action):
 
 def update_sku_stock(order_list, action):
     from django.db.models import Sum
-    OrderDetail.objects.filter(order__in=order_list).values_list("sku").
+    #OrderDetail.objects.filter(order__in=order_list).values_list("sku").
     return  True
 
 def update_barcode_stock(order_list, action):
