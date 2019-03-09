@@ -1781,19 +1781,19 @@ def mapping_order_lightin(order):
             if quantity == 0:
                 #已经凑齐了sku所需的数量
                 break
-            if lightin_barcode.o_sellable == 0:
+            if lightin_barcode.sellable == 0:
                 continue
 
 
-            if quantity > lightin_barcode.o_sellable:
+            if quantity > lightin_barcode.sellable:
                 # 条码的库存数量比订单项所需的少
-                quantity -= lightin_barcode.o_sellable
-                occupied = lightin_barcode.o_sellable
+                quantity -= lightin_barcode.sellable
+                occupied = lightin_barcode.sellable
             else:
                 occupied = quantity
                 quantity = 0
 
-            print("        条码 %s , 条码可售库存 %s 占用 %s" % (lightin_barcode, lightin_barcode.o_sellable, occupied))
+            print("        条码 %s , 条码可售库存 %s 占用 %s" % (lightin_barcode, lightin_barcode.sellable, occupied))
 
             inventory_list.append([sku, lightin_barcode, occupied, price])
 
