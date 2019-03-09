@@ -2042,7 +2042,7 @@ def sync_Shipped_order_lightin(days=1):
 def sync_Shipped_order_shopify():
     from prs.shop_action import  fulfill_order_shopify
 
-    orders = Order.objects.filter(status = "open", wms_status= "D",logistic_no__isnull=False, fulfillment_status__isnull=True ,order_id__isnull=False)
+    orders = Order.objects.filter(status = "open", wms_status__in= ["D","W"],logistic_no__isnull=False, fulfillment_status__isnull=True ,order_id__isnull=False)
 
     n= orders.count()
     for order in orders:
