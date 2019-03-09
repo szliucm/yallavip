@@ -591,7 +591,32 @@ class Lightin_barcode(models.Model):
     y_reserved = models.IntegerField(u'wms_待出库数量', default=0, blank=True, null=True)
     y_shipped = models.IntegerField(u'wms_历史出库数量', default=0, blank=True, null=True)
 
+    def cal_occupied(self):
+        from orders.model import  OrderDetail_lightin
+        from django.db.models import Sum
 
+        return  OrderDetail_lightin.objects.filter(
+            order__financial_status="paid" ,
+            order__fulfillment_status__isnull = True,
+            order__status = "open",
+            order__verify__verify_status = "SUCCESS",
+            order__verify__sms_status = "CHECKED",
+            order__wms_status__in = ["","W"],
+            barcode__barcode = self.barcode
+                                   ).aggregate(nums = Sum('quantity')).get("nums")
+
+    cal_occupied.short_description = "占用存"
+    occupied = property(cal_occupied)
+
+    def cal_sellable(self):
+        from orders.model import  OrderDetail_lightin
+        from django.db.models import Sum
+
+        return  self.o_quantity - self.occupied
+
+
+    cal_sellable.short_description = "可售库存"
+    sellable = property(cal_sellable)
 
     class Meta:
         verbose_name = "Lightin barcode映射"

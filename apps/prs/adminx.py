@@ -763,7 +763,7 @@ class Lightin_barcodeAdmin(object):
     import_export_args = {"import_resource_class": Lightin_barcodeResource,
                           "export_resource_class": Lightin_barcodeResource}
 
-    list_display = ["SKU","barcode","o_quantity","o_sellable","o_reserved","o_shipped","y_sellable","y_reserved","y_shipped",]
+    list_display = ["SKU","barcode","occupied", "sellable", "o_quantity","o_sellable","o_reserved","o_shipped","y_sellable","y_reserved","y_shipped",]
 
 
     search_fields = ["SKU","barcode",]
