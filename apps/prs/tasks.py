@@ -1778,10 +1778,11 @@ def mapping_order_lightin(order):
 
         # 每个可能的条码
         for lightin_barcode in lightin_barcodes:
+            print("处理每个可能的条码")
             if quantity == 0:
                 #已经凑齐了sku所需的数量
                 break
-            if lightin_barcode.sellable == 0:
+            if lightin_barcode.sellable <= 0:
                 continue
 
 
