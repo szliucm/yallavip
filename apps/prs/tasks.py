@@ -2011,6 +2011,7 @@ def sync_Shipped_order_lightin(days=1):
                 order = Order.objects.get(order_no=order_no)
                 if order:
 #                    if order.wms_status =="W" and  data.get("order_status") == "D":
+                    send_time = None
                     if data.get("order_status") == "D":
                         # wms状态从代发货变成已发货，就修改本地 barcode 库存
 
@@ -2022,6 +2023,10 @@ def sync_Shipped_order_lightin(days=1):
                             barcode.save()
                         print ("更新本地barcode库存")
 
+                        send_time =  data.get("date_shipping")
+                    elif data.get("order_status") == "W":
+                        pass
+
 
 
                     #更新本地的订单状态
@@ -2031,7 +2036,7 @@ def sync_Shipped_order_lightin(days=1):
                             "wms_status": data.get("order_status"),
                             "logistic_type":data.get("shipping_method"),
                             "logistic_no": data.get("tracking_no"),
-                            "send_time": data.get("date_shipping"),
+                            "send_time": send_time,
                             "weight": data.get("order_weight"),
                         },
                     )
