@@ -2021,29 +2021,21 @@ def sync_Shipped_order_lightin(days=1):
                             barcode.o_reserved = F("quantity") - item.quantity
                             barcode.save()
                         print ("更新本地barcode库存")
-                        '''
-                        # 更新本地sku库存
-                        for item in items:
-                            lightin_sku = Lightin_SKU.objects.get(sku=item.SKU)
-                            lightin_sku.o_quantity = F("o_quantity") - item.quantity
-                            lightin_sku.o_reserved = F("o_reserved") - item.quantity
 
-                            lightin_sku.save()
-                        print ("更新本地barcode库存")
-                        '''
 
-                        #更新本地的订单状态
-                        Order.objects.update_or_create(
-                            order_no = order_no,
-                            defaults={
-                                "wms_status": data.get("order_status"),
-                                "logistic_type":data.get("shipping_method"),
-                                "logistic_no": data.get("tracking_no"),
-                                "send_time": data.get("date_shipping"),
-                                "weight": data.get("order_weight"),
-                            },
-                        )
-                        print ("更新本地的订单状态")
+
+                    #更新本地的订单状态
+                    Order.objects.update_or_create(
+                        order_no = order_no,
+                        defaults={
+                            "wms_status": data.get("order_status"),
+                            "logistic_type":data.get("shipping_method"),
+                            "logistic_no": data.get("tracking_no"),
+                            "send_time": data.get("date_shipping"),
+                            "weight": data.get("order_weight"),
+                        },
+                    )
+                    print ("更新本地的订单状态")
 
         if result.get("nextPage") == "false":
             break
