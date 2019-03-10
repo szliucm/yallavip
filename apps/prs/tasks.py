@@ -2402,7 +2402,7 @@ def cal_barcode(wms_status):
     barcode_list = []
 
     order_barcodes = OrderDetail_lightin.objects.filter(order__wms_status=wms_status,
-                                       ).values_list('barcode').annotate(Sum('quantity'))
+                                       ).values_list('barcode__barcode').annotate(Sum('quantity'))
     for order_barcode in order_barcodes:
         barcode_quantity[order_barcode[0]] = order_barcode[1]
         if order_barcode[0] not in barcode_list:
