@@ -2004,20 +2004,32 @@ def sync_Shipped_order_lightin(days=1):
             for data in result.get("data"):
                 order_no = data.get("reference_no")
                 if not order_no :
-                    print(data)
+                    print("没有订单号",data)
                     continue
                 print("当前处理订单 ", order_no)
 
                 order = Order.objects.get(order_no=order_no)
                 if order:
-                    if order.wms_status != data.get("order_status"):
-                        #更新本地库存
+                    if order.wms_status =="W" and  data.get("order_status") == "D":
+                        # wms状态从代发货变成已发货，就修改本地 barcode 库存
+
                         items = OrderDetail_lightin.objects.filter(order=order)
+                        # 更新本地barcode库存
                         for item in items:
                             barcode = Lightin_barcode.objects.get(barcode=item.barcode)
-                            barcode.quantity = F("quantity") - item.quantity
+                            barcode.o_reserved = F("quantity") - item.quantity
                             barcode.save()
-                        print ("更新本地库存")
+                        print ("更新本地barcode库存")
+                        '''
+                        # 更新本地sku库存
+                        for item in items:
+                            lightin_sku = Lightin_SKU.objects.get(sku=item.SKU)
+                            lightin_sku.o_quantity = F("o_quantity") - item.quantity
+                            lightin_sku.o_reserved = F("o_reserved") - item.quantity
+
+                            lightin_sku.save()
+                        print ("更新本地barcode库存")
+                        '''
 
                         #更新本地的订单状态
                         Order.objects.update_or_create(
@@ -2041,6 +2053,7 @@ def sync_Shipped_order_lightin(days=1):
 @shared_task
 def sync_Shipped_order_shopify():
     from prs.shop_action import  fulfill_order_shopify
+    from django.db.models import F
 
     orders = Order.objects.filter(status = "open", wms_status__in= ["D","W"],logistic_no__isnull=False, fulfillment_status__isnull=True ,order_id__isnull=False)
 
@@ -2059,7 +2072,23 @@ def sync_Shipped_order_shopify():
             fulfillment_status = data.get("errors")
 
         else:
-            fulfillment_status = "fulfilled"
+            # shopify发货成功
+
+            if not order.fulfillment_status == '':
+                # wms状态从未发货变成已发货，就修改本地 sku 库存，否则订单关闭，自动计算的占用库存会出错
+                items = OrderDetail_lightin.objects.filter(order=order)
+
+                # 更新本地sku库存
+                for item in items:
+                    lightin_sku = Lightin_SKU.objects.get(sku=item.SKU)
+                    lightin_sku.o_quantity = F("o_quantity") - item.quantity
+                    lightin_sku.o_reserved = F("o_reserved") - item.quantity
+
+                    lightin_sku.save()
+                print ("更新本地sku库存", order.order_no, item.SKU)
+
+                fulfillment_status = "fulfilled"
+
 
 
         # 更新本地的订单状态
