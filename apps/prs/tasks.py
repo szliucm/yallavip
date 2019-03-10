@@ -2341,10 +2341,89 @@ def cal_reserved(overtime=24):
         lightin_spu.save()
 
 
+@shared_task
+def cal_reserved_barcode(overtime=24):
+    from django.db.models import Sum
+    from orders.models import OrderDetail_lightin
+
+    barcode_quantity = {}
+    barcode_list = []
+    # 计算待发货
+    #W状态的就是待发货的
+    order_barcodes = OrderDetail_lightin.objects.filter(order__wms_status="W",
+                                       ).values_list('barcode').annotate(Sum('quantity'))
+    for order_barcode in order_barcodes:
+        barcode_quantity[order_barcode[0]] = barcode_list[1]
+        if order_barcode[0] not in barcode_list:
+            barcode_list.append(order_barcode[0])
+
+    print("有%s个sku需要更新" % (len(barcode_quantity)))
+
+    for barcode in barcode_quantity:
+        try:
+            lightin_barcode = Lightin_barcode.objects.get(barcode=barcode)
+            lightin_barcode.o_reserved = barcode_quantity[barcode]
+            #lightin_sku.o_sellable = lightin_sku.o_quantity - sku_quantity[sku]
+            lightin_barcode.save()
+
+            print(lightin_barcode, lightin_barcode.o_reserved)
+
+        except Exception as e:
+            print("更新出错", sku, e)
+
+
+    # 计算已发货
+    draft_skus = DraftItem.objects.filter(draft__status="open",
+                                     draft__created_at__gt=dt.now() - dt.timedelta(hours=overtime),
+                                       ).values_list('sku').annotate(Sum('quantity'))
+
+    for draft_sku in draft_skus:
+        if sku_quantity.get(draft_sku[0]):
+            sku_quantity[draft_sku[0]] += draft_sku[1]
+        else:
+            sku_quantity[draft_sku[0]] = draft_sku[1]
+        if draft_sku[0] not in sku_list:
+            sku_list.append(draft_sku[0])
 
 
 
+    #更新对应的spu
+    lightin_spus = Lightin_SPU.objects.filter(spu_sku__SKU__in = sku_list).distinct()
+    print("有%s个spu需要更新"%(lightin_spus.count()))
+    for lightin_spu in lightin_spus:
+        lightin_spu.sellable = Lightin_SKU.objects.filter(lightin_spu__pk=lightin_spu.pk).aggregate(nums = Sum('o_sellable')).get("nums")
+        lightin_spu.save()
 
+def cal_barcode(wms_status):
+    from django.db.models import Sum
+    from orders.models import OrderDetail_lightin
+
+    barcode_quantity = {}
+    barcode_list = []
+
+    order_barcodes = OrderDetail_lightin.objects.filter(order__wms_status=wms_status,
+                                       ).values_list('barcode').annotate(Sum('quantity'))
+    for order_barcode in order_barcodes:
+        barcode_quantity[order_barcode[0]] = barcode_list[1]
+        if order_barcode[0] not in barcode_list:
+            barcode_list.append(order_barcode[0])
+
+    print("有%s个sku需要更新" % (len(barcode_quantity)))
+
+    for barcode in barcode_quantity:
+        try:
+            lightin_barcode = Lightin_barcode.objects.get(barcode=barcode)
+            if wms_status == "W":
+                lightin_barcode.o_reserved = barcode_quantity[barcode]
+            elif wms_status == "D":
+                lightin_barcode.o_shipped = barcode_quantity[barcode]
+            #lightin_sku.o_sellable = lightin_sku.o_quantity - sku_quantity[sku]
+            lightin_barcode.save()
+
+            print(lightin_barcode,wms_status, barcode_quantity[barcode])
+
+        except Exception as e:
+            print("更新出错", barcode, e)
 
 @shared_task
 def sync_shopify(minutes=10):
