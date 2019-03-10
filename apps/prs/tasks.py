@@ -2353,7 +2353,7 @@ def cal_reserved_barcode(overtime=24):
     order_barcodes = OrderDetail_lightin.objects.filter(order__wms_status="W",
                                        ).values_list('barcode').annotate(Sum('quantity'))
     for order_barcode in order_barcodes:
-        barcode_quantity[order_barcode[0]] = barcode_list[1]
+        barcode_quantity[order_barcode[0]] = order_barcode[1]
         if order_barcode[0] not in barcode_list:
             barcode_list.append(order_barcode[0])
 
@@ -2404,7 +2404,7 @@ def cal_barcode(wms_status):
     order_barcodes = OrderDetail_lightin.objects.filter(order__wms_status=wms_status,
                                        ).values_list('barcode').annotate(Sum('quantity'))
     for order_barcode in order_barcodes:
-        barcode_quantity[order_barcode[0]] = barcode_list[1]
+        barcode_quantity[order_barcode[0]] = order_barcode[1]
         if order_barcode[0] not in barcode_list:
             barcode_list.append(order_barcode[0])
 
