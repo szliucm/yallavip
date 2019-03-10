@@ -2010,7 +2010,8 @@ def sync_Shipped_order_lightin(days=1):
 
                 order = Order.objects.get(order_no=order_no)
                 if order:
-                    if order.wms_status =="W" and  data.get("order_status") == "D":
+#                    if order.wms_status =="W" and  data.get("order_status") == "D":
+                    if data.get("order_status") == "D":
                         # wms状态从代发货变成已发货，就修改本地 barcode 库存
 
                         items = OrderDetail_lightin.objects.filter(order=order)
