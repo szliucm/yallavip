@@ -2175,7 +2175,8 @@ def get_wms_quantity():
                         "y_sellable": data.get("sellable"),
                         "y_unsellable": data.get("y_unsellable"),
                         "y_reserved": data.get("reserved"),
-                        "y_shipped": data.get("shipped")
+                        "y_shipped": data.get("shipped"),
+                        "updated_time": dt.now()
                         #"quantity":  int(data.get("sellable")) + int(data.get("reserved"))
 
                     },

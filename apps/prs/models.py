@@ -591,6 +591,7 @@ class Lightin_barcode(models.Model):
     y_reserved = models.IntegerField(u'wms_待出库数量', default=0, blank=True, null=True)
     y_shipped = models.IntegerField(u'wms_历史出库数量', default=0, blank=True, null=True)
 
+    updated_time = models.DateTimeField(null=True, blank=True, verbose_name="更新时间")
     def cal_occupied(self):
         from orders.models import  OrderDetail_lightin
         from django.db.models import Sum
