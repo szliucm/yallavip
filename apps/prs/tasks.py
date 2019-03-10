@@ -2006,7 +2006,7 @@ def sync_Shipped_order_lightin(days=1):
                 if not order_no :
                     print("没有订单号",data)
                     continue
-                print("当前处理订单 ", order_no)
+                print("当前处理订单 ", order_no, data.get("order_status"))
 
                 order = Order.objects.get(order_no=order_no)
                 if order:
