@@ -2140,7 +2140,7 @@ def get_wms_product():
         else:
             page += 1;
 
-def get_wms_quantity():
+def get_wms_quantity(barcode=""):
     page = 1
 
     pages = 0
@@ -2151,7 +2151,7 @@ def get_wms_quantity():
         param = {
             "pageSize": "100",
             "page": page,
-             "product_sku":"",
+             "product_sku":barcode,
             "product_sku_arr":[],
             "warehouse_code":warehouse_code,
             "warehouse_code_arr":[]
@@ -2161,7 +2161,7 @@ def get_wms_quantity():
 
         result = yunwms(service, param)
 
-        #print(result)
+        print(result)
         if result.get("ask") == "Success":
             for data in result.get("data"):
                 Lightin_barcode.objects.update_or_create(
