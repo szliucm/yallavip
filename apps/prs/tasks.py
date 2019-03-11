@@ -2118,7 +2118,7 @@ def sync_Shipped_order_shopify():
                         lightin_sku.o_reserved = F("o_reserved") - item.product_quantity
 
                         lightin_sku.save()
-                print ("更新本地sku库存", order.order_no, item.SKU)
+                print ("更新本地sku库存", order.order_no, item.sku)
 
                 fulfillment_status = "fulfilled"
 
