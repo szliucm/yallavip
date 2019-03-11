@@ -2106,7 +2106,7 @@ def sync_Shipped_order_shopify():
 
             if not order.fulfillment_status == '':
                 # wms状态从未发货变成已发货，就修改本地 sku 库存，否则订单关闭，自动计算的占用库存会出错
-                items = OrderDetail_lightin.objects.filter(order=order)
+                items = OrderDetail.objects.filter(order=order)
 
                 # 更新本地sku库存
                 for item in items:
