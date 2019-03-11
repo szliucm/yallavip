@@ -1880,7 +1880,7 @@ def update_barcode_stock(order_list, action):
 
     for barcode in barcode_quantity:
         try:
-            lightin_barcode = Lightin_barcode.objects.get(barcode=barcode)
+            lightin_barcode = Lightin_barcode.objects.get(pk=barcode)
             if action == 'W':
                 lightin_barcode.o_reserved += barcode_quantity[barcode]
                 lightin_barcode.o_sellable -= barcode_quantity[barcode]
@@ -2430,6 +2430,7 @@ def cal_barcode(wms_status):
             lightin_barcode = Lightin_barcode.objects.get(barcode=barcode)
             if wms_status == "W":
                 lightin_barcode.o_reserved = barcode_quantity[barcode]
+                lightin_barcode.o_sellable = lightin_barcode.o_quantity - barcode_quantity[barcode]
             elif wms_status == "D":
                 lightin_barcode.o_shipped = barcode_quantity[barcode]
             #lightin_sku.o_sellable = lightin_sku.o_quantity - sku_quantity[sku]
