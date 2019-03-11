@@ -2110,11 +2110,14 @@ def sync_Shipped_order_shopify():
 
                 # 更新本地sku库存
                 for item in items:
-                    lightin_sku = Lightin_SKU.objects.get(SKU=item.sku)
-                    lightin_sku.o_quantity = F("o_quantity") - item.product_quantity
-                    lightin_sku.o_reserved = F("o_reserved") - item.product_quantity
+                    lightin_skus = Lightin_SKU.objects.filter(SKU=item.sku)
+                    if lightin_skus:
 
-                    lightin_sku.save()
+                        lightin_sku = lightin_skus.first()
+                        lightin_sku.o_quantity = F("o_quantity") - item.product_quantity
+                        lightin_sku.o_reserved = F("o_reserved") - item.product_quantity
+
+                        lightin_sku.save()
                 print ("更新本地sku库存", order.order_no, item.SKU)
 
                 fulfillment_status = "fulfilled"
