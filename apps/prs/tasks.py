@@ -1846,10 +1846,11 @@ def fulfill_orders_lightin():
             if error == "":
                 result = fulfill_order_lightin(order)
                 if result:
+                    # 发货成功的列表
                     order_list.append(order)
 
     #提交仓库准备发货成功的，要更新本地库存
-    update_stock(order_list, "W")
+    update_barcode_stock(order_list, "W")
 
 def update_stock(order_list, action):
     #SKU 库存
@@ -1863,6 +1864,37 @@ def update_sku_stock(order_list, action):
     return  True
 
 def update_barcode_stock(order_list, action):
+    from django.db.models import Sum
+    barcode_quantity = {}
+    barcode_list = []
+
+    order_barcodes = OrderDetail_lightin.objects.filter(order__in =order_list,
+                                                        ).values_list('barcode').annotate(Sum('quantity'))
+
+    for order_barcode in order_barcodes:
+        barcode_quantity[order_barcode[0]] = order_barcode[1]
+        if order_barcode[0] not in barcode_list:
+            barcode_list.append(order_barcode[0])
+
+    print("有%s个sku需要更新" % (len(barcode_quantity)))
+
+    for barcode in barcode_quantity:
+        try:
+            lightin_barcode = Lightin_barcode.objects.get(barcode=barcode)
+            if action == 'W':
+                lightin_barcode.o_reserved += barcode_quantity[barcode]
+                lightin_barcode.o_sellable -= barcode_quantity[barcode]
+            elif action == 'D':
+                lightin_barcode.o_reserved -= barcode_quantity[barcode]
+                lightin_barcode.o_quantity -= barcode_quantity[barcode]
+
+            lightin_barcode.save()
+
+            print(lightin_barcode, lightin_barcode.o_reserved)
+
+        except Exception as e:
+            print("更新出错", barcode, e)
+
     return  True
 
 def fulfill_order_lightin(order):
@@ -1923,7 +1955,7 @@ def fulfill_order_lightin(order):
 
     print(result)
     if result.get("ask") == "Success":
-        #发货成功
+        #发货成功，更新订单状态
         Order.objects.filter(pk = order.pk).update(
             wms_status = result.get("order_status"),
             logistic_no = result.get("tracking_no"),
@@ -2359,42 +2391,22 @@ def cal_reserved_barcode(overtime=24):
         if order_barcode[0] not in barcode_list:
             barcode_list.append(order_barcode[0])
 
-    print("有%s个sku需要更新" % (len(barcode_quantity)))
+    print("有%s个lightin_barcode需要更新" % (len(barcode_quantity)))
 
     for barcode in barcode_quantity:
         try:
             lightin_barcode = Lightin_barcode.objects.get(barcode=barcode)
             lightin_barcode.o_reserved = barcode_quantity[barcode]
-            #lightin_sku.o_sellable = lightin_sku.o_quantity - sku_quantity[sku]
-            lightin_barcode.save()
+            lightin_barcode.o_sellable = lightin_barcode.o_quantity -  barcode_quantity[barcode]
 
-            print(lightin_barcode, lightin_barcode.o_reserved)
+            #lightin_barcode.save()
+
+            print(lightin_barcode, lightin_barcode.o_quantity,lightin_barcode.o_reserved,lightin_barcode.o_sellable)
 
         except Exception as e:
-            print("更新出错", sku, e)
+            print("更新出错", barcode, e)
 
 
-    # 计算已发货
-    draft_skus = DraftItem.objects.filter(draft__status="open",
-                                     draft__created_at__gt=dt.now() - dt.timedelta(hours=overtime),
-                                       ).values_list('sku').annotate(Sum('quantity'))
-
-    for draft_sku in draft_skus:
-        if sku_quantity.get(draft_sku[0]):
-            sku_quantity[draft_sku[0]] += draft_sku[1]
-        else:
-            sku_quantity[draft_sku[0]] = draft_sku[1]
-        if draft_sku[0] not in sku_list:
-            sku_list.append(draft_sku[0])
-
-
-
-    #更新对应的spu
-    lightin_spus = Lightin_SPU.objects.filter(spu_sku__SKU__in = sku_list).distinct()
-    print("有%s个spu需要更新"%(lightin_spus.count()))
-    for lightin_spu in lightin_spus:
-        lightin_spu.sellable = Lightin_SKU.objects.filter(lightin_spu__pk=lightin_spu.pk).aggregate(nums = Sum('o_sellable')).get("nums")
-        lightin_spu.save()
 
 def cal_barcode(wms_status):
     from django.db.models import Sum
