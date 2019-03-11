@@ -1644,6 +1644,11 @@ class ClientServiceAdmin(object):
         return obj.order.order_status
     order_status.short_description = "订单状态"
 
+    def stock(self, obj):
+        return obj.order.stock
+
+    stock.short_description = "库存"
+
     def order_logistic_update_status(self, obj):
 
         package = Package.objects.filter(logistic_no=obj.order.logistic_no).first()
@@ -1707,7 +1712,7 @@ class ClientServiceAdmin(object):
     batch_normal.short_description = "批量正常"
 
     ordering = ['-order__order_time']
-    list_display = ('order', 'order_time','order_status','order_logistic_update_status','supply_status', 'colored_verify_status', \
+    list_display = ('order', 'order_time','status','stock','order_logistic_update_status', 'colored_verify_status', \
                     'receiver_city', 'city','receiver_addr',
                     'colored_sms_status',
                     "deal_outofstock","real_amount",
