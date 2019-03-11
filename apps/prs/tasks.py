@@ -2298,12 +2298,14 @@ def cal_reserved(overtime=24):
     sku_list = []
     # 计算订单
     order_skus = OrderDetail.objects.filter(order__status="open",
-                                       order__order_time__gt =  dt.now() - dt.timedelta(hours=overtime),
+                                      # order__order_time__gt =  dt.now() - dt.timedelta(hours=overtime),
                                        ).values_list('sku').annotate(Sum('product_quantity'))
     for order_sku in order_skus:
         sku_quantity[order_sku[0]] = order_sku[1]
         if order_sku[0] not in sku_list:
             sku_list.append(order_sku[0])
+
+    print("开放的订单 有%s个sku需要更新" % (len(sku_quantity)))
 
     # 计算草稿
     draft_skus = DraftItem.objects.filter(draft__status="open",
@@ -2318,7 +2320,7 @@ def cal_reserved(overtime=24):
         if draft_sku[0] not in sku_list:
             sku_list.append(draft_sku[0])
 
-    print("有%s个sku需要更新"%(len(sku_quantity)))
+    print("加上24小时内的草稿 有%s个sku需要更新"%(len(sku_quantity)))
 
     for sku in sku_quantity:
         try:
