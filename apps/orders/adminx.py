@@ -218,7 +218,7 @@ class OrderAdmin(object):
 
     #"stock", "cal_barcode", "inventory_status",
     list_display = ["order_no", "status", "stock",  "wms_status","fulfill_error","order_amount", "order_time", "logistic_no","order_comment"]
-    list_editable = ["fulfill_error"]
+    list_editable = ["status"]
     # list_display_links = ["show_conversation"]
     search_fields = ["order_no",'logistic_no', ]
     list_filter = ( "status","wms_status","financial_status","fulfillment_status", "package_status", "verify_time","order_time","send_time","verify__verify_status","verify__sms_status",)
