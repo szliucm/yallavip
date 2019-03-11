@@ -2111,8 +2111,8 @@ def sync_Shipped_order_shopify():
                 # 更新本地sku库存
                 for item in items:
                     lightin_sku = Lightin_SKU.objects.get(SKU=item.sku)
-                    lightin_sku.o_quantity = F("o_quantity") - item.quantity
-                    lightin_sku.o_reserved = F("o_reserved") - item.quantity
+                    lightin_sku.o_quantity = F("o_quantity") - item.product_quantity
+                    lightin_sku.o_reserved = F("o_reserved") - item.product_quantity
 
                     lightin_sku.save()
                 print ("更新本地sku库存", order.order_no, item.SKU)
