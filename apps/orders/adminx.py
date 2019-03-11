@@ -1028,7 +1028,7 @@ class OrderDetailAdmin(object):
     search_fields = ["order__order_no",'sku',"order__logistic_no" ]
 
     ordering = ['-order__order_no']
-    list_filter = ("order__order_status","order__verify__verify_status","order__verify__sms_status",)
+    list_filter = ("order__status","order__verify__verify_status","order__verify__sms_status",)
 
     actions = ["batch_overseas_stop",]
 
