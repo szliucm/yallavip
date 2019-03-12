@@ -241,7 +241,7 @@ def updatelogistic_trail_lightin(type=None):
                 defaults={
                     "ref_order" : queryset.get(logistic_no=waybillnumber),
                     'logistic_update_time': row.get("New_date"),
-                    'logistic_update_status': row.get("Status"),
+                    'logistic_track_code': row.get("Status"),
                     'logistic_update_comment': row.get("New_Comment"),
 
                 }
