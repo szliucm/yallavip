@@ -1593,7 +1593,7 @@ def sync_lightin_album():
 
     batch_nos = lightinalbums_all.values_list('myalbum').annotate(Min('batch_no'))
     for batch_no in batch_nos:
-        lightinalbums = lightinalbums_all.filter(myalbum__pk = batch_no[0],batch_no=batch_no[1])
+        lightinalbums = lightinalbums_all.filter(myalbum__pk = batch_no[0],batch_no=batch_no[1],lightin_spu__sellable__gt=0)
 
         for lightinalbum in lightinalbums:
             error, posted = post_lightin_album(lightinalbum)
