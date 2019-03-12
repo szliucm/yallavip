@@ -239,9 +239,9 @@ def updatelogistic_trail_lightin(type=None):
                 logistic_no=waybillnumber,
                 ref_order=queryset.get(logistic_no = waybillnumber),
                 defaults={
-                    'logistic_update_time': row["New_date"],
-                    'logistic_update_status': row["Status"],
-                    'logistic_update_comment': row["New_Comment"],
+                    'logistic_update_time': row.get("New_date"),
+                    'logistic_update_status': row.get("Status"),
+                    'logistic_update_comment': row.get("New_Comment"),
 
                 }
             )
@@ -252,10 +252,10 @@ def updatelogistic_trail_lightin(type=None):
                 print(trail_row)
                 trail = LogisticTrail(
                     waybillnumber=waybillnumber,
-                    trail_time=trail_row["Occur_date"],
-                    trail_statuscnname=trail_row["Comment"],
+                    trail_time=trail_row.get("Occur_date"),
+                    trail_statuscnname=trail_row.get("Comment"),
                     trail_status=trail_row.get("track_code"),
-                    trail_locaiton=trail_row["track_area"],
+                    trail_locaiton=trail_row.get("track_area"),
                 )
                 trails_list.append(trail)
                 pass
