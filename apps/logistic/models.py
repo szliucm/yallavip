@@ -480,11 +480,11 @@ class Resell(Package):
         return self.logistic_no
 
 class LogisticTrail(models.Model):
-    waybillnumber = models.CharField(u'物流追踪号', default='', max_length=100, blank=True)
-    trail_status  = models.CharField(u'发生状态', default='', max_length=500, blank=True)
-    trail_statuscnname = models.CharField(u'发生状态_zh', default='', max_length=500, blank=True)
+    waybillnumber = models.CharField(u'物流追踪号', default='', max_length=100, blank=True, null=True)
+    trail_status  = models.CharField(u'发生状态', default='', max_length=500, blank=True, null=True)
+    trail_statuscnname = models.CharField(u'发生状态_zh', default='', max_length=500, blank=True, null=True)
     trail_time = models.DateTimeField(u'发生时间', auto_now=False, blank=True, null=True)
-    trail_locaiton= models.CharField(u'发生地点', default='', max_length=100, blank=True)
+    trail_locaiton= models.CharField(u'发生地点', default='', max_length=100, blank=True, null=True)
 
 
     class Meta:
