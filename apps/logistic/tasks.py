@@ -221,38 +221,50 @@ def sync_logistic_order():
 #更新兰亭物流轨迹
 @shared_task
 def updatelogistic_trail_lightin(type=None):
-
+    from prs.tasks import  getTrack
     #扫描订单，生成待追踪列表
-    Order.objects.filter(~Q(track_status__in = ["CC"]),wms_status = "D" ).values_list("order_no","logistic_no")
+    queryset = Order.objects.filter(~Q(track_status__in = ["CC"]),wms_status = "D" )
+
+    logistic_no_list = list(queryset.values_list("logistic_no",flat=True))
+    print("一共有  %d  个包裹需要更新轨迹"%(queryset.count() ))
+    result = getTrack(logistic_no_list)
+    if result.get("ask") == "Success":
+        order_id_list = []
+        oriorders_list = []
+        for row in result.get("Data"):
+            #处理单个订单
+            waybillnumber = row["TrackingNumber"]
+            Package.objects.update_or_create(
+                logistic_no=waybillnumber,
+                ref_order=queryset.get(logistic_no = waybillnumber),
+                defaults={
+                    'logistic_update_date': row["New_date"],
+                    'logistic_update_status': row["Status"],
+                    'logistic_update_comment': row["New_Comment"],
+                    'logistic_update_locate': row["track_area"],
 
 
-    if type == 1:
-        queryset = Package.objects.filter(file_status="OPEN").order_by("-send_time")
+                }
+            )
 
-    else:
-        queryset = Package.objects.filter(
-            Q(update_trail_time__lt=(timezone.now() - timedelta(days=1))) | Q(update_trail_time__isnull=True),
-            file_status="OPEN")
+            trails_list = []
+            for trail_row in row.get("Detail"):
+                #处理订单的轨迹明细
+                trail = LogisticTrail(
+                    waybillnumber=waybillnumber,
+                    trail_time=trail_row["Occur_date"],
+                    trail_statuscnname=trail_row["Comment"],
+                    trail_status=trail_row["track_code"],
+                    trail_locaiton=trail_row["track_area"],
+                )
+                trails_list.append(trail)
+                pass
 
-    total = queryset.count()
-    n=0
-    for row in queryset:
-        print("一共还有  %d  个包裹需要更新轨迹"%(total - n ))
-        n += 1
+            # 删除所有可能重复的轨迹信息
+            LogisticTrail.objects.filter(waybillnumber=row["TrackingNumber"]).delete()
+            LogisticTrail.objects.bulk_create(trails_list)
 
-        '''
-        if row.update_trail_time is not None:
-            if row.update_trail_time>=(timezone.now()- timedelta(days=1)):
-                print("更新时间少于一天")
-                continue
-        '''
-
-        update_trail(row.logistic_no)
-
-    sync_balance(2)
-    sync_balance(3)
-
-
+    #print(result)
     return
 
 

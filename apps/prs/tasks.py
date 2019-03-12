@@ -2305,7 +2305,7 @@ def getTrack(logistic_list):
 
     result = yuntms(service, param)
 
-    print(result)
+    return  result
 
 def yuntms(service, param):
     from suds.client import Client

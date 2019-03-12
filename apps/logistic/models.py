@@ -33,6 +33,8 @@ class Package(models.Model):
     logistic_update_date = models.DateField(u'物流更新时间', auto_now=False, null=True, blank=True)
     logistic_update_status = models.CharField(verbose_name='物流状态', max_length=100, null=True,
                                               blank=True)
+    logistic_update_comment = models.CharField(verbose_name='物流状态说明', max_length=100, null=True,
+                                              blank=True,default="")
     logistic_update_locate = models.CharField(u'物流更新地点', max_length=100, null=True, blank=True)
 
     update_trail_time = models.DateTimeField(u'轨迹更新时间', auto_now=False, blank=True, null=True)
