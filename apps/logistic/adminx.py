@@ -416,8 +416,8 @@ class PackageAdmin(object):
                "batch_updatelogistic_trail",]
 
 
-    list_display = ( 'logistic_no','package_status','yallavip_package_status',
-                    'logistic_update_date','logistic_update_time', 'logistic_update_status', 'logistic_update_locate',
+    list_display = ( 'logistic_no','package_status',
+                    'logistic_update_date','logistic_update_time', 'logistic_update_status', 'logistic_update_comment',
                     'problem_type','tracking_no')
     list_editable = [ ]
     search_fields = ['logistic_no', ]
