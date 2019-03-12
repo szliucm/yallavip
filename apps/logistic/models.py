@@ -34,11 +34,27 @@ class Package(models.Model):
     logistic_update_time = models.DateTimeField(u'轨迹更新时间', auto_now=False, blank=True, null=True)
 
     TRAIL_STATUS=(
-        ("IR","已预报"),
-        ("AF", "签入"),
-        ("DF", "签出"),
-        ("ND", "派送中"),
-        ("CC", "妥投"),
+        ("CN", "报关放行"),
+        ("CE", "报关异常"),
+        ("AS", "已起 运"),
+        ("DE", "出发异常"),
+        ("AA", "已到 港"),
+        ("NC", "清关放行"),
+        ("AC", "清关异常"),
+        ("AF", "已上 网"),
+        ("NO", "未上 网"),
+        ("AP", "已取 件"),
+        ("NT", "转运 中"),
+        ("AT", "转运异常"),
+        ("ND", "派送 中"),
+        ("DA", "派送异常"),
+        ("CC", "派送妥投"),
+        ("NE", "包裹异常"),
+        ("AO", "操作异常"),
+        ("UE", "退回发件地"),
+        ("DF", "快件操作完成"),
+        ("SP", "请联系服务商"),
+        ("RT", "ready to pitch"),
 
     )
 
