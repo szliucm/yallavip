@@ -2418,8 +2418,10 @@ def cal_barcode(wms_status):
     barcode_quantity = {}
     barcode_list = []
 
+    Lightin_barcode.objects.update(o_reserved=0)
+
     order_barcodes = OrderDetail_lightin.objects.filter(order__wms_status=wms_status,
-                                                        order__status = 'open',
+                                                        #order__status = 'open',
                                        ).values_list('barcode__barcode').annotate(Sum('quantity'))
     for order_barcode in order_barcodes:
         barcode_quantity[order_barcode[0]] = order_barcode[1]
