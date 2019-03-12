@@ -2042,16 +2042,16 @@ def sync_Shipped_order_lightin(days=1):
 
                 order = Order.objects.get(order_no=order_no)
                 if order:
-#                    if order.wms_status =="W" and  data.get("order_status") == "D":
                     send_time = None
-                    if data.get("order_status") == "D":
-                        # wms状态从代发货变成已发货，就修改本地 barcode 库存
+                    if order.wms_status == "W" and data.get("order_status") == "D":
+                        # wms状态从待发货变成已发货，就修改本地 barcode 库存
 
                         items = OrderDetail_lightin.objects.filter(order=order)
                         # 更新本地barcode库存
                         for item in items:
                             barcode = Lightin_barcode.objects.get(barcode=item.barcode)
-                            barcode.o_reserved = F("quantity") - item.quantity
+                            barcode.o_reserved = F("o_reserved") - item.quantity
+                            barcode.o_quantity = F("o_quantity") - item.quantity
                             barcode.save()
                         print ("更新本地barcode库存")
 
@@ -2093,9 +2093,9 @@ def sync_Shipped_order_shopify():
         # 更新shopify的发货状态
 
         print("shopify 发货 ", order.order_no,order.order_id, order.logistic_no)
-        n -= 1
-        print("还有 %s 待发货" % (n))
 
+        print("还有 %s 待发货" % (n))
+        n -= 1
         data = fulfill_order_shopify(order.order_id, order.logistic_no)
 
         if data.get("errors"):
@@ -2328,6 +2328,8 @@ def cal_reserved(overtime=24):
     from orders.models import OrderDetail
     from shop.models import DraftItem
 
+    #先清空所有的reserved信息
+    Lightin_SKU.objects.update(o_reserved=0)
 
     sku_quantity = {}
     sku_list = []
