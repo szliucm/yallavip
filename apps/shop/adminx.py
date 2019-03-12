@@ -313,6 +313,7 @@ def insert_product(shop_name, products):
                     sku=variant_row["sku"],
                     image_no=variant_row["image_id"],
                     title=variant_row["title"],
+                    inventory_item_no = variant_row["inventory_item_id"],
                     price=variant_row["price"],
                     option1=variant_row["option1"],
                     option2=variant_row["option2"],
@@ -417,7 +418,8 @@ class ShopAdmin(object):
 
             url = shop_url + "/admin/products/count.json"
             params = {
-                "since_id": max_product_no
+                #"since_id": max_product_no
+                "created_at_min" : "2019-02-10T00:00:00-00:00",
             }
             # print("url %s params %s"%(url, params))
             r = requests.get(url, params)
@@ -446,7 +448,8 @@ class ShopAdmin(object):
                     params = {
                         "page": i,
                         "limit": limit,
-                        "since_id": max_product_no,
+                        #"since_id": max_product_no,
+                        "created_at_min": "2019-02-10T00:00:00-00:00",
                         "fields": "id,handle,body_html,title,product_type,created_at,published_at,"
                                   "updated_at,tags,vendor,variants,images,options",
                         # "fields": "product_id",
@@ -673,7 +676,7 @@ class ShopifyProductAdmin(object):
 
             products.append(product)
 
-        insert_product(shop_obj.shop_name, products)
+            insert_product(shop_obj.shop_name, products)
 
 
 
