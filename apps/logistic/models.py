@@ -64,7 +64,7 @@ class Package(models.Model):
                                               blank=True)
     logistic_update_status = models.CharField(verbose_name='物流状态', max_length=100, null=True,
                                               blank=True)
-    logistic_update_comment = models.CharField(verbose_name='物流状态说明', max_length=100, null=True,
+    logistic_update_comment = models.CharField(verbose_name='物流状态说明', max_length=500, null=True,
                                               blank=True,default="")
     logistic_update_locate = models.CharField(u'物流更新地点', max_length=100, null=True, blank=True)
 

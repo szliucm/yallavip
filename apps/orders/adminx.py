@@ -8,12 +8,13 @@ import base64
 
 import numpy as np, re
 import xadmin
+from xadmin.layout import Main, Side, Fieldset, Row, AppendedText
 from django.shortcuts import get_object_or_404, get_list_or_404, render
 from import_export import resources, fields
 from import_export.widgets import ForeignKeyWidget
 from .models import Order, OrderDetail,OrderDetail_lightin, Verify, OrderConversation,ClientService,Verification,\
         Logistic_winlink,Logistic_jiacheng,Logistic_status,Logistic_trail, Sms,\
-        LogisticAccount,OverseaOrder,OverseaSkuRank
+        LogisticAccount,OverseaOrder,OverseaSkuRank,MyOrder,MyOrderDetail
 from shop.models import ShopifyProduct, ShopifyVariant,Combination,ShopifyImage
 from fb.models import MyPhoto
 
@@ -2924,3 +2925,46 @@ class OrderDetail_lightinAdmin(object):
     list_filter = ("order__status", "order__verify__verify_status", "order__verify__sms_status",)
 
     actions = [ ]
+
+
+
+
+@xadmin.sites.register(MyOrder)
+class MyOrderAdmin(object):
+    class MyOrderDetailInline(object):
+        model = MyOrderDetail
+        extra = 2
+        #style = 'tab'
+        form_layout = (
+            Main(
+                Fieldset('',
+                         Row('order', 'sku','product_quantity',),
+                         ),
+
+            )
+        )
+
+
+    list_display = ['buyer_name',  ]
+
+    search_fields = []
+
+    ordering = []
+    list_filter = ()
+
+    actions = [ ]
+    inlines = [MyOrderDetailInline, ]
+
+
+
+
+@xadmin.sites.register(MyOrderDetail)
+class MyOrderDetailAdmin(object):
+    list_display = ['order','sku', 'quantity','price',]
+
+    search_fields = []
+
+    ordering = []
+    list_filter = ()
+
+    actions = []

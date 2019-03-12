@@ -1338,3 +1338,30 @@ class LogisticAccount(models.Model):
     def __str__(self):
         return self.logistic_no
 
+class MyOrder(models.Model):
+    buyer_name = models.CharField(u'买家姓名', default='', max_length=500, blank=True)
+    class Meta:
+        verbose_name = "YallaVIP Order"
+        verbose_name_plural = verbose_name
+
+
+    def __str__(self):
+        return self.buyer_name
+
+class MyOrderDetail(models.Model):
+    order = models.ForeignKey(MyOrder, related_name='my_order_orderdetail', null=False, on_delete=models.CASCADE,
+                              verbose_name="Order")
+
+    sku = models.CharField(u'SKU', default='', max_length=100, null=True, blank=True)
+    product_quantity = models.CharField(u'Quantity', default='', max_length=50, blank=True)
+    price = models.CharField(u'Unit Price', default='', max_length=50, blank=True)
+
+    buyer_name = models.CharField(u'买家姓名', default='', max_length=500, blank=True)
+
+    class Meta:
+        verbose_name = "YallaVIP OrderItem"
+        verbose_name_plural = verbose_name
+
+
+    def __str__(self):
+        return self.sku
