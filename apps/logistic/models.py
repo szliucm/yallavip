@@ -32,7 +32,18 @@ class Package(models.Model):
     logistic_start_date = models.DateField(u'物流收货时间', auto_now=False, null=True, blank=True)
     logistic_update_date = models.DateField(u'物流更新日期', auto_now=False, null=True, blank=True)
     logistic_update_time = models.DateTimeField(u'轨迹更新时间', auto_now=False, blank=True, null=True)
-    logistic_update_status = models.CharField(verbose_name='物流状态', max_length=100, null=True,
+
+    TRAIL_STATUS=(
+        ("IR","已预报"),
+        ("AF", "签入"),
+        ("DF", "签出"),
+        ("ND", "派送中"),
+        ("CC", "妥投"),
+
+    )
+
+
+    logistic_update_status = models.CharField(choices=TRAIL_STATUS,verbose_name='物流状态', max_length=100, null=True,
                                               blank=True)
     logistic_update_comment = models.CharField(verbose_name='物流状态说明', max_length=100, null=True,
                                               blank=True,default="")

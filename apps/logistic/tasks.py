@@ -237,8 +237,9 @@ def updatelogistic_trail_lightin(type=None):
             print(waybillnumber)
             obj, created = Package.objects.update_or_create(
                 logistic_no=waybillnumber,
-                ref_order=queryset.get(logistic_no = waybillnumber),
+
                 defaults={
+                    "ref_order" : queryset.get(logistic_no=waybillnumber),
                     'logistic_update_time': row.get("New_date"),
                     'logistic_update_status': row.get("Status"),
                     'logistic_update_comment': row.get("New_Comment"),
