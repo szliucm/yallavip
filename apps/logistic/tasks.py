@@ -241,14 +241,14 @@ def updatelogistic_trail_lightin(type=None):
                     'logistic_update_date': row["New_date"],
                     'logistic_update_status': row["Status"],
                     'logistic_update_comment': row["New_Comment"],
-                }
+
                 }
             )
 
             trails_list = []
             for trail_row in row.get("Detail"):
                 #处理订单的轨迹明细
-                print(trail_row)
+
                 trail = LogisticTrail(
                     waybillnumber=waybillnumber,
                     trail_time=trail_row["Occur_date"],
