@@ -30,7 +30,8 @@ class Package(models.Model):
     size_weight = models.CharField(u'体积重', max_length=100, null=True, blank=True)
     charge_weight = models.CharField(u'计费重', max_length=100, null=True, blank=True)
     logistic_start_date = models.DateField(u'物流收货时间', auto_now=False, null=True, blank=True)
-    logistic_update_date = models.DateField(u'物流更新时间', auto_now=False, null=True, blank=True)
+    logistic_update_date = models.DateField(u'物流更新日期', auto_now=False, null=True, blank=True)
+    logistic_update_time = models.DateTimeField(u'轨迹更新时间', auto_now=False, blank=True, null=True)
     logistic_update_status = models.CharField(verbose_name='物流状态', max_length=100, null=True,
                                               blank=True)
     logistic_update_comment = models.CharField(verbose_name='物流状态说明', max_length=100, null=True,

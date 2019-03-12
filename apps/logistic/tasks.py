@@ -234,11 +234,12 @@ def updatelogistic_trail_lightin(type=None):
         for row in result.get("Data"):
             #处理单个订单
             waybillnumber = row["TrackingNumber"]
+            print(waybillnumber)
             Package.objects.update_or_create(
                 logistic_no=waybillnumber,
                 ref_order=queryset.get(logistic_no = waybillnumber),
                 defaults={
-                    'logistic_update_date': row["New_date"],
+                    'logistic_update_time': row["New_date"],
                     'logistic_update_status': row["Status"],
                     'logistic_update_comment': row["New_Comment"],
 
