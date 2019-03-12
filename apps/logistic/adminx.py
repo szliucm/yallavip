@@ -27,7 +27,7 @@ from django.shortcuts import get_object_or_404, get_list_or_404, render
 from import_export import resources, fields
 from import_export.widgets import ForeignKeyWidget
 from .models import Package, LogisticSupplier,LogisticCustomerService,OverseaPackage,Resell,\
-        LogisticBalance,Overtime,ToBalance,LogisticManagerConfirm,LogisticResendTrail,Reminder, MultiPackage,DealTrail
+        LogisticBalance,Overtime,ToBalance,LogisticManagerConfirm,LogisticResendTrail,Reminder, MultiPackage,DealTrail,LogisticTrail
 from orders.models import Order,OrderConversation,OrderDetail
 from product.models import Product
 from django.db import models
@@ -757,6 +757,8 @@ class OverseaPackageAdmin(object):
             queryset |= self.model.objects.filter(logistic_no__in=query.split(","))
         return queryset
 '''
+
+
 
 class LogisticCustomerServiceResource(resources.ModelResource):
 
@@ -1825,3 +1827,12 @@ class OverseaPackageAdmin(object):
     def queryset(self):
         qs = super().queryset()
         return qs.filter(file_status="OPEN" , wait_status = False, from_warehouse = "海外仓")
+
+@xadmin.sites.register(LogisticTrail)
+class LogisticTrailAdmin(object):
+    list_display = ( 'waybillnumber','package', 'trail_status','trail_statuscnname', 'trail_time','trail_locaiton',)
+    list_editable = [  ]
+    search_fields = ['waybillnumber', ]
+    list_filter = ()
+    ordering = []
+    actions = []
