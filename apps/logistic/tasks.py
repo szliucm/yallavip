@@ -241,9 +241,7 @@ def updatelogistic_trail_lightin(type=None):
                     'logistic_update_date': row["New_date"],
                     'logistic_update_status': row["Status"],
                     'logistic_update_comment': row["New_Comment"],
-                    'logistic_update_locate': row["track_area"],
-
-
+                }
                 }
             )
 
