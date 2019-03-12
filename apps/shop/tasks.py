@@ -774,3 +774,85 @@ def update_drafts():
                     continue
 
     oriorders.update(updated=False)
+
+def download_product():
+    # 定义actions函数
+
+    shop_name = "yallasale-com"
+
+    shop_obj = Shop.objects.get(shop_name=shop_name)
+
+    '''
+    #取得系统中已有的最大product_no
+    product = ShopifyProduct.objects.filter(shop_name=shop_name).order_by('-product_no').first()
+    if product is None:
+        max_product_no = "0"
+    else:
+        max_product_no = product.product_no
+
+    print("max_product_no", max_product_no)
+
+    #删除所有可能重复的产品信息
+
+    ShopifyVariant.objects.filter(product_no__gt=max_product_no).delete()
+    ShopifyImage.objects.filter(product_no__gt=max_product_no).delete()
+    ShopifyOptions.objects.filter(product_no__gt=max_product_no).delete()
+    '''
+
+    #获取新产品信息
+    shop_url = "https://%s:%s@%s.myshopify.com" % (shop_obj.apikey, shop_obj.password, shop_obj.shop_name)
+    # shop_url = "https://12222a833afcad263c5cc593eca7af10:47aea3fe8f4b9430b1bac56c886c9bae@yallasale-com.myshopify.com/admin"
+    # shopify.ShopifyResource.set_site(shop_url)
+
+    url = shop_url + "/admin/products/count.json"
+    params = {
+        #"since_id": max_product_no
+        "created_at_min" : "2019-02-10T00:00:00-00:00",
+    }
+    # print("url %s params %s"%(url, params))
+    r = requests.get(url, params)
+    data = json.loads(r.text)
+
+
+    print("product count is ", data["count"])
+
+    total_count = data["count"]
+
+    i = 0
+    limit = 100
+
+    while True:
+        try:
+
+            if (i * limit > total_count):
+                break
+
+            i = i + 1
+            print( "当前是第%s页"%(i ))
+
+
+
+            # products = shopify.Product.find(page=i,limit=limit,updated_at_min=shop.updated_time)
+            url = shop_url + "/admin/products.json"
+            params = {
+                "page": i,
+                "limit": limit,
+                #"since_id": max_product_no,
+                "created_at_min": "2019-02-10T00:00:00-00:00",
+                "fields": "id,handle,body_html,title,product_type,created_at,published_at,"
+                          "updated_at,tags,vendor,variants,images,options",
+                # "fields": "product_id",
+            }
+            print(("params is ", params))
+
+            r = requests.get(url, params)
+            products = json.loads(r.text)["products"]
+
+            insert_product(shop_name, products)
+
+
+        except KeyError:
+            print("products for the shop {} completed".format(shop_name))
+            break
+
+
