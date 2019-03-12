@@ -249,12 +249,12 @@ def updatelogistic_trail_lightin(type=None):
             trails_list = []
             for trail_row in row.get("Detail"):
                 #处理订单的轨迹明细
-
+                print(trail_row)
                 trail = LogisticTrail(
                     waybillnumber=waybillnumber,
                     trail_time=trail_row["Occur_date"],
                     trail_statuscnname=trail_row["Comment"],
-                    trail_status=trail_row["track_code"],
+                    trail_status=trail_row.get("track_code"),
                     trail_locaiton=trail_row["track_area"],
                 )
                 trails_list.append(trail)
