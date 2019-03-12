@@ -2496,6 +2496,7 @@ def get_wms_orders(days=1):
                 oriorder = WmsOriOrder(
                     order_id=row["order_code"],
                     order_no=row["reference_no"],
+                    tracking_no=row["tracking_no"],
                     created_at=row["date_create"],
                     status=row["order_status"],
                     order_json=json.dumps(row),
