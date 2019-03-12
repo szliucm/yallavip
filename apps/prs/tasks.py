@@ -2459,7 +2459,62 @@ def sync_shopify(minutes=10):
 
 
 
+@shared_task
+def get_wms_orders(days=1):
+    import datetime
+    from django.db.models import F
 
+    today = datetime.date.today()
+    start_time = str(today - datetime.timedelta(days=days))
+
+    page = 1
+
+    while 1:
+
+        param = {
+            "pageSize": "100",
+            "page": page,
+            "order_code": "",
+            # "order_status": "D",
+            "order_code_arr": [],
+            "create_date_from": start_time,
+            "create_date_to": "",
+            "modify_date_from": "",
+            "modify_date_to": ""
+        }
+
+        service = "getOrderList"
+
+        result = yunwms(service, param)
+
+        # print(result)
+        if result.get("ask") == "Success":
+            order_id_list = []
+            oriorders_list = []
+            for row in result.get("data"):
+                order_id_list.append(row["order_code"])
+                oriorder = WmsOriOrder(
+                    order_id=row["order_code"],
+                    order_no=row["reference_no"],
+                    created_at=row["created_at"],
+                    status=row["order_status"],
+                    order_json=json.dumps(row),
+                    updated=True,
+                )
+                oriorders_list.append(oriorder)
+
+                # 删除所有可能重复的订单信息
+            WmsOriOrder.objects.filter(order_id__in=order_id_list).delete()
+
+            WmsOriOrder.objects.bulk_create(oriorders_list)
+        else:
+            print("出错了！", result.get("message"))
+            break
+
+        if result.get("nextPage") == "false":
+            break
+        else:
+            page += 1;
 
 
 
@@ -2476,4 +2531,5 @@ from django.db import connection, transaction
     cursor.execute(sql)
     transaction.commit()
 '''
+
 
