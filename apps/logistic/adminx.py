@@ -417,7 +417,7 @@ class PackageAdmin(object):
 
 
     list_display = ( 'logistic_no','package_status',
-                    'logistic_update_date','logistic_update_time','logistic_track_code', 'logistic_update_status', 'logistic_update_comment',
+                    'logistic_update_date','logistic_update_time','logistic_track_code',  'logistic_update_comment',
                     'problem_type','tracking_no')
     list_editable = [ ]
     search_fields = ['logistic_no', ]
@@ -1834,5 +1834,5 @@ class LogisticTrailAdmin(object):
     list_editable = [  ]
     search_fields = ['waybillnumber', ]
     list_filter = ()
-    ordering = []
+    ordering = ['-trail_time']
     actions = []
