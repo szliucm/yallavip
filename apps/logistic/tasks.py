@@ -250,6 +250,7 @@ def updatelogistic_trail_lightin(type=None):
             trails_list = []
             for trail_row in row.get("Detail"):
                 #处理订单的轨迹明细
+                print(trail_row)
                 trail = LogisticTrail(
                     waybillnumber=waybillnumber,
                     trail_time=trail_row["Occur_date"],
