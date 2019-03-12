@@ -2196,7 +2196,7 @@ def get_wms_quantity(barcode=""):
 
         result = yunwms(service, param)
 
-        print(result)
+        #print(result)
         if result.get("ask") == "Success":
             for data in result.get("data"):
                 Lightin_barcode.objects.update_or_create(

@@ -218,5 +218,42 @@ def sync_logistic_order():
         if order is not None:
             Package.objects.filter(pk=row.pk).update(ref_order = order)
 
+#更新兰亭物流轨迹
+@shared_task
+def updatelogistic_trail_lightin(type=None):
+
+    #扫描订单，生成待追踪列表
+    Order.objects.filter(~Q(track_status__in = ["CC"]),wms_status = "D" ).values_list("order_no","logistic_no")
+
+
+    if type == 1:
+        queryset = Package.objects.filter(file_status="OPEN").order_by("-send_time")
+
+    else:
+        queryset = Package.objects.filter(
+            Q(update_trail_time__lt=(timezone.now() - timedelta(days=1))) | Q(update_trail_time__isnull=True),
+            file_status="OPEN")
+
+    total = queryset.count()
+    n=0
+    for row in queryset:
+        print("一共还有  %d  个包裹需要更新轨迹"%(total - n ))
+        n += 1
+
+        '''
+        if row.update_trail_time is not None:
+            if row.update_trail_time>=(timezone.now()- timedelta(days=1)):
+                print("更新时间少于一天")
+                continue
+        '''
+
+        update_trail(row.logistic_no)
+
+    sync_balance(2)
+    sync_balance(3)
+
+
+    return
+
 
 
