@@ -43,7 +43,7 @@ class Package(models.Model):
     )
 
 
-    logistic_track_code = models.CharField(choices=TRAIL_STATUS,verbose_name='物流状态', max_length=100, null=True,
+    logistic_track_code = models.CharField(choices=TRAIL_STATUS,verbose_name='物流轨迹代码', max_length=100, null=True,
                                               blank=True)
     logistic_update_status = models.CharField(verbose_name='物流状态', max_length=100, null=True,
                                               blank=True)

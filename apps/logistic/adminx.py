@@ -421,7 +421,7 @@ class PackageAdmin(object):
                     'problem_type','tracking_no')
     list_editable = [ ]
     search_fields = ['logistic_no', ]
-    list_filter = ("package_status","logistic_update_status",)
+    list_filter = ("package_status","logistic_update_status",'logistic_track_code',)
     ordering = []
 
 
