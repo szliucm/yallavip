@@ -235,7 +235,7 @@ def updatelogistic_trail_lightin(type=None):
             #处理单个订单
             waybillnumber = row["TrackingNumber"]
             print(waybillnumber)
-            Package.objects.update_or_create(
+            obj, created = Package.objects.update_or_create(
                 logistic_no=waybillnumber,
                 ref_order=queryset.get(logistic_no = waybillnumber),
                 defaults={
@@ -251,6 +251,7 @@ def updatelogistic_trail_lightin(type=None):
                 #处理订单的轨迹明细
                 print(trail_row)
                 trail = LogisticTrail(
+                    package = obj,
                     waybillnumber=waybillnumber,
                     trail_time=trail_row.get("Occur_date"),
                     trail_statuscnname=trail_row.get("Comment"),
