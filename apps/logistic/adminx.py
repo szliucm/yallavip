@@ -417,7 +417,7 @@ class PackageAdmin(object):
 
 
     list_display = ( 'logistic_no','package_status','yallavip_package_status',
-                    'logistic_update_date', 'logistic_update_status', 'logistic_update_locate',
+                    'logistic_update_date','logistic_update_time', 'logistic_update_status', 'logistic_update_locate',
                     'problem_type','tracking_no')
     list_editable = [ ]
     search_fields = ['logistic_no', ]
