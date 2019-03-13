@@ -440,7 +440,9 @@ def get_orders(minutes=10):
         params["status"] = stat
         # print("url %s params %s"%(url, params))
         r = requests.get(url, params)
+
         data = json.loads(r.text)
+        print(r, r.text)
 
         if not data:
             print("返回为空", data)
