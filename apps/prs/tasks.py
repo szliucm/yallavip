@@ -1682,7 +1682,7 @@ def delete_outstock_lightin_album():
 #删除lightin_album 的某个特定子集
 def delete_out_lightin_album(lightinalbums_out):
     from facebook_business.api import FacebookAdsApi
-    from facebook_business.adobjects.photo import Photo
+
 
     # 选择所有可用的page
 
@@ -1694,35 +1694,40 @@ def delete_out_lightin_album(lightinalbums_out):
         if photo_nos is None or len(photo_nos) == 0:
             continue
 
-        for photo_no in photo_nos:
+        delete_photos(photo_nos)
 
-            fields = [
-            ]
-            params = {
+def delete_photos(photo_nos):
+    from facebook_business.adobjects.photo import Photo
 
-            }
-            try:
+    for photo_no in photo_nos:
 
-                response = Photo(photo_no).api_delete(
-                    fields=fields,
-                    params=params,
-                )
+        fields = [
+        ]
+        params = {
 
-                #response = "delete photo_no "+ photo_no
-            except Exception as e:
-                print("删除图片出错",photo_no, e)
-                continue
-            #更新lightinalbum的发布记录
-            print("facebook 返回结果",response)
-            LightinAlbum.objects.filter(fb_id=photo_no).update(
+        }
+        try:
 
-                    published=False,
-                    deleted=True,
-                    #delete_error=response,
-                    deleted_time=dt.now()
+            response = Photo(photo_no).api_delete(
+                fields=fields,
+                params=params,
+            )
 
-                )
-            print("删除相册图片 LightinAlbum %s %s" % (photo_no, response))
+            #response = "delete photo_no "+ photo_no
+        except Exception as e:
+            print("删除图片出错",photo_no, e)
+            continue
+        #更新lightinalbum的发布记录
+        print("facebook 返回结果",response)
+        LightinAlbum.objects.filter(fb_id=photo_no).update(
+
+                published=False,
+                deleted=True,
+                #delete_error=response,
+                deleted_time=dt.now()
+
+            )
+        print("删除相册图片 LightinAlbum %s %s" % (photo_no, response))
 
 
 @shared_task

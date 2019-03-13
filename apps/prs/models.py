@@ -479,7 +479,7 @@ class Lightin_SPU(models.Model):
         verbose_name_plural = verbose_name
 
     def __str__(self):
-        return self.SPU
+        return self.handle
 
 class Lightin_SKU(models.Model):
 

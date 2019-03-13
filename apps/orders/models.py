@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.html import format_html
 from conversations.models import Conversation
-from prs.models import  Lightin_SKU,Lightin_barcode
+from prs.models import  Lightin_SPU, Lightin_SKU,Lightin_barcode
 
 
 # Create your models here.
@@ -1351,10 +1351,13 @@ class MyOrder(models.Model):
 class MyOrderDetail(models.Model):
     order = models.ForeignKey(MyOrder, related_name='my_order_orderdetail', null=False, on_delete=models.CASCADE,
                               verbose_name="Order")
+    lightin_spu = models.ForeignKey(Lightin_SPU, related_name='lightin_spu_orderdetail', null=True,
+                                    on_delete=models.CASCADE,
+                                    verbose_name="货号")
     lightin_sku = models.ForeignKey(Lightin_SKU, related_name='lightin_sku_orderdetail', null=True, on_delete=models.CASCADE,
                               verbose_name="sku")
     #sku = models.CharField(u'SKU', default='', max_length=100, null=True, blank=True)
-    product_quantity = models.CharField(u'Quantity', default='', max_length=50, blank=True)
+    quantity = models.CharField(u'Quantity', default='', max_length=50, blank=True)
     price = models.CharField(u'Unit Price', default='', max_length=50, blank=True)
 
     def cal_amount(self):
