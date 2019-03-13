@@ -1696,6 +1696,43 @@ def delete_out_lightin_album(lightinalbums_out):
 
         delete_photos(photo_nos)
 
+#删除重复发布且已下架的图片
+
+def delete_missed_photo():
+    from facebook_business.api import FacebookAdsApi
+    from fb.models import  MyPhoto
+
+    #找出已下架商品的handle
+    handles = Lightin_SPU.objects.filter(sellable__lte=0).values_list("handle",flat=True).distinct()
+
+    photo_miss = {}
+    #在fb的图片里找handle的图片
+    for handle in handles:
+        photos =MyPhoto.objects.filter(name__contains=handle).values_list("page_no","photo_no").distinct()
+        for photo in photos:
+            page_no = photo[0]
+            fb_id = photo[1]
+            photo_list = photo_miss.get(page_no)
+            if not photo_list:
+                photo_list = []
+
+            if fb_id not in photo_list:
+                photo_list.append(fb_id)
+
+            photo_miss[page_no] = photo_list
+
+    # 选择所有可用的page
+    for page_no in photo_miss:
+        FacebookAdsApi.init(access_token=get_token(page_no))
+
+        photo_nos = photo_miss[page_no]
+        print("page %s 待删除数量 %s  "%(page_no, len(photo_nos)))
+        if photo_nos is None or len(photo_nos) == 0:
+            continue
+
+        delete_photos(photo_nos)
+
+
 def delete_photos(photo_nos):
     from facebook_business.adobjects.photo import Photo
 
