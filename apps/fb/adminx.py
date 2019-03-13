@@ -323,6 +323,7 @@ class MyFeedAdmin(object):
                     "comment_count", "like_count", "message",]
     search_fields = ['feed_no', "page_no","message",]
     actions = ["batch_update_sku", "create_page_feed"]
+    list_filter = ('page_no',)
 
     def create_page_feed(self, request, queryset):
         # 发图片post
