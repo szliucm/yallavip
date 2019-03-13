@@ -1351,12 +1351,18 @@ class MyOrder(models.Model):
 class MyOrderDetail(models.Model):
     order = models.ForeignKey(MyOrder, related_name='my_order_orderdetail', null=False, on_delete=models.CASCADE,
                               verbose_name="Order")
-
-    sku = models.CharField(u'SKU', default='', max_length=100, null=True, blank=True)
+    lightin_sku = models.ForeignKey(Lightin_SKU, related_name='lightin_sku_orderdetail', null=True, on_delete=models.CASCADE,
+                              verbose_name="sku")
+    #sku = models.CharField(u'SKU', default='', max_length=100, null=True, blank=True)
     product_quantity = models.CharField(u'Quantity', default='', max_length=50, blank=True)
     price = models.CharField(u'Unit Price', default='', max_length=50, blank=True)
 
-    buyer_name = models.CharField(u'买家姓名', default='', max_length=500, blank=True)
+    def cal_amount(self):
+        return  self.product_quantity * self.price
+
+    cal_amount.short_description = "小计"
+    amount = property(cal_amount)
+
 
     class Meta:
         verbose_name = "YallaVIP OrderItem"
@@ -1364,4 +1370,4 @@ class MyOrderDetail(models.Model):
 
 
     def __str__(self):
-        return self.sku
+        return self.lightin_sku.skuattr

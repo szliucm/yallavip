@@ -2933,12 +2933,14 @@ class OrderDetail_lightinAdmin(object):
 class MyOrderAdmin(object):
     class MyOrderDetailInline(object):
         model = MyOrderDetail
-        extra = 2
+        extra = 1
         #style = 'tab'
         form_layout = (
             Main(
-                Fieldset('',
-                         Row('order', 'sku','product_quantity',),
+                Fieldset('订单明细',
+                         #Row( 'lightin_sku','product_quantity','price',),
+                         'lightin_sku','price', 'product_quantity', 'amount',
+
                          ),
 
             )
@@ -2953,6 +2955,22 @@ class MyOrderAdmin(object):
     list_filter = ()
 
     actions = [ ]
+    relfield_style = 'fk_ajax'
+
+    form_layout = (
+        Main(
+            Fieldset('客户信息',
+                     Row('buyer_name', ),
+                     ),
+
+
+        ),
+        Side(
+            Fieldset('最近订单',
+
+                     ),
+        )
+    )
     inlines = [MyOrderDetailInline, ]
 
 
@@ -2960,7 +2978,7 @@ class MyOrderAdmin(object):
 
 @xadmin.sites.register(MyOrderDetail)
 class MyOrderDetailAdmin(object):
-    list_display = ['order','sku', 'quantity','price',]
+    list_display = ['order','lightin_sku', 'quantity','price',]
 
     search_fields = []
 

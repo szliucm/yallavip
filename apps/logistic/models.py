@@ -7,7 +7,6 @@ from fb.models import  MyPhoto
 from django.utils import timezone as dt
 from django.utils.safestring import mark_safe
 
-
 # Create your models here.
 class Package(models.Model):
     super_package = models.ForeignKey('self', null=True, on_delete=models.CASCADE,

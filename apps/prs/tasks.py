@@ -2522,6 +2522,41 @@ def get_wms_orders(days=1):
             page += 1;
 
 
+def update_shopify_variant():
+
+    from shop.models import ShopifyVariant
+
+    dest_shop = "yallasale-com"
+    shop_obj = Shop.objects.get(shop_name=dest_shop)
+
+    shop_url = "https://%s:%s@%s.myshopify.com" % (shop_obj.apikey, shop_obj.password, shop_obj.shop_name)
+
+    variants = ShopifyVariant.objects.filter(inventory_policy="").distinct().values_list("variant_no",flat=True)
+    for variant_id in variants:
+        params = {
+            "variant": {
+                "id": variant_id,
+                "inventory_policy": "deny",
+                "inventory_management": "shopify"
+            }
+        }
+        headers = {
+            "Content-Type": "application/json",
+            "charset": "utf-8",
+
+        }
+        # 初始化SDK
+        url = shop_url + "/admin/variants/%s.json"%(variant_id)
+
+        print("开始修改变体",variant_id)
+        #print(url, json.dumps(params))
+
+        r = requests.put(url, headers=headers, data=json.dumps(params))
+        if r.text is None:
+            print(r)
+            return None
+        else:
+            print(r, r.text)
 
 
 
@@ -2536,5 +2571,6 @@ from django.db import connection, transaction
     cursor.execute(sql)
     transaction.commit()
 '''
+
 
 
