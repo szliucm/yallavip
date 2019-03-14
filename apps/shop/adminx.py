@@ -314,6 +314,12 @@ def insert_product(shop_name, products):
                     image_no=variant_row["image_id"],
                     title=variant_row["title"],
                     inventory_item_no = variant_row["inventory_item_id"],
+                    inventory_policy=variant_row["inventory_policy"],
+                    fulfillment_service=variant_row["fulfillment_service"],
+                    inventory_management=variant_row["inventory_management"],
+                    inventory_quantity=variant_row["inventory_quantity"],
+
+
                     price=variant_row["price"],
                     option1=variant_row["option1"],
                     option2=variant_row["option2"],
