@@ -246,6 +246,11 @@ def updatelogistic_trail_lightin(type=None):
 
                 }
             )
+            #妥投的就设置order状态，不再更新轨迹
+
+            if row.get("Status") == "CC":
+                print(waybillnumber, "妥投了")
+                Order.objects.filter(logistic_no = waybillnumber).update(track_status = "CC")
 
             trails_list = []
             for trail_row in row.get("Detail"):

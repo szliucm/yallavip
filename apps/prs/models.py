@@ -508,6 +508,11 @@ class Lightin_SKU(models.Model):
 
     skuattr = models.TextField(default='', null=True, blank=True, verbose_name="skuattr")
 
+    image = models.ImageField(u'组合图', upload_to='combo/', default="", null=True, blank=True)
+    image_marked = models.CharField(default='', max_length=100, null=True, blank=True, verbose_name="组合水印图")
+    listed = models.BooleanField(u'已发布到主站', default=False)
+    #listing_status = models.BooleanField(u'发布到Facebook', default=False)
+
     #y_sellable = models.IntegerField(u'wms_可售数量', default=0, blank=True, null=True)
     #y_reserved = models.IntegerField(u'wms_待出库数量', default=0, blank=True, null=True)
 
@@ -626,7 +631,8 @@ class Lightin_barcode(models.Model):
 
         return  self.barcode
 
-class Combo(models.Model):
+class Combo(Lightin_SKU):
+    '''
     combo_no = models.CharField(u'Combo', default='', max_length=100, blank=True)
 
     handle = models.CharField(u'货号', default='', max_length=256, null=True, blank=True)
@@ -641,6 +647,8 @@ class Combo(models.Model):
     image = models.ImageField(u'组合图', upload_to='combo/', default="", null=True, blank=True)
     image_marked = models.CharField(default='', max_length=100, null=True, blank=True, verbose_name="组合水印图")
 
+    '''
+
     def cal_items(self):
 
         return  ",".join(self.combo_item.values_list("lightin_sku__SKU",flat=True))
@@ -649,12 +657,13 @@ class Combo(models.Model):
     items = property(cal_items)
 
     class Meta:
+        proxy = True
         verbose_name = "组合产品"
         verbose_name_plural = verbose_name
 
 
     def __str__(self):
-        return self.combo_no
+        return self.SKU
 
 
 class ComboItem(models.Model):
