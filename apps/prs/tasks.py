@@ -2427,6 +2427,16 @@ def cal_reserved(overtime=24):
 
     sku_quantity = {}
     sku_list = []
+    #计算组合商品,每个组合商品只有一件
+    combo_skus = ComboItem.objects.filter(combo__o_quantity__gt = 0,
+                                       ).values_list('lightin_sku__SKU',flat=True)
+    for combo_sku in combo_skus:
+        sku_quantity[combo_sku] = sku_quantity.get(combo_sku,0) + 1
+        if combo_sku not in sku_list:
+            sku_list.append(combo_sku)
+
+    print("组合商品 有%s个sku需要更新" % (len(sku_quantity)))
+
     # 计算订单
     order_skus = OrderDetail.objects.filter(order__status="open",
                                       # order__order_time__gt =  dt.now() - dt.timedelta(hours=overtime),
@@ -2436,7 +2446,7 @@ def cal_reserved(overtime=24):
         if order_sku[0] not in sku_list:
             sku_list.append(order_sku[0])
 
-    print("开放的订单 有%s个sku需要更新" % (len(sku_quantity)))
+    print("加上开放的订单 有%s个sku需要更新" % (len(sku_quantity)))
 
     # 计算草稿
     draft_skus = DraftItem.objects.filter(draft__status="open",
@@ -2467,6 +2477,7 @@ def cal_reserved(overtime=24):
 
 
     #更新对应的spu
+    print(sku_list)
     lightin_spus = Lightin_SPU.objects.filter(spu_sku__SKU__in = sku_list).distinct()
     print("有%s个spu需要更新"%(lightin_spus.count()))
     for lightin_spu in lightin_spus:

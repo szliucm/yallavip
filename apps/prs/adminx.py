@@ -3,6 +3,8 @@ __author__ = 'Aaron'
 
 import  json
 import xadmin
+from xadmin.layout import Main, Side, Fieldset, Row, AppendedText
+
 from import_export import resources, fields
 from import_export.widgets import ForeignKeyWidget
 from django.db.models import Count
@@ -809,4 +811,51 @@ class LightinAlbumAdmin(object):
     list_editable = []
     readonly_fields = ()
     actions = []
+
+@xadmin.sites.register(Combo)
+class ComboAdmin(object):
+    class ComboItemInline(object):
+
+
+        model = ComboItem
+        extra = 1
+        #style = 'tab'
+        form_layout = (
+            Main(
+                Fieldset('组合明细',
+                         #Row( 'lightin_sku','product_quantity','price',),
+                         'lightin_sku', 'SKU',
+
+                         ),
+
+            )
+        )
+
+
+    list_display = ['combo_no', 'handle','listed', 'listing_status','items' ]
+
+    search_fields = ['handle',]
+
+    ordering = []
+    list_filter = ('listed', 'listing_status',)
+
+    actions = [ ]
+    relfield_style = 'fk_ajax'
+
+    form_layout = (
+        Main(
+            Fieldset('组合产品信息',
+                     Row('combo_no','handle', ),
+                     ),
+
+
+        ),
+
+    )
+
+
+    inlines = [ComboItemInline, ]
+
+
+
 

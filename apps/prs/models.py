@@ -479,7 +479,7 @@ class Lightin_SPU(models.Model):
         verbose_name_plural = verbose_name
 
     def __str__(self):
-        return self.handle
+        return self.SPU
 
 class Lightin_SKU(models.Model):
 
@@ -494,10 +494,6 @@ class Lightin_SKU(models.Model):
     o_quantity = models.IntegerField(u'oms_可用数量', default=0, blank=True, null=True)
     o_reserved = models.IntegerField(u'oms_保留数量', default=0, blank=True, null=True)
     o_sellable = models.IntegerField(u'oms_可售数量', default=0, blank=True, null=True)
-
-
-
-
 
 
     vendor_sale_price = models.FloatField(verbose_name="供方销售价",default=0)
@@ -520,7 +516,7 @@ class Lightin_SKU(models.Model):
         verbose_name_plural = verbose_name
 
     def __str__(self):
-        return self.SPU
+        return self.SKU
 
 class LightinAlbum(models.Model):
 
@@ -629,6 +625,57 @@ class Lightin_barcode(models.Model):
     def __str__(self):
 
         return  self.barcode
+
+class Combo(models.Model):
+    combo_no = models.CharField(u'Combo', default='', max_length=100, blank=True)
+
+    handle = models.CharField(u'货号', default='', max_length=256, null=True, blank=True)
+
+    listed = models.BooleanField(u'已发布到主站', default=False)
+    listing_status = models.BooleanField(u'发布到Facebook', default=False)
+
+    o_quantity = models.IntegerField(u'oms_可用数量', default=1, blank=True, null=True)
+    o_sellable = models.IntegerField(u'oms_可售数量', default=0, blank=True, null=True)
+    o_reserved = models.IntegerField(u'oms_待出库数量', default=0, blank=True, null=True)
+
+    image = models.ImageField(u'组合图', upload_to='combo/', default="", null=True, blank=True)
+    image_marked = models.CharField(default='', max_length=100, null=True, blank=True, verbose_name="组合水印图")
+
+    def cal_items(self):
+
+        return  ",".join(self.combo_item.values_list("lightin_sku__SKU",flat=True))
+
+    cal_items.short_description = "组合明细"
+    items = property(cal_items)
+
+    class Meta:
+        verbose_name = "组合产品"
+        verbose_name_plural = verbose_name
+
+
+    def __str__(self):
+        return self.combo_no
+
+
+class ComboItem(models.Model):
+    combo = models.ForeignKey(Combo, null=True, blank=True, verbose_name="Combo",
+                                    related_name="combo_item", on_delete=models.CASCADE)
+
+    lightin_sku = models.ForeignKey(Lightin_SKU, null=True, blank=True, verbose_name="SKU",
+                                    related_name="sku_comboitem", on_delete=models.CASCADE)
+
+    #SKU = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="SKU")
+
+    #o_quantity = models.IntegerField(u'oms_可用数量', default=0, blank=True, null=True)
+    #o_sellable = models.IntegerField(u'oms_可售数量', default=0, blank=True, null=True)
+    #o_reserved = models.IntegerField(u'oms_待出库数量', default=0, blank=True, null=True)
+
+    class Meta:
+        verbose_name = "组合产品明细"
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.lightin_sku.SKU
 
 class WmsOriOrder(models.Model):
 
