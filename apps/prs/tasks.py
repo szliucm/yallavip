@@ -1749,6 +1749,7 @@ def delete_oversea_photo():
     #在fb的图片里找handle的图片
     for handle in handles:
         myphotos = MyPhoto.objects.filter(name__contains=handle)
+        print("当前处理包裹 ", handle, myphotos.count())
         photos = myphotos.values_list("page_no","photo_no").distinct()
         for photo in photos:
             page_no = photo[0]
