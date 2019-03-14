@@ -1006,7 +1006,7 @@ class MyAlbumAdmin(object):
                     params=params,
                 )
             except Exception as e:
-                print("获取Facebook数据出错", fields, r, e)
+                print("获取Facebook数据出错", fields,  e)
                 continue
 
             for photo in photos:
