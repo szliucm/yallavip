@@ -852,8 +852,12 @@ class MyAlbumAdmin(object):
         param["limit"] = "100"
 
         param["fields"] = fields
+        try:
+            r = requests.get(url, param)
+        except Exception as e:
+            print("获取Facebook数据出错",fields, r,e)
+            return  None
 
-        r = requests.get(url, param)
 
         data = json.loads(r.text)
 
@@ -942,6 +946,8 @@ class MyAlbumAdmin(object):
 
         try:
             data = self.get_data(album_no, token, field_input)
+            if not data:
+                return  None
             json_list.append(data)
         except KeyError:
             print("Error with get request.")
@@ -994,10 +1000,14 @@ class MyAlbumAdmin(object):
             params = {
 
             }
-            photos = Album(album_no).get_photos(
-                fields=fields,
-                params=params,
-            )
+            try:
+                photos = Album(album_no).get_photos(
+                    fields=fields,
+                    params=params,
+                )
+            except Exception as e:
+                print("获取Facebook数据出错", fields, r, e)
+                continue
 
             for photo in photos:
                 #print("photos is %s %s "%(photo["id"],photo["likes"]))
