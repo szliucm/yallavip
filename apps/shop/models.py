@@ -103,14 +103,14 @@ class ShopifyVariant(models.Model):
 
     grams = models.IntegerField(u'克量',default=0,blank=True, null=True)
     weight = models.IntegerField(u'weight',default=0,blank=True, null=True)
-    weight_unit = models.CharField(u'weight_unit', default='g', max_length=100, blank=True)
+    weight_unit = models.CharField(u'weight_unit', default='g', max_length=100,null=True, blank=True)
 
     image_no = models.CharField(u'image_no', default='', max_length=200, null=True,blank=True)
-    inventory_item_no = models.CharField(u'inventory_item_no', default='', max_length=500, blank=True)
-    inventory_management = models.CharField(u'inventory_management', default='', max_length=100, blank=True)
+    inventory_item_no = models.CharField(u'inventory_item_no', default='', max_length=500, null=True,blank=True)
+    inventory_management = models.CharField(u'inventory_management', default='', max_length=100, null=True,blank=True)
 
     inventory_policy = models.CharField(u'inventory_policy', default='', max_length=200, blank=True)
-    inventory_quantity = models.CharField(u'inventory_quantity', default='', max_length=500, blank=True)
+    inventory_quantity = models.CharField(u'inventory_quantity', default='', max_length=500, null=True,blank=True)
     option1 = models.CharField(u'option1', default='', max_length=500, null=True,blank=True)
     option2 = models.CharField(u'option2', default='', max_length=500, null=True,blank=True)
     option3 = models.CharField(u'option3', default='', max_length=500, null=True,blank=True)
