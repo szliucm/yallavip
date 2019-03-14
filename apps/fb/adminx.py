@@ -837,7 +837,7 @@ class MyAlbumAdmin(object):
 
     list_display = [ "album_no","mypage", "name","published_count","readypublish_count","topublish_count", "cates", "prices","attrs","show_album_promte", "count", "like_count", "comment_count","created_time",]
     list_editable = ["cates", "prices","attrs",]
-    search_fields = ['album_no', ]
+    search_fields = ['album_no',  "name",]
     list_filter = ("mypage","active", )
     ordering = ["-count"]
     actions = ["batch_update_albums", ]
