@@ -2642,8 +2642,13 @@ def update_shopify_variant():
         if r.text is None:
             print(r)
             return None
-        else:
-            print(r, r.text)
+
+        ShopifyVariant.objects.filter(variant_no=variant_id).update(
+            inventory_policy = "deny",
+            inventory_management= "shopify"
+        )
+
+
 
 
 
