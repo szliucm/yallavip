@@ -1737,6 +1737,44 @@ def delete_missed_photo():
 
         delete_photos(photo_nos)
 
+#删除无货的海外仓包裹
+def delete_oversea_photo():
+    from facebook_business.api import FacebookAdsApi
+    from fb.models import  MyPhoto
+
+    #找出已下架商品的handle
+    handles = Lightin_SKU.objects.filter(o_sellable__lte=0, SKU__startswith="579815").values_list("SKU",flat=True).distinct()
+
+    photo_miss = {}
+    #在fb的图片里找handle的图片
+    for handle in handles:
+        myphotos = MyPhoto.objects.filter(name__contains=handle)
+        photos = myphotos.values_list("page_no","photo_no").distinct()
+        for photo in photos:
+            page_no = photo[0]
+            fb_id = photo[1]
+            photo_list = photo_miss.get(page_no)
+            if not photo_list:
+                photo_list = []
+
+            if fb_id not in photo_list:
+                photo_list.append(fb_id)
+
+            photo_miss[page_no] = photo_list
+
+        myphotos.delete()
+
+    # 选择所有可用的page
+    for page_no in photo_miss:
+        FacebookAdsApi.init(access_token=get_token(page_no))
+
+        photo_nos = photo_miss[page_no]
+        print("page %s 待删除数量 %s  "%(page_no, len(photo_nos)))
+        if photo_nos is None or len(photo_nos) == 0:
+            continue
+
+        delete_photos(photo_nos)
+
 
 def delete_photos(photo_nos):
     from facebook_business.adobjects.photo import Photo
