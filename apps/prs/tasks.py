@@ -1853,51 +1853,36 @@ def mapping_order_lightin(order):
 
     # 每个订单项
     for orderdetail in orderdetails:
-        sku = orderdetail.sku
+        #sku = orderdetail.sku
+        try:
+            SKU = Lightin_SKU.objects.get(SKU=orderdetail.sku)
+        except :
+            error = "找不到sku"
+            break
+
+
+
         price = orderdetail.price
         quantity = int(float(orderdetail.product_quantity))
         print("sku %s , 需求量 %s " % (sku, quantity))
 
         sku_list = ["13531030880298", "price gap", "COD link", "price gap 2", ]
-        if sku in sku_list:
+        if SKU.SKU in sku_list:
             continue
 
-        lightin_barcodes = Lightin_barcode.objects.filter(SKU=sku)
+        #组合商品需要进一步拆分成item，然后映射
+        #非组合商品， item = sku
+        if SKU.comboed:
+            items = SKU.combo_item.values_list("lightin_sku__SKU",flat=True)
+        else:
+            items = [SKU]
 
-        if lightin_barcodes is None:
-            print("找不到映射，也就意味着无法管理库存！")
-            #需要标识为异常订单
-            error = "找不到SKU"
-            break
-
-        # 每个可能的条码
-        for lightin_barcode in lightin_barcodes:
-            print("处理每个可能的条码")
-            if quantity == 0:
-                #已经凑齐了sku所需的数量
-                break
-            if lightin_barcode.sellable <= 0:
-                continue
-
-
-            if quantity > lightin_barcode.sellable:
-                # 条码的库存数量比订单项所需的少
-                quantity -= lightin_barcode.sellable
-                occupied = lightin_barcode.sellable
+        for item in items:
+            item_inventory_list , error = get_barcodes(item, quantity)
+            if error == "":
+                inventory_list += item_inventory_list
             else:
-                occupied = quantity
-                quantity = 0
-
-            print("        条码 %s , 条码可售库存 %s 占用 %s" % (lightin_barcode, lightin_barcode.sellable, occupied))
-
-            inventory_list.append([sku, lightin_barcode, occupied, price])
-
-        #需求没有被满足，标识订单缺货
-        print("quantity", quantity)
-        if quantity > 0:
-            error =sku + "缺货"
-            break
-
+                break
 
 
     if error =="":
@@ -1921,6 +1906,48 @@ def mapping_order_lightin(order):
         print("映射不成功", error)
 
     return error
+
+def get_barcodes(sku, quantity):
+    inventory_list = []
+    lightin_barcodes = Lightin_barcode.objects.filter(SKU=sku)
+
+    if lightin_barcodes is None:
+        print("找不到映射，也就意味着无法管理库存！")
+        #需要标识为异常订单
+        error = "找不到SKU"
+        return  None, error
+
+    # 每个可能的条码
+    for lightin_barcode in lightin_barcodes:
+        print("处理每个可能的条码")
+        if quantity == 0:
+            #已经凑齐了sku所需的数量
+            break
+        if lightin_barcode.sellable <= 0:
+            continue
+
+
+        if quantity > lightin_barcode.sellable:
+            # 条码的库存数量比订单项所需的少
+            quantity -= lightin_barcode.sellable
+            occupied = lightin_barcode.sellable
+        else:
+            occupied = quantity
+            quantity = 0
+
+        print("        条码 %s , 条码可售库存 %s 占用 %s" % (lightin_barcode, lightin_barcode.sellable, occupied))
+
+        inventory_list.append([sku,  lightin_barcode, occupied, price])
+
+    #需求没有被满足，标识订单缺货
+    print("quantity", quantity)
+    if quantity > 0:
+        error =sku + "缺货"
+        return None,error
+    else:
+        return inventory_list,""
+
+
 
 @shared_task
 def fulfill_orders_lightin():
@@ -2427,7 +2454,7 @@ def cal_reserved(overtime=24):
 
     sku_quantity = {}
     sku_list = []
-    #计算组合商品,每个组合商品只有一件
+    #计算组合商品,每个组合商品只有一件,多件的情况以后再说
     combo_skus = ComboItem.objects.filter(combo__o_quantity__gt = 0,
                                        ).values_list('lightin_sku__SKU',flat=True)
     for combo_sku in combo_skus:

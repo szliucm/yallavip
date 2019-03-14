@@ -358,6 +358,7 @@ class OrderDetail_lightin(models.Model):
 
     SKU = models.CharField(u'SKU', default='', max_length=100, null=True, blank=True)
 
+
     #barcode = models.CharField(u'barcode', default='', max_length=100, blank=True)
     barcode = models.ForeignKey(Lightin_barcode, related_name='barcode_orderdetail_lightin', null=False, on_delete=models.CASCADE,
                               verbose_name="barcode")

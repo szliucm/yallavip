@@ -816,15 +816,15 @@ class LightinAlbumAdmin(object):
 class ComboAdmin(object):
     class ComboItemInline(object):
 
-
         model = ComboItem
         extra = 1
-        #style = 'tab'
+        style = 'row'
+
         form_layout = (
             Main(
                 Fieldset('组合明细',
                          #Row( 'lightin_sku','product_quantity','price',),
-                         'lightin_sku', 'SKU',
+                          'SKU',
 
                          ),
 
@@ -832,12 +832,13 @@ class ComboAdmin(object):
         )
 
 
-    list_display = ['combo_no', 'handle','listed', 'listing_status','items' ]
 
-    search_fields = ['handle',]
+    list_display = ['SKU', 'listed', 'items' ]
+
+    search_fields = ['SKU',]
 
     ordering = []
-    list_filter = ('listed', 'listing_status',)
+    list_filter = ('listed',)
 
     actions = [ ]
     relfield_style = 'fk_ajax'
@@ -845,7 +846,7 @@ class ComboAdmin(object):
     form_layout = (
         Main(
             Fieldset('组合产品信息',
-                     Row('combo_no','handle', ),
+                     Row('SKU', ),
                      ),
 
 
