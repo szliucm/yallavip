@@ -1657,9 +1657,11 @@ def delete_outstock_lightin_album():
 
     from logistic.tasks import my_custom_sql
 
+    '''
     # 先初始化spu的库存
     mysql = "UPDATE prs_lightin_spu INNER JOIN (SELECT SPU, sum(o_sellable) as quantity FROM prs_lightin_sku GROUP BY SPU ) b ON prs_lightin_spu.SPU = b.SPU) SET prs_lightin_spu.sellable = b.quantity"
     my_custom_sql(mysql)
+    '''
 
     #每天更新一次所有在发布的图片，每分钟更新一次订单sku对应的图片
     lightinalbums_all = LightinAlbum.objects.filter(published=True,lightin_spu__sellable__lte=0).values_list("myalbum__page_no", "fb_id").order_by("myalbum__page_no")
