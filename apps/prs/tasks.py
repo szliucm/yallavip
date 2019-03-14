@@ -2617,7 +2617,7 @@ def update_shopify_variant():
 
     shop_url = "https://%s:%s@%s.myshopify.com" % (shop_obj.apikey, shop_obj.password, shop_obj.shop_name)
 
-    variants = ShopifyVariant.objects.filter(inventory_policy="").distinct().values_list("variant_no",flat=True)
+    variants = ShopifyVariant.objects.filter(inventory_policy="continue").distinct().values_list("variant_no",flat=True)
     for variant_id in variants:
         params = {
             "variant": {
