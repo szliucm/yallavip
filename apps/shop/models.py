@@ -123,7 +123,7 @@ class ShopifyVariant(models.Model):
 
     tax_code = models.CharField(u'tax_code', default='', max_length=200, blank=True)
     title = models.CharField(u'title', default='', max_length=500,  null=True,blank=True)
-    sku = models.CharField(u'sku', default='', max_length=100,  null=True,blank=True)
+    sku = models.CharField(u'sku', default='', max_length=500,  null=True,blank=True)
 
     listing_status = models.BooleanField(u'发布到Facebook', default=False)
     supply_status = models.CharField(u'供应状态', choices=SUPPLY_STATUS, max_length=50, default='NORMAL', blank=True)
