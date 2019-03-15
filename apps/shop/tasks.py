@@ -840,7 +840,7 @@ def download_product():
                 "page": i,
                 "limit": limit,
                 #"since_id": max_product_no,
-                "created_at_min": "2019-02-10T00:00:00-00:00",
+                #"created_at_min": "2019-02-10T00:00:00-00:00",
                 "fields": "id,handle,body_html,title,product_type,created_at,published_at,"
                           "updated_at,tags,vendor,variants,images,options",
                 # "fields": "product_id",
