@@ -744,10 +744,26 @@ class Lightin_SKUAdmin(object):
     import_export_args = {"import_resource_class": Lightin_SKUResource,
                           "export_resource_class": Lightin_SKUResource}
 
-    list_display = ["SKU", "SPU",  "o_quantity", "o_reserved","o_sellable", "vendor_sale_price","vendor_supply_price","weight", "length","width","height","skuattr",]
+    def photo(self, obj):
+        if obj.lightin_spu.images is not None and len(obj.lightin_spu.images)>0 :
+            photos = json.loads(obj.lightin_spu.images)
+            img = ''
+
+            for photo in photos:
+                try:
+                    img = img + '<a><img src="%s" width="100px"></a>' % (photo)
+                except Exception as e:
+                    print("获取图片出错", e)
+
+            return mark_safe(img)
+
+        else:
+            photos = "no photo"
+
+    list_display = ["SKU", "SPU",  "o_quantity", "o_reserved","o_sellable","photo","skuattr",]
 
     # 'sku_name','img',
-    search_fields = ["SPU", "SKU",]
+    search_fields = ["SPU", "SKU","lightin_spu__handle",]
     list_filter = ["SPU"]
     list_editable = []
     readonly_fields = ()
