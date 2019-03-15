@@ -2712,6 +2712,215 @@ def update_shopify_variant():
 
 
 
+#把有货，还未上架的包裹上架
+@shared_task
+def list_package():
+
+    from logistic.models import  Package
+
+    from .shop_action import create_package_sku
+
+    dest_shop = "yallasale-com"
+    discount = 0.9
+    min_product_no = 999999999999999
+
+    lightin_skus = Lightin_SKU.objects.filter(SKU__startswith='579815',o_sellable__gt=0,listed=False  )
+    print("packages is ", lightin_skus)
+
+    for lightin_sku in lightin_skus:
+        order = Order.objects.filter(order_no=lightin_sku.SKU).first()
+        print("order",  order)
+        if not order:
+            print("cannot find the order",lightin_sku.SKU )
+            continue
+
+        product_no,sku_created = create_package_sku(dest_shop, order, discount)
+        print(order,"created", product_no)
+
+
+        if sku_created:
+            if product_no < min_product_no:
+                min_product_no = product_no
+
+            Lightin_SKU.objects.filter(pk=lightin_sku.pk).update(listed=True)
+        '''
+        n =n+1
+        if n>10:
+            break
+        else:
+            print("******", n)
+        '''
+
+    # 上传完后整体更新目标站数据
+    sync_shop(dest_shop, min_product_no)
+
+
+    return  True
+
+def create_combo():
+    from .shop_action import create_package_sku
+    dest_shop = "yallasale-com"
+    min_product_no = 999999999999999
+
+    combos = Combo.objects.filter(comboed=True,listed=False)
+    n = 0
+    for combo in combos:
+        product_no, sku_created = create_combo_sku(dest_shop, combo)
+
+        if sku_created:
+            if product_no < min_product_no:
+                min_product_no = product_no
+
+        Combo.objects.filter(pk=combo.pk).update(listed=True)
+
+#创建组合商品sku，每100个组合商品sku建一个product
+def create_combo_sku(dest_shop, combo):
+    # 初始化SDK
+    shop_obj = Shop.objects.get(shop_name=dest_shop)
+
+    shop_url = "https://%s:%s@%s.myshopify.com" % (shop_obj.apikey, shop_obj.password, shop_obj.shop_name)
+
+    # url = shop_url + "/admin/products.json"
+
+    # 每100个组合商品sku创建一个组合商品，组合商品sku作为变体存放。，否则创建新的
+    #以数据库中最大的组合商品的sku号为基准创建handle和sku
+
+    handle_new = "C" + combon_no
+    # 创建变体
+    variants_list = []
+
+    sku = order.order_no
+    print("handle_new  sku", handle_new, sku)
+    try:
+        order_amount = float(order.order_amount)
+    except:
+
+        print("order_amount",order, order.order_amount)
+
+        return None, False
+
+    variant_item = {
+
+        "price": int( order_amount* discount),
+        "compare_at_price": order_amount,
+        "sku": sku,
+        "option1": order_no,
+
+        "title": order_no,
+        "taxable": "true",
+        "inventory_management": "shopify",
+        "fulfillment_service": "manual",
+        "inventory_policy": "deny",
+
+        "inventory_quantity": 1,
+        "requires_shipping": "true",
+        "weight": order.weight,
+        "weight_unit": "g",
+
+    }
+    #print("variant_item", variant_item)
+    variants_list.append(variant_item)
+
+    # 所以先检测商品是否存在
+    url = shop_url + "/admin/products.json"
+    params = {
+        "handle": handle_new,
+        # "page": 1,
+        # "limit": 100,
+        # "since_id": max_product_no,
+        "fields": "id,handle, variants",
+    }
+
+    response = requests.get(url, params)
+    #print("url %s, params %s , response %s" % (url, json.dumps(params), response))
+
+    data = json.loads(response.text)
+    #print("check ori_product data is ", data)
+
+    headers = {
+        "Content-Type": "application/json",
+        "charset": "utf-8",
+
+    }
+
+    ori_products = data.get("products")
+
+    #print("ori_products", ori_products, len(ori_products))
+
+    if len(ori_products) == 0:
+        print("product does not exist yet")
+        # 创建新商品
+        url = shop_url + "/admin/products.json"
+
+        params = {
+            "product": {
+                "handle": handle_new,
+                "title": "Overseas Package " + handle_new,
+                "variants": variants_list,
+            }
+        }
+
+        response = requests.post(url, headers=headers, data=json.dumps(params))
+        data = json.loads(response.text)
+        new_product = data.get("product")
+        if new_product is None:
+            # 创建新产品失败
+            print("data is ", data)
+            return None, False
+
+
+
+
+    elif len(ori_products) == 1:
+
+        ori_product = ori_products[0]
+        if ori_product is None:
+            # 获取原有产品失败
+            print("data is ", data)
+            return None,False
+        else:
+            print("product exist", ori_product["handle"])
+            # 获取原有产品信息
+            for k in range(len(ori_product["variants"])):
+                variant_row = ori_product["variants"][k]
+                #print("variant_row is ", variant_row)
+                variant_item = {
+
+                    "id": variant_row.get("id"),
+
+                }
+
+                variants_list.append(variant_item)
+
+            # 更新原有商品
+            # PUT /admin/products/#{product_id}.json
+            url = shop_url + "/admin/products/%s.json" % (ori_product.get("id"))
+
+            params = {
+                "product": {
+                    "id": ori_product.get("id"),
+                    # "title": "Overseas Package " + handle_new,
+                    "variants": variants_list,
+                }
+            }
+
+            response = requests.put(url, headers=headers, data=json.dumps(params))
+            data = json.loads(response.text)
+            new_product = data.get("product")
+            if new_product is None:
+                # 更新原有产品变体失败
+                print("fail to update variant")
+                print("data is ", data)
+                return None, False
+
+    else:
+        print("unknow error")
+        return None,False
+
+    print("new product is ", new_product.get("id"))
+
+    return ( new_product.get("id"), True)
+
 
 
 # 更新相册对应的主页外键

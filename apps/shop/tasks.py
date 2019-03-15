@@ -820,7 +820,7 @@ def download_product():
 
     total_count = data["count"]
 
-    i = 0
+    i = 163
     limit = 200
 
     while True:
