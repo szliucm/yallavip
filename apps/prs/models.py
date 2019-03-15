@@ -487,7 +487,7 @@ class Lightin_SKU(models.Model):
                                     related_name="spu_sku", on_delete=models.CASCADE)
 
     SPU = models.CharField(default='',max_length=300, null=True, blank=True, verbose_name="SPU")
-    SKU = models.CharField(default='',unique=True, max_length=200, null=True, blank=True, verbose_name="SKU")
+    SKU = models.CharField(default='',unique=True, max_length=100, null=True, blank=True, verbose_name="SKU")
     #barcode = models.CharField(u'barcode', default='', max_length=100, blank=True)
 
     o_quantity = models.IntegerField(u'oms_可用数量', default=0, blank=True, null=True)
@@ -495,15 +495,15 @@ class Lightin_SKU(models.Model):
     o_sellable = models.IntegerField(u'oms_可售数量', default=0, blank=True, null=True)
 
 
-    vendor_sale_price = models.FloatField(verbose_name="供方销售价",default=0)
-    vendor_supply_price = models.FloatField(verbose_name="供方采购价", default=0)
+    vendor_sale_price = models.FloatField(verbose_name="供方销售价",default=0, blank=True, null=True)
+    vendor_supply_price = models.FloatField(verbose_name="供方采购价", default=0, blank=True, null=True)
 
 
 
-    weight = models.FloatField(verbose_name="weight", default=0, null=True)
-    length = models.FloatField(verbose_name="length", default=0, null=True)
-    width = models.FloatField(verbose_name="width", default=0, null=True)
-    height = models.FloatField(verbose_name="height", default=0, null=True)
+    weight = models.FloatField(verbose_name="weight", default=0, blank=True, null=True)
+    length = models.FloatField(verbose_name="length", default=0, blank=True, null=True)
+    width = models.FloatField(verbose_name="width", default=0, blank=True, null=True)
+    height = models.FloatField(verbose_name="height", default=0, blank=True, null=True)
 
     skuattr = models.TextField(default='', null=True, blank=True, verbose_name="skuattr")
 
@@ -651,14 +651,7 @@ class Combo(Lightin_SKU):
 
     '''
 
-    def cal_items(self):
-        if self.combo_item:
-            return  ",".join(self.combo_item.values_list("SKU",flat=True))
-        else:
-            return ""
 
-    cal_items.short_description = "组合明细"
-    items = property(cal_items)
 
     class Meta:
         proxy = True
