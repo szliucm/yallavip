@@ -821,16 +821,16 @@ def download_product():
     total_count = data["count"]
 
     i = 0
-    limit = 250
+    limit = 200
 
     while True:
         try:
 
-            if (i * limit > total_count):
+            if (i * limit > int(total_count)):
                 break
 
             i = i + 1
-            print( "当前是第%s页"%(i ))
+
 
 
 
@@ -852,6 +852,7 @@ def download_product():
 
             insert_product(shop_name, products)
 
+            print("当前是第%s页" % (i))
 
         except KeyError:
             print("products for the shop {} completed".format(shop_name))
