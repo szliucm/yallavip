@@ -2456,7 +2456,7 @@ def cal_reserved(overtime=24):
     sku_list = []
     #计算组合商品,每个组合商品只有一件,多件的情况以后再说
     combo_skus = ComboItem.objects.filter(combo__o_quantity__gt = 0,
-                                       ).values_list('lightin_sku__SKU',flat=True)
+                                       ).values_list('SKU',flat=True)
     for combo_sku in combo_skus:
         sku_quantity[combo_sku] = sku_quantity.get(combo_sku,0) + 1
         if combo_sku not in sku_list:

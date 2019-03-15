@@ -501,17 +501,17 @@ class Lightin_SKU(models.Model):
 
 
 
-    weight = models.FloatField(verbose_name="weight", default=0)
-    length = models.FloatField(verbose_name="length", default=0)
-    width = models.FloatField(verbose_name="width", default=0)
-    height = models.FloatField(verbose_name="height", default=0)
+    weight = models.FloatField(verbose_name="weight", default=0, null=True)
+    length = models.FloatField(verbose_name="length", default=0, null=True)
+    width = models.FloatField(verbose_name="width", default=0, null=True)
+    height = models.FloatField(verbose_name="height", default=0, null=True)
 
     skuattr = models.TextField(default='', null=True, blank=True, verbose_name="skuattr")
 
     image = models.ImageField(u'组合图', upload_to='combo/', default="", null=True, blank=True)
     image_marked = models.CharField(default='', max_length=100, null=True, blank=True, verbose_name="组合水印图")
-    listed = models.BooleanField(u'已发布到主站', default=False)
-    comboed = models.BooleanField(u'组合商品', default=False)
+    listed = models.BooleanField(u'已发布到主站', default=False, null=True)
+    comboed = models.BooleanField(u'组合商品', default=False, null=True)
 
     #listing_status = models.BooleanField(u'发布到Facebook', default=False)
 
@@ -665,15 +665,12 @@ class Combo(Lightin_SKU):
         verbose_name = "组合产品"
         verbose_name_plural = verbose_name
 
-
     def __str__(self):
         return self.SKU
 
-
 class ComboItem(models.Model):
-    combo = models.ForeignKey(Combo, null=True, blank=True, verbose_name="Combo",
+    combo = models.ForeignKey(Lightin_SKU, null=True, blank=True, verbose_name="Combo",
                                     related_name="combo_item", on_delete=models.CASCADE)
-
     #lightin_sku = models.ForeignKey(Lightin_SKU, null=True, blank=True, verbose_name="SKU",
                                     #related_name="sku_comboitem", on_delete=models.CASCADE)
 

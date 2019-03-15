@@ -734,8 +734,24 @@ class Lightin_SKUResource(resources.ModelResource):
         fields = ("SPU", "SKU","barcode","quantity", "vendor_sale_price","vendor_supply_price","weight", "length","width","height","skuattr",)
         # exclude = ()
 
+class ComboItemInline(object):
+    model = ComboItem
+    extra = 1
+    #style = 'row'
+
+    form_layout = (
+        Main(
+            Fieldset('组合明细',
+                     # Row( 'lightin_sku','product_quantity','price',),
+                     'SKU',
+
+                     ),
+        )
+    )
+
 @xadmin.sites.register(Lightin_SKU)
 class Lightin_SKUAdmin(object):
+
 
     import_export_args = {"import_resource_class": Lightin_SKUResource,
                           "export_resource_class": Lightin_SKUResource}
@@ -748,6 +764,10 @@ class Lightin_SKUAdmin(object):
     list_editable = []
     readonly_fields = ()
     actions = []
+
+
+    #inlines = [ComboItemInline, ]
+
 
 class Lightin_barcodeResource(resources.ModelResource):
 
@@ -814,24 +834,23 @@ class LightinAlbumAdmin(object):
 
 @xadmin.sites.register(Combo)
 class ComboAdmin(object):
+    '''
     class ComboItemInline(object):
-
         model = ComboItem
         extra = 1
-        style = 'row'
+        #style = 'row'
 
         form_layout = (
             Main(
                 Fieldset('组合明细',
-                         #Row( 'lightin_sku','product_quantity','price',),
-                          'SKU',
+                         # Row( 'lightin_sku','product_quantity','price',),
+                         'SKU',
 
                          ),
-
             )
         )
-
-
+    '''
+    inlines = [ComboItemInline, ]
 
     list_display = ['SKU', 'listed', 'items' ]
 
@@ -849,13 +868,14 @@ class ComboAdmin(object):
                      Row('SKU', ),
                      ),
 
-
         ),
 
     )
 
 
-    inlines = [ComboItemInline, ]
+
+
+
 
 
 

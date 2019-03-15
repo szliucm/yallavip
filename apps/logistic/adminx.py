@@ -425,6 +425,8 @@ class PackageAdmin(object):
     ordering = []
 
 
+
+
     def batch_updatelogistic_trail(self, request, queryset):
         # 定义actions函数
         requrl = "http://api.jcex.com/JcexJson/api/notify/sendmsg"
@@ -1099,9 +1101,10 @@ class LogisticCustomerServiceAdmin(object):
         deal_list= ["NONE",
                      "WAITING",
                      ]
-
-        return qs.filter(file_status="OPEN" , wait_status = False, warehouse_check= "NONE",
-                         yallavip_package_status="PROBLEM", deal__in = deal_list)
+        error_list = ["CE","DE","AC","AT","DA","NE","AO","UE","SP"]
+        #return qs.filter(file_status="OPEN" , wait_status = False, warehouse_check= "NONE",yallavip_package_status="PROBLEM", deal__in = deal_list)
+        return qs.filter(file_status="OPEN", wait_status=False, warehouse_check="NONE",
+                         logistic_track_code__in=error_list , deal__in = deal_list)
 
 @xadmin.sites.register(LogisticManagerConfirm)
 class LogisticManagerConfirmAdmin(object):
