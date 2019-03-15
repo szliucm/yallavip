@@ -1854,9 +1854,14 @@ def mapping_order_lightin(order):
     # 每个订单项
     for orderdetail in orderdetails:
         #sku = orderdetail.sku
+        sku_list = ["13531030880298", "price gap", "COD link", "price gap 2", ]
+        if orderdetail.sku in sku_list:
+            continue
+
         try:
             SKU = Lightin_SKU.objects.get(SKU=orderdetail.sku)
         except :
+            print(orderdetail.sku)
             error = "找不到sku"
             break
 
@@ -1866,9 +1871,7 @@ def mapping_order_lightin(order):
         quantity = int(float(orderdetail.product_quantity))
         print("sku %s , 需求量 %s 价格 %s" % (SKU, quantity,price))
 
-        sku_list = ["13531030880298", "price gap", "COD link", "price gap 2", ]
-        if SKU.SKU in sku_list:
-            continue
+
 
         #组合商品需要进一步拆分成item，然后映射
         #非组合商品， item = sku
