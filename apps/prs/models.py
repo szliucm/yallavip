@@ -487,7 +487,7 @@ class Lightin_SKU(models.Model):
                                     related_name="spu_sku", on_delete=models.CASCADE)
 
     SPU = models.CharField(default='',max_length=300, null=True, blank=True, verbose_name="SPU")
-    SKU = models.CharField(default='',unique=True, max_length=100, null=True, blank=True, verbose_name="SKU")
+    SKU = models.CharField(default='', max_length=100, null=True, blank=True, verbose_name="SKU")
     #barcode = models.CharField(u'barcode', default='', max_length=100, blank=True)
 
     o_quantity = models.IntegerField(u'oms_可用数量', default=0, blank=True, null=True)

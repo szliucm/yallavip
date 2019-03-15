@@ -734,20 +734,8 @@ class Lightin_SKUResource(resources.ModelResource):
         fields = ("SPU", "SKU","barcode","quantity", "vendor_sale_price","vendor_supply_price","weight", "length","width","height","skuattr",)
         # exclude = ()
 
-class ComboItemInline(object):
-    model = ComboItem
-    extra = 1
-    #style = 'row'
 
-    form_layout = (
-        Main(
-            Fieldset('组合明细',
-                     # Row( 'lightin_sku','product_quantity','price',),
-                     'SKU',
 
-                     ),
-        )
-    )
 
 @xadmin.sites.register(Lightin_SKU)
 class Lightin_SKUAdmin(object):
@@ -766,7 +754,6 @@ class Lightin_SKUAdmin(object):
     actions = []
 
 
-    #inlines = [ComboItemInline, ]
 
 
 class Lightin_barcodeResource(resources.ModelResource):
@@ -834,29 +821,23 @@ class LightinAlbumAdmin(object):
 
 @xadmin.sites.register(Combo)
 class ComboAdmin(object):
-    '''
     class ComboItemInline(object):
         model = ComboItem
         extra = 1
-        #style = 'row'
-
+        # style = 'row'
+        '''
         form_layout = (
             Main(
                 Fieldset('组合明细',
                          # Row( 'lightin_sku','product_quantity','price',),
-                         'SKU',
+                         'combo', 'SKU',
 
                          ),
             )
         )
-    '''
-    def show_album(self, obj):
-        album_name = ProductCategory.objects.get(code=obj.category_code).album_name
+        '''
 
-        return album_name
-
-    show_album.short_description = "相册名"
-
+    inlines = [ComboItemInline, ]
 
     def items(self, obj):
         if self.combo_item:
@@ -866,7 +847,7 @@ class ComboAdmin(object):
 
     items.short_description = "组合明细"
 
-    inlines = [ComboItemInline, ]
+
 
     list_display = ['SKU', 'listed', 'items' ]
 
@@ -893,7 +874,21 @@ class ComboAdmin(object):
         return qs.filter( comboed = True)
 
 
+@xadmin.sites.register(ComboItem)
+class ComboItemAdmin(object):
 
+
+
+
+
+    list_display = ['SKU', 'combo',  ]
+
+    search_fields = ['SKU',]
+
+    ordering = []
+    list_filter = ('combo',)
+
+    actions = [ ]
 
 
 
