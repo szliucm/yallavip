@@ -2074,8 +2074,6 @@ def fulfill_order_lightin(order):
         #    "file_data":"hVJPjUP4+yHjvKErt5PuFfvRhd..."
         #}
     }
-    print(param)
-    return
 
     result = yunwms(service, param)
     print(result)
