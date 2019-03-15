@@ -850,6 +850,22 @@ class ComboAdmin(object):
             )
         )
     '''
+    def show_album(self, obj):
+        album_name = ProductCategory.objects.get(code=obj.category_code).album_name
+
+        return album_name
+
+    show_album.short_description = "相册名"
+
+
+    def items(self, obj):
+        if self.combo_item:
+            return  ",".join(self.combo_item.values_list("SKU",flat=True))
+        else:
+            return ""
+
+    items.short_description = "组合明细"
+
     inlines = [ComboItemInline, ]
 
     list_display = ['SKU', 'listed', 'items' ]
