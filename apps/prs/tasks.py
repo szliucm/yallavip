@@ -1864,7 +1864,7 @@ def mapping_order_lightin(order):
 
         price = orderdetail.price
         quantity = int(float(orderdetail.product_quantity))
-        print("sku %s , 需求量 %s " % (sku, quantity))
+        print("sku %s , 需求量 %s 价格 %s" % (SKU, quantity,price))
 
         sku_list = ["13531030880298", "price gap", "COD link", "price gap 2", ]
         if SKU.SKU in sku_list:
@@ -1873,12 +1873,12 @@ def mapping_order_lightin(order):
         #组合商品需要进一步拆分成item，然后映射
         #非组合商品， item = sku
         if SKU.comboed:
-            items = SKU.combo_item.values_list("lightin_sku__SKU",flat=True)
+            items = SKU.combo_item.values_list("SKU",flat=True)
         else:
             items = [SKU]
 
         for item in items:
-            item_inventory_list , error = get_barcodes(item, quantity)
+            item_inventory_list , error = get_barcodes(item, quantity,price)
             if error == "":
                 inventory_list += item_inventory_list
             else:
@@ -1907,7 +1907,7 @@ def mapping_order_lightin(order):
 
     return error
 
-def get_barcodes(sku, quantity):
+def get_barcodes(sku, quantity,price):
     inventory_list = []
     lightin_barcodes = Lightin_barcode.objects.filter(SKU=sku)
 
@@ -1942,7 +1942,7 @@ def get_barcodes(sku, quantity):
     #需求没有被满足，标识订单缺货
     print("quantity", quantity)
     if quantity > 0:
-        error =sku + "缺货"
+        error =sku + " 缺货"
         return None,error
     else:
         return inventory_list,""
@@ -2071,9 +2071,10 @@ def fulfill_order_lightin(order):
         #    "file_data":"hVJPjUP4+yHjvKErt5PuFfvRhd..."
         #}
     }
-    #print(param)
-    result = yunwms(service, param)
+    print(param)
+    return
 
+    result = yunwms(service, param)
     print(result)
     if result.get("ask") == "Success":
         #发货成功，更新订单状态
@@ -2239,13 +2240,26 @@ def sync_Shipped_order_shopify():
                         lightin_sku.o_reserved = F("o_reserved") - item.product_quantity
 
                         lightin_sku.save()
-                print ("更新本地sku库存", order.order_no, item.sku)
 
-                fulfillment_status = "fulfilled"
+                        #如果是组合商品，还要调整对应的item的库存
+                        if lightin_sku.comboed:
+                            for combo_item in  lightin_sku.combo_item.values_list("SKU",flat=True):
+                                combo_lightin_sku = Lightin_SKU.objects.get(SKU=combo_item)
+                                combo_lightin_sku.o_quantity = F("o_quantity") - item.product_quantity
+                                combo_lightin_sku.o_reserved = F("o_reserved") - item.product_quantity
+
+                                combo_lightin_sku.save()
+
+
+
+                    print ("更新本地sku库存", order.order_no, item.sku)
+
+            fulfillment_status = "fulfilled"
 
 
 
         # 更新本地的订单状态
+        print(order, order.order_no)
         Order.objects.update_or_create(
             order_no=order.order_no,
             defaults={
@@ -2469,6 +2483,7 @@ def cal_reserved(overtime=24):
                                       # order__order_time__gt =  dt.now() - dt.timedelta(hours=overtime),
                                        ).values_list('sku').annotate(Sum('product_quantity'))
     for order_sku in order_skus:
+        print(order_sku)
         sku_quantity[order_sku[0]] = order_sku[1]
         if order_sku[0] not in sku_list:
             sku_list.append(order_sku[0])
