@@ -2469,13 +2469,15 @@ def cal_reserved(overtime=24):
 
     sku_quantity = {}
     sku_list = []
-    #计算组合商品,每个组合商品只有一件,多件的情况以后再说
-    combo_skus = ComboItem.objects.filter(combo__o_quantity__gt = 0,
-                                       ).values_list('SKU',flat=True)
+    #计算组合商品
+    combo_skus = ComboItem.objects.filter(combo__o_quantity__gt = 0 ).values_list('SKU').annotate(Sum('combo__o_quantity'))
+
     for combo_sku in combo_skus:
-        sku_quantity[combo_sku] = sku_quantity.get(combo_sku,0) + 1
-        if combo_sku not in sku_list:
-            sku_list.append(combo_sku)
+        #每个sku占用的库存，等于它对应的combo的库存
+
+        sku_quantity[combo_sku[0]] = sku_quantity.get(combo_sku[0],0) + combo_sku[1]
+        if combo_sku[0] not in sku_list:
+            sku_list.append(combo_sku[0])
 
     print("组合商品 有%s个sku需要更新" % (len(sku_quantity)))
 
@@ -2485,7 +2487,7 @@ def cal_reserved(overtime=24):
                                        ).values_list('sku').annotate(Sum('product_quantity'))
     for order_sku in order_skus:
         print(order_sku)
-        sku_quantity[order_sku[0]] = order_sku[1]
+        sku_quantity[order_sku[0]] = sku_quantity.get(order_sku[0],0) + order_sku[1]
         if order_sku[0] not in sku_list:
             sku_list.append(order_sku[0])
 

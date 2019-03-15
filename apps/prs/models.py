@@ -653,7 +653,10 @@ class Combo(Lightin_SKU):
 
     def cal_items(self):
         if self.combo_item:
-            return ",".join(self.combo_item.values_list("SKU", flat=True))
+            if self.combo_item:
+                return ",".join(self.combo_item.values_list("SKU", flat=True))
+            else:
+                return ""
         else:
             return ""
 
@@ -676,7 +679,7 @@ class ComboItem(models.Model):
 
     SKU = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="SKU")
 
-    #o_quantity = models.IntegerField(u'oms_可用数量', default=0, blank=True, null=True)
+    #quantity = models.IntegerField(u'可用数量', default=0, blank=True, null=True)
     #o_sellable = models.IntegerField(u'oms_可售数量', default=0, blank=True, null=True)
     #o_reserved = models.IntegerField(u'oms_待出库数量', default=0, blank=True, null=True)
 

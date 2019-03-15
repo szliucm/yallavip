@@ -744,7 +744,7 @@ class Lightin_SKUAdmin(object):
     import_export_args = {"import_resource_class": Lightin_SKUResource,
                           "export_resource_class": Lightin_SKUResource}
 
-    list_display = ["SPU", "SKU", "o_quantity", "o_reserved","o_sellable", "vendor_sale_price","vendor_supply_price","weight", "length","width","height","skuattr",]
+    list_display = ["SKU", "SPU",  "o_quantity", "o_reserved","o_sellable", "vendor_sale_price","vendor_supply_price","weight", "length","width","height","skuattr",]
 
     # 'sku_name','img',
     search_fields = ["SPU", "SKU",]
@@ -844,13 +844,14 @@ class ComboAdmin(object):
 
 
     list_display = ['SKU', 'listed', 'items' ]
-
+    exclude = ["lightin_spu", "SPU",]
     search_fields = ['SKU',]
 
     ordering = []
     list_filter = ('listed',)
 
     actions = [ ]
+
     relfield_style = 'fk_ajax'
 
     form_layout = (
