@@ -868,7 +868,7 @@ class LogisticCustomerServiceAdmin(object):
         #'batch_redelivering', 'batch_returning', 'batch_returned',
 
        ]
-
+    '''
     list_display = ('logistic_no','send_time','logistic_start_date',
                     #'yallavip_package_status','problem_type', 'response',
 
@@ -878,6 +878,18 @@ class LogisticCustomerServiceAdmin(object):
                     "total_date", "lost_date","waite_date",
 
                      'order_no','order_comment', 'receiver_phone',
+
+                    'show_conversation')
+    '''
+    list_display = ('logistic_no',
+                    # 'yallavip_package_status','problem_type', 'response',
+
+                    'logistic_update_time', 'logistic_track_code',
+                    'problem_date', 'problem_trail',
+                    'feedback', 'deal', 'feedback_time',
+                   "waite_date",
+
+                    'order_no', 'order_comment',
 
                     'show_conversation')
     list_editable = ['feedback',  ]
