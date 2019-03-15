@@ -651,7 +651,14 @@ class Combo(Lightin_SKU):
 
     '''
 
+    def cal_items(self):
+        if self.combo_item:
+            return ",".join(self.combo_item.values_list("SKU", flat=True))
+        else:
+            return ""
 
+    cal_items.short_description = "组合明细"
+    items = property(cal_items)
 
     class Meta:
         proxy = True
@@ -672,6 +679,8 @@ class ComboItem(models.Model):
     #o_quantity = models.IntegerField(u'oms_可用数量', default=0, blank=True, null=True)
     #o_sellable = models.IntegerField(u'oms_可售数量', default=0, blank=True, null=True)
     #o_reserved = models.IntegerField(u'oms_待出库数量', default=0, blank=True, null=True)
+
+
 
     class Meta:
         verbose_name = "组合产品明细"

@@ -839,13 +839,7 @@ class ComboAdmin(object):
 
     inlines = [ComboItemInline, ]
 
-    def items(self, obj):
-        if self.combo_item:
-            return  ",".join(self.combo_item.values_list("SKU",flat=True))
-        else:
-            return ""
 
-    items.short_description = "组合明细"
 
 
 
