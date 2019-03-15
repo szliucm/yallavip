@@ -1305,10 +1305,16 @@ class LogisticResendTrailAdmin(object):
 
     receiver_phone.short_description = "收货人电话"
 
+
+    def last_cs(self, obj):
+        return self.package_dealtrail.order_by("deal_time").first().deal_staff
+
+    last_cs.short_description = "最后受理客服"
+
     list_display = ('logistic_no', 'send_time','receiver_phone',
 
                     'logistic_update_date', 'logistic_update_status', 'logistic_update_locate',
-                    "problem_date",
+                    "problem_date","last_cs",
                     #'feedback', 'deal', 'feedback_time',
                     "resend_start_time","resend_commnet",'resend_date',"resend_stat",
                     'order_no', 'order_comment',
