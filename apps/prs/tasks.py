@@ -2763,7 +2763,7 @@ def create_combo():
     min_product_no = 999999999999999
 
     combos = Combo.objects.filter(comboed=True,listed=False)
-    n = 0
+
     for combo in combos:
         product_no, sku_created = create_combo_sku(dest_shop, combo)
 
@@ -2771,8 +2771,10 @@ def create_combo():
             if product_no < min_product_no:
                 min_product_no = product_no
 
-        Combo.objects.filter(pk=combo.pk).update(listed=True)
+            Combo.objects.filter(pk=combo.pk).update(listed=True)
 
+    # 上传完后整体更新目标站数据
+    sync_shop(dest_shop, min_product_no)
 #创建组合商品sku，每100个组合商品sku建一个product
 def create_combo_sku(dest_shop, combo):
     # 初始化SDK
@@ -2785,28 +2787,22 @@ def create_combo_sku(dest_shop, combo):
     # 每100个组合商品sku创建一个组合商品，组合商品sku作为变体存放。，否则创建新的
     #以数据库中最大的组合商品的sku号为基准创建handle和sku
 
-    handle_new = "C" + combon_no
+    handle_new = combo.SKU[:-2]
     # 创建变体
     variants_list = []
 
-    sku = order.order_no
+    sku = combo.SKU
     print("handle_new  sku", handle_new, sku)
-    try:
-        order_amount = float(order.order_amount)
-    except:
 
-        print("order_amount",order, order.order_amount)
-
-        return None, False
 
     variant_item = {
 
-        "price": int( order_amount* discount),
-        "compare_at_price": order_amount,
+        "price": combo.sku_price,
+        "compare_at_price": combo.sku_price*2.5,
         "sku": sku,
-        "option1": order_no,
+        "option1": sku,
 
-        "title": order_no,
+        "title": sku,
         "taxable": "true",
         "inventory_management": "shopify",
         "fulfillment_service": "manual",
@@ -2814,7 +2810,7 @@ def create_combo_sku(dest_shop, combo):
 
         "inventory_quantity": 1,
         "requires_shipping": "true",
-        "weight": order.weight,
+        "weight": combo.weight,
         "weight_unit": "g",
 
     }

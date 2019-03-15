@@ -512,6 +512,7 @@ class Lightin_SKU(models.Model):
     image_marked = models.CharField(default='', max_length=100, null=True, blank=True, verbose_name="组合水印图")
     listed = models.BooleanField(u'已发布到主站', default=False, null=True)
     comboed = models.BooleanField(u'组合商品', default=False, null=True)
+    sku_price = models.IntegerField(u'sku售价', default=0, blank=True, null=True)
 
     #listing_status = models.BooleanField(u'发布到Facebook', default=False)
 
