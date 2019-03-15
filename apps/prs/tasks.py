@@ -1270,7 +1270,7 @@ def get_lightin():
             )
 
 
-#3,将1688产品详细信息发布到shopfiy店铺
+#3,将产品详细信息发布到shopfiy店铺
 @shared_task
 def post_lightin_shopify():
 
@@ -1293,7 +1293,7 @@ def post_lightin_shopify():
             break
         '''
 
-@task
+
 def post_to_shopify_lightin(lightinproduct_pk ):
     from .ali import create_body_lightin, create_variant_lightin
     from django.utils import timezone as datetime

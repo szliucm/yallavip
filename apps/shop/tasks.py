@@ -809,7 +809,7 @@ def download_product():
     url = shop_url + "/admin/products/count.json"
     params = {
         #"since_id": max_product_no
-        "created_at_min" : "2019-02-10T00:00:00-00:00",
+        #"created_at_min" : "2019-02-10T00:00:00-00:00",
     }
     # print("url %s params %s"%(url, params))
     r = requests.get(url, params)
