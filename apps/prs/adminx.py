@@ -871,6 +871,10 @@ class ComboAdmin(object):
         ),
 
     )
+    def queryset(self):
+        qs = super().queryset()
+
+        return qs.filter( comboed = True)
 
 
 
