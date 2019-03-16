@@ -3018,8 +3018,8 @@ def combo_image(combo):
         draw1 = ImageDraw.Draw(layer)
         # 简单打货号
         lw, lh = layer.size
-        draw1.rectangle(( 20,lh -130, 20+len(combo.SKU)*30, lh-60) , fill='yellow')
-        draw1.text(( 30,lh -120), combo.SKU, font=font,
+        draw1.rectangle(( 20,lh -140, 20+len(combo.SKU)*30, lh-100) , fill='yellow')
+        draw1.text(( 30,lh -135), combo.SKU, font=font,
                    fill=(0, 0, 0))  # 设置文字位置/内容/颜色/字体
 
 
