@@ -3022,26 +3022,19 @@ def combo_image(combo):
         x = 0
         y = lh-150
         #写货号
-        draw1.rectangle(( x+20,y+10, x+len(combo.SKU)*40, y+50) , fill='yellow')
-        draw1.text(( 30,y+5), combo.SKU, font=font,
+        draw1.rectangle(( x+20,y+10, x+200, y+50) , fill='yellow')
+        draw1.text(( x+30,y+15), combo.SKU, font=font,
                    fill="black")  # 设置文字位置/内容/颜色/字体
         #写包邮
         promote = "Free Deliver"
-        draw1.rectangle((x+20, y+60, x + len(promote) * 30, y+110), fill='yellow')
-        draw1.text((30, y+70), promote, font=font,
+        draw1.rectangle((x+200, y+10, x + 400, y+50), fill='yellow')
+        draw1.text((x +30, y+15), promote, font=font,
                    fill=(0, 0, 0))  # 设置文字位置/内容/颜色/字体
-        # 写件数
-
-        draw1.text((500, y + 20), "%s set"%(item_count), font=font,
+        # 写件数 和 售价
+        font = ImageFont.truetype(FONT, 60)
+        draw1.text((500, y + 20), "%s  / %s SAR"%(item_count,combo.sku_price), font=font,
                    fill="white" ) # 设置文字位置/内容/颜色/字体
 
-        # 写售价
-
-        draw1.text((600, y + 25), "%s SAR" % (combo.sku_price), font=font,
-                   fill="white")  # 设置文字位置/内容/颜色/字体
-
-        #画装饰线
-        draw1.rectangle((x + 1, y + 1, x + 899, y + 149), None, "white")
 
 
 
