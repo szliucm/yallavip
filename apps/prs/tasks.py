@@ -3033,6 +3033,21 @@ def combo_image(combo):
 
         draw1.text((500, y + 25), "%s set"%(item_count), font=font,
                    fill="white" ) # 设置文字位置/内容/颜色/字体
+        # 写原价
+
+        draw1.text((500, y + 25), "%s set" % (item_count), font=font,
+                   fill="white")  # 设置文字位置/内容/颜色/字体
+        # 写售价
+
+        draw1.text((500, y + 25), "%s set" % (item_count), font=font,
+                   fill="white")  # 设置文字位置/内容/颜色/字体
+        # 写货币
+        draw1.text((500, y + 25), "%s set" % (item_count), font=font,
+                   fill="white")  # 设置文字位置/内容/颜色/字体
+
+        #画装饰线
+        draw1.rectangle((x + 1, y + 1, x + 899, y + 149), None, "white")
+
 
 
         out = layer.convert('RGB')
