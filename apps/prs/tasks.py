@@ -3014,7 +3014,7 @@ def combo_image(combo):
     #左下角写货号，free delivery
     #右下角写 几件 原价，售价
     if layer:
-        font = ImageFont.truetype(FONT, 40)
+        font = ImageFont.truetype(FONT, 35)
         draw1 = ImageDraw.Draw(layer)
         # 简单打货号
         lw, lh = layer.size
@@ -3032,8 +3032,11 @@ def combo_image(combo):
                    fill=(0, 0, 0))  # 设置文字位置/内容/颜色/字体
         # 写件数 和 售价
         font = ImageFont.truetype(FONT, 60)
-        draw1.text((300, y + 20), "%s pcs/ %s SAR"%(item_count,combo.sku_price), font=font,
+        draw1.text((x+300, y + 20), "%s pcs" %(item_count), font=font,
                    fill="white" ) # 设置文字位置/内容/颜色/字体
+
+        draw1.rectangle((x + 600, y + 20, x + 800, y + 80), fill='yellow')
+        draw1.text((x+6200, y + 30), "%sSAR"%(combo.sku_price), font=font,fill = "white" )  # 设置文字位置/内容/颜色/字体
 
 
 
