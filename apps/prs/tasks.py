@@ -3026,16 +3026,17 @@ def combo_image(combo):
         draw1.text(( 30,y+5), combo.SKU, font=font,
                    fill="black")  # 设置文字位置/内容/颜色/字体
         #写包邮
-        draw1.rectangle((x+20, y+40, x + len(combo.SKU) * 30, y+60), fill='yellow')
-        draw1.text((30, y+25), "Free Deliver", font=font,
+        promote = "Free Deliver"
+        draw1.rectangle((x+20, y+60, x + len(promote) * 30, y+90), fill='yellow')
+        draw1.text((30, y+25), promote, font=font,
                    fill=(0, 0, 0))  # 设置文字位置/内容/颜色/字体
         # 写件数
 
-        draw1.text((500, y + 25), "%s set"%(item_count), font=font,
+        draw1.text((500, y + 20), "%s set"%(item_count), font=font,
                    fill="white" ) # 设置文字位置/内容/颜色/字体
         # 写原价
 
-        draw1.text((500, y + 25), "%s set" % (item_count), font=font,
+        draw1.text((500, y + 60), "%s set" % (item_count), font=font,
                    fill="white")  # 设置文字位置/内容/颜色/字体
         # 写售价
 
