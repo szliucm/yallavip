@@ -654,7 +654,8 @@ class Combo(Lightin_SKU):
     def cal_items(self):
         if self.combo_item:
             if self.combo_item:
-                return ",".join(self.combo_item.values_list("lightin_sku__SKU", flat=True))
+                #return ",".join(self.combo_item.values_list("lightin_sku__SKU", flat=True))
+                return ",".join(self.combo_item.values_list("SKU", flat=True))
             else:
                 return ""
         else:
