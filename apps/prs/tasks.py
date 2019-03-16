@@ -2980,7 +2980,7 @@ def combo_image(combo):
     if item_count == 6:
         # 六张图
         #先做个900x900的画布
-        layer = Image.new("RGB", (900, 1050), "red")
+        layer = Image.new("RGB", (900, 1000), "red")
 
         layer.paste(clipResizeImg_new(ims[0], 600, 600), (0, 0))
         layer.paste(clipResizeImg_new(ims[1], 300, 300), (0, 600))
@@ -2989,8 +2989,8 @@ def combo_image(combo):
         layer.paste(clipResizeImg_new(ims[4], 300, 300), (600, 300))
         layer.paste(clipResizeImg_new(ims[5], 300, 300), (600, 600))
     elif item_count == 7:
-        # 先做个900x150000的画布
-        layer = Image.new("RGB", (900, 1350), "red")
+        # 先做个900x130000的画布
+        layer = Image.new("RGB", (900, 1300), "red")
         layer.paste(clipResizeImg_new(ims[0], 450, 450), (0, 0))
         layer.paste(clipResizeImg_new(ims[1], 450, 450), (450, 0))
         layer.paste(clipResizeImg_new(ims[2], 450, 450), (0, 450))
@@ -3028,15 +3028,15 @@ def combo_image(combo):
         #写包邮
         promote = "Free Deliver"
         draw1.rectangle((x+20, y+55, x + 250, y+95), fill='yellow')
-        draw1.text((x +30, y+65), promote, font=font,
+        draw1.text((x +30, y+60), promote, font=font,
                    fill=(0, 0, 0))  # 设置文字位置/内容/颜色/字体
         # 写件数 和 售价
         font = ImageFont.truetype(FONT, 60)
-        draw1.text((x+300, y + 20), "%s pcs" %(item_count), font=font,
+        draw1.text((x+400, y + 20), "%s pcs" %(item_count), font=font,
                    fill="white" ) # 设置文字位置/内容/颜色/字体
 
         draw1.rectangle((x + 600, y + 20, x + 800, y + 80), fill='yellow')
-        draw1.text((x+6200, y + 30), "%sSAR"%(combo.sku_price), font=font,fill = "white" )  # 设置文字位置/内容/颜色/字体
+        draw1.text((x+6200, y + 30), "%s SAR"%(combo.sku_price), font=font,fill = "black" )  # 设置文字位置/内容/颜色/字体
 
 
 
