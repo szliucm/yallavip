@@ -2993,7 +2993,7 @@ def combo_image(combo):
         layer.paste(clipResizeImg_new(ims[3], 450, 450), (450, 450))
         layer.paste(clipResizeImg_new(ims[4], 300, 300), (0, 900))
         layer.paste(clipResizeImg_new(ims[5], 300, 300), (300, 900))
-        layer.paste(clipResizeImg_new(ims[5], 300, 300), (600, 900))
+        layer.paste(clipResizeImg_new(ims[6], 300, 300), (600, 900))
 
     print(price_dict, price_dict_sorted)
 
