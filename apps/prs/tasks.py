@@ -2951,6 +2951,7 @@ def combo_image(combo):
 
                 image_split[4] = '800x800'
                 image = a.join(image_split)
+                print( spu, image)
 
                 im = get_remote_image(image)
                 image_dict[item.SKU] = im
