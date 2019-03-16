@@ -2090,7 +2090,7 @@ def get_lightin_product_info(SPU, url):
 
     # debug用
     '''
-    with open('lightin.txt', 'wb') as f:
+    with open('funmart.txt', 'wb') as f:
         f.write(res)
 
 

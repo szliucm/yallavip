@@ -839,6 +839,7 @@ class LightinAlbumAdmin(object):
 class ComboAdmin(object):
     class ComboItemInline(object):
         model = ComboItem
+        fk_name = "combo"
         extra = 1
         # style = 'row'
         '''
@@ -892,9 +893,9 @@ class ComboItemAdmin(object):
 
 
 
-    list_display = ['SKU', 'combo',  ]
+    list_display = ['lightin_sku', 'combo',  ]
 
-    search_fields = ['SKU',]
+    search_fields = ['lightin_sku__SKU',]
 
     ordering = []
     list_filter = ('combo',)

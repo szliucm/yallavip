@@ -2920,6 +2920,120 @@ def create_combo_sku(dest_shop, combo):
     return ( new_product.get("id"), True)
 
 
+#拼接组合商品图片
+def combo_images():
+    for combo in Combo.objects.filter(comboed=True, listed=False):
+        combo_image(combo)
+
+
+def combo_image(combo):
+    from shop.photo_mark import clipResizeImg_new, get_remote_image
+    try:
+        from PIL import Image, ImageDraw, ImageFont, ImageEnhance
+
+    except ImportError:
+        import Image, ImageDraw, ImageFont, ImageEnhance
+
+    price_dict = {}
+    image_dict = {}
+    #把所有的项目按价格排序，价格高的在前面
+    items =  combo.combo_item.all()
+    for item in items:
+        print (item, item.SKU)
+        sku = item.lightin_sku
+        spu = sku.lightin_spu
+        #images = json.loads(Lightin_SPU.objects.get(spu_sku__SKU= item.SKU).images)
+        if spu.images_dict:
+            image = json.loads(spu.images_dict).values()
+            if image and len(image) > 0:
+                a = "/"
+                image_split = list(image)[0].split(a)
+
+                image_split[4] = '800x800'
+                image = a.join(image_split)
+
+                im = get_remote_image(image)
+                image_dict[item.SKU] = im
+                price_dict[item.SKU] = sku.vendor_supply_price
+
+    price_dict_sorted =  sorted(price_dict.items(),key=lambda item:item[1],reverse=True)
+
+
+
+
+    #按价格高低放图，价格高的放在大的位置
+    ims = []
+    for item_sorted in price_dict_sorted :
+        sku = item_sorted[0]
+        im = image_dict[sku]
+        ims.append(im)
+
+    # 开始拼图，先做个900x900的画布
+
+    layer = Image.new("RGB", (900, 900), "white")
+    if items.count() == 6:
+        # 六张图
+        layer.paste(clipResizeImg_new(ims[0], 600, 600), (0, 0))
+        layer.paste(clipResizeImg_new(ims[1], 299, 299), (0, 300))
+        layer.paste(clipResizeImg_new(ims[2], 299, 299), (300, 300))
+        layer.paste(clipResizeImg_new(ims[3], 299, 299), (600, 0))
+        layer.paste(clipResizeImg_new(ims[4], 299, 299), (600, 300))
+        layer.paste(clipResizeImg_new(ims[5], 299, 299), (600, 600))
+
+    print(price_dict, price_dict_sorted)
+
+    out = layer.convert('RGB')
+    # out.show()
+    out.save('target.jpg', 'JPEG')
+    return
+
+    '''
+    for
+
+        if (n == 0):
+            ims.append(clipResizeImg_new(im, 600, 900))
+            im_main = im
+
+    '''
+
+    '''
+    while n < 4:
+        try:
+            im = Image.open('./ori/' + str(row[0]) + '_' + str(m) + '.jpg')  # image 对象
+        except:
+            m = m + 1
+            if m > 20:
+                # im = Image.new("RGB", (300, 300), "white")
+                break
+            else:
+                continue
+
+        if (n == 0):
+            ims.append(clipResizeImg_new(im, 600, 900))
+            im_main = im
+        else:
+            ims.append(clipResizeImg_new(im, 299, 299))
+        n = n + 1
+        m = m + 1
+
+    layer = Image.new("RGB", (900, 900), "white")
+
+    layer.paste(ims[0], (0, 0))
+    # layer.paste("blue", (0,0,900,900))
+    # out = Image.composite(layer, im1, layer)
+    for index in range(len(ims)):
+        layer.paste(ims[index], (601, 300 * (index - 1)))
+
+    out = Image.composite(layer, im2, layer)
+
+    out = layer.convert('RGB')
+    # out.show()
+    out.save('target.jpg', 'JPEG')
+
+    
+    '''
+
+
 
 # 更新相册对应的主页外键
 #update fb_myalbum a , fb_mypage p set a.mypage_id = p.id where p.page_no = a.page_no

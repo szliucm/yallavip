@@ -654,7 +654,7 @@ class Combo(Lightin_SKU):
     def cal_items(self):
         if self.combo_item:
             if self.combo_item:
-                return ",".join(self.combo_item.values_list("SKU", flat=True))
+                return ",".join(self.combo_item.values_list("lightin_sku__SKU", flat=True))
             else:
                 return ""
         else:
@@ -672,13 +672,12 @@ class Combo(Lightin_SKU):
         return self.SKU
 
 class ComboItem(models.Model):
-    combo = models.ForeignKey(Lightin_SKU, null=True, blank=True, verbose_name="Combo",
+    combo = models.ForeignKey(Combo, null=True, blank=True, verbose_name="Combo",
                                     related_name="combo_item", on_delete=models.CASCADE)
-    #lightin_sku = models.ForeignKey(Lightin_SKU, null=True, blank=True, verbose_name="SKU",
-                                    #related_name="sku_comboitem", on_delete=models.CASCADE)
 
+    lightin_sku = models.ForeignKey(Lightin_SKU, null=True, blank=True, verbose_name="SKU",
+                                    related_name="sku_comboitem", on_delete=models.CASCADE)
     SKU = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="SKU")
-
     #quantity = models.IntegerField(u'可用数量', default=0, blank=True, null=True)
     #o_sellable = models.IntegerField(u'oms_可售数量', default=0, blank=True, null=True)
     #o_reserved = models.IntegerField(u'oms_待出库数量', default=0, blank=True, null=True)
@@ -690,7 +689,10 @@ class ComboItem(models.Model):
         verbose_name_plural = verbose_name
 
     def __str__(self):
-        return self.SKU
+        if self.lightin_sku:
+            return self.lightin_sku.SKU
+        else:
+            return ""
 
 class WmsOriOrder(models.Model):
 
