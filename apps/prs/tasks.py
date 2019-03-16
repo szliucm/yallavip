@@ -2928,6 +2928,10 @@ def combo_images():
 
 def combo_image(combo):
     from shop.photo_mark import clipResizeImg_new, get_remote_image
+    import os
+    from django.conf import settings
+    FONT = os.path.join(settings.BASE_DIR, "static/font/ARIAL.TTF")
+
     try:
         from PIL import Image, ImageDraw, ImageFont, ImageEnhance
 
@@ -2994,12 +2998,35 @@ def combo_image(combo):
         layer.paste(clipResizeImg_new(ims[4], 300, 300), (0, 900))
         layer.paste(clipResizeImg_new(ims[5], 300, 300), (300, 900))
         layer.paste(clipResizeImg_new(ims[6], 300, 300), (600, 900))
+    else:
+        layer = None
 
     print(price_dict, price_dict_sorted)
 
-    out = layer.convert('RGB')
-    # out.show()
-    out.save('target%s.jpg'%(sku), 'JPEG')
+    '''
+    #发布的时候根据在那个page，选择不同的logo， 左上角打水印
+    logo = Image.open(logo)
+    lw, lh = logo.size
+    
+
+    layer.paste(clipResizeImg_new(logo, lw * 50/lh , 50), (600, 900))
+    '''
+    #左下角写货号，free delivery
+    #右下角写 几件 多少钱
+    if layer:
+        font = ImageFont.truetype(FONT, 45)
+        draw1 = ImageDraw.Draw(layer)
+        # 简单打货号
+        lw, lh = layer.size
+        draw1.rectangle(( 20,lh -50, 20+len(combo.SKU)*10, lh-20) , fill='yellow')
+        draw1.text(( 30,lh -40), combo.SKU, font=font,
+                   fill=(0, 0, 0))  # 设置文字位置/内容/颜色/字体
+
+
+
+        out = layer.convert('RGB')
+        # out.show()
+        out.save('target%s.jpg'%(combo.SKU), 'JPEG')
     return
 
     '''
