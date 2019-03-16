@@ -2983,11 +2983,11 @@ def combo_image(combo):
         layer = Image.new("RGB", (900, 1050), "red")
 
         layer.paste(clipResizeImg_new(ims[0], 600, 600), (0, 0))
-        layer.paste(clipResizeImg_new(ims[1], 299, 299), (0, 600))
-        layer.paste(clipResizeImg_new(ims[2], 299, 299), (300, 600))
-        layer.paste(clipResizeImg_new(ims[3], 299, 299), (600, 0))
-        layer.paste(clipResizeImg_new(ims[4], 299, 299), (600, 300))
-        layer.paste(clipResizeImg_new(ims[5], 299, 299), (600, 600))
+        layer.paste(clipResizeImg_new(ims[1], 300, 300), (0, 600))
+        layer.paste(clipResizeImg_new(ims[2], 300, 300), (300, 600))
+        layer.paste(clipResizeImg_new(ims[3], 300, 300), (600, 0))
+        layer.paste(clipResizeImg_new(ims[4], 300, 300), (600, 300))
+        layer.paste(clipResizeImg_new(ims[5], 300, 300), (600, 600))
     elif item_count == 7:
         # 先做个900x150000的画布
         layer = Image.new("RGB", (900, 1350), "red")
@@ -3012,16 +3012,27 @@ def combo_image(combo):
     layer.paste(clipResizeImg_new(logo, lw * 50/lh , 50), (600, 900))
     '''
     #左下角写货号，free delivery
-    #右下角写 几件 多少钱
+    #右下角写 几件 原价，售价
     if layer:
         font = ImageFont.truetype(FONT, 45)
         draw1 = ImageDraw.Draw(layer)
         # 简单打货号
         lw, lh = layer.size
-        draw1.rectangle(( 20,lh -140, 20+len(combo.SKU)*30, lh-100) , fill='yellow')
-        draw1.text(( 30,lh -135), combo.SKU, font=font,
-                   fill=(0, 0, 0))  # 设置文字位置/内容/颜色/字体
 
+        x = 0
+        y = lh-150
+        #写货号
+        draw1.rectangle(( x+20,y+10, x+len(combo.SKU)*30, y+30) , fill='yellow')
+        draw1.text(( 30,y+5), combo.SKU, font=font,
+                   fill="black")  # 设置文字位置/内容/颜色/字体
+        #写包邮
+        draw1.rectangle((x+20, y+40, x + len(combo.SKU) * 30, y+60), fill='yellow')
+        draw1.text((30, y+25), "Free Deliver", font=font,
+                   fill=(0, 0, 0))  # 设置文字位置/内容/颜色/字体
+        # 写件数
+
+        draw1.text((500, y + 25), "%s set"%(item_count), font=font,
+                   fill="white" ) # 设置文字位置/内容/颜色/字体
 
 
         out = layer.convert('RGB')
