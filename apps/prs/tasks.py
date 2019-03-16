@@ -3031,12 +3031,12 @@ def combo_image(combo):
         draw1.text((x +30, y+60), promote, font=font,
                    fill=(0, 0, 0))  # 设置文字位置/内容/颜色/字体
         # 写件数 和 售价
-        font = ImageFont.truetype(FONT, 60)
-        draw1.text((x+450, y + 20), "%s pcs" %(item_count), font=font,
+        font = ImageFont.truetype(FONT, 50)
+        draw1.text((x+450, y + 30), "%s pcs" %(item_count), font=font,
                    fill="white" ) # 设置文字位置/内容/颜色/字体
 
         draw1.rectangle((x + 600, y + 20, x + 800, y + 80), fill='white')
-        draw1.text((x+620, y + 30), "%s SAR"%(combo.sku_price), font=font,fill = "red" )  # 设置文字位置/内容/颜色/字体
+        draw1.text((x+620, y + 30), "%s sar"%(combo.sku_price), font=font,fill = "red" )  # 设置文字位置/内容/颜色/字体
 
 
 
