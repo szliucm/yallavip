@@ -2975,8 +2975,8 @@ def combo_image(combo):
     if items.count() == 6:
         # 六张图
         layer.paste(clipResizeImg_new(ims[0], 600, 600), (0, 0))
-        layer.paste(clipResizeImg_new(ims[1], 299, 299), (0, 300))
-        layer.paste(clipResizeImg_new(ims[2], 299, 299), (300, 300))
+        layer.paste(clipResizeImg_new(ims[1], 299, 299), (0, 600))
+        layer.paste(clipResizeImg_new(ims[2], 299, 299), (300, 600))
         layer.paste(clipResizeImg_new(ims[3], 299, 299), (600, 0))
         layer.paste(clipResizeImg_new(ims[4], 299, 299), (600, 300))
         layer.paste(clipResizeImg_new(ims[5], 299, 299), (600, 600))
