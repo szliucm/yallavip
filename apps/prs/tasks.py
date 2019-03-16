@@ -3020,7 +3020,7 @@ def combo_image(combo):
         lw, lh = layer.size
 
         x = 0
-        y = lh-150
+        y = lh-100
         #写货号
         draw1.rectangle(( x+20,y+5, x+180, y+45) , fill='yellow')
         draw1.text(( x+30,y+10), combo.SKU, font=font,
