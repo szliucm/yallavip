@@ -2958,7 +2958,7 @@ def combo_image(combo):
                 price_dict[item.SKU] = sku.vendor_supply_price
 
     price_dict_sorted =  sorted(price_dict.items(),key=lambda item:item[1],reverse=True)
-
+    print(image_split, price_dict_sorted, price_dict)
 
 
 
