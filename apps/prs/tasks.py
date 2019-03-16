@@ -2972,7 +2972,8 @@ def combo_image(combo):
     # 开始拼图，先做个900x900的画布
 
     layer = Image.new("RGB", (900, 900), "white")
-    if items.count() == 6:
+    item_count = items.count()
+    if item_count == 6:
         # 六张图
         layer.paste(clipResizeImg_new(ims[0], 600, 600), (0, 0))
         layer.paste(clipResizeImg_new(ims[1], 299, 299), (0, 600))
@@ -2980,12 +2981,20 @@ def combo_image(combo):
         layer.paste(clipResizeImg_new(ims[3], 299, 299), (600, 0))
         layer.paste(clipResizeImg_new(ims[4], 299, 299), (600, 300))
         layer.paste(clipResizeImg_new(ims[5], 299, 299), (600, 600))
+    elif item_count == 7:
+        layer.paste(clipResizeImg_new(ims[0], 450, 450), (0, 0))
+        layer.paste(clipResizeImg_new(ims[1], 450, 450), (450, 0))
+        layer.paste(clipResizeImg_new(ims[2], 450, 450), (0, 450))
+        layer.paste(clipResizeImg_new(ims[3], 450, 450), (450, 450))
+        layer.paste(clipResizeImg_new(ims[4], 300, 300), (0, 900))
+        layer.paste(clipResizeImg_new(ims[5], 300, 300), (300, 900))
+        layer.paste(clipResizeImg_new(ims[5], 300, 300), (600, 900))
 
     print(price_dict, price_dict_sorted)
 
     out = layer.convert('RGB')
     # out.show()
-    out.save('target.jpg', 'JPEG')
+    out.save('target_7.jpg', 'JPEG')
     return
 
     '''
