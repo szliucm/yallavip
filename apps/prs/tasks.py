@@ -2977,7 +2977,28 @@ def combo_image(combo):
 
 
     item_count = items.count()
-    if item_count == 6:
+    if item_count == 4:
+        # 四张图
+        #先做个900x1000的画布
+        layer = Image.new("RGB", (900, 1000), "red")
+
+        layer.paste(clipResizeImg_new(ims[0], 450, 450), (0, 0))
+        layer.paste(clipResizeImg_new(ims[1], 450, 450), (0, 450))
+        layer.paste(clipResizeImg_new(ims[2], 450, 450), (450, 0))
+        layer.paste(clipResizeImg_new(ims[3], 450, 450), (450, 450))
+
+    elif item_count == 5:
+        # 五张图
+        #先做个750x1000的画布
+        layer = Image.new("RGB", (750, 1000), "red")
+
+        layer.paste(clipResizeImg_new(ims[0], 450, 450), (0, 0))
+        layer.paste(clipResizeImg_new(ims[1], 450, 450), (0, 450))
+        layer.paste(clipResizeImg_new(ims[2], 300, 300), (450, 0))
+        layer.paste(clipResizeImg_new(ims[3], 300, 300), (450, 300))
+        layer.paste(clipResizeImg_new(ims[4], 300, 300), (450, 600))
+
+    elif item_count == 6:
         # 六张图
         #先做个900x900的画布
         layer = Image.new("RGB", (900, 1000), "red")
@@ -2989,7 +3010,7 @@ def combo_image(combo):
         layer.paste(clipResizeImg_new(ims[4], 300, 300), (600, 300))
         layer.paste(clipResizeImg_new(ims[5], 300, 300), (600, 600))
     elif item_count == 7:
-        # 先做个900x130000的画布
+        # 先做个900x130的画布
         layer = Image.new("RGB", (900, 1300), "red")
         layer.paste(clipResizeImg_new(ims[0], 450, 450), (0, 0))
         layer.paste(clipResizeImg_new(ims[1], 450, 450), (450, 0))
@@ -2998,6 +3019,42 @@ def combo_image(combo):
         layer.paste(clipResizeImg_new(ims[4], 300, 300), (0, 900))
         layer.paste(clipResizeImg_new(ims[5], 300, 300), (300, 900))
         layer.paste(clipResizeImg_new(ims[6], 300, 300), (600, 900))
+    elif item_count == 8:
+        # 先做个900x130的画布
+        layer = Image.new("RGB", (900, 1150), "red")
+        layer.paste(clipResizeImg_new(ims[0], 450, 450), (0, 0))
+        layer.paste(clipResizeImg_new(ims[1], 450, 450), (450, 0))
+        layer.paste(clipResizeImg_new(ims[2], 450, 450), (0, 450))
+        layer.paste(clipResizeImg_new(ims[3], 450, 450), (0, 750))
+        layer.paste(clipResizeImg_new(ims[4], 300, 300), (300, 450))
+        layer.paste(clipResizeImg_new(ims[5], 300, 300), (300, 750))
+        layer.paste(clipResizeImg_new(ims[6], 300, 300), (600, 450))
+        layer.paste(clipResizeImg_new(ims[7], 300, 300), (600, 750))
+    elif item_count == 9:
+        # 先做个900x900的画布
+        layer = Image.new("RGB", (900, 900), "red")
+        layer.paste(clipResizeImg_new(ims[0], 300, 300), (0, 0))
+        layer.paste(clipResizeImg_new(ims[1], 300, 300), (0, 300))
+        layer.paste(clipResizeImg_new(ims[2], 300, 300), (0, 600))
+        layer.paste(clipResizeImg_new(ims[3], 300, 300), (300, 0))
+        layer.paste(clipResizeImg_new(ims[4], 300, 300), (300, 300))
+        layer.paste(clipResizeImg_new(ims[5], 300, 300), (300, 600))
+        layer.paste(clipResizeImg_new(ims[6], 300, 300), (600, 0))
+        layer.paste(clipResizeImg_new(ims[7], 300, 300), (600, 300))
+        layer.paste(clipResizeImg_new(ims[8], 300, 300), (600, 600))
+    elif item_count == 10:
+        # 先做个900x130的画布
+        layer = Image.new("RGB", (900, 925), "red")
+        layer.paste(clipResizeImg_new(ims[0], 300, 300), (0, 0))
+        layer.paste(clipResizeImg_new(ims[1], 300, 300), (0, 300))
+        layer.paste(clipResizeImg_new(ims[2], 300, 300), (300, 0))
+        layer.paste(clipResizeImg_new(ims[3], 300, 300), (300, 300))
+        layer.paste(clipResizeImg_new(ims[4], 300, 300), (600, 0))
+        layer.paste(clipResizeImg_new(ims[5], 300, 300), (600, 300))
+        layer.paste(clipResizeImg_new(ims[6], 225, 225), (0, 600))
+        layer.paste(clipResizeImg_new(ims[7], 225, 225), (225, 600))
+        layer.paste(clipResizeImg_new(ims[8], 225, 225), (450, 600))
+        layer.paste(clipResizeImg_new(ims[9], 225, 225), (765, 600))
     else:
         layer = None
 
@@ -3043,9 +3100,22 @@ def combo_image(combo):
 
         out = layer.convert('RGB')
         # out.show()
-        out.save('target%s.jpg'%(combo.SKU), 'JPEG')
-    return
+        image_filename = combo.SKU + '.jpg'
 
+        destination = os.path.join(settings.MEDIA_ROOT, "combo/", image_filename)
+
+        print("destination", destination)
+
+        out.save(destination, 'JPEG', quality=95)
+        #out.save('target%s.jpg'%(combo.SKU), 'JPEG')
+
+
+        combo.image_marked = destination
+
+    else:
+        combo.image_marked = "items数量问题"
+
+    combo.save()
     '''
     for
 
