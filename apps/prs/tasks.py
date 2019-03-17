@@ -2923,6 +2923,7 @@ def create_combo_sku(dest_shop, combo):
 #拼接组合商品图片
 def combo_images():
     for combo in Combo.objects.filter(comboed=True, imaged=False):
+        print ("当前处理 combo ", combo)
         combo_image(combo)
 
 
@@ -2963,7 +2964,7 @@ def combo_image(combo):
                 price_dict[item.SKU] = sku.vendor_supply_price
 
     price_dict_sorted =  sorted(price_dict.items(),key=lambda item:item[1],reverse=True)
-    print(image_split, price_dict_sorted, price_dict)
+    #print(image_split, price_dict_sorted, price_dict)
 
 
 
@@ -2990,14 +2991,14 @@ def combo_image(combo):
 
     elif item_count == 5:
         # 五张图
-        #先做个750x1000的画布
+        #先做个900x1000的画布
         layer = Image.new("RGB", (750, 1000), "red")
 
-        layer.paste(clipResizeImg_new(ims[0], 450, 450), (0, 0))
-        layer.paste(clipResizeImg_new(ims[1], 450, 450), (0, 450))
-        layer.paste(clipResizeImg_new(ims[2], 300, 300), (450, 0))
-        layer.paste(clipResizeImg_new(ims[3], 300, 300), (450, 300))
-        layer.paste(clipResizeImg_new(ims[4], 300, 300), (450, 600))
+        layer.paste(clipResizeImg_new(ims[0], 540, 540), (0, 0))
+        layer.paste(clipResizeImg_new(ims[1], 540, 540), (0, 540))
+        layer.paste(clipResizeImg_new(ims[2], 360, 360), (540, 0))
+        layer.paste(clipResizeImg_new(ims[3], 360, 360), (540, 360))
+        layer.paste(clipResizeImg_new(ims[4], 360, 360), (540, 720))
 
     elif item_count == 6:
         # 六张图
