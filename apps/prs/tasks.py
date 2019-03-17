@@ -3109,8 +3109,9 @@ def combo_image(combo):
         out.save(destination, 'JPEG', quality=95)
         #out.save('target%s.jpg'%(combo.SKU), 'JPEG')
 
+        destination_url = domain + os.path.join(settings.MEDIA_URL, "combo/", image_filename)
 
-        combo.image_marked = destination
+        combo.image_marked = destination_url
 
     else:
         combo.image_marked = "items数量问题"
