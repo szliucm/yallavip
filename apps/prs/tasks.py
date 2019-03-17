@@ -2930,6 +2930,7 @@ def combo_image(combo):
     from shop.photo_mark import clipResizeImg_new, get_remote_image
     import os
     from django.conf import settings
+    domain = "http://admin.yallavip.com"
     FONT = os.path.join(settings.BASE_DIR, "static/font/ARIAL.TTF")
 
     try:
