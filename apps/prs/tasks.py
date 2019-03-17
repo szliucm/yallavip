@@ -2927,6 +2927,7 @@ def combo_images():
         combo_image(combo)
 
 
+
 def combo_image(combo):
     from shop.photo_mark import clipResizeImg_new, get_remote_image
     import os
@@ -2966,7 +2967,10 @@ def combo_image(combo):
     price_dict_sorted =  sorted(price_dict.items(),key=lambda item:item[1],reverse=True)
     #print(image_split, price_dict_sorted, price_dict)
 
-
+    if not items.count() == len(image_dict):
+        combo.image_marked = "图片和items数量不一致"
+        combo.save()
+        return
 
     #按价格高低放图，价格高的放在大的位置
     ims = []
