@@ -2922,7 +2922,7 @@ def create_combo_sku(dest_shop, combo):
 
 #拼接组合商品图片
 def combo_images():
-    for combo in Combo.objects.filter(comboed=True, listed=False):
+    for combo in Combo.objects.filter(comboed=True, imaged=False):
         combo_image(combo)
 
 
@@ -3113,6 +3113,7 @@ def combo_image(combo):
         destination_url = domain + os.path.join(settings.MEDIA_URL, "combo/", image_filename)
 
         combo.image_marked = destination_url
+        combo.imaged = True
 
     else:
         combo.image_marked = "items数量问题"
