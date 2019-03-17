@@ -857,10 +857,21 @@ class ComboAdmin(object):
     inlines = [ComboItemInline, ]
 
 
+    def photo(self, obj):
+
+        try:
+            img =  '<a><img src="%s" width="100px"></a>' % (obj.image_marked)
+        except Exception as e:
+            img = "获取图片出错 "+ e
+
+        return mark_safe(img)
 
 
 
-    list_display = ['SKU', 'listed', 'items' ]
+    photo.short_description = "图片"
+
+
+    list_display = ['SKU', 'photo', 'listed', 'items' ]
     exclude = ["lightin_spu", "SPU",]
     search_fields = ['SKU',]
 
