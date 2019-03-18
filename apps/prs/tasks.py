@@ -3255,9 +3255,12 @@ def skus_image():
 
 def sku_image(lightin_sku):
     attr = lightin_sku.skuattr
+    spu = lightin_sku.lightin_spu
 
-    attr_image_dict = json.loads(lightin_sku.lightin_spu.attr_image_dict)
-    images_dict = json.loads(lightin_sku.lightin_spu.images_dict)
+    if not spu.attr_image_dict or not spu.attr_image_dict:
+        return
+    attr_image_dict = json.loads(spu.attr_image_dict)
+    images_dict = json.loads(spu.images_dict)
     image_key = None
     print ("开始处理 ",lightin_sku,  images_dict, attr)
     #遍历字典项，找到可能的属性图片，可能为空
