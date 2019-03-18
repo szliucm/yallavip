@@ -1756,7 +1756,7 @@ def delete_combo_photo():
     from fb.models import  MyPhoto
 
     #找出缺货的组合商品
-    combo_SKUs = ComboItem.objects.filter(lightin_sku__o_quantity__lt=1).values_list("combo__SKU",flat=True).distinct()
+    combo_SKUs = ComboItem.objects.filter(lightin_sku__o_sellable__lt=0).values_list("combo__SKU",flat=True).distinct()
 
     photo_miss = {}
     #在fb的图片里找combo_SKU的图片
