@@ -3230,11 +3230,11 @@ def sku_image(lightin_sku):
     for attr_key in attr_image_dict:
         print(attr_key )
         if attr.find(attr_key) >= 0:
-            image_key = attr_image_dict[attr_key]
+            image_key = attr_image_dict.get(attr_key)
             break
 
     lightin_sku.image = images_dict.get(image_key)
-    print(image_key, images_dict(image_key))
+    print(image_key, images_dict.get(image_key))
 
     lightin_sku.imaged = True
 
