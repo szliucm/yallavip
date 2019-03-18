@@ -131,6 +131,7 @@ class MyFeed(models.Model):
     sku = models.CharField(default='', max_length=100, blank=True, verbose_name="sku")
 
     created_time = models.DateTimeField(null=True, blank=True, verbose_name="创建时间")
+    active = models.BooleanField(u"feed状态", default=False)
     name = models.CharField(max_length=500, null=True, blank=True, verbose_name="name")
 
     description = models.CharField(max_length=1000, null=True, blank=True, verbose_name="description")

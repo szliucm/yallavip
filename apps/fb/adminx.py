@@ -202,8 +202,8 @@ class MyPageAdmin(object):
         adobjects = FacebookAdsApi.init(access_token=my_access_token, debug=True)
         for row in queryset:
             page_no = row.page_no
-            # 重置原有相册信息为不活跃
-            #MyFeed.objects.filter(page_no=page_no).update(active=False)
+            # 重置原有feed信息为不活跃
+            MyFeed.objects.filter(page_no=page_no).update(active=False)
 
             fields = ["created_time", "description", "id",
                       "type", "message", "name",
@@ -223,6 +223,7 @@ class MyPageAdmin(object):
                                                                 defaults={'page_no': page_no,
                                                                           'created_time':
                                                                               feed["created_time"],
+                                                                          'active': True,
                                                                           'message': feed.get("message"),
                                                                           'description': feed.get("description"),
                                                                           'name': feed.get("name"),

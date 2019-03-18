@@ -1720,7 +1720,49 @@ def delete_missed_photo():
     photo_miss = {}
     #在fb的图片里找handle的图片
     for handle in handles:
-        myphotos = MyPhoto.objects.filter(name__contains=handle)
+        myphotos = MyPhoto.objects.filter(name__contains=handle, active=True)
+        photos = myphotos.values_list("page_no","photo_no").distinct()
+        for photo in photos:
+            page_no = photo[0]
+            fb_id = photo[1]
+            photo_list = photo_miss.get(page_no)
+            if not photo_list:
+                photo_list = []
+
+            if fb_id not in photo_list:
+                photo_list.append(fb_id)
+
+            photo_miss[page_no] = photo_list
+
+        myphotos.delete()
+
+    # 选择所有可用的page
+    for page_no in photo_miss:
+        FacebookAdsApi.init(access_token=get_token(page_no))
+
+        photo_nos = photo_miss[page_no]
+        print("page %s 待删除数量 %s  "%(page_no, len(photo_nos)))
+        if photo_nos is None or len(photo_nos) == 0:
+            continue
+
+        delete_photos(photo_nos)
+
+#删除缺货的组合商品
+#组合库存减为0， 自动释放组合占用库存
+#删除图片
+#shopify的库存减为0 (还没实现)
+def delete_combo_photo():
+    from facebook_business.api import FacebookAdsApi
+    from fb.models import  MyPhoto
+
+    #找出缺货的组合商品
+    combo_SKUs = ComboItem.objects.filter(lightin_sku__o_quantity__lt=1).values_list("combo_SKU",flat=True).distinct()
+
+    photo_miss = {}
+    #在fb的图片里找combo_SKU的图片
+    for combo_SKU in combo_SKUs:
+        myphotos = MyPhoto.objects.filter(name__contains=combo_SKU, active=True)
+        print("当前处理组合 ", handle, myphotos.count())
         photos = myphotos.values_list("page_no","photo_no").distinct()
         for photo in photos:
             page_no = photo[0]
