@@ -3226,7 +3226,7 @@ def sku_image(lightin_sku):
     attr_image_dict = json.loads(lightin_sku.lightin_spu.attr_image_dict)
     images_dict = json.loads(lightin_sku.lightin_spu.images_dict)
     image_key = None
-    print ("开始处理 ",lightin_sku,  attr)
+    print ("开始处理 ",lightin_sku,  images_dict, attr)
     for attr_key in attr_image_dict:
         print(attr_key )
         if attr.find(attr_key) >= 0:
