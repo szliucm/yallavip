@@ -2998,8 +2998,7 @@ def combo_image(combo):
     elif item_count == 5:
         # 五张图
         #先做个900x1000的画布
-        layer = Image.new("RGB", (900, 1000), "red")
-
+        layer = Image.new("RGB", (900, 1180), "red")
         layer.paste(clipResizeImg_new(ims[0], 540, 540), (0, 0))
         layer.paste(clipResizeImg_new(ims[1], 540, 540), (0, 540))
         layer.paste(clipResizeImg_new(ims[2], 360, 360), (540, 0))
