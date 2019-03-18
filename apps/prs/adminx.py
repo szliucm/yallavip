@@ -919,9 +919,24 @@ class ComboItemAdmin(object):
 
     photo.short_description = "图片"
 
+    def o_quantity(self, obj):
+        return  obj.lightin_sku.o_quantity
+
+    o_quantity.short_description = "oms_可用数量"
+
+    def o_reserved(self, obj):
+        return  obj.lightin_sku.o_reserved
+
+    o_reserved.short_description = "oms_保留数量"
+
+    def o_sellable(self, obj):
+        return  obj.lightin_sku.o_sellable
+
+    o_sellable.short_description = "oms_可售数量"
 
 
-    list_display = ['lightin_sku','photo', 'combo',  ]
+
+    list_display = ['lightin_sku','photo', 'combo', 'o_quantity','o_reserved','o_sellable', ]
 
     search_fields = ['lightin_sku__SKU',]
 
