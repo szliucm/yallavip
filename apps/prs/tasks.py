@@ -1762,7 +1762,7 @@ def delete_combo_photo():
     #在fb的图片里找combo_SKU的图片
     for combo_SKU in combo_SKUs:
         myphotos = MyPhoto.objects.filter(name__contains=combo_SKU, active=True)
-        print("当前处理组合 ", handle, myphotos.count())
+        print("当前处理组合 ", combo_SKU, myphotos.count())
         photos = myphotos.values_list("page_no","photo_no").distinct()
         for photo in photos:
             page_no = photo[0]
