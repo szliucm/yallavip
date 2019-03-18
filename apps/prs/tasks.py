@@ -2814,13 +2814,32 @@ def create_combo():
     combos = Combo.objects.filter(comboed=True,listed=False)
 
     for combo in combos:
+        # 先判断所有的项目是否都有库存，否则返回失败
+        items = combo.combo_item.all()
+        target_count = items.count()
+        real_items = items.filter(lightin_sku__o_sellable__gt=0)
+        real_count = real_items.count()
+        if real_count < target_count:
+            combo.combo_error = "sku 缺货"
+            combo.save()
+            continue
+
+
         product_no, sku_created = create_combo_sku(dest_shop, combo)
 
         if sku_created:
             if product_no < min_product_no:
                 min_product_no = product_no
 
-            Combo.objects.filter(pk=combo.pk).update(listed=True)
+            #Combo.objects.filter(pk=combo.pk).update(listed=True)
+            combo.listed = True
+
+        else:
+            combo.combo_error = "创建shopfiy失败 "
+
+        combo.save()
+    #更新库存占用
+    cal_reserved()
 
     # 上传完后整体更新目标站数据
     sync_shop(dest_shop, min_product_no)
@@ -2990,26 +3009,36 @@ def combo_image(combo):
 
     price_dict = {}
     image_dict = {}
-    #把所有的项目按价格排序，价格高的在前面
-    items =  combo.combo_item.all()
+
+
+
+
     for item in items:
         print (item, item.SKU)
         sku = item.lightin_sku
-        spu = sku.lightin_spu
-        #images = json.loads(Lightin_SPU.objects.get(spu_sku__SKU= item.SKU).images)
-        if spu.images_dict:
-            image = json.loads(spu.images_dict).values()
-            if image and len(image) > 0:
-                a = "/"
-                image_split = list(image)[0].split(a)
 
-                image_split[4] = '800x800'
-                image = a.join(image_split)
-                print( spu, image)
+        # 如果sku有属性图片则用属性图片，否则用spu图片
+        image = None
+        if sku.image:
+            image = sku.image
+            print("sku 图片")
+        else:
 
-                im = get_remote_image(image)
-                image_dict[item.SKU] = im
-                price_dict[item.SKU] = sku.vendor_supply_price
+            spu = sku.lightin_spu
+            #images = json.loads(Lightin_SPU.objects.get(spu_sku__SKU= item.SKU).images)
+            if spu.images_dict:
+                image = json.loads(spu.images_dict).values()
+                if image and len(image) > 0:
+                    a = "/"
+                    image_split = list(image)[0].split(a)
+
+                    image_split[4] = '800x800'
+                    image = a.join(image_split)
+                    print("spu 图片", spu, image)
+
+        im = get_remote_image(image)
+        image_dict[item.SKU] = im
+        price_dict[item.SKU] = sku.vendor_supply_price
 
     price_dict_sorted =  sorted(price_dict.items(),key=lambda item:item[1],reverse=True)
     #print(image_split, price_dict_sorted, price_dict)
@@ -3019,6 +3048,7 @@ def combo_image(combo):
         combo.save()
         return
 
+    # 把所有的项目按价格排序，价格高的在前面
     #按价格高低放图，价格高的放在大的位置
     ims = []
     for item_sorted in price_dict_sorted :
@@ -3230,6 +3260,7 @@ def sku_image(lightin_sku):
     images_dict = json.loads(lightin_sku.lightin_spu.images_dict)
     image_key = None
     print ("开始处理 ",lightin_sku,  images_dict, attr)
+    #遍历字典项，找到可能的属性图片，可能为空
     for attr_key in attr_image_dict:
         print(attr_key )
         if attr.find(attr_key) >= 0:
@@ -3237,13 +3268,13 @@ def sku_image(lightin_sku):
             break
 
     lightin_sku.image = images_dict.get(image_key)
-    print(image_key, images_dict.get(image_key))
+
 
     lightin_sku.imaged = True
 
     lightin_sku.save()
 
-
+    print(image_key, images_dict.get(image_key))
 
 
 
