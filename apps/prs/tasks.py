@@ -3248,7 +3248,9 @@ def combo_image(combo):
     '''
 
 def skus_image():
-    lightin_skus = Lightin_SKU.objects.filter(comboed=False,imaged=False)
+    lightin_skus = Lightin_SKU.objects.filter(comboed=False,imaged=False,
+                                              lightin_spu__attr_image_dict__isnull=False,
+                                              lightin_spu__images_dict__isnull=False,)
     for lightin_sku in lightin_skus:
         sku_image(lightin_sku)
 
@@ -3257,27 +3259,25 @@ def sku_image(lightin_sku):
     attr = lightin_sku.skuattr
     spu = lightin_sku.lightin_spu
 
-    if not spu.attr_image_dict or not spu.attr_image_dict:
-        return
     attr_image_dict = json.loads(spu.attr_image_dict)
     images_dict = json.loads(spu.images_dict)
     image_key = None
-    print ("开始处理 ",lightin_sku,  images_dict, attr)
+    print ("开始处理 ",lightin_sku, attr_image_dict, images_dict, attr)
     #遍历字典项，找到可能的属性图片，可能为空
     for attr_key in attr_image_dict:
         print(attr_key )
         if attr.find(attr_key) >= 0:
             image_key = attr_image_dict.get(attr_key)
+            print("匹配成功")
             break
 
-    lightin_sku.image = images_dict.get(image_key)
-
-
-    lightin_sku.imaged = True
-
-    lightin_sku.save()
-
     print(image_key, images_dict.get(image_key))
+
+    lightin_sku.image = images_dict.get(image_key)
+    lightin_sku.imaged = True
+    lightin_sku.save()
+    print("保存成功")
+
 
 
 
