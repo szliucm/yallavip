@@ -995,6 +995,10 @@ class MyAlbumAdmin(object):
         adobjects = FacebookAdsApi.init(access_token=my_access_token  , debug=True)
         for row in queryset:
             album_no = row.album_no
+            # 重置原有相册的图片信息为不活跃
+
+            MyPhoto.objects.filter(album_no=album_no).update(active=False)
+
             fields = ["id","name","created_time", "updated_time","picture","link",
                       "likes.summary(true)","comments.summary(true)"
                       ]
@@ -1055,7 +1059,7 @@ class MyAlbumAdmin(object):
                                                                             photo["created_time"].split('+')[0],
                                                                         'updated_time':
                                                                             photo["updated_time"].split('+')[0],
-
+                                                                        'active':True,
                                                                         'name':name,
                                                                         'picture': photo["picture"],
                                                                         'link': photo["link"],
