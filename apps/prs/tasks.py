@@ -3112,12 +3112,13 @@ def combo_image(combo):
 
         destination = os.path.join(settings.MEDIA_ROOT, "combo/", image_filename)
 
-        print("destination", destination)
+
 
         out.save(destination, 'JPEG', quality=95)
         #out.save('target%s.jpg'%(combo.SKU), 'JPEG')
 
         destination_url = domain + os.path.join(settings.MEDIA_URL, "combo/", image_filename)
+        print("destination_url", destination_url)
 
         combo.image_marked = destination_url
         combo.imaged = True
