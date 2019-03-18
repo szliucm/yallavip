@@ -1247,13 +1247,14 @@ def get_lightin():
     from .ali import get_lightin_product_info
     from django.utils import timezone as dt
 
-    lightinproducts = Lightin_SPU.objects.filter(got=False,got_error="无" )
-    print("一共有%d 个lightin链接待处理"%(lightinproducts.count()))
+    lightinproducts = Lightin_SPU.objects.filter(~Q(attr_image_dict="{}"),got=False,got_error="无" , sellable__gt=0)
+    n = lightinproducts.count()
+    print("一共有%d 个lightin链接待处理"%(n))
 
 
 
     for lightinproduct in lightinproducts:
-
+        print("还有%d 个lightin链接待处理" % (n))
         message,status=get_lightin_product_info(lightinproduct.SPU, lightinproduct.link)
         if status:
             print("成功！")
@@ -1268,6 +1269,8 @@ def get_lightin():
 
                 }
             )
+        n -= 1
+
 
 
 #3,将产品详细信息发布到shopfiy店铺
