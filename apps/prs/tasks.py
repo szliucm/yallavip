@@ -3226,13 +3226,17 @@ def sku_image(lightin_sku):
     attr_image_dict = json.loads(lightin_sku.lightin_spu.attr_image_dict)
     images_dict = json.loads(lightin_sku.lightin_spu.images_dict)
     image_key = None
+    print ("开始处理 ",lightin_sku,  attr)
     for attr_key in attr_image_dict:
+        print(attr_key )
         if attr.find(attr_key) >= 0:
             image_key = attr_image_dict[attr_key]
             break
 
     lightin_sku.image = images_dict.get(image_key)
-    imaged = True
+    print(image_key, images_dict(image_key))
+
+    lightin_sku.imaged = True
 
     lightin_sku.save()
 
