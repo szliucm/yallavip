@@ -1688,6 +1688,8 @@ def delete_outstock_lightin_album():
         Order.objects.filter(updated=True).update(updated=False)
 
     delete_missed_photo()
+    delete_oversea_photo()
+
 
 #删除lightin_album 的某个特定子集
 def delete_out_lightin_album(lightinalbums_out):
