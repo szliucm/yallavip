@@ -2164,13 +2164,33 @@ def get_lightin_product_info(SPU, url):
             image_id = row.attrib.get("id").split("_")[1]
             img = row.xpath('.//img')[0].attrib.get('data-normal')
             images_dict[image_id] = img
-            images_list.append(img)
+            if img not in images_list:
+                images_list.append(img)
 
         #src = row.attrib.get('src')
         #attribute_id = row.attrib.get('attribute_id')
 
+    #取隐藏的sku图
+    divs = htmlEmt.xpath('//div[@class="image-sku-list hide"]')
+    if divs:
 
-    # 取sku图
+        img_div = divs[0].xpath('.//li')
+        print("隐藏的sku图", img_div)
+
+        for row in img_div:
+            image_id = row.attrib.get("id").split("_")[1]
+            img = row.xpath('.//img')[0].attrib.get('data-normal')
+            images_dict[image_id] = img
+            if img not in images_list:
+                images_list.append(img)
+
+
+        # src = row.attrib.get('src')
+        # attribute_id = row.attrib.get('attribute_id')
+
+
+
+    # 取sku属性-图对应记录
     divs = htmlEmt.xpath('//li[contains(@class,"attr-v-show-img")]')
     attr_image_dict = {}
     if divs:
