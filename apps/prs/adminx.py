@@ -938,7 +938,7 @@ class ComboItemAdmin(object):
 
     list_display = ['lightin_sku','photo', 'combo', 'o_quantity','o_reserved','o_sellable', ]
 
-    search_fields = ['lightin_sku__SKU',]
+    search_fields = ['lightin_sku__SKU','combo__SKU', ]
 
     ordering = []
     list_filter = ('combo',)
