@@ -3248,9 +3248,9 @@ def combo_image(combo):
     '''
 
 def skus_image():
-    lightin_skus = Lightin_SKU.objects.filter(comboed=False,imaged=False,
-                                              lightin_spu__attr_image_dict__isnull=False,
-                                              lightin_spu__images_dict__isnull=False,)
+    lightin_skus = Lightin_SKU.objects.filter(~(Q(lightin_spu__attr_image_dict__isnull=True) |Q(lightin_spu__attr_image_dict="")|
+                                                  Q(lightin_spu__images_dict__isnull=True)| Q(lightin_spu__images_dict="")),
+                                                comboed=False,imaged=False)
     for lightin_sku in lightin_skus:
         print ("开始处理 ", lightin_sku)
         sku_image(lightin_sku)
