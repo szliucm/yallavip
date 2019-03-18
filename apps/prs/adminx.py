@@ -900,11 +900,28 @@ class ComboAdmin(object):
 @xadmin.sites.register(ComboItem)
 class ComboItemAdmin(object):
 
+    def photo(self, obj):
+        spu = obj.lightin_sku.lightin_spu
+        if spu.images is not None and len(spu.images) > 0:
+            photos = json.loads(spu.images)
+            img = ''
+
+            for photo in photos:
+                try:
+                    img = img + '<a><img src="%s" width="100px"></a>' % (photo)
+                except Exception as e:
+                    print("获取图片出错", e)
+
+            return mark_safe(img)
+
+        else:
+            photos = "no photo"
+
+    photo.short_description = "图片"
 
 
 
-
-    list_display = ['lightin_sku', 'combo',  ]
+    list_display = ['lightin_sku','photo', 'combo',  ]
 
     search_fields = ['lightin_sku__SKU',]
 
