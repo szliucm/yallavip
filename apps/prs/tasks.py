@@ -3214,6 +3214,34 @@ def combo_image(combo):
     
     '''
 
+def skus_image():
+    lightin_skus = Lightin_SKU.objects.filter(comboed=False,imaged=False)
+    for lightin_sku in lightin_skus:
+        sku_image(lightin_sku)
+
+
+def sku_image(lightin_sku):
+    attr = lightin_sku.skuattr
+
+    attr_image_dict = json.loads(lightin_sku.lightin_spu.attr_image_dict)
+    images_dict = json.loads(lightin_sku.lightin_spu.images_dict)
+    image_key = None
+    for attr_key in attr_image_dict:
+        if attr.find(attr_key) >= 0:
+            image_key = attr_image_dict[attr_key]
+            break
+
+    lightin_sku.image = images_dict.get(image_key)
+    imaged = True
+
+    lightin_sku.save()
+
+
+
+
+
+
+
 
 
 # 更新相册对应的主页外键
