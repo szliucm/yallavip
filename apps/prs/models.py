@@ -510,9 +510,12 @@ class Lightin_SKU(models.Model):
     #image = models.ImageField(u'组合图', upload_to='combo/', default="", null=True, blank=True)
     image = models.CharField(default='', max_length=200, null=True, blank=True, verbose_name="sku图")
     image_marked = models.CharField(default='', max_length=100, null=True, blank=True, verbose_name="组合水印图")
+
+    comboed = models.BooleanField(u'是否组合商品', default=False, null=True)
+    locked = models.BooleanField(u'库存锁定', default=False, null=True)
     imaged = models.BooleanField(u'图片已生成', default=False, null=True)
     listed = models.BooleanField(u'已发布到主站', default=False, null=True)
-    comboed = models.BooleanField(u'组合商品', default=False, null=True)
+
     combo_error = models.CharField(default='', max_length=100, null=True, blank=True, verbose_name="组合错误")
     sku_price = models.IntegerField(u'sku售价', default=0, blank=True, null=True)
 

@@ -2812,7 +2812,7 @@ def list_package():
 
     return  True
 
-def create_combo():
+def lock_combo():
     from .shop_action import create_package_sku
     dest_shop = "yallasale-com"
     min_product_no = 999999999999999
@@ -2820,7 +2820,7 @@ def create_combo():
     #先同步shopify，更新库存占用
     #sync_shopify()
 
-    combos = Combo.objects.filter(comboed=True,listed=False)
+    combos = Combo.objects.filter(comboed=True,locked=False)
 
     for combo in combos:
         # 先判断所有的项目是否都有库存，否则返回失败
@@ -2839,9 +2839,11 @@ def create_combo():
         else:
             combo.o_quantity = 1
             combo.o_sellable = 1
+            combo.locked = True
             combo.save()
     return
 
+def create_combo():
     '''
         product_no, sku_created = create_combo_sku(dest_shop, combo)
 
@@ -2866,6 +2868,7 @@ def create_combo():
 
     # 上传完后整体更新目标站数据
     sync_shop(dest_shop, min_product_no)
+
 #创建组合商品sku，每100个组合商品sku建一个product
 def create_combo_sku(dest_shop, combo):
     # 初始化SDK
