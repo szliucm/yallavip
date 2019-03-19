@@ -901,7 +901,7 @@ def post_lightin_album(lightinalbum):
         "url": lightinalbum.image_marked,
 
         "name": lightinalbum.name,
-        "qn":lightinalbum.lightin_spu.handle
+
 
     }
     try:
