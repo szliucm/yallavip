@@ -885,7 +885,11 @@ def post_photo_to_album(targer_page,album_no,aliproduct ):
 def post_lightin_album(lightinalbum):
     page_no = lightinalbum.myalbum.page_no
     album_no = lightinalbum.myalbum.album_no
-    product_no = lightinalbum.lightin_spu.product_no
+    if lightinalbum.lightin_spu:
+
+        product_no = lightinalbum.lightin_spu.SPU
+    else:
+        product_no = lightinalbum.lightin_sku.SKU
 
     adobjects = FacebookAdsApi.init(my_app_id, my_app_secret, access_token=get_token(page_no), debug=True)
     fields = ["id","name","created_time", "updated_time","picture","link",
