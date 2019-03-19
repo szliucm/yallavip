@@ -2984,12 +2984,8 @@ def init_combo(sku):
         comboitem_list.append(comboitem)
     ComboItem.objects.bulk_create(comboitem_list)
 
-    combo.sku_price =  int((float(price*8))
-    combo.save
-
-
-
-
+    combo.sku_price =  int(price*8)
+    combo.save()
 
     return
 
