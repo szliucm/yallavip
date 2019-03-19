@@ -953,7 +953,7 @@ class ComboItemAdmin(object):
     search_fields = ['lightin_sku__SKU','combo__SKU', ]
 
     ordering = []
-    list_filter = ('combo',)
+    list_filter = ()
 
     actions = [ ]
 
