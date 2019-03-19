@@ -2833,8 +2833,13 @@ def create_combo():
             combo.combo_error = "sku 缺货"
             combo.save()
             continue
+        else:
+            combo.o_quantity = 1
+            combo.o_reserved = 0
+            combo.o_sellable = 0
+            combo.save()
 
-
+        '''
         product_no, sku_created = create_combo_sku(dest_shop, combo)
 
         if sku_created:
@@ -2842,9 +2847,6 @@ def create_combo():
                 min_product_no = product_no
 
             #Combo.objects.filter(pk=combo.pk).update(listed=True)
-            combo.o_quantity = 1
-            combo.o_reserved = 0
-            combo.o_sellable = 0
             combo.listed = True
             combo.combo_error = ""
 
@@ -2853,8 +2855,8 @@ def create_combo():
             combo.combo_error = "创建shopfiy失败 "
 
         combo.save()
+        '''
 
-    return
 
     #更新库存占用
     cal_reserved()
