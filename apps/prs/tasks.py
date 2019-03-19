@@ -2836,7 +2836,7 @@ def create_combo():
         else:
             combo.o_quantity = 1
             combo.o_reserved = 0
-            combo.o_sellable = 0
+            combo.o_sellable = 1
             combo.save()
     return
 
