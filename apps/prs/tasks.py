@@ -3011,7 +3011,7 @@ def combo_image(combo):
     image_dict = {}
 
 
-
+    items = combo.combo_item.all()
 
     for item in items:
         print (item, item.SKU)
