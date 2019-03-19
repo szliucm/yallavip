@@ -1764,6 +1764,7 @@ def delete_missed_photo():
 def delete_lost_photo(what):
     from facebook_business.api import FacebookAdsApi
     from fb.models import  MyPhoto
+    from django.db.models import Sum
     import re
 
     # 在fb的图片里找含what(579815 \ l00 \ c00 之类的，某种特征字符)的图片
