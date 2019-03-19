@@ -536,6 +536,8 @@ class LightinAlbum(models.Model):
     lightin_spu = models.ForeignKey(Lightin_SPU, null=True, blank=True, verbose_name="SPU",
                                 related_name="myfb_product", on_delete=models.CASCADE)
 
+    lightin_sku = models.ForeignKey(Lightin_SKU, null=True, blank=True, verbose_name="SKU",
+                                    related_name="myfb_sku", on_delete=models.CASCADE)
 
     myalbum = models.ForeignKey('fb.MyAlbum', null=True, blank=True, verbose_name="相册",
                                   related_name="lightin_myalbum", on_delete=models.SET_NULL)

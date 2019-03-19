@@ -1436,6 +1436,7 @@ def update_shopify_title_lightin(lightin_spu, shop_url ):
 def prepare_lightin_album():
     from django.db import connection, transaction
     cursor = connection.cursor()
+    is_sku = False
     # 找出所有活跃的page
     pages = MyPage.objects.filter(active=True)
     for page in pages:
@@ -1448,18 +1449,27 @@ def prepare_lightin_album():
 
             #拼接相册的筛选产品的条件
             q_cate = Q()
-            q_cate.connector = 'OR'
+            q_cate.connector = 'AND'
             if album.cates:
-                for cate in album.cates.split(","):
-                    q_cate.children.append(('breadcrumb__contains', cate))
+                if album.cates == "Combo":
+                    is_sku = True
+                    q_cate.children.append('comboed',True)
+                    q_cate.children.append('o_sellable_gt', 0)
+                else:
+                    for cate in album.cates.split(","):
+                        q_cate.children.append(('breadcrumb__contains', cate))
 
 
             q_price = Q()
             q_price.connector = 'AND'
             if album.prices:
                 prices = album.prices.split(",")
-                q_price.children.append(('shopify_price__gt',prices[0]))
-                q_price.children.append(('shopify_price__lte', prices[1]))
+                if is_sku:
+                    q_price.children.append(('sku_price__gt',prices[0]))
+                    q_price.children.append(('sku_price__lte', prices[1]))
+                else:
+                    q_price.children.append(('shopify_price__gt',prices[0]))
+                    q_price.children.append(('shopify_price__lte', prices[1]))
 
             q_attr = Q()
             q_attr.connector = 'OR'
@@ -1478,19 +1488,38 @@ def prepare_lightin_album():
             # 根据品类找已经上架到shopify 但还未添加到相册的产品
 
             print(con)
-            products_to_add = Lightin_SPU.objects.filter(con,published=True).exclude(id__in =
+            product_list = []
+
+            if is_sku:
+                skus_to_add = Lightin_SKU.objects.filter(con, published=True).exclude(id__in=
+                                                                                          LightinAlbum.objects.filter(
+                                                                                              myalbum__pk=album.pk,
+                                                                                              lightin_sku__isnull=False).values_list(
+                                                                                              'lightin_sku__id',
+                                                                                              flat=True)).distinct()
+
+                for sku_to_add in skus_to_add:
+                    product = LightinAlbum(
+                        lightin_sku=Lightin_SKU.objects.get(pk=sku_to_add.pk),
+                        myalbum=MyAlbum.objects.get(pk=album.pk),
+
+                    )
+                    product_list.append(product)
+
+            else:
+                products_to_add = Lightin_SPU.objects.filter(con,published=True).exclude(id__in =
                                                                    LightinAlbum.objects.filter(myalbum__pk = album.pk, lightin_spu__isnull=False ).values_list('lightin_spu__id',flat=True)  ).distinct()
 
 
 
-            product_list = []
-            for product_to_add in products_to_add:
-                product = LightinAlbum(
-                    lightin_spu=Lightin_SPU.objects.get(pk=product_to_add.pk),
-                    myalbum=MyAlbum.objects.get(pk=album.pk),
 
-                )
-                product_list.append(product)
+                for product_to_add in products_to_add:
+                    product = LightinAlbum(
+                        lightin_spu=Lightin_SPU.objects.get(pk=product_to_add.pk),
+                        myalbum=MyAlbum.objects.get(pk=album.pk),
+
+                    )
+                    product_list.append(product)
 
 
             print(product_list)
