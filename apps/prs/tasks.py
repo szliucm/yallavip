@@ -2963,12 +2963,13 @@ def init_combo(sku):
     skus = random.sample(list(skus_all),2)
 
     # 随机取3~8个小件
-    skus_all = Lightin_SKU.objects.filter(o_sellable__gt=0, lightin_spu__breadcrumb__icontains="Jewelry & Watches")
+    skus_all = Lightin_SKU.objects.filter(o_sellable__gt=0, lightin_spu__breadcrumb__icontains="Jewelry & Watches", vendor_supply_price_lt=2)
     pieces = random.randint(3, 8)
     skus.extend(random.sample(list(skus_all),pieces))
 
     combo = Combo.objects.create(
-        SKU=sku
+        SKU=sku,
+        comboed = True
         )
 
     comboitem_list=[]
