@@ -2831,11 +2831,13 @@ def create_combo():
         print (target_count, real_count)
         if real_count < target_count:
             combo.combo_error = "sku 缺货"
+            combo.o_quantity = 0
+            combo.o_sellable = 0
+
             combo.save()
-            continue
+
         else:
             combo.o_quantity = 1
-            combo.o_reserved = 0
             combo.o_sellable = 1
             combo.save()
     return
