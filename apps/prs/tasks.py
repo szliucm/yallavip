@@ -1454,7 +1454,7 @@ def prepare_lightin_album():
                 if album.cates == "Combo":
                     is_sku = True
                     q_cate.children.append(('comboed',True))
-                    q_cate.children.append(('o_sellable_gt', 0))
+                    q_cate.children.append(('o_sellable__gt', 0))
                 else:
                     for cate in album.cates.split(","):
                         q_cate.children.append(('breadcrumb__contains', cate))
