@@ -926,7 +926,7 @@ class ComboItemAdmin(object):
         try:
             img =  '<a><img src="%s" width="100px"></a>' % (sku.image)
         except Exception as e:
-            img = "获取图片出错 "+ e
+            img = "获取图片出错 "
 
         return mark_safe(img)
 
