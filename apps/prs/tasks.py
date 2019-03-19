@@ -2818,7 +2818,7 @@ def create_combo():
     min_product_no = 999999999999999
 
     #先同步shopify，更新库存占用
-    sync_shopify()
+    #sync_shopify()
 
     combos = Combo.objects.filter(comboed=True,listed=False)
 
@@ -2838,6 +2838,7 @@ def create_combo():
             combo.o_reserved = 0
             combo.o_sellable = 0
             combo.save()
+    return
 
         '''
         product_no, sku_created = create_combo_sku(dest_shop, combo)
