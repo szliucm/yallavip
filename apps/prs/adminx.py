@@ -753,14 +753,21 @@ class Lightin_SKUAdmin(object):
                 try:
                     img = img + '<a><img src="%s" width="100px"></a>' % (photo)
                 except Exception as e:
-                    print("获取图片出错", e)
-
-            return mark_safe(img)
+                    img = "获取图片出错 "+ e
 
         else:
-            photos = "no photo"
+            img = "no photo"
 
-    list_display = ["SKU", "SPU",  "o_quantity", "o_reserved","o_sellable","photo","skuattr",]
+        return mark_safe(img)
+
+    photo.short_description = "图片"
+
+    def shopify_price(self, obj):
+        return obj.lightin_spu.shopify_price
+
+    shopify_price.short_description = "零售价"
+
+    list_display = ["SKU", "SPU", "shopify_price", "o_quantity", "o_reserved","o_sellable","photo","skuattr",]
 
     # 'sku_name','img',
     search_fields = ["SPU", "SKU","lightin_spu__handle",]
