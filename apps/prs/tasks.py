@@ -1253,7 +1253,7 @@ def get_lightin():
     #lightinproducts = Lightin_SPU.objects.filter(~(Q(attr_image_dict="{}")|Q(attr_image_dict="")),got=False,got_error="无" , sellable__gt=0)
 
     #抓取没有属性图片字典
-    lightinproducts = Lightin_SPU.objects.filter(~(Q(attr_image_dict="{}")|Q(attr_image_dict="")),sellable__gt=0)
+    lightinproducts = Lightin_SPU.objects.filter(~(Q(attr_image_dict="{}")|Q(attr_image_dict="")),spu_sku__skuattr__contains ="Color", sellable__gt=0)
 
 
     n = lightinproducts.count()
@@ -1922,6 +1922,8 @@ def delete_photos(photo_nos):
 
             )
         print("删除相册图片 LightinAlbum %s %s" % (photo_no, response))
+
+
 
 
 @shared_task
@@ -2871,12 +2873,9 @@ def list_package():
     return  True
 
 def lock_combo():
-    from .shop_action import create_package_sku
-    dest_shop = "yallasale-com"
-    min_product_no = 999999999999999
 
     #先同步shopify，更新库存占用
-    #sync_shopify()
+    sync_shopify()
 
     combos = Combo.objects.filter(comboed=True,locked=False)
 
@@ -2899,10 +2898,19 @@ def lock_combo():
             combo.o_sellable = 1
             combo.locked = True
             combo.save()
+
+    # 更新库存占用
+    cal_reserved()
+
     return
 
 def create_combo():
-    '''
+    from .shop_action import create_package_sku
+    dest_shop = "yallasale-com"
+    min_product_no = 999999999999999
+
+    combos = Combo.objects.filter(comboed=True, locked=True,listed=False)
+    for combo in combos:
         product_no, sku_created = create_combo_sku(dest_shop, combo)
 
         if sku_created:
@@ -2914,15 +2922,10 @@ def create_combo():
             combo.combo_error = ""
 
         else:
-            combo.o_quantity = 0
             combo.combo_error = "创建shopfiy失败 "
 
         combo.save()
-        '''
 
-
-    #更新库存占用
-    cal_reserved()
 
     # 上传完后整体更新目标站数据
     sync_shop(dest_shop, min_product_no)
