@@ -898,7 +898,7 @@ class ComboAdmin(object):
     search_fields = ['SKU',]
 
     ordering = []
-    list_filter = ('listed',)
+    list_filter = ('listed',"imaged","locked")
 
     actions = [ ]
 
