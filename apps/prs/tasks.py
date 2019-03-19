@@ -1499,9 +1499,18 @@ def prepare_lightin_album():
                                                                                               flat=True)).distinct()
 
                 for sku_to_add in skus_to_add:
+
+                    name = "[" + sku_to_add.SKU + "]"
+                    items = sku_to_add.combo_item.all().values_list("lightin_sku__SKU",flat=True)
+                    for item in items:
+                        name = name + "\n" + item
+                    name = name + "\n\nPrice:  " + str(sku_price) + "SAR"
+
+
                     product = LightinAlbum(
                         lightin_sku=Lightin_SKU.objects.get(pk=sku_to_add.pk),
                         myalbum=MyAlbum.objects.get(pk=album.pk),
+                        name = name
 
                     )
                     product_list.append(product)
