@@ -782,7 +782,7 @@ class Lightin_SKUAdmin(object):
 
     cn_name.short_description = "cn_name"
 
-    list_display = ["SKU", "SPU", "shopify_price",'cn_name', "o_quantity", "o_reserved","o_sellable","sku_photo", "photo","skuattr",]
+    list_display = ["SKU", "SPU", "shopify_price",'cn_name', "o_sellable","sku_photo", "photo","skuattr",]
 
     # 'sku_name','img',
     search_fields = ["SPU", "SKU","lightin_spu__handle",]
@@ -972,7 +972,7 @@ class ComboItemAdmin(object):
 
 
 
-    list_display = ['lightin_sku','sku_photo', 'photo', 'combo', 'o_quantity','o_reserved','o_sellable', ]
+    list_display = ['lightin_sku','sku_photo', 'photo', 'combo','o_sellable', ]
 
     search_fields = ['lightin_sku__SKU','combo__SKU', ]
 
