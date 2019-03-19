@@ -2203,9 +2203,11 @@ def get_lightin_product_info(SPU, url):
                 attr_image_dict[attr] = image_id
     else:
         #另一种方式去属性-图对应记录
-        divs = htmlEmt.xpath('//li[@class="attr-v-show"]')
+        divs = htmlEmt.xpath('//li[contains(@class,"attr-v-show")]')
+        print("另一种属性 ",divs)
         if divs:
             sku_divs = divs[0].xpath('.//div/span')
+            print("属性值", sku_divs)
             for sku_div in sku_divs:
                 image_id = sku_div.attrib.get("image-id")
                 attr = sku_div.attrib.get("data-content")
