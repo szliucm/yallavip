@@ -1247,7 +1247,13 @@ def get_lightin():
     from .ali import get_lightin_product_info
     from django.utils import timezone as dt
 
-    lightinproducts = Lightin_SPU.objects.filter(~(Q(attr_image_dict="{}")|Q(attr_image_dict="")),got=False,got_error="无" , sellable__gt=0)
+    #抓取隐藏的属性图片
+    #lightinproducts = Lightin_SPU.objects.filter(~(Q(attr_image_dict="{}")|Q(attr_image_dict="")),got=False,got_error="无" , sellable__gt=0)
+
+    #抓取没有属性图片字典
+    lightinproducts = Lightin_SPU.objects.filter(~(Q(attr_image_dict="{}")|Q(attr_image_dict="")),sellable__gt=0)
+
+
     n = lightinproducts.count()
     print("一共有%d 个lightin链接待处理"%(n))
 
