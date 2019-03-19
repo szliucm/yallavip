@@ -953,7 +953,10 @@ class ComboItemAdmin(object):
 
     photo.short_description = "spu图片"
 
+    def price(self, obj):
+        return  int(obj.lightin_sku.vendor_supply_price * 5.63)
 
+    price.short_description = "price"
 
     def skuattr(self, obj):
         return  obj.lightin_sku.skuattr
@@ -967,7 +970,7 @@ class ComboItemAdmin(object):
 
 
 
-    list_display = ['lightin_sku','o_sellable',"skuattr",'sku_photo',  'combo','photo', ]
+    list_display = ['lightin_sku','o_sellable',"price", "skuattr",'sku_photo',  'combo','photo', ]
 
     search_fields = ['lightin_sku__SKU','combo__SKU', ]
 
