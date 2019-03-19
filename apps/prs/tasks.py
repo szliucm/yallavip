@@ -2523,7 +2523,7 @@ def cal_reserved(overtime=24):
     sku_quantity = {}
     sku_list = []
     #计算组合商品
-    combo_skus = ComboItem.objects.filter(combo__o_sellable__gt = 0 ).values_list('SKU').annotate(Sum('combo__o_sellable'))
+    combo_skus = ComboItem.objects.filter(combo__loecked = True ).values_list('SKU').annotate(Sum('combo__o_quantity'))
 
     for combo_sku in combo_skus:
         #每个sku占用的库存，等于它对应的combo的库存
