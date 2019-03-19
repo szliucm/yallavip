@@ -2819,11 +2819,13 @@ def create_combo():
         target_count = items.count()
         real_items = items.filter(lightin_sku__o_sellable__gt=0)
         real_count = real_items.count()
+        print (target_count, real_count)
         if real_count < target_count:
             combo.combo_error = "sku 缺货"
             combo.save()
             continue
 
+    return
 
         product_no, sku_created = create_combo_sku(dest_shop, combo)
 
