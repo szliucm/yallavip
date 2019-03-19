@@ -2828,7 +2828,7 @@ def create_combo():
         target_count = items.count()
         real_items = items.filter(lightin_sku__o_sellable__gt=0)
         real_count = real_items.count()
-        print (target_count, real_count)
+        print (combo, target_count, real_count)
         if real_count < target_count:
             combo.combo_error = "sku 缺货"
             combo.o_quantity = 0
