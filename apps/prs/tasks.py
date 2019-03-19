@@ -2825,7 +2825,6 @@ def create_combo():
             combo.save()
             continue
 
-    return
 
         product_no, sku_created = create_combo_sku(dest_shop, combo)
 
@@ -2840,6 +2839,9 @@ def create_combo():
             combo.combo_error = "创建shopfiy失败 "
 
         combo.save()
+
+    return
+
     #更新库存占用
     cal_reserved()
 
