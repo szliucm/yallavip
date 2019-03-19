@@ -767,11 +767,16 @@ class Lightin_SKUAdmin(object):
 
     shopify_price.short_description = "零售价"
 
-    list_display = ["SKU", "SPU", "shopify_price", "o_quantity", "o_reserved","o_sellable","photo","skuattr",]
+    def cn_name(self, obj):
+        return obj.lightin_spu.cn_name
+
+    cn_name.short_description = "cn_name"
+
+    list_display = ["SKU", "SPU", "shopify_price",'cn_name', "o_quantity", "o_reserved","o_sellable","photo","skuattr",]
 
     # 'sku_name','img',
     search_fields = ["SPU", "SKU","lightin_spu__handle",]
-    list_filter = ["SPU"]
+    list_filter = ["SPU","lightin_spu__cate_1","lightin_spu__cate_2","lightin_spu__cate_3",]
     list_editable = []
     readonly_fields = ()
     actions = []
