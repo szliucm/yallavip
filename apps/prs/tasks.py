@@ -2840,7 +2840,7 @@ def create_combo():
             combo.save()
     return
 
-        '''
+    '''
         product_no, sku_created = create_combo_sku(dest_shop, combo)
 
         if sku_created:
