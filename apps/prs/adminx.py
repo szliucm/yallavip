@@ -760,7 +760,17 @@ class Lightin_SKUAdmin(object):
 
         return mark_safe(img)
 
-    photo.short_description = "图片"
+    photo.short_description = "spu图片"
+
+    def sku_photo(self, obj):
+        if obj.limage is not None and len(obj.limage)>0 :
+           img = '<a><img src="%s" width="100px"></a>' % (obj.limage)
+        else:
+            img = "no photo"
+
+        return mark_safe(img)
+
+    sku_photo.short_description = "sku图片"
 
     def shopify_price(self, obj):
         return obj.lightin_spu.shopify_price
@@ -772,7 +782,7 @@ class Lightin_SKUAdmin(object):
 
     cn_name.short_description = "cn_name"
 
-    list_display = ["SKU", "SPU", "shopify_price",'cn_name', "o_quantity", "o_reserved","o_sellable","photo","skuattr",]
+    list_display = ["SKU", "SPU", "shopify_price",'cn_name', "o_quantity", "o_reserved","o_sellable","sku_photo", "photo","skuattr",]
 
     # 'sku_name','img',
     search_fields = ["SPU", "SKU","lightin_spu__handle",]
@@ -911,6 +921,18 @@ class ComboAdmin(object):
 
 @xadmin.sites.register(ComboItem)
 class ComboItemAdmin(object):
+    def sku_photo(self, obj):
+        sku = obj.lightin_sku
+        try:
+            img =  '<a><img src="%s" width="100px"></a>' % (sku.image)
+        except Exception as e:
+            img = "获取图片出错 "+ e
+
+        return mark_safe(img)
+
+
+
+    sku_photo.short_description = "sku图片"
 
     def photo(self, obj):
         spu = obj.lightin_sku.lightin_spu
@@ -929,7 +951,9 @@ class ComboItemAdmin(object):
         else:
             photos = "no photo"
 
-    photo.short_description = "图片"
+    photo.short_description = "spu图片"
+
+
 
     def o_quantity(self, obj):
         return  obj.lightin_sku.o_quantity
@@ -948,7 +972,7 @@ class ComboItemAdmin(object):
 
 
 
-    list_display = ['lightin_sku','photo', 'combo', 'o_quantity','o_reserved','o_sellable', ]
+    list_display = ['lightin_sku','sku_photo', 'photo', 'combo', 'o_quantity','o_reserved','o_sellable', ]
 
     search_fields = ['lightin_sku__SKU','combo__SKU', ]
 

@@ -2811,6 +2811,9 @@ def create_combo():
     dest_shop = "yallasale-com"
     min_product_no = 999999999999999
 
+    #先同步shopify，更新库存占用
+    sync_shopify()
+
     combos = Combo.objects.filter(comboed=True,listed=False)
 
     for combo in combos:
@@ -2833,9 +2836,14 @@ def create_combo():
                 min_product_no = product_no
 
             #Combo.objects.filter(pk=combo.pk).update(listed=True)
+            combo.o_quantity = 1
+            combo.o_reserved = 0
+            combo.o_sellable = 0
             combo.listed = True
+            combo.combo_error = ""
 
         else:
+            combo.o_quantity = 0
             combo.combo_error = "创建shopfiy失败 "
 
         combo.save()
