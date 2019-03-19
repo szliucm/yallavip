@@ -18,6 +18,8 @@ from fb.models import MyPage, MyAlbum
 from .shop_action import sync_shop
 from orders.models import Order, OrderDetail,OrderDetail_lightin
 
+from logistic.tasks import my_custom_sql
+
 
 my_app_id = "562741177444068"
 my_app_secret = "e6df363351fb5ce4b7f0080adad08a4d"
@@ -1664,7 +1666,7 @@ def delete_outstock_lightin_album():
     
     '''
 
-    from logistic.tasks import my_custom_sql
+
 
     '''
     # 先初始化spu的库存
@@ -1744,6 +1746,55 @@ def delete_missed_photo():
             photo_miss[page_no] = photo_list
 
         myphotos.delete()
+
+    # 选择所有可用的page
+    for page_no in photo_miss:
+        FacebookAdsApi.init(access_token=get_token(page_no))
+
+        photo_nos = photo_miss[page_no]
+        print("page %s 待删除数量 %s  "%(page_no, len(photo_nos)))
+        if photo_nos is None or len(photo_nos) == 0:
+            continue
+
+        delete_photos(photo_nos)
+
+#删除那些找不到库存的图片
+#找到所有的可疑图片，查找对应的库存
+
+def delete_lost_photo(what):
+    from facebook_business.api import FacebookAdsApi
+    from fb.models import  MyPhoto
+    import re
+
+    # 在fb的图片里找含what(579815 \ l00 \ c00 之类的，某种特征字符)的图片
+    myphotos = MyPhoto.objects.filter(name__contains=what, active=True)
+
+    photo_miss = {}
+    photos = myphotos.values_list("page_no","photo_no","name").distinct()
+    for photo in photos:
+        page_no = photo[0]
+        fb_id = photo[1]
+        name = photo[2]
+        pos = name.find(what)
+        a = name[pos:pos+12]
+        b = re.findall("\d+",a)
+        sku = "-".join(b)
+
+
+
+
+
+        SKU = Lightin_SKU.objects.filter(SKU=sku)
+        # 如果找不到或者可售库存小于0，就删除
+        if not SKU or SKU.aggregate(nums = Sum('o_sellable')).get("nums") <=0:
+            photo_list = photo_miss.get(page_no)
+            if not photo_list:
+                photo_list = []
+            if fb_id not in photo_list:
+                photo_list.append(fb_id)
+
+            photo_miss[page_no] = photo_list
+
 
     # 选择所有可用的page
     for page_no in photo_miss:
@@ -2517,9 +2568,10 @@ def cal_reserved(overtime=24):
     from orders.models import OrderDetail
     from shop.models import DraftItem
 
-    #先清空所有的reserved信息
+    #先清空所有的库存占用
     Lightin_SKU.objects.update(o_reserved=0)
 
+    #计算库存占用
     sku_quantity = {}
     sku_list = []
     #计算组合商品
@@ -2561,11 +2613,12 @@ def cal_reserved(overtime=24):
 
     print("加上24小时内的草稿 有%s个sku需要更新"%(len(sku_quantity)))
 
+    #更新库存占用
     for sku in sku_quantity:
         try:
             lightin_sku = Lightin_SKU.objects.get(SKU = sku)
             lightin_sku.o_reserved = sku_quantity[sku]
-            lightin_sku.o_sellable = lightin_sku.o_quantity - sku_quantity[sku]
+            #lightin_sku.o_sellable = lightin_sku.o_quantity - sku_quantity[sku]
             lightin_sku.save()
 
             print(lightin_sku, lightin_sku.o_reserved, lightin_sku.o_sellable)
@@ -2573,8 +2626,12 @@ def cal_reserved(overtime=24):
         except Exception as e:
             print("更新出错",sku, e)
 
+    #更新所有的可售库存
+    mysql = "update prs_lightin_sku set o_sellable = o_quantity - o_reserved"
 
-    #更新对应的spu
+    my_custom_sql(mysql)
+
+    #更新对应的spu的可售库存
     print(sku_list)
     lightin_spus = Lightin_SPU.objects.filter(spu_sku__SKU__in = sku_list).distinct()
     print("有%s个spu需要更新"%(lightin_spus.count()))
