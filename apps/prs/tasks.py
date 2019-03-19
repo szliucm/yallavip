@@ -1436,7 +1436,7 @@ def update_shopify_title_lightin(lightin_spu, shop_url ):
 def prepare_lightin_album():
     from django.db import connection, transaction
     cursor = connection.cursor()
-    is_sku = False
+
     # 找出所有活跃的page
     pages = MyPage.objects.filter(active=True)
     for page in pages:
@@ -1445,6 +1445,7 @@ def prepare_lightin_album():
         albums = MyAlbum.objects.filter(Q(cates__isnull=False)|Q(prices__isnull=False)|Q(attrs__isnull=False), mypage__pk = page.pk, )
         print("albums is ", albums)
         for album in albums:
+            is_sku = False
             print("album is ", album)
 
             #拼接相册的筛选产品的条件
