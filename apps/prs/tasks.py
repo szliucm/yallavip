@@ -1491,7 +1491,7 @@ def prepare_lightin_album():
             product_list = []
 
             if is_sku:
-                skus_to_add = Lightin_SKU.objects.filter(con, published=True).exclude(id__in=
+                skus_to_add = Lightin_SKU.objects.filter(con, listed=True,locked=True,imaged=True).exclude(id__in=
                                                                                           LightinAlbum.objects.filter(
                                                                                               myalbum__pk=album.pk,
                                                                                               lightin_sku__isnull=False).values_list(
