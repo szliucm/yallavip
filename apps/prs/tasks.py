@@ -2954,6 +2954,46 @@ def lock_combo():
 
     return
 
+def init_combo(sku):
+    #随机生成包裹
+
+
+    #随机取两个大件
+    skus_all = Lightin_SKU.objects.filter(o_sellable__gt=0,lightin_spu__breadcrumb__icontains= "Shoes & Bags" )
+    skus = random.sample(list(skus_all),2)
+
+    # 随机取3~8个小件
+    skus_all = Lightin_SKU.objects.filter(o_sellable__gt=0, lightin_spu__breadcrumb__icontains="Jewelry & Watches")
+    pieces = random.randint(3, 8)
+    skus.extend(random.sample(list(skus_all),pieces))
+
+    combo = Combo.objects.create(
+        SKU=sku
+        )
+
+    comboitem_list=[]
+    price = 0
+    for row in skus:
+        # print("row is ",row)
+        comboitem = ComboItem(
+            combo=combo,
+            lightin_sku=row,
+            SKU=row.SKU
+        )
+        price += row.vendor_supply_price
+        comboitem_list.append(comboitem)
+    ComboItem.objects.bulk_create(comboitem_list)
+
+    combo.sku_price =  int((float(price*8))
+    combo.save
+
+
+
+
+
+    return
+
+
 def create_combo():
     from .shop_action import create_package_sku
     dest_shop = "yallasale-com"
