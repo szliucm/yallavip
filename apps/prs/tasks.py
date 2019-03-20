@@ -3573,7 +3573,57 @@ def sku_image(lightin_sku):
 
 
 
+def post_combo_feed():
+    from .video import fb_slideshow
 
+
+
+    #page_nos = MyPage.objects.filter(active=True).values_list('page_no', flat=True)
+    page_nos = ["281101289261739"]   #for debug
+    for page_no in page_nos:
+
+        combo = Combo.objects.filter(comboed=True, listed=True, o_sellable__gt=0).order_by('?')[:1].first()
+
+        dest_images=[]
+        dest_images.append(combo.image_marked)
+
+        #两次要用到拼图：制作组合图和制作动图，可以考虑一次搞定，把images列表数据存起来即可
+        items = combo.combo_item.all()
+        for item in items:
+            print (item, item.SKU)
+            sku = item.lightin_sku
+
+            # 如果sku有属性图片则用属性图片，否则用spu图片
+            image = None
+            if sku.image:
+                image = sku.image
+                print("sku 图片")
+            else:
+
+                spu = sku.lightin_spu
+                # images = json.loads(Lightin_SPU.objects.get(spu_sku__SKU= item.SKU).images)
+                if spu.images_dict:
+                    image = json.loads(spu.images_dict).values()
+                    if image and len(image) > 0:
+                        a = "/"
+                        image_split = list(image)[0].split(a)
+
+                        image_split[4] = '800x800'
+                        image = a.join(image_split)
+                        print("spu 图片", spu, image)
+
+            im = get_remote_image(image)
+            if not im:
+                combo.image_marked = "image打不开"
+                combo.save()
+                return
+
+            dest_images.append(image)
+
+
+            post_id = fb_slideshow(list(dest_images), page_no)
+
+            print("postid ", post_id)
 
 
 
