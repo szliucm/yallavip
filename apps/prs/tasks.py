@@ -1950,6 +1950,7 @@ def delete_photos(photo_nos):
         params = {
 
         }
+        error = ""
         try:
 
             response = Photo(photo_no).api_delete(
@@ -1960,14 +1961,15 @@ def delete_photos(photo_nos):
             #response = "delete photo_no "+ photo_no
         except Exception as e:
             print("删除图片出错",photo_no, e)
-            continue
+            error = e
+            #continue
         #更新lightinalbum的发布记录
         print("facebook 返回结果",response)
         LightinAlbum.objects.filter(fb_id=photo_no).update(
 
                 published=False,
                 deleted=True,
-                #delete_error=response,
+                delete_error=error,
                 deleted_time=dt.now()
 
             )
