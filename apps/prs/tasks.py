@@ -1634,7 +1634,7 @@ def prepare_lightin_album_material():
 @shared_task
 def sync_lightin_album(album_name= None):
     from django.db.models import Min
-    from .fb_action import post_lightin_album
+
 
 
     #之前只考虑一次统一发一个批次，但因为各个相册建立的时间不同，批次差异很大，所以必须按相册找到当前需要发的批次
@@ -1659,6 +1659,7 @@ def sync_lightin_album(album_name= None):
 
 #把图片发到Facebook相册
 def sync_lightin_album_batch(lightinalbums):
+    from .fb_action import post_lightin_album
 
     for lightinalbum in lightinalbums:
         error, posted = post_lightin_album(lightinalbum)
