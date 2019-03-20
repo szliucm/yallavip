@@ -1961,7 +1961,7 @@ def delete_photos(photo_nos):
             #response = "delete photo_no "+ photo_no
         except Exception as e:
             print("删除图片出错",photo_no, e)
-            error = e.message
+            error = "删除图片出错"
             #continue
         #更新lightinalbum的发布记录
         #print("facebook 返回结果",response)
@@ -1969,7 +1969,7 @@ def delete_photos(photo_nos):
 
                 published=False,
                 deleted=True,
-                delete_error=error[:100],
+                delete_error=error,
                 deleted_time=dt.now()
 
             )
