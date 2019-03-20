@@ -3615,16 +3615,22 @@ def post_combo_feed():
 
             im = get_remote_image(image)
             if not im:
-                combo.combo_error = "组合动图时image打不开"
-                combo.save()
+
                 break
 
             dest_images.append(image)
 
-
+        if len(dest_images) == items.count()+1:
             post_id = fb_slideshow(list(dest_images), page_no)
 
             print("postid ", post_id)
+        else:
+            combo.combo_error = "为page %s组合动图时image数量少了"%(page_no)
+            combo.save()
+            continue
+
+
+
 
 
 
