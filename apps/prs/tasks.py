@@ -3590,8 +3590,8 @@ def post_combo_feed():
 
 
 
-    #page_nos = MyPage.objects.filter(active=True).values_list('page_no', flat=True)
-    page_nos = ["281101289261739"]   #for debug
+    page_nos = MyPage.objects.filter(active=True).values_list('page_no', flat=True)
+    #page_nos = ["281101289261739"]   #for debug
     for page_no in page_nos:
 
         combo = Combo.objects.filter(comboed=True, listed=True, imaged=True, o_sellable__gt=0).order_by('?')[:1].first()
