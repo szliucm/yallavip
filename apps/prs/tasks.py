@@ -2674,6 +2674,24 @@ def cal_reserved(overtime=24):
     print("加上24小时内的草稿 有%s个sku需要更新" % (n))
 
     #更新库存占用
+    lightin_skus = Lightin_SKU.objects.filter(SKU__in=sku_list).distinct()
+    for lightin_sku in lightin_skus:
+        try:
+
+            lightin_sku.o_reserved = sku_quantity[lightin_sku.SKU]
+            # lightin_sku.o_sellable = lightin_sku.o_quantity - sku_quantity[sku]
+            lightin_sku.save()
+
+            # print(lightin_sku, lightin_sku.o_reserved, lightin_sku.o_sellable)
+
+        except Exception as e:
+            print("更新出错", sku, e)
+
+        n -= 1
+        print("还有%s个待更新" % (n))
+
+
+    '''
     for sku in sku_quantity:
         try:
             lightin_sku = Lightin_SKU.objects.get(SKU = sku)
@@ -2688,6 +2706,7 @@ def cal_reserved(overtime=24):
 
         n-=1
         print("还有%s个待更新"%(n))
+    '''
 
     #更新所有的可售库存
     mysql = "update prs_lightin_sku set o_sellable = o_quantity - o_reserved"
