@@ -3061,7 +3061,7 @@ def init_combo(sku):
 
 
     #随机取两个大件
-    skus_all = Lightin_SKU.objects.filter(o_sellable__gt=0,lightin_spu__breadcrumb__icontains= ',"Bags",' )
+    skus_all = Lightin_SKU.objects.filter(o_sellable__gt=0,lightin_spu__breadcrumb__icontains= '"Bags"' )
     skus = random.sample(list(skus_all),2)
 
     # 随机取3~8个小件
