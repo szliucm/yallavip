@@ -3413,7 +3413,7 @@ def combo_image(combo):
         layer.paste(clipResizeImg_new(ims[6], 225, 225), (0, 600))
         layer.paste(clipResizeImg_new(ims[7], 225, 225), (225, 600))
         layer.paste(clipResizeImg_new(ims[8], 225, 225), (450, 600))
-        layer.paste(clipResizeImg_new(ims[9], 225, 225), (765, 600))
+        layer.paste(clipResizeImg_new(ims[9], 225, 225), (675, 600))
     else:
         layer = None
 
