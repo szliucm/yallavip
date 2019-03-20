@@ -2956,8 +2956,13 @@ def lock_combo():
 
     return
 
-def init_combos():
-    Lightin_SKU.objects.filter(comboed=True).last()
+def init_combos(num):
+    sku = Lightin_SKU.objects.filter(comboed=True).last()
+    sku_prefix = sku.SKU[0]
+    sku_no = int( sku.SKU[1:])
+
+    for n in range(0,num):
+        init_combo(sku_prefix + str(sku_no+n).zfill(4))
 
 
 def init_combo(sku):
