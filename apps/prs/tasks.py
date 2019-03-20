@@ -3379,19 +3379,19 @@ def combo_image(combo):
         layer.paste(clipResizeImg_new(ims[5], 300, 300), (300, 900))
         layer.paste(clipResizeImg_new(ims[6], 300, 300), (600, 900))
     elif item_count == 8:
-        # 先做个900x130的画布
+        # 先做个900x1150的画布
         layer = Image.new("RGB", (900, 1150), "red")
         layer.paste(clipResizeImg_new(ims[0], 450, 450), (0, 0))
         layer.paste(clipResizeImg_new(ims[1], 450, 450), (450, 0))
-        layer.paste(clipResizeImg_new(ims[2], 450, 450), (0, 450))
-        layer.paste(clipResizeImg_new(ims[3], 450, 450), (0, 750))
+        layer.paste(clipResizeImg_new(ims[2], 300, 300), (0, 450))
+        layer.paste(clipResizeImg_new(ims[3], 300, 300), (0, 750))
         layer.paste(clipResizeImg_new(ims[4], 300, 300), (300, 450))
         layer.paste(clipResizeImg_new(ims[5], 300, 300), (300, 750))
         layer.paste(clipResizeImg_new(ims[6], 300, 300), (600, 450))
         layer.paste(clipResizeImg_new(ims[7], 300, 300), (600, 750))
     elif item_count == 9:
-        # 先做个900x900的画布
-        layer = Image.new("RGB", (900, 900), "red")
+        # 先做个900x1000的画布
+        layer = Image.new("RGB", (900, 1000), "red")
         layer.paste(clipResizeImg_new(ims[0], 300, 300), (0, 0))
         layer.paste(clipResizeImg_new(ims[1], 300, 300), (0, 300))
         layer.paste(clipResizeImg_new(ims[2], 300, 300), (0, 600))
