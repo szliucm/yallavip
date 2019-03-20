@@ -3048,6 +3048,8 @@ def init_combos(num):
     sku_prefix = sku.SKU[0]
     sku_no = int( sku.SKU[1:])
 
+    #先更新一遍库存
+    cal_reserved()
 
     for n in range(0,num):
 
@@ -3089,6 +3091,7 @@ def init_combo(sku):
     combo.locked = True
     combo.save()
 
+    #更新库存以便锁定
     cal_reserved_skus(skus)
 
     return
@@ -3314,6 +3317,11 @@ def combo_image(combo):
                     print("spu 图片", spu, image)
 
         im = get_remote_image(image)
+        if not im:
+            combo.image_marked = "image打不开"
+            combo.save()
+            return
+
         image_dict[item.SKU] = im
         price_dict[item.SKU] = sku.vendor_supply_price
 
