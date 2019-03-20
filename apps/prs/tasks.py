@@ -1639,15 +1639,17 @@ def sync_lightin_album(album_name= None):
 
     #之前只考虑一次统一发一个批次，但因为各个相册建立的时间不同，批次差异很大，所以必须按相册找到当前需要发的批次
     if album_name:
-        lightinalbums_all = LightinAlbum.objects.filter(published=False, publish_error="无", material=True,myalbum__name__contains=album_name)
+        lightinalbums_all = LightinAlbum.objects.filter(Q(lightin_spu__sellable__gt=0) | Q(lightin_sku__o_sellable__gt=0),
+                                                            published=False, publish_error="无",
+                                                        material=True,myalbum__name__contains=album_name)
     else:
-        lightinalbums_all = LightinAlbum.objects.filter(published=False, publish_error="无", material=True)
+        lightinalbums_all = LightinAlbum.objects.filter(Q(lightin_spu__sellable__gt=0) | Q(lightin_sku__o_sellable__gt=0),
+                                                        published=False, publish_error="无", material=True)
 
     batch_nos = lightinalbums_all.values_list('myalbum').annotate(Min('batch_no'))
     print("有%s个相册待更新"%(batch_nos.count()))
     for batch_no in batch_nos:
-        lightinalbums = lightinalbums_all.filter(Q(lightin_spu__sellable__gt=0) | Q(lightin_sku__o_sellable__gt=0),
-                                                 myalbum__pk=batch_no[0], batch_no=batch_no[1] )
+        lightinalbums = lightinalbums_all.filter(myalbum__pk=batch_no[0], batch_no=batch_no[1] )
         print("相册%s 批次 %s 有%s 个图片待发" % (batch_no[0], batch_no[1], lightinalbums.count()))
         sync_lightin_album_batch(lightinalbums)
 
