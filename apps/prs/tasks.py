@@ -3574,7 +3574,7 @@ def sku_image(lightin_sku):
 
 
 def post_combo_feed():
-    from shop.photo_mark import  get_remote_image
+    from shop.photo_mark import clipResizeImg_new, get_remote_image
     from .video import fb_slideshow
 
 
@@ -3586,7 +3586,23 @@ def post_combo_feed():
         combo = Combo.objects.filter(comboed=True, listed=True, imaged=True, o_sellable__gt=0).order_by('?')[:1].first()
         print("准备在page %s 上发组合商品 %s 的动图"%(page_no, combo))
         dest_images=[]
-        dest_images.append(combo.image_marked)
+        #首张图要变成1:1,以便和后面的图一样大小
+        im = get_remote_image(combo.image_marked)
+        layer = Image.new("RGB", (900, 900), "red")
+
+        layer.paste(clipResizeImg_new(im, 900, 900), (0, 0))
+        out = layer.convert('RGB')
+        # out.show()
+        image_filename = combo.SKU + '_slide.jpg'
+
+        destination = os.path.join(settings.MEDIA_ROOT, "combo/", image_filename)
+
+        out.save(destination, 'JPEG', quality=95)
+        # out.save('target%s.jpg'%(combo.SKU), 'JPEG')
+
+        destination_url = domain + os.path.join(settings.MEDIA_URL, "combo/", image_filename)
+
+        dest_images.append(destination_url)
 
         #两次要用到拼图：制作组合图和制作动图，可以考虑一次搞定，把images列表数据存起来即可
         items = combo.combo_item.all()
