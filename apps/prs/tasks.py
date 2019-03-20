@@ -1725,7 +1725,7 @@ def delete_outstock_lightin_album():
     '''
 
     #每天更新一次所有在发布的图片，每分钟更新一次订单sku对应的图片
-    lightinalbums_all = LightinAlbum.objects.filter(published=True,lightin_spu__sellable__lte=0).values_list("myalbum__page_no", "fb_id").order_by("myalbum__page_no")
+    lightinalbums_all = LightinAlbum.objects.filter(Q(lightin_spu__sellable__lte=0) | Q(lightin_sku__o_sellable__lte=0), published=True).values_list("myalbum__page_no", "fb_id").order_by("myalbum__page_no")
     print("一共有%s 个图片待删除" % (lightinalbums_all.count()))
 
     lightinalbums_out = {}
