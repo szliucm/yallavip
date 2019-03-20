@@ -2687,8 +2687,7 @@ def cal_reserved(overtime=24):
         except Exception as e:
             print("更新出错", sku, e)
 
-        n -= 1
-        print("还有%s个待更新" % (n))
+
 
 
     '''
