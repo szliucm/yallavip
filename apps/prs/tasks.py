@@ -1644,16 +1644,18 @@ def sync_lightin_album(album_name= None):
         lightinalbums_all = LightinAlbum.objects.filter(published=False, publish_error="无", material=True)
 
     batch_nos = lightinalbums_all.values_list('myalbum').annotate(Min('batch_no'))
+    print("有%s个相册待更新"%(batch_nos.count()))
     for batch_no in batch_nos:
         lightinalbums = lightinalbums_all.filter(Q(lightin_spu__sellable__gt=0) | Q(lightin_sku__o_sellable__gt=0),
-                                                 myalbum__pk=batch_no[0], batch_no=batch_no[1], )
-
+                                                 myalbum__pk=batch_no[0], batch_no=batch_no[1] )
+        print("有%s个图片待发" % (lightinalbums.count()))
         sync_lightin_album_batch(lightinalbums)
 
         # 把比当前批次号小 20 的批次的图片 还在发布状态的从Facebook删除
 
         delete_outdate_lightin_album(batch_no)
 
+#把图片发到Facebook相册
 def sync_lightin_album_batch(lightinalbums):
 
     for lightinalbum in lightinalbums:
@@ -3086,8 +3088,11 @@ def init_combo(sku):
     ComboItem.objects.bulk_create(comboitem_list)
 
     combo.sku_price =  int(price*6.5)
+    combo.o_quantity = 1
+    combo.o_sellable = 1
     combo.locked = True
     combo.save()
+
 
     #更新库存以便锁定
     cal_reserved_skus(skus)
