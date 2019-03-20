@@ -1973,7 +1973,7 @@ def delete_photos(photo_nos):
                 deleted_time=dt.now()
 
             )
-        print("删除相册图片 LightinAlbum %s %s" % (photo_no, response))
+        print("删除相册图片 LightinAlbum %s" % (photo_no))
 
 
 
