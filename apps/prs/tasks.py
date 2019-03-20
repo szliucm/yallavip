@@ -3067,10 +3067,11 @@ def init_combo(sku):
     skus_all = Lightin_SKU.objects.filter(o_sellable__gt=0,lightin_spu__breadcrumb__icontains= '"Bags"' )
     skus = random.sample(list(skus_all),2)
 
-    # 随机取3~8个小件
+    # 随机取3~6个小件
     skus_all = Lightin_SKU.objects.filter(o_sellable__gt=0, lightin_spu__breadcrumb__icontains="Jewelry & Watches", vendor_supply_price__lt=2)
     pieces = random.randint(3, 6)
-    skus.extend(random.sample(list(skus_all),pieces))
+    skus_all_list = list(skus_all)
+    skus.extend(random.sample(skus_all_list,max(len(skus_all_list),pieces)))
 
     combo = Combo.objects.create(
         SKU=sku,
