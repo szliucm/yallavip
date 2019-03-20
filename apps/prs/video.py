@@ -195,8 +195,8 @@ def fb_slideshow(images, target_page):
     params = {
         'slideshow_spec': {
             "images_urls": images,
-            "duration_ms": 1000,
-            "transition_ms": 200,
+            "duration_ms": 2000,
+            "transition_ms": 1000,
         },
 
         'access_token': get_token(target_page)

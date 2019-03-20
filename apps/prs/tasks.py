@@ -3595,6 +3595,10 @@ def post_combo_feed():
     for page_no in page_nos:
 
         combo = Combo.objects.filter(comboed=True, listed=True, imaged=True, o_sellable__gt=0).order_by('?')[:1].first()
+        items = combo.combo_item.all()
+        if items.count()>6:
+            continue
+
         print("准备在page %s 上发组合商品 %s 的动图"%(page_no, combo))
         dest_images=[]
         #首张图要变成1:1,以便和后面的图一样大小
@@ -3616,7 +3620,7 @@ def post_combo_feed():
         dest_images.append(destination_url)
 
         #两次要用到拼图：制作组合图和制作动图，可以考虑一次搞定，把images列表数据存起来即可
-        items = combo.combo_item.all()
+
         for item in items:
             print (item, item.SKU)
             sku = item.lightin_sku
