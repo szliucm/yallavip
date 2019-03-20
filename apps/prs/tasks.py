@@ -3051,7 +3051,7 @@ def init_combos(num):
     #先更新一遍库存
     cal_reserved()
 
-    for n in range(0,num):
+    for n in range(1,num):
 
         init_combo(sku_prefix + str(sku_no+n).zfill(4))
 
