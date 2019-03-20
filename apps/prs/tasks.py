@@ -2700,7 +2700,7 @@ def cal_reserved(overtime=24):
         lightin_spu.save()
 
 @shared_task
-def cal_reserved_skus(skus):
+def cal_reserved_skus(skus,overtime=24):
     from django.db.models import Sum
     from orders.models import OrderDetail
     from shop.models import DraftItem
