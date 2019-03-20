@@ -1638,7 +1638,7 @@ def sync_lightin_album(album_name= None):
 
 
     #之前只考虑一次统一发一个批次，但因为各个相册建立的时间不同，批次差异很大，所以必须按相册找到当前需要发的批次
-    if name:
+    if album_name:
         lightinalbums_all = LightinAlbum.objects.filter(published=False, publish_error="无", material=True,myalbum__name__contains=album_name)
     else:
         lightinalbums_all = LightinAlbum.objects.filter(published=False, publish_error="无", material=True)
