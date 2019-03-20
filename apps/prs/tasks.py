@@ -3575,6 +3575,17 @@ def sku_image(lightin_sku):
 
 def post_combo_feed():
     from shop.photo_mark import clipResizeImg_new, get_remote_image
+    import os
+    from django.conf import settings
+    domain = "http://admin.yallavip.com"
+    FONT = os.path.join(settings.BASE_DIR, "static/font/ARIAL.TTF")
+
+    try:
+        from PIL import Image, ImageDraw, ImageFont, ImageEnhance
+
+    except ImportError:
+        import Image, ImageDraw, ImageFont, ImageEnhance
+
     from .video import fb_slideshow
 
 
