@@ -3590,7 +3590,7 @@ def post_combo_feed():
 
 
 
-    page_nos = MyPage.objects.filter(active=True).values_list('page_no', flat=True)
+    page_nos = MyPage.objects.filter(active=True,is_published=True).values_list('page_no', flat=True)
     #page_nos = ["281101289261739"]   #for debug
     for page_no in page_nos:
 
