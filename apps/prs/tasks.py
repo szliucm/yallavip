@@ -1961,7 +1961,7 @@ def delete_photos(photo_nos):
             #response = "delete photo_no "+ photo_no
         except Exception as e:
             print("删除图片出错",photo_no, e)
-            error = e
+            error = e.message
             #continue
         #更新lightinalbum的发布记录
         #print("facebook 返回结果",response)
@@ -2955,6 +2955,10 @@ def lock_combo():
     cal_reserved()
 
     return
+
+def init_combos():
+    Lightin_SKU.objects.filter(comboed=True).last()
+
 
 def init_combo(sku):
     #随机生成包裹
