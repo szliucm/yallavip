@@ -3071,7 +3071,7 @@ def init_combo(sku):
     skus_all = Lightin_SKU.objects.filter(o_sellable__gt=0, lightin_spu__breadcrumb__icontains="Jewelry & Watches", vendor_supply_price__lt=2)
     pieces = random.randint(3, 6)
     skus_all_list = list(skus_all)
-    skus.extend(random.sample(skus_all_list,max(len(skus_all_list),pieces)))
+    skus.extend(random.sample(skus_all_list,min(len(skus_all_list),pieces)))
 
     combo = Combo.objects.create(
         SKU=sku,
