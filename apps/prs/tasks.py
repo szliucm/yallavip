@@ -3582,7 +3582,7 @@ def post_combo_feed():
     page_nos = ["281101289261739"]   #for debug
     for page_no in page_nos:
 
-        combo = Combo.objects.filter(comboed=True, listed=True, o_sellable__gt=0).order_by('?')[:1].first()
+        combo = Combo.objects.filter(comboed=True, listed=True, imaged=True, o_sellable__gt=0).order_by('?')[:1].first()
 
         dest_images=[]
         dest_images.append(combo.image_marked)
