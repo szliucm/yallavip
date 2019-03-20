@@ -1636,51 +1636,45 @@ def sync_lightin_album():
     from django.db.models import Min
     from .fb_action import post_lightin_album
 
-    '''
-    #把有未发布的图片的，最小批次号作为当前批次
-    batch_no = LightinAlbum.objects.filter(published=False, publish_error="无",material =True).aggregate(Min('batch_no')).get("batch_no__min")
 
-    # 将当前批次下未发布的图片，发布到Facebook
-    #分相册 处理
-    lightinalbums_all = LightinAlbum.objects.filter(published=False, publish_error="无", material =True,batch_no=batch_no)
-
-    albums_list = lightinalbums_all.distinct().values_list('myalbum', flat=True)
-
-    for album in albums_list:
-        lightinalbums = lightinalbums_all.filter(myalbum__pk=album)
-    '''
     #之前只考虑一次统一发一个批次，但因为各个相册建立的时间不同，批次差异很大，所以必须按相册找到当前需要发的批次
     lightinalbums_all = LightinAlbum.objects.filter(published=False, publish_error="无", material=True)
 
     batch_nos = lightinalbums_all.values_list('myalbum').annotate(Min('batch_no'))
     for batch_no in batch_nos:
-        lightinalbums = lightinalbums_all.filter(Q(lightin_spu__sellable__gt=0) | Q(lightin_sku__o_sellable__gt=0),myalbum__pk = batch_no[0],batch_no=batch_no[1],)
+        sync_lightin_album_batch(lightinalbums_all, batch_nos)
 
-        for lightinalbum in lightinalbums:
-            error, posted = post_lightin_album(lightinalbum)
-
-            #更新Facebook图片数据库记录
-
-            if posted is not None:
-                LightinAlbum.objects.filter(pk=lightinalbum.pk).update(
-
-                    fb_id=posted,
-                    published=True,
-                    published_time=dt.now()
-                )
-                print("发布新产品到相册成功 LightinAlbum %s" % (lightinalbum.pk))
-            else:
-                print(
-                    "发布新产品到相册失败 LightinAlbum %s   error   %s" % (lightinalbum.pk, error))
-                LightinAlbum.objects.filter(pk=lightinalbum.pk).update(
-
-                    published=False,
-                    publish_error=error[:90],
-                    published_time=dt.now()
-                )
     # 把比当前批次号小 20 的批次的图片 还在发布状态的从Facebook删除
 
     delete_outdate_lightin_album(batch_no)
+
+def sync_lightin_album_batch(lightinalbums_all, batch_no):
+
+    lightinalbums = lightinalbums_all.filter(Q(lightin_spu__sellable__gt=0) | Q(lightin_sku__o_sellable__gt=0),myalbum__pk = batch_no[0],batch_no=batch_no[1],)
+
+    for lightinalbum in lightinalbums:
+        error, posted = post_lightin_album(lightinalbum)
+
+        #更新Facebook图片数据库记录
+
+        if posted is not None:
+            LightinAlbum.objects.filter(pk=lightinalbum.pk).update(
+
+                fb_id=posted,
+                published=True,
+                published_time=dt.now()
+            )
+            print("发布新产品到相册成功 LightinAlbum %s" % (lightinalbum.pk))
+        else:
+            print(
+                "发布新产品到相册失败 LightinAlbum %s   error   %s" % (lightinalbum.pk, error))
+            LightinAlbum.objects.filter(pk=lightinalbum.pk).update(
+
+                published=False,
+                publish_error=error[:90],
+                published_time=dt.now()
+            )
+
 
 
 #把比当前批次号，且还在发布状态的从Facebook删除
