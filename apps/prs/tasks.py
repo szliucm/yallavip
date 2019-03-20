@@ -1964,7 +1964,7 @@ def delete_photos(photo_nos):
             error = e
             #continue
         #更新lightinalbum的发布记录
-        print("facebook 返回结果",response)
+        #print("facebook 返回结果",response)
         LightinAlbum.objects.filter(fb_id=photo_no).update(
 
                 published=False,
