@@ -3574,7 +3574,7 @@ def sku_image(lightin_sku):
 
 
 def post_combo_feed():
-    from shop.photo_mark import clipResizeImg_new, get_remote_image
+    from shop.photo_mark import fill_image, get_remote_image
     import os
     from django.conf import settings
     domain = "http://admin.yallavip.com"
