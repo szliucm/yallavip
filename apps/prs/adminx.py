@@ -882,7 +882,7 @@ class ComboAdmin(object):
     def photo(self, obj):
 
         try:
-            img =  '<a><img src="%s" width="100px"></a>' % (obj.image_marked)
+            img =  '<a><img src="%s" width="300px"></a>' % (obj.image_marked)
         except Exception as e:
             img = "获取图片出错 "+ e
 
@@ -893,12 +893,13 @@ class ComboAdmin(object):
     photo.short_description = "图片"
 
 
-    list_display = ['SKU', 'photo', 'listed', 'items' ]
+    list_display = ['SKU',"sku_price", 'photo', 'listed', 'items' ]
+    list_editable = ["checked",]
     exclude = ["lightin_spu", "SPU",]
     search_fields = ['SKU',]
 
     ordering = []
-    list_filter = ('listed',"imaged","locked")
+    list_filter = ('listed',"imaged","locked","checked")
 
     actions = [ ]
 

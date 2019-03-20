@@ -512,6 +512,7 @@ class Lightin_SKU(models.Model):
     image_marked = models.CharField(default='', max_length=100, null=True, blank=True, verbose_name="组合水印图")
 
     comboed = models.BooleanField(u'是否组合商品', default=False, null=True)
+    checked = models.BooleanField(u'是否审核', default=False, null=True)
     locked = models.BooleanField(u'库存锁定', default=False, null=True)
     imaged = models.BooleanField(u'图片已生成', default=False, null=True)
     listed = models.BooleanField(u'已发布到主站', default=False, null=True)
