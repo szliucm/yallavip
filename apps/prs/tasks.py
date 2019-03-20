@@ -3574,6 +3574,7 @@ def sku_image(lightin_sku):
 
 
 def post_combo_feed():
+    from shop.photo_mark import  get_remote_image
     from .video import fb_slideshow
 
 
@@ -3583,7 +3584,7 @@ def post_combo_feed():
     for page_no in page_nos:
 
         combo = Combo.objects.filter(comboed=True, listed=True, imaged=True, o_sellable__gt=0).order_by('?')[:1].first()
-
+        print("准备在page %s 上发组合商品 %s 的动图"%(page_no, combo))
         dest_images=[]
         dest_images.append(combo.image_marked)
 
@@ -3614,9 +3615,9 @@ def post_combo_feed():
 
             im = get_remote_image(image)
             if not im:
-                combo.image_marked = "image打不开"
+                combo.combo_error = "组合动图时image打不开"
                 combo.save()
-                return
+                break
 
             dest_images.append(image)
 
