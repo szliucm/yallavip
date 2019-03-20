@@ -3599,16 +3599,16 @@ def post_combo_feed():
         dest_images=[]
         #首张图要变成1:1,以便和后面的图一样大小
         im = get_remote_image(combo.image_marked)
-        layer = Image.new("RGB", (900, 900), "red")
 
-        layer.paste(clipResizeImg_new(im, 900, 900), (0, 0))
-        out = layer.convert('RGB')
+        new_im = fill_image(im)
+
+
         # out.show()
         image_filename = combo.SKU + '_slide.jpg'
 
         destination = os.path.join(settings.MEDIA_ROOT, "combo/", image_filename)
 
-        out.save(destination, 'JPEG', quality=95)
+        new_im.save(destination, 'JPEG', quality=95)
         # out.save('target%s.jpg'%(combo.SKU), 'JPEG')
 
         destination_url = domain + os.path.join(settings.MEDIA_URL, "combo/", image_filename)
