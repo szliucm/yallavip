@@ -1632,25 +1632,29 @@ def prepare_lightin_album_material():
                     )
 
 @shared_task
-def sync_lightin_album():
+def sync_lightin_album(album_name= None):
     from django.db.models import Min
     from .fb_action import post_lightin_album
 
 
     #之前只考虑一次统一发一个批次，但因为各个相册建立的时间不同，批次差异很大，所以必须按相册找到当前需要发的批次
-    lightinalbums_all = LightinAlbum.objects.filter(published=False, publish_error="无", material=True)
+    if name:
+        lightinalbums_all = LightinAlbum.objects.filter(published=False, publish_error="无", material=True,myalbum__name__contains=album_name)
+    else:
+        lightinalbums_all = LightinAlbum.objects.filter(published=False, publish_error="无", material=True)
 
     batch_nos = lightinalbums_all.values_list('myalbum').annotate(Min('batch_no'))
     for batch_no in batch_nos:
-        sync_lightin_album_batch(lightinalbums_all, batch_nos)
+        lightinalbums = lightinalbums_all.filter(Q(lightin_spu__sellable__gt=0) | Q(lightin_sku__o_sellable__gt=0),
+                                                 myalbum__pk=batch_no[0], batch_no=batch_no[1], )
 
-    # 把比当前批次号小 20 的批次的图片 还在发布状态的从Facebook删除
+        sync_lightin_album_batch(lightinalbums)
 
-    delete_outdate_lightin_album(batch_no)
+        # 把比当前批次号小 20 的批次的图片 还在发布状态的从Facebook删除
 
-def sync_lightin_album_batch(lightinalbums_all, batch_no):
+        delete_outdate_lightin_album(batch_no)
 
-    lightinalbums = lightinalbums_all.filter(Q(lightin_spu__sellable__gt=0) | Q(lightin_sku__o_sellable__gt=0),myalbum__pk = batch_no[0],batch_no=batch_no[1],)
+def sync_lightin_album_batch(lightinalbums):
 
     for lightinalbum in lightinalbums:
         error, posted = post_lightin_album(lightinalbum)
