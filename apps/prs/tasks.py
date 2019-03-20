@@ -2666,7 +2666,9 @@ def cal_reserved(overtime=24):
         if draft_sku[0] not in sku_list:
             sku_list.append(draft_sku[0])
 
-    print("加上24小时内的草稿 有%s个sku需要更新"%(len(sku_quantity)))
+
+    n = len(sku_quantity)
+    print("加上24小时内的草稿 有%s个sku需要更新" % (n))
 
     #更新库存占用
     for sku in sku_quantity:
@@ -2676,10 +2678,13 @@ def cal_reserved(overtime=24):
             #lightin_sku.o_sellable = lightin_sku.o_quantity - sku_quantity[sku]
             lightin_sku.save()
 
-            print(lightin_sku, lightin_sku.o_reserved, lightin_sku.o_sellable)
+            #print(lightin_sku, lightin_sku.o_reserved, lightin_sku.o_sellable)
 
         except Exception as e:
             print("更新出错",sku, e)
+
+        n-=1
+        print("还有%s个待更新"%(n))
 
     #更新所有的可售库存
     mysql = "update prs_lightin_sku set o_sellable = o_quantity - o_reserved"
@@ -2962,6 +2967,7 @@ def init_combos(num):
     sku_no = int( sku.SKU[1:])
 
     for n in range(0,num):
+        cal_reserved()
         init_combo(sku_prefix + str(sku_no+n).zfill(4))
 
 
@@ -2996,7 +3002,7 @@ def init_combo(sku):
         comboitem_list.append(comboitem)
     ComboItem.objects.bulk_create(comboitem_list)
 
-    combo.sku_price =  int(price*8)
+    combo.sku_price =  int(price*6.5)
     combo.save()
 
     return

@@ -882,7 +882,7 @@ class ComboAdmin(object):
     def photo(self, obj):
 
         try:
-            img =  '<a><img src="%s" width="300px"></a>' % (obj.image_marked)
+            img =  '<a><img src="%s" width="900px"></a>' % (obj.image_marked)
         except Exception as e:
             img = "获取图片出错 "+ e
 
