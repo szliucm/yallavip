@@ -1969,7 +1969,7 @@ def delete_photos(photo_nos):
 
                 published=False,
                 deleted=True,
-                delete_error=error,
+                delete_error=error[:100],
                 deleted_time=dt.now()
 
             )
