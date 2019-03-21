@@ -3007,10 +3007,10 @@ def init_combos(num):
 def gen_package(main_cate, main_cate_nums, sub_cate, sub_cate_nums, sub_cate_price):
 
     print(main_cate, main_cate_nums, sub_cate, sub_cate_nums, sub_cate_price)
-
+    skus = []
     # 随机取main_cate_nums个大件
     skus_all = Lightin_SKU.objects.filter(o_sellable__gt=0, lightin_spu__breadcrumb__icontains=main_cate)
-    skus = random.sample(list(skus_all), main_cate_nums)
+    skus.extend(random.sample(list(skus_all), main_cate_nums))
 
     # 随机取sub_cate_nums个价格不高于sub_cate_price的小件
     skus_all = Lightin_SKU.objects.filter(o_sellable__gt=0, lightin_spu__breadcrumb__icontains=sub_cate,
@@ -3021,15 +3021,15 @@ def gen_package(main_cate, main_cate_nums, sub_cate, sub_cate_nums, sub_cate_pri
 
     return skus
 
-
 # 组合一个combo
 # sku是combo的sku号，skus是combo的items
 def make_combo(sku, skus):
     print(sku, skus)
 
-    combo = Combo.objects.create(
-        SKU=sku,
-        comboed=True
+    combo = Combo.objects.update_or_create(SKU=sku,
+        defaults={
+        'comboed'  :True
+        }
     )
 
     comboitem_list = []
@@ -3046,6 +3046,8 @@ def make_combo(sku, skus):
         comboitem_list.append(comboitem)
 
     print(comboitem_list)
+
+    ComboItem.objects.filter(combo=combo).delete()
     ComboItem.objects.bulk_create(comboitem_list)
 
     combo.sku_price = int(price * 6.5)
@@ -3053,6 +3055,8 @@ def make_combo(sku, skus):
     combo.o_sellable = 1
     combo.locked = True
     combo.save()
+
+    print("new combo is ", combo)
 
     # 更新库存以便锁定
     cal_reserved_skus(skus)
