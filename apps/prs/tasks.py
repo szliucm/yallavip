@@ -3025,6 +3025,8 @@ def gen_package(main_cate, main_cate_nums, sub_cate, sub_cate_nums, sub_cate_pri
 # 组合一个combo
 # sku是combo的sku号，skus是combo的items
 def make_combo(sku, skus):
+    print(sku, skus)
+
     combo = Combo.objects.create(
         SKU=sku,
         comboed=True
@@ -3034,6 +3036,7 @@ def make_combo(sku, skus):
     price = 0
     for row in skus:
         # print("row is ",row)
+        print("comboitem ", row,SKU, row.vendor_supply_price)
         comboitem = ComboItem(
             combo=combo,
             lightin_sku=row,
@@ -3041,6 +3044,8 @@ def make_combo(sku, skus):
         )
         price += row.vendor_supply_price
         comboitem_list.append(comboitem)
+
+    print(comboitem_list)
     ComboItem.objects.bulk_create(comboitem_list)
 
     combo.sku_price = int(price * 6.5)
