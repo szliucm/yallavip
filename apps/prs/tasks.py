@@ -3005,6 +3005,9 @@ def init_combos(num):
 
 
 def gen_package(main_cate, main_cate_nums, sub_cate, sub_cate_nums, sub_cate_price):
+
+    print(main_cate, main_cate_nums, sub_cate, sub_cate_nums, sub_cate_price)
+
     # 随机取main_cate_nums个大件
     skus_all = Lightin_SKU.objects.filter(o_sellable__gt=0, lightin_spu__breadcrumb__icontains=main_cate)
     skus = random.sample(list(skus_all), main_cate_nums)

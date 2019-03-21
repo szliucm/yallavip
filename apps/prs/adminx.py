@@ -893,7 +893,7 @@ class ComboAdmin(object):
     photo.short_description = "图片"
 
 
-    list_display = ['SKU',"checked","sku_price", 'photo', 'listed', 'items' ]
+    list_display = ['SKU',"checked","sku_price","o_sellable", 'photo', 'listed', 'items' ]
     list_editable = ["checked",]
     exclude = ["lightin_spu", "SPU",]
     search_fields = ['SKU',]
