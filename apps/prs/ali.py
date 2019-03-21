@@ -2582,3 +2582,31 @@ def create_variant_lightin(lightin_spu):
         print("产品变体发布失败！！！！")
         return None
 
+
+def chrome_get_url(url ,data=None):
+    chrome_options = Options()
+    chrome_options.add_argument('--headless')  # 16年之后，chrome给出的解决办法，抢了PhantomJS饭碗
+    chrome_options.add_argument('--disable-gpu')
+    chrome_options.add_argument('--no-sandbox')  # root用户不加这条会无法运行
+
+    browser = webdriver.Chrome(options=chrome_options)
+    wait = WebDriverWait(browser, 15)
+
+    print("url is ", url)
+
+    #browser.get(url=url, data=data)
+    browser.get(url=url)
+    html=browser.page_source
+
+
+    with open('funmart.txt', 'w') as f:
+        f.write(html)
+
+    #input_third = browser.find_element_by_xpath('//*[@class="price"]')
+
+    #print(input_third)
+
+    print(html)
+
+    browser.close()
+

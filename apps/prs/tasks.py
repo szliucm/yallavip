@@ -3076,20 +3076,23 @@ def init_combos(num):
 
         init_combo(sku_prefix + str(sku_no+n).zfill(4))
 
+ def gen_package(main_cate,main_cate_nums, sub_cate,sub_cate_nums, sub_cate_price):
 
-def init_combo(sku):
-    #随机生成包裹
+    #随机取main_cate_nums个大件
+    skus_all = Lightin_SKU.objects.filter(o_sellable__gt=0,lightin_spu__breadcrumb__icontains= main_cate )
+    skus = random.sample(list(skus_all),main_cate_nums)
 
-
-    #随机取两个大件
-    skus_all = Lightin_SKU.objects.filter(o_sellable__gt=0,lightin_spu__breadcrumb__icontains= '"Bags"' )
-    skus = random.sample(list(skus_all),2)
-
-    # 随机取3~6个小件
-    skus_all = Lightin_SKU.objects.filter(o_sellable__gt=0, lightin_spu__breadcrumb__icontains="Jewelry & Watches", vendor_supply_price__lt=2)
-    pieces = random.randint(3, 6)
+    # 随机取sub_cate_nums个价格不高于sub_cate_price的小件
+    skus_all = Lightin_SKU.objects.filter(o_sellable__gt=0, lightin_spu__breadcrumb__icontains=sub_cate, vendor_supply_price__lt=sub_cate_price)
+    pieces = random.randint(sub_cate_nums[0], sub_cate_nums[1])
     skus_all_list = list(skus_all)
     skus.extend(random.sample(skus_all_list,min(len(skus_all_list),pieces)))
+
+    return  skus
+
+#组合一个combo
+#sku是combo的sku号，skus是combo的items
+def make_combo(sku, skus):
 
     combo = Combo.objects.create(
         SKU=sku,
@@ -3119,6 +3122,72 @@ def init_combo(sku):
     #更新库存以便锁定
     cal_reserved_skus(skus)
 
+def init_combo(sku):
+
+    # 随机生成包裹类型
+    combo_types=[
+        {
+        "main_cate": '"Women\'s Tops & Sets"',
+        "main_cate_nums": 2,
+        "sub_cates": '"Women\'s Tops & Sets"',
+        "sub_cate_nums": [3, 4],
+        "sub_cate_price": 3.6
+         },
+        {
+            "main_cate": '"Bags"',
+            "main_cate_nums": 2,
+            "sub_cates": '"Jewelry & Watches"',
+            "sub_cate_nums": [3, 6],
+            "sub_cate_price": 2
+        },
+    ]
+
+
+    combo_type = random.choice(combo_types)
+
+    skus = gen_package(combo_type["main_cate"], combo_type["main_cate_nums"], combo_type["sub_cates"], combo_type["sub_cate_nums"], combo_type["sub_cate_price"])
+
+    make_combo(sku, skus)
+
+    '''
+    #随机取大件
+    skus_all = Lightin_SKU.objects.filter(o_sellable__gt=0,lightin_spu__breadcrumb__icontains= combo_type["main_cate"] )
+    skus = random.sample(list(skus_all),combo_type["main_cate_nums"])
+
+    # 随机取小件
+    skus_all = Lightin_SKU.objects.filter(o_sellable__gt=0, lightin_spu__breadcrumb__icontains=combo_type["sub_cates"], vendor_supply_price__lt=combo_type["sub_cate_price"])
+    pieces = random.randint(combo_type["sub_cate_nums"][0],combo_type["sub_cate_nums"][1])
+    skus_all_list = list(skus_all)
+    skus.extend(random.sample(skus_all_list,min(len(skus_all_list),pieces)))
+  
+    combo = Combo.objects.create(
+        SKU=sku,
+        comboed = True
+        )
+
+    comboitem_list=[]
+    price = 0
+    for row in skus:
+        # print("row is ",row)
+        comboitem = ComboItem(
+            combo=combo,
+            lightin_sku=row,
+            SKU=row.SKU
+        )
+        price += row.vendor_supply_price
+        comboitem_list.append(comboitem)
+    ComboItem.objects.bulk_create(comboitem_list)
+
+    combo.sku_price =  int(price*6.5)
+    combo.o_quantity = 1
+    combo.o_sellable = 1
+    combo.locked = True
+    combo.save()
+
+
+    #更新库存以便锁定
+    cal_reserved_skus(skus)
+    '''
     return
 
 
