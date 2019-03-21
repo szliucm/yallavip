@@ -3036,7 +3036,7 @@ def make_combo(sku, skus):
     price = 0
     for row in skus:
         # print("row is ",row)
-        print("comboitem ", row,SKU, row.vendor_supply_price)
+        print("comboitem ", row.SKU, row.vendor_supply_price)
         comboitem = ComboItem(
             combo=combo,
             lightin_sku=row,
