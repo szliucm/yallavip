@@ -472,7 +472,7 @@ class Lightin_SPU(models.Model):
     quantity = models.IntegerField(u'数量', default=0, blank=True, null=True)
 
     sellable = models.IntegerField(u'oms_可售数量', default=0, blank=True, null=True)
-
+    aded = models.BooleanField(default=False, verbose_name="广告状态")
 
     class Meta:
         verbose_name = "兰亭SPU"
@@ -722,3 +722,4 @@ class WmsOriOrder(models.Model):
 
     def __str__(self):
         return self.order_id
+

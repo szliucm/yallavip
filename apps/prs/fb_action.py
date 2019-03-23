@@ -936,3 +936,159 @@ def post_lightin_album(lightinalbum):
 
     #print("new_photo saved ", obj, created)
     return  "成功", photo["id"]
+
+def post_ads():
+    #page_nos = MyPage.objects.filter(active=True, is_published=True).values_list('page_no', flat=True)
+    page_nos = ["2084015718575745"]   #for debug
+
+
+
+    for page_no in page_nos:
+        post_ad(page_no)
+
+def post_ad(page_no):
+
+    from shop.photo_mark import lightin_mark_image_page
+
+    import requests
+    import base64
+
+    adobjects = FacebookAdsApi.init(access_token=my_access_token, debug=True)
+    adacount_no = "act_1903121643086425"
+    adset_no = "23843265435620510"
+
+    #取库存大、单价高且还未打广告的商品
+
+    spus = Lightin_SPU.objects.filter(sellable__gt=5,shopify_price__gt= 50,shopify_price__lt= 90, aded = False )
+    limit = 1
+    n = 1
+
+    for spu in spus:
+        print("spu ", spu)
+        name = "💋💋Flash Sale ！！！💋💋" \
+               "90% off！Lowest Price Online ！！！" \
+               "🥳🥳🥳 10:00-22:00 Everyday ,Update 100 New items Every Hour !! The quantity is limited !!😇😇" \
+               "All goods are in Riyadh stock,It will be delivered to you in 3-5 days! ❣️❣️" \
+               "How to order?Pls choice the product that you like it , then send us the picture, we will order it for you!🤩🤩"
+        name = name + "\n[" +spu.handle +"]"
+
+        # 价格
+        price1 = int(spu.shopify_price)
+        price2 = int(price1 * random.uniform(5, 6))
+        # 为了减少促销的麻烦，文案里不写价格了
+        # name = name + "\n\nPrice:  " + str(price1) + "SAR"
+
+        # 准备图片
+        # 先取第一张，以后考虑根据实际有库存的sku的图片（待优化）
+        error = ""
+        if spu.images_dict:
+            image = json.loads(spu.images_dict).values()
+            if image and len(image) > 0:
+                a = "/"
+                image_split = list(image)[0].split(a)
+
+                image_split[4] = '800x800'
+                image = a.join(image_split)
+
+            # 打水印
+            # logo， page促销标
+            # 如果有相册促销标，就打相册促销标，否则打价格标签
+            target_page =  MyPage.objects.get(page_no= page_no)
+            image_marked, image_marked_url = lightin_mark_image_page(image, spu.handle, str(price1), str(price2),target_page)
+            if not image_marked:
+                error = "打水印失败"
+
+        else:
+            print(page_no, spu.SPU, "没有图片")
+            error = "没有图片"
+
+        if not error == "":
+            continue
+
+        # 上传到adimage
+
+        # 使用 adaccount 的 SDK
+        '''
+        with open(image_marked, 'rb') as f:
+            base64_data = base64.b64encode(f.read())
+            bytes = base64_data.decode()
+
+        print("type of bytes", type(bytes))
+
+        fields = {
+
+        }
+        params = {
+            "bytes": bytes,
+            # 'filename': destination,
+        }
+        adimage = AdAccount(adacount_no).create_ad_image(
+            fields=fields,
+            params=params,
+        )
+
+        print("adimage", adimage)
+
+        # 创建adCreative
+        adimagehash = adimage["hash"]
+        '''
+        adimagehash = "9b5b76dcc1e92eba0048d2501b74e7e3"
+        fields = [
+        ]
+
+        #link ad
+        params = {
+            'name': 'Creative for ' + spu.handle,
+            'object_story_spec': {'page_id': page_no,
+                                  'link_data': {"call_to_action": {"type": "MESSAGE_PAGE",
+                                                                   "value": {"app_destination": "MESSENGER"}},
+                                                "image_hash": adimagehash,
+                                                "link": "https://facebook.com/%s" % (page_no),
+
+                                                "message": name,
+                                                "name": "Yallavip ",
+                                                "description": " e-commerce",
+                                                "use_flexible_image_aspect_ratio": True,}},
+        }
+        '''
+        #photo ad
+        params = {
+            'name': 'Creative for ' + spu.handle,
+            'object_story_spec': {'page_id': page_no,
+                                  'photo_data': {
+                                                "image_hash": adimagehash,
+
+
+                                                "caption": name,
+                                                }},
+        }
+        '''
+
+        adCreative = AdAccount(adacount_no).create_ad_creative(
+            fields=fields,
+            params=params,
+        )
+
+        print("adCreative is ", adCreative)
+
+        fields = [
+        ]
+        params = {
+            'name': 'My Ad '+ spu.handle,
+            'adset_id': adset_no,
+            'creative': {'creative_id': adCreative["id"]},
+            'status': 'PAUSED',
+            # "access_token": my_access_token,
+        }
+
+        ad = AdAccount(adacount_no).create_ad(
+            fields=fields,
+            params=params,
+        )
+
+        print("ad is ", ad)
+
+        n+=1
+
+        if n > limit:
+            break

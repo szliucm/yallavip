@@ -14,7 +14,7 @@ from import_export import resources, fields
 from import_export.widgets import ForeignKeyWidget
 from .models import Order, OrderDetail,OrderDetail_lightin, Verify, OrderConversation,ClientService,Verification,\
         Logistic_winlink,Logistic_jiacheng,Logistic_status,Logistic_trail, Sms,\
-        LogisticAccount,OverseaOrder,OverseaSkuRank,MyOrder,MyOrderDetail
+        LogisticAccount,OverseaOrder,OverseaSkuRank,MyOrder,MyOrderDetail, Order_History
 from shop.models import ShopifyProduct, ShopifyVariant,Combination,ShopifyImage
 from fb.models import MyPhoto
 
@@ -230,12 +230,8 @@ class OrderAdmin(object):
     #}
 
 
-
-
-
-
-
-    actions = ['fullfill', 'start_verify','batch_copy','start_package_track',"batch_overseas_stop", "mapping_lightin",]
+    actions = [ 'batch_copy',]
+    #'start_verify','fullfill','start_package_track',"batch_overseas_stop", "mapping_lightin",
 
     def mapping_lightin(self, request, queryset):
         from django.db.models import Sum
@@ -1028,7 +1024,7 @@ class OrderDetailAdmin(object):
 
     search_fields = ["order__order_no",'sku',"order__logistic_no" ]
 
-    ordering = ['-order__order_no']
+    ordering = ['-order__order_time']
     list_filter = ("order__status","order__verify__verify_status","order__verify__sms_status",)
 
     actions = ["batch_overseas_stop",]
@@ -1081,9 +1077,11 @@ class OrderDetailAdmin(object):
 
     batch_overseas_stop.short_description = "海外仓批量下架"
 
+    '''
     def queryset(self):
         qs = super().queryset()
         return qs.filter(order__status="OPEN" )
+    '''
 
 class OrderConverstaionResource(resources.ModelResource):
     order = fields.Field(
@@ -2986,3 +2984,38 @@ class MyOrderDetailAdmin(object):
     list_filter = ()
 
     actions = []
+
+
+
+
+@xadmin.sites.register(Order_History)
+class Order_HistoryAdmin(object):
+    def trail_status(self, obj):
+        logistic_trail = Logistic_trail.objects.filter(logistic_no=obj.logistic_no).last()
+
+        return logistic_trail.trail_status
+
+    trail_status.short_description = "物流轨迹"
+
+    def show_settle_status(self, obj):
+        return LogisticAccount.objects.filter(logistic_no=obj.logistic_no).first().settle_status
+
+    show_settle_status.short_description = "结算状态"
+
+    def show_conversation(self, obj):
+        return show_conversation_tmp(obj)
+
+    show_conversation.allow_tags = True
+
+    show_conversation.short_description = "会话"
+
+    # "stock", "cal_barcode", "inventory_status",
+    list_display = ["order_no", "status", "stock", "wms_status", "fulfill_error", "order_amount", "order_time",
+                    "logistic_no", "order_comment"]
+    list_editable = ["status"]
+    # list_display_links = ["show_conversation"]
+    search_fields = ["order_no", 'logistic_no', ]
+    list_filter = (
+    "status", "wms_status", "financial_status", "fulfillment_status", "package_status", "verify_time", "order_time",
+    "send_time", "verify__verify_status", "verify__sms_status",)
+    ordering = ['-order_time']

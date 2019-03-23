@@ -303,7 +303,7 @@ def lightin_mark_image(ori_image, handle, price1, price2, lightinalbum):
 
 
 
-    print("logo %s promote %s price %s lightinalbum %s"%(logo,promote,price ,lightinalbum.pk  ))
+    print("logo %s promote %s price %s lightinalbum %s"%(logo,promote,price ,lightinalbum  ))
 
 
     image = get_remote_image(ori_image)
@@ -318,6 +318,45 @@ def lightin_mark_image(ori_image, handle, price1, price2, lightinalbum):
     # 处理完的图片保存到本地
 
     image_filename = handle + '_' + str(datetime.now()) + '_'+ targer_page.page + '.jpg'
+    image_filename = image_filename.replace(' ', '')
+    destination = os.path.join(settings.MEDIA_ROOT, "product/", image_filename)
+
+    print("destination", destination)
+
+    image.save(destination,'JPEG',quality = 95)
+
+    destination_url = domain + os.path.join(settings.MEDIA_URL, "product/", image_filename)
+
+    return  destination, destination_url
+
+
+def lightin_mark_image_page(ori_image, handle, price1, price2, target_page):
+    from django.utils import timezone as datetime
+    # 对图片进行处理
+    ################
+
+    logo = target_page.logo
+    promote = target_page.promote
+    price = target_page.price
+
+
+
+
+    print("logo %s promote %s price %s targer_page %s"%(logo,promote,price ,target_page  ))
+
+
+    image = get_remote_image(ori_image)
+
+    if image is None:
+        return  None,None
+
+    image = deal_image(image, logo=logo, handle=handle, price=price, promote=promote,  price1=price1, price2=price2)
+
+    #################
+
+    # 处理完的图片保存到本地
+
+    image_filename = handle + '_' + str(datetime.now()) + '_'+ target_page.page + '.jpg'
     image_filename = image_filename.replace(' ', '')
     destination = os.path.join(settings.MEDIA_ROOT, "product/", image_filename)
 

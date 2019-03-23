@@ -12,7 +12,8 @@ from django.utils import timezone as datetime
 from django.utils import timezone as dt
 from fb.models import MyPage, MyAlbum
 from logistic.tasks import my_custom_sql
-from orders.models import Order, OrderDetail, OrderDetail_lightin
+from orders.models import Order, OrderDetail, OrderDetail_lightin,Verify,Sms
+
 from shop.models import ProductCategoryMypage
 from shop.models import Shop, ShopifyProduct, ShopifyVariant, ShopifyImage, ShopifyOptions
 
@@ -1603,8 +1604,8 @@ def sync_lightin_album(album_name=None):
         sync_lightin_album_batch(lightinalbums)
 
         # 把比当前批次号小 20 的批次的图片 还在发布状态的从Facebook删除
-
-        delete_outdate_lightin_album(batch_no)
+        #暂停删老图
+        #delete_outdate_lightin_album(batch_no)
 
 
 # 把图片发到Facebook相册
@@ -2045,7 +2046,7 @@ def get_barcodes(sku, quantity, price):
     # 需求没有被满足，标识订单缺货
     print("quantity", quantity)
     if quantity > 0:
-        error = sku.SKU + " 缺货"
+        error = sku + " 缺货"
         return None, error
     else:
         return inventory_list, ""
@@ -2062,7 +2063,9 @@ def fulfill_orders_lightin():
     print("共有%s个订单待发货" % (orders.count()))
     order_list = []
     for order in orders:
-        if order.stock in ["充足", "紧张"]:
+        #if order.stock in ["充足", "紧张"]:
+        #只有所有sku可售库存大于等于零，才发货，避免库存争夺
+        if order.stock in ["充足"]:
             error = mapping_order_lightin(order)
             if error == "":
                 result = fulfill_order_lightin(order)
@@ -2072,6 +2075,9 @@ def fulfill_orders_lightin():
 
     # 提交仓库准备发货成功的，要更新本地库存
     update_barcode_stock(order_list, "W")
+
+    #shopify发货
+    sync_Shipped_order_shopify()
 
 
 def update_stock(order_list, action):
@@ -2815,6 +2821,7 @@ def sync_shopify(minutes=10):
     cal_reserved(overtime=24)
 
     delete_outstock_lightin_album()
+    auto_smscode()
 
 
 @shared_task
@@ -2873,7 +2880,40 @@ def get_wms_orders(days=1):
         if result.get("nextPage") == "false":
             break
         else:
-            page += 1;
+            page += 1
+
+        '''
+        //初始化barcode库存
+        update prs_lightin_barcode set o_quantity = y_sellable + y_reserved ,o_sellable = y_sellable , o_reserved = y_reserved
+        
+        //初始化sku库存
+        UPDATE prs_lightin_sku
+        INNER JOIN (
+        SELECT
+        SKU,
+        sum(o_sellable) as quantity
+        FROM
+        prs_lightin_barcode
+        GROUP BY
+        SKU
+        ) b ON prs_lightin_sku.SKU = b.SKU
+        SET prs_lightin_sku.o_quantity = b.quantity 
+        
+        update prs_lightin_sku set o_sellable = o_quantity - o_reserved
+        
+        //初始化spu库存
+        UPDATE prs_lightin_spu
+        INNER JOIN (
+        SELECT
+        SPU,
+        sum(o_sellable) as quantity
+        FROM
+        prs_lightin_sku
+        GROUP BY
+        SPU
+        ) b ON prs_lightin_spu.SPU = b.SPU
+        SET prs_lightin_spu.sellable = b.quantity
+        '''
 
 
 def update_shopify_variant():
@@ -3026,7 +3066,7 @@ def gen_package(main_cate, main_cate_nums, sub_cate, sub_cate_nums, sub_cate_pri
 def make_combo(sku, skus):
     print(sku, skus)
 
-    combo = Combo.objects.update_or_create(SKU=sku,
+    combo, created = Combo.objects.update_or_create(SKU=sku,
         defaults={
         'comboed'  :True
         }
@@ -3049,6 +3089,7 @@ def make_combo(sku, skus):
 
     ComboItem.objects.filter(combo=combo).delete()
     ComboItem.objects.bulk_create(comboitem_list)
+
 
     combo.sku_price = int(price * 6.5)
     combo.o_quantity = 1
@@ -3479,13 +3520,13 @@ def combo_image(combo):
         draw1.text((x + 30, y + 10), combo.SKU, font=font,
                    fill="black")  # 设置文字位置/内容/颜色/字体
         # 写包邮
-        promote = "Free Deliver"
+        promote = "Free Shipping"
         draw1.rectangle((x + 20, y + 55, x + 250, y + 95), fill='yellow')
         draw1.text((x + 30, y + 60), promote, font=font,
                    fill=(0, 0, 0))  # 设置文字位置/内容/颜色/字体
         # 写件数 和 售价
         font = ImageFont.truetype(FONT, 50)
-        draw1.text((x + 450, y + 25), "%s pcs" % (item_count), font=font,
+        draw1.text((x + 450, y + 25), "%s sets" % (item_count), font=font,
                    fill="white")  # 设置文字位置/内容/颜色/字体
 
         draw1.rectangle((x + 600, y + 20, x + 800, y + 80), fill='white')
@@ -3674,6 +3715,144 @@ def post_combo_feed():
             combo.combo_error = "为page %s组合动图时image数量少了" % (page_no)
             combo.save()
             continue
+
+#规范电话号码
+def valid_phone(x):
+    x = str(x)
+    x = x.replace(' ', '')
+    x = x.replace('o', '')
+    x = x.replace('O', '')
+
+    if x.find('966') > -1:
+        a = x.find('966') + 3
+        x = x[a:]
+    x = x.lstrip('0')
+
+    return x
+
+#自动发送验证码
+@shared_task
+def auto_smscode():
+    from yunpian_python_sdk.model import constant as YC
+    from yunpian_python_sdk.ypclient import YunpianClient
+    import urllib
+    import sys
+    from django.utils import timezone as dt
+
+    #取需要处理的订单
+    #取出还没添加到审核的订单
+    orders_tocheck = Order.objects.filter(verify__isnull=True, status="open",
+                                  financial_status="paid")
+    # 添加到待审核订单
+    for row in orders_tocheck:
+
+        facebook_user_name = ''
+        sales = ''
+        tmp = re.split(r"\[|\]", str(row.order_comment)[:100])
+        if (len(tmp) > 3):
+            facebook_user_name = tmp[1]
+            sales = tmp[3]
+        elif (len(tmp) > 1):
+            facebook_user_name = tmp[1]
+
+        v = Verify(
+            order=Order.objects.get(id=row.id),
+            verify_status="PROCESSING",
+            phone_1=valid_phone(row.receiver_phone),
+            sms_status="NOSTART",
+            start_time=datetime.now(),
+            final_time=datetime.now(),
+            facebook_user_name=facebook_user_name,
+            sales=sales,
+        )
+
+        v.save()
+
+    #还没发送验证码的订单
+    verify_orders = Verify.objects.filter( sms_status = "NOSTART",order__status="open", order__financial_status="paid",)
+
+    #审单
+
+    # 检验城市是否在派送范围
+    # 更新城市名到标准
+    mysql = 'update orders_verify l, orders_order o set l.city = trim( lower(o.receiver_city)) where l.order_id = o.id and trim( lower(o.receiver_city)) in ' \
+            '("riyadh","jeddah","dammam","al khobar","hofuf","jubail","dhahran","tabuk","buraydah","al hassa","jizan","qatif")'
+    my_custom_sql(mysql)
+
+    #不在派送范围的直接标记问题单
+    verify_orders_outrang = verify_orders.filter(city ="None").update(verify_status='OUTRANGE',verify_comments ="out of range")
+
+
+    #验证通过的，这里只考虑了一种情况：城市在派送范围内
+    verify_orders_checked = verify_orders.filter(~Q(city ="None"))
+    clnt = YunpianClient('2f22880b34b7dc5c6d93ce21047601f9')
+
+    for verify_order  in verify_orders_checked:
+
+        #检验电话号码
+        phone_1 = verify_order.phone_1
+        if not len(phone_1) == 9:
+            #可能是多号码，也可能是号码不正确，先返回错误，不自动拆分多个电话号码
+            error = "电话号码错误"
+            verify_order.verify_status='SIMPLE'
+            verify_order.verify_comments ="phone to be confirm"
+            verify_order.save()
+            continue
+
+        #判断是否需要发送验证码
+        #还没做
+
+
+
+        # 随机生成验证码，避免作弊
+        code = "F"+ str(random.randint(0,99999)).zfill(5)
+        print(phone_1, code)
+
+        #发送验证码
+        param = {YC.MOBILE: "+966"+phone_1,
+                 YC.TEXT: '【YallaVIP】Please send  YallaVIP\'s Confirmation code#%s# to us by facebook messanger. We will deliver your order when we get your code.' %(code)}
+
+        urllib.parse.urlencode(param)
+        r = clnt.sms().single_send(param)
+
+        #记录本次发送的验证码
+        #tobe do
+        Sms.objects.create(
+            phone="966"+phone_1,
+            send_status=r.code(),
+            send_time=dt.now(),
+            content=code,
+            fail_reason=r.msg(),
+
+        )
+        # 记录发送状态到数据库
+        verify_order.sms_status = "WAIT"
+        verify_order.save()
+
+    #已发送验证码的订单
+    wait_orders = Verify.objects.filter( sms_status = "WAIT",order__status="open", order__financial_status="paid")
+    for wait_order in wait_orders:
+        code = re.findall("\d+",  wait_order.cs_reply)
+        if not code:
+            continue
+
+        reply_code =  "F" + code[0]
+        phone_list = []
+        if wait_order.phone_1:
+            phone_list.append("966"+wait_order.phone_1)
+        if wait_order.phone_2:
+            phone_list.append("966"+wait_order.phone_2)
+        sms = Sms.objects.filter(phone__in = phone_list, content = reply_code)
+
+        if sms:
+            # 记录验证成功状态到数据库
+            wait_order.sms_status = "CHECKED"
+            wait_order.save()
+
+
+    return
+
+
 
 
 # 更新相册对应的主页外键

@@ -97,10 +97,9 @@ class Order(models.Model):
             return  "没有产品"
         elif "缺货" in stock_list:
             return "缺货"
-        elif "紧张" in stock_list:
-            return "紧张"
-        elif "紧张" in stock_list:
-            return "紧张"
+
+        #elif "紧张" in stock_list:
+         #   return "紧张"
         elif "充足" in stock_list:
             return "充足"
 
@@ -332,8 +331,8 @@ class OrderDetail(models.Model):
             item = items[0]
             if   item.o_sellable >=0:
                 return "充足"
-            elif item.o_quantity >= int(float(self.product_quantity)):
-                return  "紧张"
+            #elif item.o_quantity >= int(float(self.product_quantity)):
+             #   return  "紧张"
             else:
                 return  "缺货"
         else:
@@ -423,7 +422,9 @@ class Verify(models.Model):
         ("NOSTART", "未启动"),
         ("PROCESSING", "审核中"),
         ("SUCCESS", "已审核"),
+        ("OUTRANGE", "超出派送范围"),
         ("SIMPLE", "简单问题"),
+
         ("COMPLEX", "复杂问题"),
         ("CLOSED", "关闭"),
         ("CUSTOMERCLOSED", "客户要求关闭"),
@@ -518,7 +519,7 @@ class Verify(models.Model):
     conversation_link = models.CharField(u'会话链接', max_length=200, null=True, blank=True)
 
     CITY = (
-        ("暂不支持", "暂不支持"),
+        ("None", "暂不支持"),
         ("riyadh", "Riyadh"),
         ("jeddah", "Jeddah"),
         ("dammam", "Dammam"),
@@ -981,7 +982,7 @@ class Verify(models.Model):
 
     '''
 
-    city = models.CharField(u'城市', choices=CITY,max_length=100, default= '暂不支持',null=True, blank=True)
+    city = models.CharField(u'城市', choices=CITY,max_length=100, default= 'None',null=True, blank=True)
     class Meta:
         verbose_name = "审单"
         verbose_name_plural = verbose_name
@@ -1375,3 +1376,13 @@ class MyOrderDetail(models.Model):
 
     def __str__(self):
         return self.lightin_sku.skuattr
+
+class Order_History(Order):
+    class Meta:
+        proxy = True
+
+        verbose_name = "历史订单"
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.order_no
