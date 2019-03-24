@@ -473,6 +473,7 @@ class Lightin_SPU(models.Model):
 
     sellable = models.IntegerField(u'oms_可售数量', default=0, blank=True, null=True)
     aded = models.BooleanField(default=False, verbose_name="广告状态")
+    ad_error = models.CharField(default='', max_length=100, null=True, blank=True, verbose_name="发布错误")
 
     class Meta:
         verbose_name = "兰亭SPU"
@@ -491,6 +492,7 @@ class Lightin_SKU(models.Model):
     #barcode = models.CharField(u'barcode', default='', max_length=100, blank=True)
 
     o_quantity = models.IntegerField(u'oms_可用数量', default=0, blank=True, null=True)
+    o_locked = models.IntegerField(u'oms_锁定数量', default=0, blank=True, null=True)
     o_reserved = models.IntegerField(u'oms_保留数量', default=0, blank=True, null=True)
     o_sellable = models.IntegerField(u'oms_可售数量', default=0, blank=True, null=True)
 

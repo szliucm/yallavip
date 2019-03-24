@@ -2065,13 +2065,16 @@ def fulfill_orders_lightin():
     for order in orders:
         #if order.stock in ["充足", "紧张"]:
         #只有所有sku可售库存大于等于零，才发货，避免库存争夺
-        if order.stock in ["充足"]:
+        if order.stock in ["充足","紧张"]:
+            print("准备发货", order)
             error = mapping_order_lightin(order)
             if error == "":
                 result = fulfill_order_lightin(order)
                 if result:
                     # 发货成功的列表
                     order_list.append(order)
+        else:
+            print ("库存不足")
 
     # 提交仓库准备发货成功的，要更新本地库存
     update_barcode_stock(order_list, "W")
@@ -2566,34 +2569,36 @@ def cal_reserved(overtime=24):
     from shop.models import DraftItem
 
     # 先清空所有的库存占用
-    Lightin_SKU.objects.update(o_reserved=0)
+    Lightin_SKU.objects.update(o_reserved=0, o_locked = 0)
 
     # 计算库存占用
-    sku_quantity = {}
+
     sku_list = []
-    # 计算组合商品
+    # 计算组合商品， lock库存
+    sku_locked_quantity = {}
     combo_skus = ComboItem.objects.filter(combo__locked=True).values_list('SKU').annotate(Sum('combo__o_quantity'))
 
     for combo_sku in combo_skus:
         # 每个sku占用的库存，等于它对应的combo的库存
 
-        sku_quantity[combo_sku[0]] = sku_quantity.get(combo_sku[0], 0) + combo_sku[1]
+        sku_locked_quantity[combo_sku[0]] = sku_locked_quantity.get(combo_sku[0], 0) + combo_sku[1]
         if combo_sku[0] not in sku_list:
             sku_list.append(combo_sku[0])
 
-    print("组合商品 有%s个sku需要更新" % (len(sku_quantity)))
+    print("组合商品 有%s个sku 锁定库存 需要更新" % (len(sku_locked_quantity)))
 
-    # 计算订单
+    # 计算订单 reserved库存
+    sku_reserved_quantity = {}
     order_skus = OrderDetail.objects.filter(order__status="open",
                                             # order__order_time__gt =  dt.now() - dt.timedelta(hours=overtime),
                                             ).values_list('sku').annotate(Sum('product_quantity'))
     for order_sku in order_skus:
         print(order_sku)
-        sku_quantity[order_sku[0]] = sku_quantity.get(order_sku[0], 0) + order_sku[1]
+        sku_reserved_quantity[order_sku[0]] = sku_reserved_quantity.get(order_sku[0], 0) + order_sku[1]
         if order_sku[0] not in sku_list:
             sku_list.append(order_sku[0])
 
-    print("加上开放的订单 有%s个sku需要更新" % (len(sku_quantity)))
+    print("开放的订单 有%s个sku需要更新" % (len(sku_reserved_quantity)))
 
     # 计算草稿
     draft_skus = DraftItem.objects.filter(draft__status="open",
@@ -2601,29 +2606,27 @@ def cal_reserved(overtime=24):
                                           ).values_list('sku').annotate(Sum('quantity'))
 
     for draft_sku in draft_skus:
-        if sku_quantity.get(draft_sku[0]):
-            sku_quantity[draft_sku[0]] += draft_sku[1]
-        else:
-            sku_quantity[draft_sku[0]] = draft_sku[1]
+        sku_reserved_quantity[order_sku[0]] = sku_reserved_quantity.get(draft_sku[0], 0) + draft_sku[1]
+
         if draft_sku[0] not in sku_list:
             sku_list.append(draft_sku[0])
 
-    n = len(sku_quantity)
-    print("加上24小时内的草稿 有%s个sku需要更新" % (n))
+
+    print("加上24小时内的草稿 有%s个sku需要更新" % (len(sku_reserved_quantity)))
 
     # 更新库存占用
     lightin_skus = Lightin_SKU.objects.filter(SKU__in=sku_list).distinct()
     for lightin_sku in lightin_skus:
         try:
-
-            lightin_sku.o_reserved = sku_quantity[lightin_sku.SKU]
+            lightin_sku.o_locked = sku_locked_quantity.get(lightin_sku.SKU,0)
+            lightin_sku.o_reserved = sku_reserved_quantity.get(lightin_sku.SKU,0)
             # lightin_sku.o_sellable = lightin_sku.o_quantity - sku_quantity[sku]
             lightin_sku.save()
 
             # print(lightin_sku, lightin_sku.o_reserved, lightin_sku.o_sellable)
 
         except Exception as e:
-            print("更新出错", sku, e)
+            print("更新出错", lightin_sku, e)
 
     '''
     for sku in sku_quantity:
@@ -2643,12 +2646,12 @@ def cal_reserved(overtime=24):
     '''
 
     # 更新所有的可售库存
-    mysql = "update prs_lightin_sku set o_sellable = o_quantity - o_reserved"
+    mysql = "update prs_lightin_sku set o_sellable = o_quantity - o_locked - o_reserved"
 
     my_custom_sql(mysql)
 
     # 更新对应的spu的可售库存
-    print(sku_list)
+    #print(sku_list)
     lightin_spus = Lightin_SPU.objects.filter(spu_sku__SKU__in=sku_list).distinct()
     print("有%s个spu需要更新" % (lightin_spus.count()))
     for lightin_spu in lightin_spus:
@@ -2664,35 +2667,37 @@ def cal_reserved_skus(skus, overtime=24):
     from shop.models import DraftItem
 
     # 先清空所有的库存占用
-    Lightin_SKU.objects.filter(SKU__in=skus).update(o_reserved=0)
+    Lightin_SKU.objects.filter(SKU__in=skus).update(o_reserved=0, o_locked = 0)
 
     # 计算库存占用
-    sku_quantity = {}
+
     sku_list = []
     # 计算组合商品
+    sku_locked_quantity = {}
     combo_skus = ComboItem.objects.filter(combo__locked=True, lightin_sku__SKU__in=skus).values_list('SKU').annotate(
         Sum('combo__o_quantity'))
 
     for combo_sku in combo_skus:
         # 每个sku占用的库存，等于它对应的combo的库存
 
-        sku_quantity[combo_sku[0]] = sku_quantity.get(combo_sku[0], 0) + combo_sku[1]
+        sku_locked_quantity[combo_sku[0]] = sku_locked_quantity.get(combo_sku[0], 0) + combo_sku[1]
         if combo_sku[0] not in sku_list:
             sku_list.append(combo_sku[0])
 
-    print("组合商品 有%s个sku需要更新" % (len(sku_quantity)))
+    print("组合商品 有%s个sku需要更新" % (len(sku_locked_quantity)))
 
     # 计算订单
+    sku_reserved_quantity = {}
     order_skus = OrderDetail.objects.filter(order__status="open", sku__in=skus,
                                             # order__order_time__gt =  dt.now() - dt.timedelta(hours=overtime),
                                             ).values_list('sku').annotate(Sum('product_quantity'))
     for order_sku in order_skus:
         print(order_sku)
-        sku_quantity[order_sku[0]] = sku_quantity.get(order_sku[0], 0) + order_sku[1]
+        sku_reserved_quantity[order_sku[0]] = sku_reserved_quantity.get(order_sku[0], 0) + order_sku[1]
         if order_sku[0] not in sku_list:
             sku_list.append(order_sku[0])
 
-    print("加上开放的订单 有%s个sku需要更新" % (len(sku_quantity)))
+    print("加上开放的订单 有%s个sku需要更新" % (len(sku_reserved_quantity)))
 
     # 计算草稿
     draft_skus = DraftItem.objects.filter(draft__status="open", sku__in=skus,
@@ -2700,39 +2705,36 @@ def cal_reserved_skus(skus, overtime=24):
                                           ).values_list('sku').annotate(Sum('quantity'))
 
     for draft_sku in draft_skus:
-        if sku_quantity.get(draft_sku[0]):
-            sku_quantity[draft_sku[0]] += draft_sku[1]
-        else:
-            sku_quantity[draft_sku[0]] = draft_sku[1]
+        sku_reserved_quantity[order_sku[0]] = sku_reserved_quantity.get(draft_sku[0], 0) + draft_sku[1]
+
         if draft_sku[0] not in sku_list:
             sku_list.append(draft_sku[0])
 
-    n = len(sku_quantity)
-    print("加上24小时内的草稿 有%s个sku需要更新" % (n))
+
+    print("加上24小时内的草稿 有%s个sku需要更新" % (len(sku_reserved_quantity)))
 
     # 更新库存占用
-    for sku in sku_quantity:
+    lightin_skus = Lightin_SKU.objects.filter(SKU__in=sku_list).distinct()
+    for lightin_sku in lightin_skus:
         try:
-            lightin_sku = Lightin_SKU.objects.get(SKU=sku)
-            lightin_sku.o_reserved = sku_quantity[sku]
+            lightin_sku.o_locked = sku_locked_quantity.get(lightin_sku.SKU, 0)
+            lightin_sku.o_reserved = sku_reserved_quantity.get(lightin_sku.SKU, 0)
             # lightin_sku.o_sellable = lightin_sku.o_quantity - sku_quantity[sku]
             lightin_sku.save()
 
             # print(lightin_sku, lightin_sku.o_reserved, lightin_sku.o_sellable)
 
         except Exception as e:
-            print("更新出错", sku, e)
+            print("更新出错", lightin_sku, e)
 
-        n -= 1
-        print("还有%s个待更新" % (n))
 
     # 更新所有的可售库存
-    mysql = "update prs_lightin_sku set o_sellable = o_quantity - o_reserved"
+    mysql = "update prs_lightin_sku set o_sellable = o_quantity - o_locked - o_reserved"
 
     my_custom_sql(mysql)
 
     # 更新对应的spu的可售库存
-    print(sku_list)
+    #print(sku_list)
     lightin_spus = Lightin_SPU.objects.filter(spu_sku__SKU__in=sku_list).distinct()
     print("有%s个spu需要更新" % (lightin_spus.count()))
     for lightin_spu in lightin_spus:
@@ -3025,6 +3027,9 @@ def lock_combo():
             combo.o_sellable = 1
             combo.locked = True
             combo.save()
+
+            skus = items.values_list("lightin_sku__SKU",flat=True)
+            cal_reserved_skus(list(skus))
 
     # 更新库存占用
     cal_reserved()
@@ -3597,6 +3602,8 @@ def combo_image(combo):
     
     '''
 
+def valid_combo():
+    combo_items = ComboItem.objects.filter(lightin_sku__o_sellable__lt=0).values_list("combo").distinct()
 
 def skus_image():
     lightin_skus = Lightin_SKU.objects.filter(

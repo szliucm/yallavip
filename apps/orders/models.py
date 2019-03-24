@@ -98,8 +98,8 @@ class Order(models.Model):
         elif "缺货" in stock_list:
             return "缺货"
 
-        #elif "紧张" in stock_list:
-         #   return "紧张"
+        elif "紧张" in stock_list:
+            return "紧张"
         elif "充足" in stock_list:
             return "充足"
 
@@ -331,8 +331,8 @@ class OrderDetail(models.Model):
             item = items[0]
             if   item.o_sellable >=0:
                 return "充足"
-            #elif item.o_quantity >= int(float(self.product_quantity)):
-             #   return  "紧张"
+            elif (item.o_quantity - item.o_locked)>= int(float(self.product_quantity)):
+                return  "紧张"
             else:
                 return  "缺货"
         else:
