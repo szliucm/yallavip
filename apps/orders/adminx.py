@@ -2937,7 +2937,7 @@ class MyOrderAdmin(object):
             Main(
                 Fieldset('订单明细',
                          #Row( 'lightin_sku','product_quantity','price',),
-                         'lightin_spu', 'lightin_sku','price', 'quantity', 'amount',
+                         'handle', 'lightin_sku','price', 'quantity', 'amount',
 
                          ),
 
@@ -2976,7 +2976,7 @@ class MyOrderAdmin(object):
 
 @xadmin.sites.register(MyOrderDetail)
 class MyOrderDetailAdmin(object):
-    list_display = ['order','lightin_spu', 'lightin_sku', 'quantity','price','amount', ]
+    list_display = ['order','handle', 'lightin_sku', 'quantity','price','amount', ]
 
     search_fields = []
 

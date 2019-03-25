@@ -1353,9 +1353,12 @@ class MyOrder(models.Model):
 class MyOrderDetail(models.Model):
     order = models.ForeignKey(MyOrder, related_name='my_order_orderdetail', null=False, on_delete=models.CASCADE,
                               verbose_name="Order")
+    '''
     lightin_spu = models.ForeignKey(Lightin_SPU, related_name='lightin_spu_orderdetail', null=True,
                                     on_delete=models.CASCADE,
                                     verbose_name="货号")
+    '''
+    handle = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="handle")
     lightin_sku = models.ForeignKey(Lightin_SKU, related_name='lightin_sku_orderdetail', null=True, on_delete=models.CASCADE,
                               verbose_name="sku")
     #sku = models.CharField(u'SKU', default='', max_length=100, null=True, blank=True)
@@ -1376,6 +1379,19 @@ class MyOrderDetail(models.Model):
 
     def __str__(self):
         return self.lightin_sku.skuattr
+
+class CsOrder(models.Model):
+    buyer_name = models.CharField(u'买家姓名', default='', max_length=500, blank=True)
+    handles = models.TextField(blank=True, null=True)
+
+    class Meta:
+        verbose_name = "客服辅助下单"
+        verbose_name_plural = verbose_name
+
+
+    def __str__(self):
+        return self.buyer_name
+
 
 class Order_History(Order):
     class Meta:

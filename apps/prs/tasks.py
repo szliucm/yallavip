@@ -2046,7 +2046,7 @@ def get_barcodes(sku, quantity, price):
     # 需求没有被满足，标识订单缺货
     print("quantity", quantity)
     if quantity > 0:
-        error = sku + " 缺货"
+        error = sku.SKU + "  缺货"
         return None, error
     else:
         return inventory_list, ""
@@ -2065,6 +2065,7 @@ def fulfill_orders_lightin():
     for order in orders:
         #if order.stock in ["充足", "紧张"]:
         #只有所有sku可售库存大于等于零，才发货，避免库存争夺
+
         if order.stock in ["充足","紧张"]:
             print("准备发货", order)
             error = mapping_order_lightin(order)
@@ -2270,21 +2271,23 @@ def sync_Shipped_order_lightin(days=1):
                 order = Order.objects.get(order_no=order_no)
                 if order:
                     send_time = None
-                    if order.wms_status == "W" and data.get("order_status") == "D":
-                        # wms状态从待发货变成已发货，就修改本地 barcode 库存
 
-                        items = OrderDetail_lightin.objects.filter(order=order)
-                        # 更新本地barcode库存
-                        for item in items:
-                            barcode = Lightin_barcode.objects.get(barcode=item.barcode)
-                            barcode.o_reserved = F("o_reserved") - item.quantity
-                            barcode.o_quantity = F("o_quantity") - item.quantity
-                            barcode.save()
-                        print ("更新本地barcode库存")
-
+                    if  data.get("order_status") == "D":
                         send_time = data.get("date_shipping")
-                    elif data.get("order_status") == "W":
-                        pass
+                        if order.wms_status == "W" :
+                            # wms状态从待发货变成已发货，就修改本地 barcode 库存
+
+                            items = OrderDetail_lightin.objects.filter(order=order)
+                            # 更新本地barcode库存
+                            for item in items:
+                                barcode = Lightin_barcode.objects.get(barcode=item.barcode)
+                                barcode.o_reserved = F("o_reserved") - item.quantity
+                                barcode.o_quantity = F("o_quantity") - item.quantity
+                                barcode.save()
+                            print ("更新本地barcode库存")
+
+
+
 
                     # 更新本地的订单状态
                     Order.objects.update_or_create(
@@ -2311,7 +2314,7 @@ def sync_Shipped_order_shopify():
     from prs.shop_action import fulfill_order_shopify
     from django.db.models import F
 
-    orders = Order.objects.filter(status="open", wms_status__in=["W"], logistic_no__isnull=False,
+    orders = Order.objects.filter(~Q(fulfillment_status = "fulfilled" ), status="open", wms_status__in=["W"], logistic_no__isnull=False,
                                   order_id__isnull=False)
 
     n = orders.count()
@@ -2326,7 +2329,12 @@ def sync_Shipped_order_shopify():
         data = fulfill_order_shopify(order.order_id, order.logistic_no)
 
         if data.get("errors"):
+
             fulfillment_status = data.get("errors")
+            error = data.get("errors").get("order")
+            if error :
+                if error[0].find("already fulfilled") >-1:
+                    fulfillment_status = "fulfilled"
 
         else:
             # shopify发货成功
@@ -2361,6 +2369,7 @@ def sync_Shipped_order_shopify():
 
         # 更新本地的订单状态
         print(order, order.order_no)
+        '''
         Order.objects.update_or_create(
             order_no=order.order_no,
             defaults={
@@ -2368,6 +2377,9 @@ def sync_Shipped_order_shopify():
 
             },
         )
+        '''
+        order.fulfillment_status = fulfillment_status
+        order.save()
 
 
 def get_wms_product():
