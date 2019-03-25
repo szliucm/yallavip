@@ -1303,7 +1303,7 @@ class VerifyAdmin(object):
     '''
 
     readonly_fields = ('order', 'order_time',)
-    list_display = ('order','order_sku_count','order_time',"stock", "fulfill_error",'order_financial_status','order_fulfillment_status','colored_verify_status', \
+    list_display = ('order','order_time',"stock", 'order_financial_status','colored_verify_status', \
                     'colored_sms_status',
                     'receiver_city','city','receiver_addr',
 
@@ -3032,60 +3032,187 @@ class CsOrderAdmin(object):
         img = ''
 
         for lightin_spu in lightin_spus:
-            img += '<br><a>货号: %s</a><br>'%(lightin_spu.handle)
 
+            '''
             lightin_skus = lightin_spu.spu_sku.filter(o_sellable__gt=0).distinct()
-            skus = lightin_skus.values_list("SKU",   "o_sellable","skuattr",)
+            skus = lightin_skus.values_list("SKU",   "o_sellable","sku_price", "skuattr",)
             for sku in skus:
                 #img += '<br><a>%s<br>规格: %s<br>库存: %s</a><br>' % ( sku[0], sku[1], str(sku[2]))
-                img += '<br><a>%s   %s      %s</a><br>' % (sku[0],  str(sku[1]),sku[2])
+                img += '<br><a>%s   %s  %s    %s</a><br>' % (sku[0],  str(sku[1]),sku[2], sku[3])
+            '''
+
+            if lightin_spu.images_dict :
+                images= json.loads(lightin_spu.images_dict).values()
+
+                for image in images:
+                    '''
+                    a = "/"
+                    image_split = image.split(a)
+
+                    image_split[4] = '800x800'
+                    photo = a.join(image_split)
+                    print("spu 图片", lightin_spu, photo)
+                    img = img + '<a><img src="%s" width="100px"></a>' % (photo)
+                    '''
+                    img = img + '<a><img src="%s" width="100px"></a>' % (image)
 
 
-            if lightin_spu.images is not None and len(lightin_spu.images) > 0:
-                photos = json.loads(lightin_spu.images)
 
-                n=1
-                for photo in photos:
-                    try:
-                        img = img + '<a><img src="%s" width="200px"></a>' % (photo)
-                    except Exception as e:
-                        print("获取图片出错", e)
-                    n +=1
-                    if n>3:
-                        break
 
 
 
             else:
                 img = img + "no photo"
 
+            img += '<br><a>handle: %s</a><br>' % (lightin_spu.handle)
+
 
 
         return mark_safe(img)
 
-    photo.short_description = "图片"
+    photo.short_description = "产品图片"
 
-    def subtotal(self, obj):
-        handles = obj.skus.split()
-        '''
-        lightin_skus = Lightin_SKU.objects.filter(lightin_spu__handle__in=handles, o_sellable__gt=0).distinct()
-        
-        skus = ""
-        for lightin_sku in lightin_skus:
-            skus += "\n%s"%(lightin_sku)
+    def cal_subtotal(self, obj):
+        #遍历草稿表，把所有数量大于0的加起来
 
-        '''
+        img = ""
+        subtotal = 0
+        count = 0
+        error = ""
+        if not obj.discount:
+            discount = 0
+        else:
+            discount = obj.discount
 
-        return handles
+        details =  obj.cs_order_detail.filter(quantity__gt=0)
+
+        for detail in details:
+            try:
+                sku = detail.lightin_sku
+                subtotal += sku.sku_price *  detail.quantity
+                count += detail.quantity
+
+                if sku.image:
+                    image = sku.image
+                    print("sku 图片")
+                else:
+
+                    spu = sku.lightin_spu
+                    if spu.images_dict:
+                        image = json.loads(spu.images_dict).values()
+                        if image and len(image) > 0:
+
+                            a = "/"
+                            image_split = list(image)[0].split(a)
+
+                            image_split[4] = '800x800'
+                            image = a.join(image_split)
+                            print("spu 图片", spu, image)
+
+                img += '<a><img src="%s" width="100px"></a>' % (image)
+
+                img += '<br><a>item %s : %s sets</a><br>' % (sku, detail.quantity)
+
+            except Exception as e:
+                print(e)
+                error = "计算出错" + detail
+                break
+
+
+        if error == "":
+            tax = subtotal * 0.05
+            COD = 20
+            content = "<br><a>Subtotal  %sitems    %s SR<a><br>"%(count,subtotal)
+            content += "<a>COD Fee              %s SR<a><br>" % (COD)
+            content += "<a>VAT Tax              %s SR<a><br>"%(tax)
+            content += "<a>Discount             %s SR<a><br>" % (discount)
+            content += "<a>Total                %s SR<a><br>" % (int(subtotal+COD+tax-float(discount)))
+
+            img += content
+            return mark_safe(img)
+        else:
+            return  error
+
+    cal_subtotal.short_description = "订单摘要"
 
 
 
-    list_display = ['buyer_name','handles', 'photo',"skus", "subtotal" ]
-    list_editable = ["handles","skus", ]
+    list_display = ['customer','handles', 'photo', "cal_subtotal" ]
+    list_editable = ["handles", ]
 
     search_fields = []
 
     ordering = []
     list_filter = ()
 
-    actions = []
+    actions = ['batch_prepare_draft',]
+    def batch_prepare_draft(self, request, queryset):
+        # 定义actions函数
+        #根据货号找到所有有库存的sku，把sku插到草稿表里，供进一步编辑
+        #如果对应的sku已经有了，就什么也不做
+        for row in queryset:
+            handles = row.handles.split()
+            lightin_skus = Lightin_SKU.objects.filter(lightin_spu__handle__in = handles, o_sellable__gt=0)
+
+            for lightin_sku in lightin_skus:
+                obj, created = CsOrderDetail.objects.get_or_create(
+                    csorder=row,
+                    lightin_sku = lightin_sku,
+                    defaults={'quantity': 0})
+
+        return
+
+    batch_prepare_draft.short_description = "准备草稿"
+
+@xadmin.sites.register(CsOrderDetail)
+class CsOrderDetailAdmin(object):
+    list_display = ['csorder', 'lightin_sku', 'handle','sellable','quantity', 'skuattr', "photo",]
+    list_editable = ["quantity", ]
+
+    search_fields = []
+
+    ordering = []
+    list_filter = ()
+
+    actions = [ ]
+
+    def photo(self, obj):
+        # 如果sku有属性图片则用属性图片，否则用spu图片的第一张
+        image = None
+        sku = obj.lightin_sku
+        if sku.image:
+            image = sku.image
+            print("sku 图片")
+        else:
+
+            spu = sku.lightin_spu
+            if spu.images_dict:
+                image = json.loads(spu.images_dict).values()
+                if image and len(image) > 0:
+                    a = "/"
+                    image_split = list(image)[0].split(a)
+
+                    image_split[4] = '800x800'
+                    image = a.join(image_split)
+                    print("spu 图片", spu, image)
+
+        img = '<a><img src="%s" width="200px"></a>' % (image)
+
+        return mark_safe(img)
+
+    photo.short_description = "product photo"
+
+    def skuattr(self,obj):
+        return  obj.lightin_sku.skuattr
+
+    skuattr.short_description = "skuattr"
+
+    def sellable(self, obj):
+        return obj.lightin_sku.o_sellable
+
+    sellable.short_description = "sellable"
+
+    def handle(self, obj):
+        return obj.lightin_sku.lightin_spu.handle
+
+    handle.short_description = "handle"

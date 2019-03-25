@@ -1365,6 +1365,8 @@ class MyOrderDetail(models.Model):
     quantity = models.CharField(u'Quantity', default='', max_length=50, blank=True)
     price = models.CharField(u'Unit Price', default='', max_length=50, blank=True)
 
+
+
     def cal_amount(self):
         return  self.product_quantity * self.price
 
@@ -1380,21 +1382,91 @@ class MyOrderDetail(models.Model):
     def __str__(self):
         return self.lightin_sku.skuattr
 
+class Customer(models.Model):
+    name = models.CharField(u'买家姓名', default='', max_length=100, blank=True)
 
-class CsOrder(models.Model):
-    buyer_name = models.CharField(u'买家姓名', default='', max_length=100, blank=True)
-    handles = models.TextField(u'货号',blank=True, null=True)
+    receiver_name = models.CharField(u'收货人姓名', default='', max_length=100, blank=True)
 
-    skus = models.TextField(u'skus',blank=True, null=True)
+    country_code = models.CharField(u'country_code', default='SA', max_length=100, blank=True)
 
+    CITIES = (
+        ("riyadh", "Riyadh"),
+        ("jeddah", "Jeddah"),
+        ("dammam", "Dammam"),
+        ("al khobar", "Al Khobar"),
+        ("hofuf", "Hofuf"),
+        ("jubail", "Jubail"),
+        ("dhahran", "Dhahran"),
+        ("tabuk", "Tabuk"),
+        ("buraydah", "Buraydah"),
+        ("al hassa", "Al Hassa"),
+        ("jizan", "Jizan"),
+        ("qatif", "Qatif"),
+    )
+
+    city = models.CharField(u'city', choices=CITIES, default='', max_length=100, blank=True)
+    address1 = models.CharField(u'address1', default='', max_length=100, blank=True)
+    address2 = models.CharField(u'address2', default='', max_length=100, blank=True)
+    address3 = models.CharField(u'address3', default='', max_length=100, blank=True)
+    phone_1 = models.CharField(u'phone_1', default='', max_length=100, blank=True)
+    phone_2 = models.CharField(u'phone_1', default='', max_length=100, blank=True)
+
+    comments = models.TextField(u'备注', blank=True, null=True)
+    coversation = models.CharField(u'聊天链接', default='', max_length=100, blank=True)
 
     class Meta:
-        verbose_name = "客服辅助下单"
+        verbose_name = "客户"
         verbose_name_plural = verbose_name
 
 
     def __str__(self):
-        return self.buyer_name
+        return self.name
+
+class CsOrder(models.Model):
+
+    customer = models.ForeignKey(Customer, related_name='customer_cs_order', null=True, on_delete=models.CASCADE,
+                                verbose_name="Customer")
+
+    handles = models.TextField(u'货号',blank=True, null=True)
+    discount = models.CharField(u'discount', default='0', max_length=100, blank=True)
+
+    order_amount = models.IntegerField(u'COD金额', default=0, blank=True, null=True)
+
+    sales = models.CharField(u'Sales', default='', max_length=50, blank=True)
+
+    class Meta:
+        verbose_name = "客服下单"
+        verbose_name_plural = verbose_name
+
+
+    def __str__(self):
+        if self.customer:
+            return self.customer
+        else:
+            return  ""
+
+class CsOrderDetail(models.Model):
+    csorder = models.ForeignKey(CsOrder, related_name='cs_order_detail', null=False, on_delete=models.CASCADE,
+                              verbose_name="CsOrder")
+
+    lightin_sku = models.ForeignKey(Lightin_SKU, related_name='lightin_sku_detail', null=False, on_delete=models.CASCADE,
+                                verbose_name="lightin_sku")
+
+    price = models.CharField(u'单价', default='', max_length=50, blank=True)
+    quantity = models.IntegerField(u'数量', default=0, blank=True, null=True)
+
+
+    class Meta:
+        verbose_name = "客服下单明细"
+        verbose_name_plural = verbose_name
+
+
+    def __str__(self):
+        return self.lightin_sku.SKU
+
+
+
+
 
 
 class Order_History(Order):
