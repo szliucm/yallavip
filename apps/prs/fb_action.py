@@ -969,7 +969,7 @@ def post_ad(page_no):
                                                 lightin_spu__aded=False,
                                                 myalbum__page_no=page_no, published=True).distinct()
 
-    limit = 5
+    limit = 1
     n = 1
 
     for lightinalbum in lightinalbums:

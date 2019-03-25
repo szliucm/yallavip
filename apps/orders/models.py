@@ -1383,7 +1383,10 @@ class MyOrderDetail(models.Model):
 
 class CsOrder(models.Model):
     buyer_name = models.CharField(u'买家姓名', default='', max_length=100, blank=True)
-    handles = models.TextField(blank=True, null=True)
+    handles = models.TextField(u'货号',blank=True, null=True)
+
+    skus = models.TextField(u'skus',blank=True, null=True)
+
 
     class Meta:
         verbose_name = "客服辅助下单"

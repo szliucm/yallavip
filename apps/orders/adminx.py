@@ -3032,17 +3032,27 @@ class CsOrderAdmin(object):
         img = ''
 
         for lightin_spu in lightin_spus:
-            img += '<br><a>%s</a><br>'%(lightin_spu.handle)
+            img += '<br><a>货号: %s</a><br>'%(lightin_spu.handle)
+
+            lightin_skus = lightin_spu.spu_sku.filter(o_sellable__gt=0).distinct()
+            skus = lightin_skus.values_list("SKU",   "o_sellable","skuattr",)
+            for sku in skus:
+                #img += '<br><a>%s<br>规格: %s<br>库存: %s</a><br>' % ( sku[0], sku[1], str(sku[2]))
+                img += '<br><a>%s   %s      %s</a><br>' % (sku[0],  str(sku[1]),sku[2])
+
 
             if lightin_spu.images is not None and len(lightin_spu.images) > 0:
                 photos = json.loads(lightin_spu.images)
 
-
+                n=1
                 for photo in photos:
                     try:
                         img = img + '<a><img src="%s" width="200px"></a>' % (photo)
                     except Exception as e:
                         print("获取图片出错", e)
+                    n +=1
+                    if n>3:
+                        break
 
 
 
@@ -3055,23 +3065,23 @@ class CsOrderAdmin(object):
 
     photo.short_description = "图片"
 
-    def show_skus(self, obj):
-        handles = obj.handles.split()
-        lightin_skus = Lightin_SKU.objects.filter(lightin_spu__handle__in=handles, o_sellable__gt=0).distinct()
+    def subtotal(self, obj):
+        handles = obj.skus.split()
         '''
+        lightin_skus = Lightin_SKU.objects.filter(lightin_spu__handle__in=handles, o_sellable__gt=0).distinct()
+        
         skus = ""
         for lightin_sku in lightin_skus:
             skus += "\n%s"%(lightin_sku)
 
         '''
 
-        return lightin_skus.values_list("SKU", "skuattr","o_sellable")
+        return handles
 
 
 
-
-    list_display = ['buyer_name','handles', 'show_skus','photo',]
-    list_editable = ["handles",]
+    list_display = ['buyer_name','handles', 'photo',"skus", "subtotal" ]
+    list_editable = ["handles","skus", ]
 
     search_fields = []
 
