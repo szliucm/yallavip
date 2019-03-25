@@ -12,9 +12,12 @@ from xadmin.layout import Main, Side, Fieldset, Row, AppendedText
 from django.shortcuts import get_object_or_404, get_list_or_404, render
 from import_export import resources, fields
 from import_export.widgets import ForeignKeyWidget
-from .models import Order, OrderDetail,OrderDetail_lightin, Verify, OrderConversation,ClientService,Verification,\
+from .models import *
+'''
+    Order, OrderDetail,OrderDetail_lightin, Verify, OrderConversation,ClientService,Verification,\
         Logistic_winlink,Logistic_jiacheng,Logistic_status,Logistic_trail, Sms,\
         LogisticAccount,OverseaOrder,OverseaSkuRank,MyOrder,MyOrderDetail, Order_History
+'''
 from shop.models import ShopifyProduct, ShopifyVariant,Combination,ShopifyImage
 from fb.models import MyPhoto
 
@@ -2926,7 +2929,7 @@ class OrderDetail_lightinAdmin(object):
 
 
 
-
+'''
 @xadmin.sites.register(MyOrder)
 class MyOrderAdmin(object):
     class MyOrderDetailInline(object):
@@ -2984,6 +2987,7 @@ class MyOrderDetailAdmin(object):
     list_filter = ()
 
     actions = []
+'''
 
 
 
@@ -3019,3 +3023,59 @@ class Order_HistoryAdmin(object):
     "status", "wms_status", "financial_status", "fulfillment_status", "package_status", "verify_time", "order_time",
     "send_time", "verify__verify_status", "verify__sms_status",)
     ordering = ['-order_time']
+
+@xadmin.sites.register(CsOrder)
+class CsOrderAdmin(object):
+    def photo(self, obj):
+        handles = obj.handles.split()
+        lightin_spus = Lightin_SPU.objects.filter(handle__in=handles).distinct()
+        img = ''
+
+        for lightin_spu in lightin_spus:
+            img += '<br><a>%s</a><br>'%(lightin_spu.handle)
+
+            if lightin_spu.images is not None and len(lightin_spu.images) > 0:
+                photos = json.loads(lightin_spu.images)
+
+
+                for photo in photos:
+                    try:
+                        img = img + '<a><img src="%s" width="200px"></a>' % (photo)
+                    except Exception as e:
+                        print("获取图片出错", e)
+
+
+
+            else:
+                img = img + "no photo"
+
+
+
+        return mark_safe(img)
+
+    photo.short_description = "图片"
+
+    def show_skus(self, obj):
+        handles = obj.handles.split()
+        lightin_skus = Lightin_SKU.objects.filter(lightin_spu__handle__in=handles, o_sellable__gt=0).distinct()
+        '''
+        skus = ""
+        for lightin_sku in lightin_skus:
+            skus += "\n%s"%(lightin_sku)
+
+        '''
+
+        return lightin_skus.values_list("SKU", "skuattr","o_sellable")
+
+
+
+
+    list_display = ['buyer_name','handles', 'show_skus','photo',]
+    list_editable = ["handles",]
+
+    search_fields = []
+
+    ordering = []
+    list_filter = ()
+
+    actions = []

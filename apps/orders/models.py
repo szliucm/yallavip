@@ -1380,8 +1380,9 @@ class MyOrderDetail(models.Model):
     def __str__(self):
         return self.lightin_sku.skuattr
 
+
 class CsOrder(models.Model):
-    buyer_name = models.CharField(u'买家姓名', default='', max_length=500, blank=True)
+    buyer_name = models.CharField(u'买家姓名', default='', max_length=100, blank=True)
     handles = models.TextField(blank=True, null=True)
 
     class Meta:
