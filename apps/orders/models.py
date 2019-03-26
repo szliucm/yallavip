@@ -1383,7 +1383,7 @@ class MyOrderDetail(models.Model):
 
     def __str__(self):
         return self.lightin_sku.skuattr
-
+'''
 class Customer(models.Model):
     name = models.CharField(u'买家姓名', default='', max_length=100, blank=True,null=False)
 
@@ -1473,7 +1473,7 @@ class CsOrderDetail(models.Model):
         return self.lightin_sku.SKU
 
 
-
+'''
 
 
 

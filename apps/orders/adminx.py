@@ -3023,6 +3023,8 @@ class Order_HistoryAdmin(object):
     "send_time", "verify__verify_status", "verify__sms_status",)
     ordering = ['-order_time']
 
+
+'''
 @xadmin.sites.register(CsOrder)
 class CsOrderAdmin(object):
 
@@ -3251,3 +3253,4 @@ class CustomerAdmin(object):
     list_filter = ()
 
     actions = [ ]
+'''
