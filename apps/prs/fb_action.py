@@ -959,7 +959,7 @@ def post_ad(page_no):
 
     adobjects = FacebookAdsApi.init(access_token=my_access_token, debug=True)
     adacount_no = "act_1903121643086425"
-    adset_no = "23843265435620510"
+    adset_no = "23843271397590510"
 
     #取库存大、单价高、已经发布到相册 且还未打广告的商品
 

@@ -8,6 +8,9 @@ class Customer(models.Model):
 
     handles = models.TextField(u'货号', blank=True, null=True)
 
+    #本次订单信息
+    receiver = models.ForeignKey('Receiver', related_name='receiver_customer', null=False, on_delete=models.CASCADE,
+                                 verbose_name="Receiver")
 
     discount = models.CharField(u'discount', default='0', max_length=100, blank=True)
     order_amount = models.IntegerField(u'COD金额', default=0, blank=True, null=True)

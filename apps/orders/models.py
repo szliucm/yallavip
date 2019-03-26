@@ -6,6 +6,10 @@ from prs.models import  Lightin_SPU, Lightin_SKU,Lightin_barcode
 
 # Create your models here.
 class Order(models.Model):
+    #新的以客户为中心的模型
+    customer = models.ForeignKey(Customer, related_name='customer_order', null=False, on_delete=models.CASCADE,
+                                 verbose_name="Customer")
+
     LOGISTIC_STATUS = (
         ("ARRANGE CRRGOS ON WAREHOUSE", "ARRANGE CRRGOS ON WAREHOUSE"),
         ("case closed", "case closed"),
@@ -154,6 +158,8 @@ class Order(models.Model):
     cal_inventory_status.short_description = "库存状态"
     inventory_status = property(cal_inventory_status)
 
+
+    o_status = models.CharField(u'oms_订单状态', max_length=30, default='', blank=True)
 
     #shopify 订单状态
 
