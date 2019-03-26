@@ -2702,6 +2702,7 @@ def cal_reserved_skus(skus, overtime=24):
     sku_reserved_quantity = {}
     order_skus = OrderDetail.objects.filter(order__status="open", sku__in=skus,
                                             # order__order_time__gt =  dt.now() - dt.timedelta(hours=overtime),
+
                                             ).values_list('sku').annotate(Sum('product_quantity'))
     for order_sku in order_skus:
         print(order_sku)
@@ -2717,7 +2718,7 @@ def cal_reserved_skus(skus, overtime=24):
                                           ).values_list('sku').annotate(Sum('quantity'))
 
     for draft_sku in draft_skus:
-        sku_reserved_quantity[order_sku[0]] = sku_reserved_quantity.get(draft_sku[0], 0) + draft_sku[1]
+        sku_reserved_quantity[draft_sku[0]] = sku_reserved_quantity.get(draft_sku[0], 0) + draft_sku[1]
 
         if draft_sku[0] not in sku_list:
             sku_list.append(draft_sku[0])
@@ -3123,13 +3124,7 @@ def make_combo(sku, skus):
 def init_combo(sku):
     # 随机生成包裹类型
     combo_types = [
-        {
-            "main_cate": '"Women\'s Tops & Sets"',
-            "main_cate_nums": 2,
-            "sub_cates": '"Women\'s Tops & Sets"',
-            "sub_cate_nums": [3, 4],
-            "sub_cate_price": 3.6
-        },
+
         {
             "main_cate": '"Bags"',
             "main_cate_nums": 2,
@@ -3138,6 +3133,15 @@ def init_combo(sku):
             "sub_cate_price": 2
         },
     ]
+    '''
+           {
+               "main_cate": '"Women\'s Tops & Sets"',
+               "main_cate_nums": 2,
+               "sub_cates": '"Women\'s Tops & Sets"',
+               "sub_cate_nums": [3, 4],
+               "sub_cate_price": 3.6
+           },
+           '''
 
     combo_type = random.choice(combo_types)
 
