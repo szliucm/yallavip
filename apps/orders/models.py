@@ -1486,3 +1486,5 @@ class Order_History(Order):
 
     def __str__(self):
         return self.order_no
+
+
