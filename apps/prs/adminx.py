@@ -751,7 +751,7 @@ class Lightin_SKUAdmin(object):
 
             for photo in photos:
                 try:
-                    img = img + '<a><img src="%s" width="100px"></a>' % (photo)
+                    img = img + '<a><img src="%s" width="150px"></a>' % (photo)
                 except Exception as e:
                     img = "获取图片出错 "+ e
 
@@ -764,7 +764,7 @@ class Lightin_SKUAdmin(object):
 
     def sku_photo(self, obj):
         if obj.limage is not None and len(obj.limage)>0 :
-           img = '<a><img src="%s" width="100px"></a>' % (obj.limage)
+           img = '<a><img src="%s" width="150px"></a>' % (obj.image)
         else:
             img = "no photo"
 
