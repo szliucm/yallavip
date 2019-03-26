@@ -646,6 +646,7 @@ class OrderAdmin(object):
                     params = {
 
                     }
+
                     response = Photo(myphoto.photo_no).api_delete(
                         fields=fields,
                         params=params,
@@ -739,7 +740,6 @@ class OrderAdmin(object):
         #param_data["waybillnumber"] = "989384782"
         param_data["isdisplaydetail"] = "false"
 
-
         #data_body =base64.b64encode(json.dumps(param_data).encode('utf-8'))
         #  base64.b64encode()
 
@@ -747,7 +747,6 @@ class OrderAdmin(object):
         param = dict()
         param["service"] = 'track'
         #param["data_body"] = data_body
-
 
         res = requests.post(requrl,params =param)
 
