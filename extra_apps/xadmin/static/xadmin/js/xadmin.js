@@ -11,7 +11,7 @@ $('#id_mypage').change(function () {
             },
             success: function (data) {
 
-                data = JSON.parse(data.album)//将JSON转换
+                data = JSON.parse(data.album);//将JSON转换
                 console.log(data);
                 for (var i = 0; i < data.length; i++) {
 
@@ -24,4 +24,4 @@ $('#id_mypage').change(function () {
                 console.log('error')
             }
         })
-    })
+    });
