@@ -7,8 +7,8 @@ from customer.models import  Customer
 # Create your models here.
 class Order(models.Model):
     #新的以客户为中心的模型
-    customer = models.ForeignKey(Customer, related_name='customer_order', null=False, on_delete=models.CASCADE,
-                                 verbose_name="Customer")
+    #customer = models.ForeignKey(Customer, related_name='customer_order', null=False, on_delete=models.CASCADE,
+     #                            verbose_name="Customer")
 
     LOGISTIC_STATUS = (
         ("ARRANGE CRRGOS ON WAREHOUSE", "ARRANGE CRRGOS ON WAREHOUSE"),
