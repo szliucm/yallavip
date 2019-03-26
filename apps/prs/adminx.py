@@ -775,14 +775,19 @@ class Lightin_SKUAdmin(object):
     def shopify_price(self, obj):
         return obj.lightin_spu.shopify_price
 
-    shopify_price.short_description = "零售价"
+    shopify_price.short_description = "price"
 
     def cn_name(self, obj):
         return obj.lightin_spu.cn_name
 
     cn_name.short_description = "cn_name"
 
-    list_display = ["SKU", "SPU", "shopify_price",'cn_name', "o_sellable","sku_photo", "photo","skuattr",]
+    def handle(self, obj):
+        return obj.lightin_spu.handle
+
+    handle.short_description = "handle"
+
+    list_display = ["SKU", "SPU", 'cn_name', "o_sellable","sku_photo", "handle","shopify_price", "photo","skuattr",]
 
     # 'sku_name','img',
     search_fields = ["SPU", "SKU","lightin_spu__handle",]
