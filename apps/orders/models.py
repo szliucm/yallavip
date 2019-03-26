@@ -531,6 +531,8 @@ class Verify(models.Model):
         ("buraydah", "Buraydah"),
         ("al hassa", "Al Hassa"),
         ("jizan", "Jizan"),
+        ("jazan", "Jazan"),  #      Jizan,  Jazan
+
         ("qatif", "Qatif"),
 
     )
@@ -1383,11 +1385,15 @@ class MyOrderDetail(models.Model):
         return self.lightin_sku.skuattr
 
 class Customer(models.Model):
-    name = models.CharField(u'买家姓名', default='', max_length=100, blank=True)
+    name = models.CharField(u'买家姓名', default='', max_length=100, blank=True,null=False)
 
-    receiver_name = models.CharField(u'收货人姓名', default='', max_length=100, blank=True)
+    receiver_name = models.CharField(u'收货人姓名', default='', max_length=100, blank=True,null=False)
 
-    country_code = models.CharField(u'country_code', default='SA', max_length=100, blank=True)
+    COUNTRIES = (
+        ("SA", "SA"),
+
+    )
+    country_code = models.CharField(u'country_code',choices=COUNTRIES, default='SA', max_length=10, blank=False,null=False)
 
     CITIES = (
         ("riyadh", "Riyadh"),
@@ -1404,15 +1410,15 @@ class Customer(models.Model):
         ("qatif", "Qatif"),
     )
 
-    city = models.CharField(u'city', choices=CITIES, default='', max_length=100, blank=True)
-    address1 = models.CharField(u'address1', default='', max_length=100, blank=True)
+    city = models.CharField(u'city', choices=CITIES, default='', max_length=20, blank=False,null=False)
+    address1 = models.CharField(u'address1', default='', max_length=100, blank=False,null=False)
     address2 = models.CharField(u'address2', default='', max_length=100, blank=True)
     address3 = models.CharField(u'address3', default='', max_length=100, blank=True)
-    phone_1 = models.CharField(u'phone_1', default='', max_length=100, blank=True)
+    phone_1 = models.CharField(u'phone_1', default='', max_length=100, blank=False,null=False)
     phone_2 = models.CharField(u'phone_1', default='', max_length=100, blank=True)
 
     comments = models.TextField(u'备注', blank=True, null=True)
-    coversation = models.CharField(u'聊天链接', default='', max_length=100, blank=True)
+    coversation = models.CharField(u'聊天链接', default='', max_length=100, blank=False,null=False)
 
     class Meta:
         verbose_name = "客户"
@@ -1420,12 +1426,14 @@ class Customer(models.Model):
 
 
     def __str__(self):
-        return self.name
+        return self.name + "  " + self.phone_1
 
 class CsOrder(models.Model):
 
-    customer = models.ForeignKey(Customer, related_name='customer_cs_order', null=True, on_delete=models.CASCADE,
+    customer = models.ForeignKey(Customer, related_name='customer_cs_order', null=False, on_delete=models.CASCADE,
                                 verbose_name="Customer")
+
+
 
     handles = models.TextField(u'货号',blank=True, null=True)
     discount = models.CharField(u'discount', default='0', max_length=100, blank=True)
@@ -1441,7 +1449,7 @@ class CsOrder(models.Model):
 
     def __str__(self):
         if self.customer:
-            return self.customer
+            return self.customer.name
         else:
             return  ""
 

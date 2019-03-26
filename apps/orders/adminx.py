@@ -3026,20 +3026,21 @@ class Order_HistoryAdmin(object):
 
 @xadmin.sites.register(CsOrder)
 class CsOrderAdmin(object):
+
     def photo(self, obj):
         handles = obj.handles.split()
         lightin_spus = Lightin_SPU.objects.filter(handle__in=handles).distinct()
         img = ''
 
         for lightin_spu in lightin_spus:
+            img += '<br><a>handle: %s</a><br><br>' % (lightin_spu.handle)
 
-            '''
             lightin_skus = lightin_spu.spu_sku.filter(o_sellable__gt=0).distinct()
             skus = lightin_skus.values_list("SKU",   "o_sellable","sku_price", "skuattr",)
             for sku in skus:
                 #img += '<br><a>%s<br>规格: %s<br>库存: %s</a><br>' % ( sku[0], sku[1], str(sku[2]))
-                img += '<br><a>%s   %s  %s    %s</a><br>' % (sku[0],  str(sku[1]),sku[2], sku[3])
-            '''
+                img += '<a>%s   %s  %s    %s</a><br>' % (sku[0],  str(sku[1]),sku[2], sku[3])
+
 
             if lightin_spu.images_dict :
                 images= json.loads(lightin_spu.images_dict).values()
@@ -3064,7 +3065,7 @@ class CsOrderAdmin(object):
             else:
                 img = img + "no photo"
 
-            img += '<br><a>handle: %s</a><br>' % (lightin_spu.handle)
+
 
 
 
@@ -3072,7 +3073,7 @@ class CsOrderAdmin(object):
 
     photo.short_description = "产品图片"
 
-    def cal_subtotal(self, obj):
+    def abs_order(self, obj):
         #遍历草稿表，把所有数量大于0的加起来
 
         img = ""
@@ -3092,6 +3093,8 @@ class CsOrderAdmin(object):
                 subtotal += sku.sku_price *  detail.quantity
                 count += detail.quantity
 
+                image = None
+
                 if sku.image:
                     image = sku.image
                     print("sku 图片")
@@ -3099,23 +3102,26 @@ class CsOrderAdmin(object):
 
                     spu = sku.lightin_spu
                     if spu.images_dict:
-                        image = json.loads(spu.images_dict).values()
-                        if image and len(image) > 0:
+                        images = json.loads(spu.images_dict).values()
 
+                        if images and len(images) > 0:
+                            '''
                             a = "/"
                             image_split = list(image)[0].split(a)
 
                             image_split[4] = '800x800'
                             image = a.join(image_split)
                             print("spu 图片", spu, image)
+                            '''
+                            image = list(images)[0]
+                if image:
+                    img += '<a><img src="%s" width="100px"></a>' % (image)
 
-                img += '<a><img src="%s" width="100px"></a>' % (image)
-
-                img += '<br><a>item %s : %s sets</a><br>' % (sku, detail.quantity)
+                img += '<br><a>%s %s   (%s sets)</a><br>' % (sku, sku.skuattr, detail.quantity)
 
             except Exception as e:
                 print(e)
-                error = "计算出错" + detail
+                error = "计算出错" + detail.lightin_sku.SKU
                 break
 
 
@@ -3133,12 +3139,27 @@ class CsOrderAdmin(object):
         else:
             return  error
 
-    cal_subtotal.short_description = "订单摘要"
+    abs_order.short_description = "订单摘要"
+
+    #客户收件信息摘要
+    def abs_customer(self, obj):
+        content =""
+
+        content += "<span>phone_1  %s<span><br>" % (obj.customer.phone_1)
+        content += "<span>address  %s<span><br>" % (obj.customer.address1)
+
+        #return  mark_safe(content)
+
+        return format_html(content)
 
 
 
-    list_display = ['customer','handles', 'photo', "cal_subtotal" ]
-    list_editable = ["handles", ]
+    abs_customer.short_description = "收件信息摘要"
+
+
+
+    list_display = ['customer','handles', 'photo', "discount", "abs_order","abs_customer", ]
+    list_editable = ["handles","discount", ]
 
     search_fields = []
 
@@ -3146,6 +3167,8 @@ class CsOrderAdmin(object):
     list_filter = ()
 
     actions = ['batch_prepare_draft',]
+    relfield_style = 'fk_ajax'
+
     def batch_prepare_draft(self, request, queryset):
         # 定义actions函数
         #根据货号找到所有有库存的sku，把sku插到草稿表里，供进一步编辑
@@ -3162,7 +3185,7 @@ class CsOrderAdmin(object):
 
         return
 
-    batch_prepare_draft.short_description = "准备草稿"
+    batch_prepare_draft.short_description = "更新草稿"
 
 @xadmin.sites.register(CsOrderDetail)
 class CsOrderDetailAdmin(object):
@@ -3216,3 +3239,16 @@ class CsOrderDetailAdmin(object):
         return obj.lightin_sku.lightin_spu.handle
 
     handle.short_description = "handle"
+
+@xadmin.sites.register(Customer)
+class CustomerAdmin(object):
+    list_display = ['name', 'receiver_name', 'country_code','city','address1', 'address2', "address3",
+                    'city','phone_1', 'phone_2', "comments","coversation",]
+    list_editable = [ ]
+
+    search_fields = []
+
+    ordering = []
+    list_filter = ()
+
+    actions = [ ]
