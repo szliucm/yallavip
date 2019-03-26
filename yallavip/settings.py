@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     #'goods',
     #'trade',
     #'user_operation',
+    'customer',
     'operation',
     'fb',
     'conversations',
