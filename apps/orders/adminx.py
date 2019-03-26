@@ -3047,7 +3047,7 @@ class CsOrderAdmin(object):
                 images= json.loads(lightin_spu.images_dict).values()
 
                 for image in images:
-                    '''
+
                     a = "/"
                     image_split = image.split(a)
 
@@ -3055,7 +3055,7 @@ class CsOrderAdmin(object):
                     photo = a.join(image_split)
                     print("spu 图片", lightin_spu, photo)
                     img = img + '<a><img src="%s" width="100px"></a>' % (photo)
-                    '''
+
                     img = img + '<a><img src="%s" width="100px"></a>' % (image)
 
 
