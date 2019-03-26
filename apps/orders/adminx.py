@@ -3106,14 +3106,14 @@ class CsOrderAdmin(object):
                         images = json.loads(spu.images_dict).values()
 
                         if images and len(images) > 0:
-                            '''
+      
                             a = "/"
                             image_split = list(image)[0].split(a)
 
                             image_split[4] = '800x800'
                             image = a.join(image_split)
                             print("spu 图片", spu, image)
-                            '''
+
                             image = list(images)[0]
                 if image:
                     img += '<a><img src="%s" width="100px"></a>' % (image)
