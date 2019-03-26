@@ -2,7 +2,7 @@ from django.db import models
 from django.utils.html import format_html
 from conversations.models import Conversation
 from prs.models import  Lightin_SPU, Lightin_SKU,Lightin_barcode
-
+from customer.models import  Customer
 
 # Create your models here.
 class Order(models.Model):
