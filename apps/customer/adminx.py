@@ -231,7 +231,7 @@ class CustomerAdmin(object):
     list_display = ['name',"active",'handles', 'photo', "discount", "abs_draft","abs_customer","abs_receiver", "sales"]
     list_editable = ["handles","discount","active", ]
     search_fields = ['name']
-    ordering = []
+    ordering = ["-update_time"]
     list_filter = ("sales","active")
     '''
     list_bookmarks = [{
@@ -297,7 +297,7 @@ class CustomerAdmin(object):
                     print("订单已签收，可以创建新订单")
 
                 else:
-                    print (order.status)
+                    print (ori_order.status)
                     print("订单不是开放状态，不允许创建新订单，也不能修改订单了")
                     continue
 
