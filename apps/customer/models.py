@@ -19,6 +19,7 @@ class Customer(models.Model):
 
     sales = models.CharField(u'Sales', default='', max_length=50, blank=True,null=True)
     active = models.BooleanField(u'活跃客户', default=True, null=False)
+    update_time = models.DateTimeField( auto_now=True, blank=True, verbose_name="更新时间")
 
     class Meta:
         verbose_name = "客户"

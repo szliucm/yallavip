@@ -71,7 +71,7 @@ class CustomerAdmin(object):
             skus = lightin_skus.values_list("SKU",   "o_sellable","lightin_spu__shopify_price", "skuattr",)
             for sku in skus:
                 #img += '<br><a>%s<br>规格: %s<br>库存: %s</a><br>' % ( sku[0], sku[1], str(sku[2]))
-                img += '<a>%s   [%s sets]  [%s SR]<br>%s</a><br>' % (sku[0],  str(sku[1]),sku[2], sku[3])
+                img += '<a>%s   [ %s sets]  [ %s SR]<br>%s</a><br>' % (sku[0],  str(sku[1]),sku[2], sku[3])
 
 
             if lightin_spu.images_dict :
