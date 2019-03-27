@@ -1302,7 +1302,7 @@ class VerifyAdmin(object):
     '''
 
     readonly_fields = ('order', 'order_time',)
-    list_display = ('order','order_time',"stock",'colored_verify_status', \
+    list_display = ('order','order_time',"order_financial_status","stock",'colored_verify_status', \
                     'colored_sms_status',"sms_code",
                     'receiver_city','city','receiver_addr',
 
