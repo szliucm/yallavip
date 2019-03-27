@@ -2,7 +2,7 @@ import  json
 import xadmin
 from django.utils.safestring import mark_safe
 from django.utils.html import format_html
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.utils import timezone as dt
 
 from .models import  *
@@ -12,11 +12,12 @@ from orders.models import  Order, OrderDetail
 @xadmin.sites.register(Customer)
 class CustomerAdmin(object):
     #记录操作日志
-    def deal_log(self, queryset, deal):
+    def deal_log(self, queryset, deal,content):
         for row in queryset:
             DealLog.objects.create(
                 customer=row,
                 deal_action=deal,
+                content = content,
                 deal_staff=str(self.request.user),
                 deal_time=dt.now(),
             )
@@ -74,7 +75,7 @@ class CustomerAdmin(object):
 
             if lightin_spu.images_dict :
                 images= json.loads(lightin_spu.images_dict).values()
-
+                n=0
                 for image in images:
                     '''
                     a = "/"
@@ -86,6 +87,9 @@ class CustomerAdmin(object):
                     img = img + '<a><img src="%s" width="100px"></a>' % (photo)
                     '''
                     img = img + '<a><img src="%s" width="100px"></a>' % (image)
+                    n+=1
+                    if n%4 == 0:
+                        img += "<br>"
 
 
 
@@ -147,7 +151,7 @@ class CustomerAdmin(object):
                 if image:
                     img += '<a><img src="%s" width="100px"></a>' % (image)
 
-                img += '<br><a>%s %s   (%s sets)</a><br>' % (sku, sku.skuattr, draft.quantity)
+                img += '<br><a>%s <br>%s<br>   (%s sets)</a><br>' % (sku, sku.skuattr, draft.quantity)
 
                 print (img)
 
@@ -173,8 +177,25 @@ class CustomerAdmin(object):
 
     abs_order.short_description = "草稿摘要"
 
-    #客户收件信息摘要
+    # 客户信息摘要
     def abs_customer(self, obj):
+        orders = Order.objects.filter(customer=obj)
+        abs = dict (orders.values_list('status').annotate(Count('id')))
+        content = ""
+
+        content += "<span>开放  %s<span><br>" % (abs.get("open",0))
+        content += "<span>在途  %s<span><br>" % (abs.get("transit", 0))
+        content += "<span>签收  %s<span><br>" % (abs.get("delivered", 0))
+        content += "<span>拒签  %s<span><br>" % (abs.get("refused", 0))
+
+
+
+        return format_html(content)
+
+    abs_customer.short_description = "客户信息"
+
+    #收件信息摘要
+    def abs_receiver(self, obj):
         content =""
 
         content += "<span>phone_1  %s<span><br>" % (obj.receiver.phone_1)
@@ -186,10 +207,10 @@ class CustomerAdmin(object):
 
 
 
-    abs_customer.short_description = "收件人信息"
+    abs_receiver.short_description = "收件人信息"
 
 
-    list_display = ['name','handles', 'photo', "discount", "abs_order","abs_customer", ]
+    list_display = ['name','handles', 'photo', "discount", "abs_order","abs_customer","abs_receiver", ]
     list_editable = ["handles","discount", ]
     search_fields = ['name']
     ordering = []
@@ -219,7 +240,7 @@ class CustomerAdmin(object):
             row.sales = str(self.request.user)
             row.save()
             #记录操作日志
-            deal_log(self, queryset, "更新草稿")
+            self.deal_log( queryset, "更新草稿","锁定sku %s个"%(len(lightin_skus)))
 
 
 
@@ -315,14 +336,14 @@ class CustomerAdmin(object):
                 break
 
             # 最后的操作员作为销售
-            row.sales = str(self.request.user)
-            row.save()
+            customer.sales = str(self.request.user)
+            customer.save()
             # 记录操作日志
-            deal_log(self, queryset, "提交草稿")
+            self.deal_log(queryset, "提交订单","order_no")
 
         return
 
-    batch_submit_draft.short_description = "提交草稿"
+    batch_submit_draft.short_description = "提交订单"
 
 @xadmin.sites.register(Draft)
 class DraftAdmin(object):
@@ -380,7 +401,7 @@ class DraftAdmin(object):
 @xadmin.sites.register(Receiver)
 class ReceiverAdmin(object):
     list_display = ['name', 'customer', 'country_code','city','address1', 'address2', "address3",
-                    'city','phone_1', 'phone_2', "comments","coversation",]
+                    'city','phone_1', 'phone_2', "comments",]
     list_editable = [ ]
 
     search_fields = []
@@ -404,7 +425,7 @@ class ConversationAdmin(object):
 
 @xadmin.sites.register(DealLog)
 class DealLogAdmin(object):
-    list_display = ['deal_action', 'customer', 'deal_staff','deal_time',]
+    list_display = ['deal_action', 'customer', "content", 'deal_staff','deal_time',]
     list_editable = [ ]
 
     search_fields = []
