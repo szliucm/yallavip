@@ -158,7 +158,9 @@ class CustomerAdmin(object):
                 #print (sku, subtotal, count)
                 image = None
 
-                if sku.image:
+                if sku.image_marked:
+                    image = sku.image_marked
+                elif sku.image:
                     image = sku.image
                  #   print("sku 图片")
                 else:
@@ -282,7 +284,7 @@ class CustomerAdmin(object):
                 if lightin_sku.comboed ==True or lightin_sku.SKU.find("579815")>=0 :
                     price = lightin_sku.sku_price
                 else:
-                    price = lightin_sku.lightin_spu.shopify_price,
+                    price = lightin_sku.lightin_spu.shopify_price
 
 
                 obj, created = Draft.objects.get_or_create(
