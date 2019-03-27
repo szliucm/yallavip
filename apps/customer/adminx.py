@@ -108,6 +108,13 @@ class CustomerAdmin(object):
     photo.short_description = "产品图片"
 
     def abs_order(self, obj):
+        #遍历订单表
+        obj.customer_order.filter()
+
+
+    abs_order.short_description = "订单摘要"
+
+    def abs_draft(self, obj):
         #遍历草稿表，把所有数量大于0的加起来
 
         img = ""
@@ -151,7 +158,7 @@ class CustomerAdmin(object):
                 if image:
                     img += '<a><img src="%s" width="100px"></a>' % (image)
 
-                img += '<br><a>%s <br>%s<br>   (%s sets)</a><br>' % (sku, sku.skuattr, draft.quantity)
+                img += '<br><a>%s <br>%s<br>%s SR<br>%s sets<br>subtotal %s SR</a><br>' % (sku, sku.skuattr,draft.price, draft.quantity,int(float(draft.price) *  draft.quantity))
 
                 print (img)
 
@@ -175,7 +182,8 @@ class CustomerAdmin(object):
         else:
             return  error
 
-    abs_order.short_description = "草稿摘要"
+    abs_draft.short_description = "草稿摘要"
+
 
     # 客户信息摘要
     def abs_customer(self, obj):
@@ -197,11 +205,20 @@ class CustomerAdmin(object):
     #收件信息摘要
     def abs_receiver(self, obj):
         content =""
+        #如果有活跃订单号，就显示订单号
+        order = obj.customer_order.filter(status="open").order_by("-order_time")
+        if order:
+            content += "<span>order_no  %s<span><br><br>" % (order[0].order_no)
 
-        content += "<span>phone_1  %s<span><br>" % (obj.receiver.phone_1)
+        content += "<span>name  %s<span><br>" % (obj.receiver.name)
+        content += "<span>country_code  %s<span><br>" % (obj.receiver.country_code)
+        content += "<span>city  %s<span><br>" % (obj.receiver.city)
         content += "<span>address  %s<span><br>" % (obj.receiver.address1)
-
-        #return  mark_safe(content)
+        content += "<span>address2  %s<span><br>" % (obj.receiver.address2)
+        content += "<span>address3  %s<span><br>" % (obj.receiver.address3)
+        content += "<span>phone_1  %s<span><br>" % (obj.receiver.phone_1)
+        content += "<span>phone_2  %s<span><br>" % (obj.receiver.phone_2)
+        content += "<span>comments  %s<span><br>" % (obj.receiver.comments)
 
         return format_html(content)
 
@@ -210,11 +227,20 @@ class CustomerAdmin(object):
     abs_receiver.short_description = "收件人信息"
 
 
-    list_display = ['name','handles', 'photo', "discount", "abs_order","abs_customer","abs_receiver", ]
-    list_editable = ["handles","discount", ]
+    list_display = ['name',"active",'handles', 'photo', "discount", "abs_draft","abs_customer","abs_receiver", "sales"]
+    list_editable = ["handles","discount","active", ]
     search_fields = ['name']
     ordering = []
-    list_filter = ()
+    list_filter = ("sales","active")
+    '''
+    list_bookmarks = [{
+        "title": "只看自己的客户",
+        "query": {"sales": self.request.user},
+        "order": ("-name",),
+        #"cols": ('user_name', 'user_email', 'user_mobile'),
+    }]
+    '''
+
 
     actions = ['batch_prepare_draft','batch_submit_draft',]
     relfield_style = 'fk_ajax'

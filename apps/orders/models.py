@@ -484,6 +484,7 @@ class Verify(models.Model):
     phone_3 = models.CharField(u'电话_3', max_length=20, null=True, blank=True)
 
     sms_status = models.CharField(choices=SMS_STATUS, max_length=20, default='NOSEND', verbose_name="验证码状态")
+    sms_code = models.CharField( max_length=20, default='', verbose_name="回收的验证码")
 
     error_money = models.BooleanField(u'价格', default=None, null=True)
     error_contact = models.BooleanField(u'电话', default=None, null=True)

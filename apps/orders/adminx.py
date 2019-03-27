@@ -1302,8 +1302,8 @@ class VerifyAdmin(object):
     '''
 
     readonly_fields = ('order', 'order_time',)
-    list_display = ('order','order_time',"stock", 'order_financial_status','colored_verify_status', \
-                    'colored_sms_status',
+    list_display = ('order','order_time',"stock",'colored_verify_status', \
+                    'colored_sms_status',"sms_code",
                     'receiver_city','city','receiver_addr',
 
                     'receiver_phone','phone_1', 'phone_2','warhouse_comment', 'verify_comments','verify_time','wait_status','cs_reply',\
@@ -1312,7 +1312,7 @@ class VerifyAdmin(object):
     #'cancel', 'error_money', 'error_contact', \    'error_address', 'error_cod', 'error_note',
 
     ordering = ['-order__order_time']
-    list_editable = ['phone_1', 'phone_2','verify_comments','city',]
+    list_editable = ['phone_1', 'phone_2','verify_comments','city',"sms_code",]
     search_fields = ['order__order_no','verify_comments','cs_reply',"phone_1", "order__receiver_city",]
     list_filter = ('order__status','order__financial_status','order__fulfillment_status',"order__wms_status", 'verify_status', 'sms_status', 'error_contact',"city",)
 
