@@ -2010,8 +2010,8 @@ def mapping_order_lightin(order):
             orderdetail_lightin_list.append(orderdetail_lightin)
 
             # 更新barcode占用
-            barcode = inventory[1]
-            barcode.o_reserved = F("o_reserved") + inventory[2]
+            #barcode = inventory[1]
+            #barcode.o_reserved = F("o_reserved") + inventory[2]
 
         OrderDetail_lightin.objects.bulk_create(orderdetail_lightin_list)
     else:
@@ -2112,7 +2112,7 @@ def update_barcode_stock(order_list, action):
     barcode_quantity = {}
     barcode_list = []
 
-    order_barcodes = OrderDetail_lightin.objects.filter(order__pk__in=order_list,
+    order_barcodes = OrderDetail_lightin.objects.filter(order__in=order_list,
                                                         ).values_list('barcode').annotate(Sum('quantity'))
 
     for order_barcode in order_barcodes:
