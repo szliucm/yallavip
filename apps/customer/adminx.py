@@ -61,6 +61,7 @@ class CustomerAdmin(object):
     def photo(self, obj):
         handles = obj.handles.split()
         lightin_spus = Lightin_SPU.objects.filter(handle__in=handles).distinct()
+
         img = ''
 
         for lightin_spu in lightin_spus:
@@ -99,9 +100,30 @@ class CustomerAdmin(object):
 
             else:
                 img = img + "no photo"
+        lightin_skus = Lightin_SKU.objects.filter(SKU__in=handles).distinct()
+        print(lightin_skus)
+        for lightin_sku in lightin_skus:
+            #            img += '<br><a>sku: %s</a><br><br>' % (lightin_sku.SKU)
+            #print (lightin_sku, lightin_sku.SKU,  lightin_sku.o_sellable, lightin_sku.lightin_spu.shopify_price, lightin_sku.skuattr)
+            #print ("what's wrong",lightin_sku, lightin_sku.SKU,  lightin_sku.skuattr)
+            #continue
 
+            img += '<br><a>%s   [ %s sets]  [ %s SR]<br>%s</a><br>' % (lightin_sku.SKU,  lightin_sku.o_sellable, lightin_sku.lightin_spu.shopify_price, lightin_sku.skuattr)
+            #print(img)
+            image = None
+            if lightin_sku.image:
+                image = lightin_sku.image
+                print("sku 图片")
+            else:
 
+                spu = lightin_sku.lightin_spu
+                # images = json.loads(Lightin_SPU.objects.get(spu_sku__SKU= item.SKU).images)
+                if spu.images_dict:
+                    images = json.loads(spu.images_dict).values()
+                    image = list(images)[0]
 
+            if image:
+                img += '<a><img src="%s" width="100px"></a>' % (image)
 
 
         return mark_safe(img)
@@ -134,12 +156,12 @@ class CustomerAdmin(object):
                 sku = draft.lightin_sku
                 subtotal += float(draft.price) *  draft.quantity
                 count += draft.quantity
-                print (sku, subtotal, count)
+                #print (sku, subtotal, count)
                 image = None
 
                 if sku.image:
                     image = sku.image
-                    print("sku 图片")
+                 #   print("sku 图片")
                 else:
 
                     spu = sku.lightin_spu
@@ -161,7 +183,7 @@ class CustomerAdmin(object):
 
                 img += '<br><a>%s <br>%s<br>%s SR<br>%s sets<br>subtotal %s SR</a><br>' % (sku, sku.skuattr,draft.price, draft.quantity,int(float(draft.price) *  draft.quantity))
 
-                print (img)
+               # print (img)
 
             except Exception as e:
                 print(e)
@@ -255,7 +277,7 @@ class CustomerAdmin(object):
         #如果对应的sku已经有了，就什么也不做
         for row in queryset:
             handles = row.handles.split()
-            lightin_skus = Lightin_SKU.objects.filter(lightin_spu__handle__in = handles, o_sellable__gt=0)
+            lightin_skus = Lightin_SKU.objects.filter(Q(lightin_spu__handle__in = handles) | Q(SKU__in=handles), o_sellable__gt=0)
 
             for lightin_sku in lightin_skus:
                 obj, created = Draft.objects.get_or_create(
