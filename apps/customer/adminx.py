@@ -287,11 +287,12 @@ class CustomerAdmin(object):
                     price = lightin_sku.lightin_spu.shopify_price
 
 
-                obj, created = Draft.objects.get_or_create(
+                obj, created = Draft.objects.update_or_create(
                     customer=row,
                     lightin_sku = lightin_sku,
                     price = price,
-                    defaults={'quantity': 0})
+                #    defaults={'quantity': 0}
+                )
 
             #最后的操作员作为销售
             row.sales = str(self.request.user)
