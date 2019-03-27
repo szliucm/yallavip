@@ -69,7 +69,7 @@ class Receiver(models.Model):
         verbose_name_plural = verbose_name
 
     def __str__(self):
-        return self.name +"   "+self.phone_1
+        return self.name +"   "+self.phone_1 + "  " + self.address1
 
 class Conversation(models.Model):
     customer = models.ForeignKey(Customer, related_name='customer_conversation', null=False, on_delete=models.CASCADE,

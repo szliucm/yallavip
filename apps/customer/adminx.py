@@ -245,8 +245,9 @@ class CustomerAdmin(object):
 
     actions = ['batch_prepare_draft','batch_submit_draft',]
     relfield_style = 'fk_ajax'
-    inlines = [ ConversationInline, ReceiverInline ]
-    #,
+    inlines = [ ConversationInline ]
+
+    #,, ReceiverInline
 
     def batch_prepare_draft(self, request, queryset):
         # 定义actions函数
