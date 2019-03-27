@@ -2788,7 +2788,7 @@ def cal_reserved_barcode(overtime=24):
     Lightin_barcode.objects.update(o_reserved = 0)
     for barcode in barcode_quantity:
         try:
-            lightin_barcode = Lightin_barcode.objects.get(barcode=barcode)
+            lightin_barcode = Lightin_barcode.objects.get(pk=barcode)
             lightin_barcode.o_reserved = barcode_quantity[barcode]
             lightin_barcode.o_sellable = lightin_barcode.o_quantity - barcode_quantity[barcode]
 
