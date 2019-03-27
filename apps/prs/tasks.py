@@ -3811,7 +3811,7 @@ def auto_smscode():
     # 检验城市是否在派送范围
     # 更新城市名到标准
     mysql = 'update orders_verify l, orders_order o set l.city = trim( lower(o.receiver_city)) where l.order_id = o.id and trim( lower(o.receiver_city)) in ' \
-            '("riyadh","jeddah","madinah", "makkah","mecca","dammam","al khobar","hofuf","jubail","dhahran","tabuk","buraydah","al hassa","jizan","jazan","qatif")'
+            '("riyadh","jeddah","madinah","medina", "makkah","mecca","dammam","al khobar","hofuf","jubail","dhahran","tabuk","buraydah","al hassa","jizan","jazan","qatif")'
     my_custom_sql(mysql)
 
     mysql = 'update orders_verify l set l.city = "jazan" where l.city ="jizan"'

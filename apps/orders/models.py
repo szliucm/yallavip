@@ -530,6 +530,8 @@ class Verify(models.Model):
         ("riyadh", "Riyadh"),
         ("jeddah", "Jeddah"),
         ("madinah", "Madinah"),
+        ("Medina", "Madinah"),
+
         ("makkah", "Makkah"),
         ("mecca", "Makkah"),
         ("dammam", "Dammam"),
