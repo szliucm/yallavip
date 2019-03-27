@@ -67,7 +67,8 @@ class CustomerAdmin(object):
             img += '<br><a>handle: %s</a><br><br>' % (lightin_spu.handle)
 
             lightin_skus = lightin_spu.spu_sku.filter(o_sellable__gt=0).distinct()
-            skus = lightin_skus.values_list("SKU",   "o_sellable","sku_price", "skuattr",)
+
+            skus = lightin_skus.values_list("SKU",   "o_sellable","lightin_spu__shopify_price", "skuattr",)
             for sku in skus:
                 #img += '<br><a>%s<br>规格: %s<br>库存: %s</a><br>' % ( sku[0], sku[1], str(sku[2]))
                 img += '<a>%s   %s  %s    %s</a><br>' % (sku[0],  str(sku[1]),sku[2], sku[3])
@@ -259,7 +260,7 @@ class CustomerAdmin(object):
                 obj, created = Draft.objects.get_or_create(
                     customer=row,
                     lightin_sku = lightin_sku,
-                    price = lightin_sku.sku_price,
+                    price = lightin_sku.lightin_spu.shopify_price,
                     defaults={'quantity': 0})
 
             #最后的操作员作为销售

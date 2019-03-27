@@ -2633,6 +2633,15 @@ def cal_reserved(overtime=24):
         if draft_sku[0] not in sku_list:
             sku_list.append(draft_sku[0])
 
+    #计算自己的草稿
+    draft_skus = Draft.objects.filter(
+                                          ).values_list('lightin_sku__SKU').annotate(Sum('quantity'))
+    #draft__status = "open",draft__created_at__gt = dt.now() - dt.timedelta(hours=overtime),
+    for draft_sku in draft_skus:
+        sku_reserved_quantity[order_sku[0]] = sku_reserved_quantity.get(draft_sku[0], 0) + draft_sku[1]
+
+        if draft_sku[0] not in sku_list:
+            sku_list.append(draft_sku[0])
 
     print("加上24小时内的草稿 有%s个sku需要更新" % (len(sku_reserved_quantity)))
 
