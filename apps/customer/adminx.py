@@ -107,20 +107,13 @@ class CustomerAdmin(object):
             #print (lightin_sku, lightin_sku.SKU,  lightin_sku.o_sellable, lightin_sku.lightin_spu.shopify_price, lightin_sku.skuattr)
             #print ("what's wrong",lightin_sku, lightin_sku.SKU,  lightin_sku.skuattr)
             #continue
-
-            img += '<br><a>%s   [ %s sets]  [ %s SR]<br>%s</a><br>' % (lightin_sku.SKU,  lightin_sku.o_sellable, lightin_sku.lightin_spu.shopify_price, lightin_sku.skuattr)
-            #print(img)
             image = None
-            if lightin_sku.image:
-                image = lightin_sku.image
-                print("sku 图片")
-            else:
+            if lightin_sku.comboed:
+                img += '<br><a>%s   [ %s sets]  [ %s SR]<br>%s</a><br>' % (lightin_sku.SKU,  lightin_sku.o_sellable, lightin_sku.sku_price)
+                #print(img)
 
-                spu = lightin_sku.lightin_spu
-                # images = json.loads(Lightin_SPU.objects.get(spu_sku__SKU= item.SKU).images)
-                if spu.images_dict:
-                    images = json.loads(spu.images_dict).values()
-                    image = list(images)[0]
+                if lightin_sku.image_marked:
+                    image = lightin_sku.image_marked
 
             if image:
                 img += '<a><img src="%s" width="100px"></a>' % (image)
