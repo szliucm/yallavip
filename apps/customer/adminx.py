@@ -109,7 +109,7 @@ class CustomerAdmin(object):
             #continue
             image = None
             if lightin_sku.comboed:
-                img += '<br><a>%s   [ %s sets]  [ %s SR]<br>%s</a><br>' % (lightin_sku.SKU,  lightin_sku.o_sellable, lightin_sku.sku_price)
+                img += '<br><a>%s   [ %s sets]  [ %s SR]</a><br>' % (lightin_sku.SKU,  lightin_sku.o_sellable, lightin_sku.sku_price)
                 #print(img)
 
                 if lightin_sku.image_marked:
