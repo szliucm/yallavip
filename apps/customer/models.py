@@ -18,7 +18,7 @@ class Customer(models.Model):
     order_amount = models.IntegerField(u'COD金额', default=0, blank=True, null=True)
 
     sales = models.CharField(u'Sales', default='', max_length=50, blank=True,null=True)
-    active = models.BooleanField(u'活跃客户', default=True, null=True)
+    active = models.BooleanField(u'活跃客户', default=True, null=False)
 
     class Meta:
         verbose_name = "客户"

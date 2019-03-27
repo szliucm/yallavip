@@ -731,7 +731,7 @@ class Lightin_SKUResource(resources.ModelResource):
         skip_unchanged = True
         report_skipped = True
         import_id_fields = ('SKU',)
-        fields = ("SPU", "SKU","barcode","quantity", "vendor_sale_price","vendor_supply_price","weight", "length","width","height","skuattr",)
+        fields = ("SPU", "SKU","barcode","quantity", "vendor_sale_price","vendor_supply_price","weight", "length","width","height","skuattr","image",)
         # exclude = ()
 
 
@@ -763,7 +763,7 @@ class Lightin_SKUAdmin(object):
     photo.short_description = "spu图片"
 
     def sku_photo(self, obj):
-        if obj.limage is not None and len(obj.limage)>0 :
+        if obj.image is not None and len(obj.image)>0 :
            img = '<a><img src="%s" width="384px"></a>' % (obj.image)
         else:
             img = "no photo"
