@@ -2,12 +2,25 @@ import  json
 import xadmin
 from django.utils.safestring import mark_safe
 from django.utils.html import format_html
+from django.db.models import Q
+from django.utils import timezone as dt
 
 from .models import  *
 from prs.models import  Lightin_SPU,Lightin_SKU
+from orders.models import  Order, OrderDetail
 
 @xadmin.sites.register(Customer)
 class CustomerAdmin(object):
+    #记录操作日志
+    def deal_log(self, queryset, deal):
+        for row in queryset:
+            DealLog.objects.create(
+                customer=row,
+                deal_action=deal,
+                deal_staff=str(self.request.user),
+                deal_time=dt.now(),
+            )
+
     class ReceiverInline(object):
         model = Receiver
         extra = 1
@@ -182,7 +195,7 @@ class CustomerAdmin(object):
     ordering = []
     list_filter = ()
 
-    actions = ['batch_prepare_draft',]
+    actions = ['batch_prepare_draft','batch_submit_draft',]
     relfield_style = 'fk_ajax'
     inlines = [ ConversationInline ]
     #ReceiverInline,
@@ -202,6 +215,14 @@ class CustomerAdmin(object):
                     price = lightin_sku.sku_price,
                     defaults={'quantity': 0})
 
+            #最后的操作员作为销售
+            row.sales = str(self.request.user)
+            row.save()
+            #记录操作日志
+            deal_log(self, queryset, "更新草稿")
+
+
+
         return
 
     batch_prepare_draft.short_description = "更新草稿"
@@ -216,32 +237,88 @@ class CustomerAdmin(object):
         #自动把COD和VAT加到总价里
 
         for customer in queryset:
-            order = customer.customer_order.filter(~Q(o_status="cancel").order_by("-order_time")).first()
-            if order:
-                if order.o_status == "send":
-                    print("已经发货还未签收，不允许创建新订单，也不能修改订单了")
+            #先检查客户已有订单状态
+            ori_order = customer.customer_order.filter(~Q(status="cancel")).order_by("-order_time").first()
+            if ori_order:
+
+                if ori_order.status == "open":
+                    print("还没有发货，先把订单关闭，重新创建新订单")
+                    ori_order.status = "cancel"
+                    ori_order.save()
+                elif ori_order.status == "delivered":
+                    print("订单已签收，可以创建新订单")
+
+                else:
+                    print (order.status)
+                    print("订单不是开放状态，不允许创建新订单，也不能修改订单了")
                     continue
-                elif order.o_status == "open":
-                    print("还没有发货，先把订单删除，重新创建新订单")
-                    order.delete()
+
+            #取最大订单号作为新订单号
+            order_prefix = "yalla_"
+            order = Order.objects.filter(order_no__startswith=order_prefix).last()
+            if order:
+                order_num = int(order.order_no[6:]) + 1
+            else:
+                order_num = 1
+
+            order_no = order_prefix + str(order_num).zfill(5)
+
+
 
             #创建新订单
-            obj, created = Draft.objects.get_or_create(
-                customer=row,
-                lightin_sku=lightin_sku,
-                price=lightin_sku.sku_price,
-                defaults={'quantity': 0})
+            receiver = customer.receiver
+            order = Order.objects.create(
+                customer=customer,
 
+                status="open",
+                financial_status="paid",
+                order_no = order_no,
+                receiver_name= receiver.name,
+                receiver_addr1= receiver.address1,
+                receiver_addr2= receiver.address2,
+                receiver_city =  receiver.get_city_display(),
+                receiver_country =  receiver.country_code,
+                receiver_phone =  receiver.phone_1,
+                receiver_phone_2 = receiver.phone_2,
+                order_amount=customer.order_amount,
+                order_time = dt.now(),
+            )
+            if order:
+                drafts = customer.customer_draft.filter(quantity__gt=0)
+                orderdetail_list = []
+                subtotal = 0
+                for draft in drafts:
+                    subtotal += float(draft.price) * draft.quantity
 
-            handles = row.handles.split()
-            lightin_skus = Lightin_SKU.objects.filter(lightin_spu__handle__in = handles, o_sellable__gt=0)
+                    orderdetail = OrderDetail(
+                        order=order,
+                        sku=draft.lightin_sku.SKU,
+                        product_quantity=draft.quantity,
+                        price=draft.price,
+                    )
+                    orderdetail_list.append(orderdetail)
 
-            for lightin_sku in lightin_skus:
-                obj, created = Draft.objects.get_or_create(
-                    customer=row,
-                    lightin_sku = lightin_sku,
-                    price = lightin_sku.sku_price,
-                    defaults={'quantity': 0})
+                orderdetails = OrderDetail.objects.bulk_create(orderdetail_list)
+                if not orderdetails:
+                    print("创建订单明细出错")
+                    order.status = "cancel"
+                    break
+                else:
+                    #更新总金额
+                    tax = subtotal * 0.05
+                    COD = 20
+                    order.order_amount = int(subtotal + COD + tax - float(customer.discount))
+
+                order.save()
+            else:
+                print("创建订单出错")
+                break
+
+            # 最后的操作员作为销售
+            row.sales = str(self.request.user)
+            row.save()
+            # 记录操作日志
+            deal_log(self, queryset, "提交草稿")
 
         return
 
@@ -321,6 +398,18 @@ class ConversationAdmin(object):
     search_fields = []
 
     ordering = []
+    list_filter = ()
+
+    actions = [ ]
+
+@xadmin.sites.register(DealLog)
+class DealLogAdmin(object):
+    list_display = ['deal_action', 'customer', 'deal_staff','deal_time',]
+    list_editable = [ ]
+
+    search_fields = []
+
+    ordering = ["-deal_time"]
     list_filter = ()
 
     actions = [ ]

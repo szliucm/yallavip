@@ -6,9 +6,9 @@ from customer.models import  Customer
 
 # Create your models here.
 class Order(models.Model):
+
     #新的以客户为中心的模型
-    #customer = models.ForeignKey(Customer, related_name='customer_order', null=False, on_delete=models.CASCADE,
-     #                            verbose_name="Customer")
+    customer = models.ForeignKey(Customer, related_name='customer_order', null=False, on_delete=models.CASCADE,verbose_name="Customer")
 
     LOGISTIC_STATUS = (
         ("ARRANGE CRRGOS ON WAREHOUSE", "ARRANGE CRRGOS ON WAREHOUSE"),
@@ -159,7 +159,7 @@ class Order(models.Model):
     inventory_status = property(cal_inventory_status)
 
 
-    o_status = models.CharField(u'oms_订单状态', max_length=30, default='', blank=True)
+    #o_status = models.CharField(u'oms_订单状态', max_length=30, default='', blank=True)
 
     #shopify 订单状态
 
@@ -200,6 +200,7 @@ class Order(models.Model):
     receiver_city = models.CharField(u'收货人城市', default='', max_length=500, null=True,blank=True)
     receiver_country = models.CharField(u'收货人国家', default='', max_length=500, null=True,blank=True)
     receiver_phone = models.CharField(u'收货人电话', default='', max_length=500, null=True,blank=True)
+    receiver_phone_2 = models.CharField(u'收货人电话_2', default='', max_length=500, null=True, blank=True)
 
     package_no = models.CharField(u'包裹号', default='', max_length=100, blank=True)
     logistic_no = models.CharField(u'物流追踪号', default='', max_length=100, blank=True)
@@ -528,6 +529,9 @@ class Verify(models.Model):
         ("None", "暂不支持"),
         ("riyadh", "Riyadh"),
         ("jeddah", "Jeddah"),
+        ("madinah", "Madinah"),
+        ("makkah", "Makkah"),
+        ("mecca", "Makkah"),
         ("dammam", "Dammam"),
         ("al khobar", "Al Khobar"),
         ("hofuf", "Hofuf"),

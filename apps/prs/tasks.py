@@ -16,9 +16,11 @@ from orders.models import Order, OrderDetail, OrderDetail_lightin,Verify,Sms
 
 from shop.models import ProductCategoryMypage
 from shop.models import Shop, ShopifyProduct, ShopifyVariant, ShopifyImage, ShopifyOptions
+from customer.models import  Draft
 
 from .models import *
 from .shop_action import sync_shop
+
 
 my_app_id = "562741177444068"
 my_app_secret = "e6df363351fb5ce4b7f0080adad08a4d"
@@ -1949,6 +1951,8 @@ def mapping_orders_lightin():
 
 
 def mapping_order_lightin(order):
+    from django.db.models import F
+
     # 先把自己可能占用的库存释放
     OrderDetail_lightin.objects.filter(order=order).delete()
 
@@ -2005,6 +2009,10 @@ def mapping_order_lightin(order):
             )
             orderdetail_lightin_list.append(orderdetail_lightin)
 
+            # 更新barcode占用
+            barcode = inventory[1]
+            barcode.o_reserved = F("o_reserved") + inventory[2]
+
         OrderDetail_lightin.objects.bulk_create(orderdetail_lightin_list)
     else:
         print("映射不成功", error)
@@ -2049,6 +2057,8 @@ def get_barcodes(sku, quantity, price):
         error = sku.SKU + "  缺货"
         return None, error
     else:
+
+
         return inventory_list, ""
 
 
@@ -2102,7 +2112,7 @@ def update_barcode_stock(order_list, action):
     barcode_quantity = {}
     barcode_list = []
 
-    order_barcodes = OrderDetail_lightin.objects.filter(order__in=order_list,
+    order_barcodes = OrderDetail_lightin.objects.filter(order__pk__in=order_list,
                                                         ).values_list('barcode').annotate(Sum('quantity'))
 
     for order_barcode in order_barcodes:
@@ -2774,13 +2784,15 @@ def cal_reserved_barcode(overtime=24):
 
     print("有%s个lightin_barcode需要更新" % (len(barcode_quantity)))
 
+    #先重置所有的reserved
+    Lightin_barcode.objects.update(o_reserved = 0)
     for barcode in barcode_quantity:
         try:
             lightin_barcode = Lightin_barcode.objects.get(barcode=barcode)
             lightin_barcode.o_reserved = barcode_quantity[barcode]
             lightin_barcode.o_sellable = lightin_barcode.o_quantity - barcode_quantity[barcode]
 
-            # lightin_barcode.save()
+            lightin_barcode.save()
 
             print(lightin_barcode, lightin_barcode.o_quantity, lightin_barcode.o_reserved, lightin_barcode.o_sellable)
 
@@ -3799,7 +3811,7 @@ def auto_smscode():
     # 检验城市是否在派送范围
     # 更新城市名到标准
     mysql = 'update orders_verify l, orders_order o set l.city = trim( lower(o.receiver_city)) where l.order_id = o.id and trim( lower(o.receiver_city)) in ' \
-            '("riyadh","jeddah","dammam","al khobar","hofuf","jubail","dhahran","tabuk","buraydah","al hassa","jizan","jazan","qatif")'
+            '("riyadh","jeddah","madinah", "makkah","mecca","dammam","al khobar","hofuf","jubail","dhahran","tabuk","buraydah","al hassa","jizan","jazan","qatif")'
     my_custom_sql(mysql)
 
     mysql = 'update orders_verify l set l.city = "jazan" where l.city ="jizan"'
@@ -3807,7 +3819,7 @@ def auto_smscode():
     my_custom_sql(mysql)
 
     #不在派送范围的直接标记问题单
-    verify_orders_outrang = verify_orders.filter(city ="None").update(verify_status='OUTRANGE',verify_comments ="out of range")
+    verify_orders_outrang = verify_orders.filter(city ="None").update(verify_comments ="out of range")
 
 
     #验证通过的，这里只考虑了一种情况：城市在派送范围内
@@ -3880,6 +3892,49 @@ def auto_smscode():
     return
 
 
+@shared_task
+def fulfill_orders():
+    orders = Order.objects.filter(fulfillment_status__isnull=True,
+                                  status="open",
+                                  verify__verify_status="SUCCESS",
+                                  verify__sms_status="CHECKED",
+                                  wms_status__in=["", "F"])
+    print("共有%s个订单待发货" % (orders.count()))
+    order_list = []
+    for order in orders:
+        #if order.stock in ["充足", "紧张"]:
+        #只有所有sku可售库存大于等于零，才发货，避免库存争夺
+
+        if order.stock in ["充足","紧张"]:
+            print("准备发货", order)
+            error = mapping_order_lightin(order)
+            if error == "":
+                result = fulfill_order_lightin(order)
+                if result:
+                    # 发货成功的列表
+                    order_list.append(order.pk)
+
+
+        else:
+            print ("库存不足")
+
+    # 提交仓库准备发货成功的，要更新本地库存
+    update_barcode_stock(order_list, "W")
+    # 清空发货成功的订单对应的草稿
+    clean_draft(order_list)
+
+def clean_draft(order_list):
+
+    customer_list = Order.objects.filter(pk__in=order_list).values_list("customer",flat=True)
+    Draft.objects.filter(customer__in=customer_list).delete()
+
+    '''
+    customer.discount = 0 
+    customer.order_amount = 0
+    customer.handles = ""
+    customer.sales = ""
+    customer.save()
+    '''
 
 
 # 更新相册对应的主页外键
@@ -3893,3 +3948,5 @@ from django.db import connection, transaction
     cursor.execute(sql)
     transaction.commit()
 '''
+
+

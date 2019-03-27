@@ -3,6 +3,8 @@ from django.db import models
 from prs.models import  Lightin_SKU
 
 # Create your models here.
+
+
 class Customer(models.Model):
     name = models.CharField(u'客户姓名', default='', max_length=100, blank=False,null=False)
 
@@ -14,6 +16,7 @@ class Customer(models.Model):
 
     discount = models.CharField(u'discount', default='0', max_length=100, blank=True)
     order_amount = models.IntegerField(u'COD金额', default=0, blank=True, null=True)
+
     sales = models.CharField(u'Sales', default='', max_length=50, blank=True,null=True)
 
     class Meta:
@@ -101,3 +104,18 @@ class Draft(models.Model):
 
     def __str__(self):
         return self.lightin_sku.SKU
+
+class DealLog(models.Model):
+
+    customer = models.ForeignKey(Customer, related_name='customer_deallog', null=False, on_delete=models.CASCADE,
+                                 verbose_name="Customer")
+    deal_action = models.CharField(u'操作', default='', max_length=100, blank=False,null=False)
+    deal_staff = models.CharField(u'操作员', default='', max_length=50, blank=True,null=True)
+    deal_time = models.DateTimeField(u'操作时间', auto_now=True, null=True, blank=True)
+
+    class Meta:
+        verbose_name = "操作日志"
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.deal_staff
