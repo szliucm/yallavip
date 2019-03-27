@@ -273,10 +273,16 @@ class CustomerAdmin(object):
             lightin_skus = Lightin_SKU.objects.filter(Q(lightin_spu__handle__in = handles) | Q(SKU__in=handles), o_sellable__gt=0)
 
             for lightin_sku in lightin_skus:
+                if lightin_sku.comboed ==True:
+                    price = lightin_sku.sku_price
+                else:
+                    price = lightin_sku.lightin_spu.shopify_price,
+
+
                 obj, created = Draft.objects.get_or_create(
                     customer=row,
                     lightin_sku = lightin_sku,
-                    price = lightin_sku.lightin_spu.shopify_price,
+                    price = price,
                     defaults={'quantity': 0})
 
             #最后的操作员作为销售
