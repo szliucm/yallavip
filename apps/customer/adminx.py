@@ -108,12 +108,18 @@ class CustomerAdmin(object):
             #print ("what's wrong",lightin_sku, lightin_sku.SKU,  lightin_sku.skuattr)
             #continue
             image = None
-            if lightin_sku.comboed:
-                img += '<br><a>%s   [ %s sets]  [ %s SR]</a><br>' % (lightin_sku.SKU,  lightin_sku.o_sellable, lightin_sku.sku_price)
-                #print(img)
 
-                if lightin_sku.image_marked:
-                    image = lightin_sku.image_marked
+            img += '<br><a>%s   [ %s sets]  [ %s SR]</a><br>' % (lightin_sku.SKU,  lightin_sku.o_sellable, lightin_sku.sku_price)
+
+
+            if lightin_sku.image_marked:
+                image = lightin_sku.image_marked
+            elif lightin_sku.image:
+                image = lightin_sku.image
+            else:
+                image = None
+
+
 
             if image:
                 img += '<a><img src="%s" width="100px"></a>' % (image)
@@ -273,7 +279,7 @@ class CustomerAdmin(object):
             lightin_skus = Lightin_SKU.objects.filter(Q(lightin_spu__handle__in = handles) | Q(SKU__in=handles), o_sellable__gt=0)
 
             for lightin_sku in lightin_skus:
-                if lightin_sku.comboed ==True:
+                if lightin_sku.comboed ==True or lightin_sku.SKU.find("579815")>=0 :
                     price = lightin_sku.sku_price
                 else:
                     price = lightin_sku.lightin_spu.shopify_price,
