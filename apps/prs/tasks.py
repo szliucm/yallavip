@@ -2202,6 +2202,7 @@ def fulfill_order_lightin(order):
     if result.get("ask") == "Success":
         # 发货成功，更新订单状态
         Order.objects.filter(pk=order.pk).update(
+            status = "transit",
             wms_status=result.get("order_status"),
             logistic_no=result.get("tracking_no"),
             fulfill_error="",
