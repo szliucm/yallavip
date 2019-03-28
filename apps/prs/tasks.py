@@ -2637,6 +2637,7 @@ def cal_reserved(overtime=24):
             sku_list.append(draft_sku[0])
 
     #计算自己的草稿
+    '''
     y_draft_skus = Draft.objects.filter( customer__update_time__gt = dt.now() - dt.timedelta(hours=overtime),).values_list('lightin_sku__SKU').annotate(Sum('quantity'))
     #draft__status = "open",draft__created_at__gt = dt.now() - dt.timedelta(hours=overtime),
     for y_draft_sku in y_draft_skus:
@@ -2644,7 +2645,7 @@ def cal_reserved(overtime=24):
 
         if y_draft_sku[0] not in sku_list:
             sku_list.append(y_draft_sku[0])
-
+    '''
     print("加上24小时内的草稿 有%s个sku需要更新" % (len(sku_reserved_quantity)))
 
     # 更新库存占用
@@ -2661,22 +2662,7 @@ def cal_reserved(overtime=24):
         except Exception as e:
             print("更新出错", lightin_sku, e)
 
-    '''
-    for sku in sku_quantity:
-        try:
-            lightin_sku = Lightin_SKU.objects.get(SKU = sku)
-            lightin_sku.o_reserved = sku_quantity[sku]
-            #lightin_sku.o_sellable = lightin_sku.o_quantity - sku_quantity[sku]
-            lightin_sku.save()
 
-            #print(lightin_sku, lightin_sku.o_reserved, lightin_sku.o_sellable)
-
-        except Exception as e:
-            print("更新出错",sku, e)
-
-        n-=1
-        print("还有%s个待更新"%(n))
-    '''
 
     # 更新所有的可售库存
     mysql = "update prs_lightin_sku set o_sellable = o_quantity - o_locked - o_reserved"
@@ -2743,8 +2729,18 @@ def cal_reserved_skus(skus, overtime=24):
 
         if draft_sku[0] not in sku_list:
             sku_list.append(draft_sku[0])
+    # 计算自己的草稿
+    '''
+    y_draft_skus = Draft.objects.filter(sku__in=skus,
+        customer__update_time__gt=dt.now() - dt.timedelta(hours=overtime), ).values_list(
+        'lightin_sku__SKU').annotate(Sum('quantity'))
+    # draft__status = "open",draft__created_at__gt = dt.now() - dt.timedelta(hours=overtime),
+    for y_draft_sku in y_draft_skus:
+        sku_reserved_quantity[order_sku[0]] = sku_reserved_quantity.get(y_draft_sku[0], 0) + draft_sku[1]
 
-
+        if y_draft_sku[0] not in sku_list:
+            sku_list.append(y_draft_sku[0])
+    '''
     print("加上24小时内的草稿 有%s个sku需要更新" % (len(sku_reserved_quantity)))
 
     # 更新库存占用
