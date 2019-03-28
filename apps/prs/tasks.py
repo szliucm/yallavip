@@ -3807,8 +3807,10 @@ def auto_smscode():
             sms_status="NOSTART",
             start_time=datetime.now(),
             final_time=datetime.now(),
-            facebook_user_name=facebook_user_name,
-            sales=sales,
+            facebook_user_name=",".join(list(row.customer.customer_conversation.values_list("name",flat=True))),
+            sales = row.customer.sales,
+            conversation_link = ",".join(list(row.customer.customer_conversation.values_list("coversation",flat=True))),
+            #sales=sales,
         )
 
         v.save()
