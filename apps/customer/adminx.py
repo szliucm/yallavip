@@ -614,3 +614,5 @@ class DealLogAdmin(object):
     list_filter = ( 'customer','deal_staff',)
 
     actions = [ ]
+    def has_delete_permission(self):
+        return False
