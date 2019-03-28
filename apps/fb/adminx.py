@@ -424,14 +424,14 @@ class MyAdAccountAdmin(object):
                 'effective_status': ['ACTIVE', 'PAUSED'],
             }
             campaigns = AdAccount(adaccout_no).get_campaigns(fields=fields, params=params, )
-
+            MyCampaign.objects.filter(adaccout_no=adaccout_no).update(active = False)
             for campaign in campaigns:
                 obj, created = MyCampaign.objects.update_or_create(campaign_no=campaign["id"],
                                                                 defaults={
                                                                         'adaccout_no': adaccout_no,
                                                                           'name':campaign["name"],
                                                                           'objective':  campaign["objective"],
-
+                                                                        'active':True
 
                                                                           }
                                                                 )
