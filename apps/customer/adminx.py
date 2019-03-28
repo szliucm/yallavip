@@ -294,7 +294,7 @@ class CustomerAdmin(object):
     '''
 
 
-    actions = ['batch_prepare_draft','batch_submit_draft','batch_init',]
+    actions = ['batch_prepare_draft','batch_submit_draft',]
     relfield_style = 'fk_ajax'
     inlines = [ ConversationInline ]
 
@@ -392,7 +392,39 @@ class CustomerAdmin(object):
             if not drafts:
                 customer.message = info("red", "没有草稿明细，不能提交订单")
                 customer.save()
+
+                # 记录操作日志
+                self.deal_log(queryset, "提交订单", "没有草稿明细，不能提交订单" )
                 continue
+
+            #检查草稿是否缺货
+            orderdetail_list = []
+            subtotal = 0
+            for draft in drafts:
+                if draft.quantity > draft.lightin_sku.o_sellable:
+                    print("缺货")
+                    break
+                subtotal += float(draft.price) * draft.quantity
+
+                orderdetail = OrderDetail(
+                    #order=order,
+                    sku=draft.lightin_sku.SKU,
+                    product_quantity=draft.quantity,
+                    price=draft.price,
+                )
+                orderdetail_list.append(orderdetail)
+
+            if len(orderdetail_list) < len(drafts):
+                customer.message = info("red", "缺货， 不能提交订单")
+                customer.save()
+
+                self.deal_log(queryset, "提交订单", "缺货， 不能提交订单")
+                continue
+
+            # 更新总金额
+            tax = subtotal * 0.05
+            COD = 20
+            order_amount = int(subtotal + COD + tax - float(customer.discount))
 
             #先检查客户已有订单状态
             ori_order = customer.customer_order.filter(~Q(status="cancel")).order_by("-order_time").first()
@@ -407,9 +439,12 @@ class CustomerAdmin(object):
 
                 else:
                     print (ori_order.status)
-                    customer.message = info("red", "订单不是开放状态，不允许创建新订单，也不能修改订单了")
+                    customer.message = info("red", "订单不是开放状态，不允许创建新订单，也不能修改订单")
                     customer.save()
+                    # 记录操作日志
+                    self.deal_log(queryset, "提交订单", "订单不是开放状态，不允许创建新订单，也不能修改订单")
                     continue
+
 
             #取最大订单号作为新订单号
             order_prefix = "yalla_"
@@ -445,58 +480,37 @@ class CustomerAdmin(object):
                 receiver_country =  receiver.country_code,
                 receiver_phone =  receiver.phone_1,
                 receiver_phone_2 = receiver.phone_2,
-                order_amount=customer.order_amount,
+                order_amount=order_amount,
                 order_time = dt.now(),
             )
             if order:
-                # 一开始就取了drafts，所以这里不取了
-                # drafts = customer.customer_draft.filter(quantity__gt=0)
-                orderdetail_list = []
-                subtotal = 0
-                for draft in drafts:
-                    if draft.quantity > draft.lightin_sku.o_sellable:
-                        print("缺货")
-                        break
-                    subtotal += float(draft.price) * draft.quantity
+                for order_detail in orderdetail_list:
+                   order_detail.order = order
 
-                    orderdetail = OrderDetail(
-                        order=order,
-                        sku=draft.lightin_sku.SKU,
-                        product_quantity=draft.quantity,
-                        price=draft.price,
-                    )
-                    orderdetail_list.append(orderdetail)
-
-                if len(orderdetail_list) < len(drafts):
-                    customer.message = info("red", "缺货， 不能提交订单")
+                orderdetails = OrderDetail.objects.bulk_create(orderdetail_list)
+                if not orderdetails:
+                    customer.message = info("red", "创建订单明细出错")
                     customer.save()
+
                     order.status = "cancel"
+                    order.save()
 
+                    self.deal_log(queryset, "提交订单", order_no+" 创建订单明细出错")
                 else:
-                    orderdetails = OrderDetail.objects.bulk_create(orderdetail_list)
-                    if not orderdetails:
-                        customer.message = info("red", "创建订单明细出错")
-                        customer.save()
 
-                        order.status = "cancel"
-                        break
-                    else:
-                        # 更新总金额
-                        tax = subtotal * 0.05
-                        COD = 20
-                        order.order_amount = int(subtotal + COD + tax - float(customer.discount))
+                    # 最后的操作员作为销售
+                    customer.message = info("blue", "创建订单%s成功" % (order.order_no))
+                    customer.sales = str(self.request.user)
+                    customer.save()
+                    # 记录操作日志
+                    if not customer.comments:
+                        customer.comments = ""
+                    self.deal_log(queryset, "提交订单成功", order_no + " "+ customer.comments)
 
-                        # 最后的操作员作为销售
-                        customer.message = info("blue", "创建订单%s成功" % (order.order_no))
-                        customer.sales = str(self.request.user)
-                        customer.save()
-                        # 记录操作日志
-                        self.deal_log(queryset, "提交订单", order_no + " "+ customer.comments)
-                # 更新订单状态
-                order.save()
             else:
                 customer.message = info("red", "创建订单出错")
                 customer.save()
+                self.deal_log(queryset, "提交订单", " 创建订单出错")
 
         return
 
@@ -530,7 +544,7 @@ class DraftAdmin(object):
 
     search_fields = []
 
-    ordering = []
+    ordering = ["-quantity"]
     list_filter = ()
 
     actions = [ ]
