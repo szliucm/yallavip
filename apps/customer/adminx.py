@@ -511,13 +511,13 @@ class CustomerAdmin(object):
             customer.order_amount = 0
             customer.comments = ""
             customer.message = ""
-            customer.gift = ""
+            customer.gift = False
             customer.save()
 
-            customer.customer_draft.delete()
+            customer.customer_draft.all().delete()
 
             # 记录操作日志
-            self.deal_log(queryset, "重新开始", customer+ " " + handles)
+            self.deal_log(queryset, "重新开始", customer.name +"[" +str(customer.pk)+ "] [" + handles+"]")
 
         return
 
