@@ -23,6 +23,7 @@ class Customer(models.Model):
     active = models.BooleanField(u'活跃客户', default=True, null=False)
     message = models.CharField(u'message', default='', max_length=100, blank=True, null=True)
     update_time = models.DateTimeField( auto_now=True, blank=True, verbose_name="更新时间")
+    gift = models.BooleanField(u'gift', default=False, null=False)
 
     class Meta:
         verbose_name = "客户"

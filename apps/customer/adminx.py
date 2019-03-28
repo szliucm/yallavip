@@ -341,6 +341,29 @@ class CustomerAdmin(object):
                     }
                 )
 
+            #添加gift
+            if row.handles.find("gift")>-1 and row.gift==False:
+                print ("添加gift")
+                lightin_gifts = Lightin_SKU.objects.filter(
+                    sku_price__lt =5,
+                    o_sellable__gt=0)[:10]
+                for lightin_gift in lightin_gifts:
+                    price = lightin_gift.sku_price
+
+
+                    obj, created = Draft.objects.update_or_create(
+                        customer=row,
+                        lightin_sku = lightin_gift,
+
+                        defaults={
+                            'price': price
+                        }
+                    )
+                row.gift = True
+                row.save()
+
+
+
             #最后的操作员作为销售
             row.message = info("blue", "更新草稿成功")
             row.sales = str(self.request.user)
@@ -481,7 +504,7 @@ class CustomerAdmin(object):
 
 @xadmin.sites.register(Draft)
 class DraftAdmin(object):
-    list_display = [ 'lightin_sku', 'customer','handle','sellable','quantity', 'skuattr', "photo",]
+    list_display = [ 'lightin_sku', 'customer','handle','sellable','quantity','price', 'skuattr', "photo",]
     list_editable = ["quantity", ]
 
     search_fields = []
