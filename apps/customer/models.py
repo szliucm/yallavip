@@ -9,6 +9,7 @@ class Customer(models.Model):
     name = models.CharField(u'客户姓名', default='', max_length=100, blank=False,null=False)
 
     handles = models.TextField(u'货号', blank=True, null=True)
+    attrs = models.CharField(u'规格', default='', max_length=100, blank=True,null=True)
 
     #本次订单信息
     receiver = models.ForeignKey('Receiver', related_name='receiver_customer',  on_delete=models.CASCADE,
@@ -19,6 +20,7 @@ class Customer(models.Model):
 
     sales = models.CharField(u'Sales', default='', max_length=50, blank=True,null=True)
     active = models.BooleanField(u'活跃客户', default=True, null=False)
+    message = models.CharField(u'message', default='', max_length=100, blank=True, null=True)
     update_time = models.DateTimeField( auto_now=True, blank=True, verbose_name="更新时间")
 
     class Meta:

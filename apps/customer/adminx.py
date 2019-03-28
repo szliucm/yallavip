@@ -9,6 +9,9 @@ from .models import  *
 from prs.models import  Lightin_SPU,Lightin_SKU
 from orders.models import  Order, OrderDetail
 
+def info(color_code, message):
+    return   '<span style="color:%s;">%s</span>'%(color_code,message)
+
 @xadmin.sites.register(Customer)
 class CustomerAdmin(object):
     #记录操作日志
@@ -59,15 +62,32 @@ class CustomerAdmin(object):
 
 
     def photo(self, obj):
+        #货号或者sku
         handles = obj.handles.split()
-        lightin_spus = Lightin_SPU.objects.filter(handle__in=handles).distinct()
+
+        #规格
+        q_attr = Q()
+        q_attr.connector = 'OR'
+        if obj.attrs:
+            for attr in obj.attrs.split(" "):
+                q_attr.children.append(('skuattr__contains', "="+attr))
+
+        con = Q()
+        con.add(q_attr, 'AND')
+
+
+        lightin_spus = Lightin_SPU.objects.filter( handle__in=handles).distinct()
+        print(con, lightin_spus)
 
         img = ''
 
         for lightin_spu in lightin_spus:
             img += '<br><a>handle: %s</a><br><br>' % (lightin_spu.handle)
 
-            lightin_skus = lightin_spu.spu_sku.filter(o_sellable__gt=0).distinct()
+            lightin_skus = lightin_spu.spu_sku.filter(con,o_sellable__gt=0).distinct()
+            if not lightin_skus:
+                img += '<br><a>out of stock</a><br><br>'
+                continue
 
             skus = lightin_skus.values_list("SKU",   "o_sellable","lightin_spu__shopify_price", "skuattr",)
             for sku in skus:
@@ -101,7 +121,7 @@ class CustomerAdmin(object):
             else:
                 img = img + "no photo"
         lightin_skus = Lightin_SKU.objects.filter(SKU__in=handles).distinct()
-        print(lightin_skus)
+
         for lightin_sku in lightin_skus:
             #            img += '<br><a>sku: %s</a><br><br>' % (lightin_sku.SKU)
             #print (lightin_sku, lightin_sku.SKU,  lightin_sku.o_sellable, lightin_sku.lightin_spu.shopify_price, lightin_sku.skuattr)
@@ -249,13 +269,16 @@ class CustomerAdmin(object):
 
 
     abs_receiver.short_description = "收件人信息"
+    def color_message(self, obj):
+        return format_html(obj.message)
 
+    color_message.short_description = "message"
 
-    list_display = ['name',"active",'handles', 'photo', "discount", "abs_draft","abs_customer","abs_receiver", "sales"]
-    list_editable = ["handles","discount","active", ]
+    list_display = ['name',"active","color_message", 'handles',"attrs", 'photo', "discount", "abs_draft","abs_customer","abs_receiver", "sales"]
+    list_editable = ["handles","attrs", "discount","active", ]
     search_fields = ['name']
     ordering = ["-update_time"]
-    list_filter = ("sales","active")
+    list_filter = ('name',"sales","active")
     '''
     list_bookmarks = [{
         "title": "只看自己的客户",
@@ -278,7 +301,21 @@ class CustomerAdmin(object):
         #如果对应的sku已经有了，就什么也不做
         for row in queryset:
             handles = row.handles.split()
-            lightin_skus = Lightin_SKU.objects.filter(Q(lightin_spu__handle__in = handles) | Q(SKU__in=handles), o_sellable__gt=0)
+
+            # 规格
+            q_attr = Q()
+            q_attr.connector = 'OR'
+
+            if row.attrs:
+                for attr in row.attrs.split(" "):
+                    q_attr.children.append(('skuattr__contains', "=" + attr))
+
+
+            con = Q()
+            con.add(q_attr, 'AND')
+
+
+            lightin_skus = Lightin_SKU.objects.filter((q_attr,Q(lightin_spu__handle__in = handles) )| Q(SKU__in=handles), o_sellable__gt=0)
 
             for lightin_sku in lightin_skus:
                 if lightin_sku.comboed ==True or lightin_sku.SKU.find("579815")>=0 :
@@ -295,6 +332,7 @@ class CustomerAdmin(object):
                 )
 
             #最后的操作员作为销售
+            row.message = info("blue", "更新草稿成功")
             row.sales = str(self.request.user)
             row.save()
             #记录操作日志
@@ -316,6 +354,13 @@ class CustomerAdmin(object):
         #自动把COD和VAT加到总价里
 
         for customer in queryset:
+            # 检查草稿是否正常
+            drafts = customer.customer_draft.filter(quantity__gt=0)
+            if not drafts:
+                customer.message = info("red", "没有草稿明细，不能提交订单")
+                customer.save()
+                continue
+
             #先检查客户已有订单状态
             ori_order = customer.customer_order.filter(~Q(status="cancel")).order_by("-order_time").first()
             if ori_order:
@@ -329,7 +374,8 @@ class CustomerAdmin(object):
 
                 else:
                     print (ori_order.status)
-                    print("订单不是开放状态，不允许创建新订单，也不能修改订单了")
+                    customer.message = info("red", "订单不是开放状态，不允许创建新订单，也不能修改订单了")
+                    customer.save()
                     continue
 
             #取最大订单号作为新订单号
@@ -352,6 +398,12 @@ class CustomerAdmin(object):
                 status="open",
                 financial_status="paid",
                 order_no = order_no,
+
+                buyer_name = customer.name,
+                facebook_user_name = customer.customer_conversation.name,
+                sales = customer.sales,
+                conversation_link = customer.customer_conversation.coversation,
+
                 receiver_name= receiver.name,
                 receiver_addr1= receiver.address1,
                 receiver_addr2= receiver.address2,
@@ -363,10 +415,14 @@ class CustomerAdmin(object):
                 order_time = dt.now(),
             )
             if order:
-                drafts = customer.customer_draft.filter(quantity__gt=0)
+                # 一开始就取了drafts，所以这里不取了
+                # drafts = customer.customer_draft.filter(quantity__gt=0)
                 orderdetail_list = []
                 subtotal = 0
                 for draft in drafts:
+                    if draft.quantity > draft.lightin_sku.o_sellable:
+                        print("缺货")
+                        break
                     subtotal += float(draft.price) * draft.quantity
 
                     orderdetail = OrderDetail(
@@ -377,27 +433,36 @@ class CustomerAdmin(object):
                     )
                     orderdetail_list.append(orderdetail)
 
-                orderdetails = OrderDetail.objects.bulk_create(orderdetail_list)
-                if not orderdetails:
-                    print("创建订单明细出错")
+                if len(orderdetail_list) < len(drafts):
+                    customer.message = info("red", "缺货， 不能提交订单")
+                    customer.save()
                     order.status = "cancel"
-                    break
-                else:
-                    #更新总金额
-                    tax = subtotal * 0.05
-                    COD = 20
-                    order.order_amount = int(subtotal + COD + tax - float(customer.discount))
 
+                else:
+                    orderdetails = OrderDetail.objects.bulk_create(orderdetail_list)
+                    if not orderdetails:
+                        customer.message = info("red", "创建订单明细出错")
+                        customer.save()
+
+                        order.status = "cancel"
+                        break
+                    else:
+                        # 更新总金额
+                        tax = subtotal * 0.05
+                        COD = 20
+                        order.order_amount = int(subtotal + COD + tax - float(customer.discount))
+
+                        # 最后的操作员作为销售
+                        customer.message = info("blue", "创建订单%s成功" % (order.order_no))
+                        customer.sales = str(self.request.user)
+                        customer.save()
+                        # 记录操作日志
+                        self.deal_log(queryset, "提交订单", order_no)
+                # 更新订单状态
                 order.save()
             else:
-                print("创建订单出错")
-                break
-
-            # 最后的操作员作为销售
-            customer.sales = str(self.request.user)
-            customer.save()
-            # 记录操作日志
-            self.deal_log(queryset, "提交订单","order_no")
+                customer.message = info("red", "创建订单出错")
+                customer.save()
 
         return
 

@@ -1189,8 +1189,10 @@ class VerifyAdmin(object):
     fulfill_error.short_description = "wms发货错误"
 
     def show_conversation(self, obj):
-
-        return  show_conversation_tmp(obj)
+        if obj.conversation_link:
+            return mark_safe( obj.conversation_link)
+        else::
+            return  show_conversation_tmp(obj)
 
     show_conversation.allow_tags = True
 
