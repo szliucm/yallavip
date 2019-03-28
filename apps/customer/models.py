@@ -116,7 +116,7 @@ class DealLog(models.Model):
     customer = models.ForeignKey(Customer, related_name='customer_deallog', null=False, on_delete=models.CASCADE,
                                  verbose_name="Customer")
     deal_action = models.CharField(u'操作', default='', max_length=100, blank=False,null=False)
-    content = models.CharField(u'content', default='', max_length=100, blank=False, null=False)
+    content = models.CharField(u'content', default='', max_length=500, blank=False, null=False)
     deal_staff = models.CharField(u'操作员', default='', max_length=50, blank=True,null=True)
     deal_time = models.DateTimeField(u'操作时间', auto_now=True, null=True, blank=True)
 

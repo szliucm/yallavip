@@ -504,6 +504,7 @@ class CustomerAdmin(object):
 
     def batch_init(self, request, queryset):
         for customer in queryset:
+            handles = customer.handles
             customer.handles = ""
             customer.attrs = ""
             customer.discount = 0
@@ -516,7 +517,7 @@ class CustomerAdmin(object):
             customer.customer_draft.delete()
 
             # 记录操作日志
-            self.deal_log(queryset, "重新开始", customer)
+            self.deal_log(queryset, "重新开始", customer+ " " + handles)
 
         return
 
