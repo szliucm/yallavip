@@ -392,6 +392,7 @@ class MyAdAccountAdmin(object):
     list_display = [ "adaccout_no",'name','account_status' ]
     search_fields = ['adaccout_no', ]
     actions = [ "batch_update_campaigns",'create_campaign']
+    list_filter = ('active',)
 
     def create_campaign(self, request, queryset):
 
@@ -545,6 +546,7 @@ class MyCampaignAdmin(object):
     list_display = [ "adaccout_no","campaign_no",'name','objective' ]
     search_fields = ['campaign_no', ]
     actions = [ "batch_update_adset","batch_update_insight",]
+    list_filter = ( "active")
 
 
 

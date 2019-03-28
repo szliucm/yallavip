@@ -39,7 +39,7 @@ class MyAdAccount(models.Model):
     adaccout_no = models.CharField(u'广告账户', default='', max_length=100, blank=True)
     account_status = models.CharField(u'广告账户状态', max_length=200, null=True, blank=True)
     name = models.CharField(u'广告账户名', max_length=200, null=True, blank=True)
-
+    active = models.BooleanField(u"状态", default=False)
 
     class Meta:
         verbose_name = "广告账户"
