@@ -1191,7 +1191,7 @@ class VerifyAdmin(object):
     def show_conversation(self, obj):
         if obj.conversation_link:
             return mark_safe( obj.conversation_link)
-        else::
+        else:
             return  show_conversation_tmp(obj)
 
     show_conversation.allow_tags = True
