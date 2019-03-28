@@ -310,12 +310,17 @@ class CustomerAdmin(object):
                 for attr in row.attrs.split(" "):
                     q_attr.children.append(('skuattr__contains', "=" + attr))
 
+            q_spu = Q()
+            q_spu.connector = 'OR'
+            q_spu.children.append(('lightin_spu__handle__in', handles))
+
 
             con = Q()
             con.add(q_attr, 'AND')
+            con.add(q_spu, 'AND')
 
 
-            lightin_skus = Lightin_SKU.objects.filter((q_attr,Q(lightin_spu__handle__in = handles) )| Q(SKU__in=handles), o_sellable__gt=0)
+            lightin_skus = Lightin_SKU.objects.filter( con | Q(SKU__in=handles), o_sellable__gt=0)
 
             for lightin_sku in lightin_skus:
                 if lightin_sku.comboed ==True or lightin_sku.SKU.find("579815")>=0 :
@@ -327,8 +332,10 @@ class CustomerAdmin(object):
                 obj, created = Draft.objects.update_or_create(
                     customer=row,
                     lightin_sku = lightin_sku,
-                    price = price,
-                #    defaults={'quantity': 0}
+
+                    defaults={
+                        'price': price
+                    }
                 )
 
             #最后的操作员作为销售
