@@ -3796,21 +3796,21 @@ def auto_smscode():
             sales = tmp[3]
         elif (len(tmp) > 1):
             facebook_user_name = tmp[1]
+        if row.customer:
+            v = Verify(
+                order=Order.objects.get(id=row.id),
+                verify_status="PROCESSING",
+                phone_1=valid_phone(row.receiver_phone),
+                sms_status="NOSTART",
+                start_time=datetime.now(),
+                final_time=datetime.now(),
+                facebook_user_name=",".join(list(row.customer.customer_conversation.values_list("name",flat=True))),
+                sales = row.customer.sales,
+                conversation_link = ",".join(list(row.customer.customer_conversation.values_list("coversation",flat=True))),
+                #sales=sales,
+            )
 
-        v = Verify(
-            order=Order.objects.get(id=row.id),
-            verify_status="PROCESSING",
-            phone_1=valid_phone(row.receiver_phone),
-            sms_status="NOSTART",
-            start_time=datetime.now(),
-            final_time=datetime.now(),
-            facebook_user_name=",".join(list(row.customer.customer_conversation.values_list("name",flat=True))),
-            sales = row.customer.sales,
-            conversation_link = ",".join(list(row.customer.customer_conversation.values_list("coversation",flat=True))),
-            #sales=sales,
-        )
-
-        v.save()
+            v.save()
 
     #还没发送验证码的订单
     verify_orders = Verify.objects.filter( sms_status = "NOSTART",order__status="open", order__financial_status="paid",)
