@@ -397,6 +397,25 @@ class CustomerAdmin(object):
                 self.deal_log(queryset, "提交订单", "没有草稿明细，不能提交订单" )
                 continue
 
+            # 先检查客户已有订单状态
+            ori_order = customer.customer_order.filter(~Q(status="cancel")).order_by("-order_time").first()
+            if ori_order:
+
+                if ori_order.status == "open":
+                    print("还没有发货，先把订单关闭，重新创建新订单")
+                    ori_order.status = "cancel"
+                    ori_order.save()
+                elif ori_order.status == "delivered":
+                    print("订单已签收，可以创建新订单")
+
+                else:
+                    print (ori_order.status)
+                    customer.message = info("red", "订单不是开放状态，不允许创建新订单，也不能修改订单")
+                    customer.save()
+                    # 记录操作日志
+                    self.deal_log(queryset, "提交订单", "订单不是开放状态，不允许创建新订单，也不能修改订单")
+                    continue
+
             #检查草稿是否缺货
             orderdetail_list = []
             subtotal = 0
@@ -426,24 +445,7 @@ class CustomerAdmin(object):
             COD = 20
             order_amount = int(subtotal + COD + tax - float(customer.discount))
 
-            #先检查客户已有订单状态
-            ori_order = customer.customer_order.filter(~Q(status="cancel")).order_by("-order_time").first()
-            if ori_order:
 
-                if ori_order.status == "open":
-                    print("还没有发货，先把订单关闭，重新创建新订单")
-                    ori_order.status = "cancel"
-                    ori_order.save()
-                elif ori_order.status == "delivered":
-                    print("订单已签收，可以创建新订单")
-
-                else:
-                    print (ori_order.status)
-                    customer.message = info("red", "订单不是开放状态，不允许创建新订单，也不能修改订单")
-                    customer.save()
-                    # 记录操作日志
-                    self.deal_log(queryset, "提交订单", "订单不是开放状态，不允许创建新订单，也不能修改订单")
-                    continue
 
 
             #取最大订单号作为新订单号
