@@ -611,6 +611,6 @@ class DealLogAdmin(object):
     search_fields = []
 
     ordering = ["-deal_time"]
-    list_filter = ()
+    list_filter = ( 'customer','deal_staff',)
 
     actions = [ ]
