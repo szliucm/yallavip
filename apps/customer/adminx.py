@@ -87,7 +87,8 @@ class CustomerAdmin(object):
         for lightin_spu in lightin_spus:
             img += '<br><a>handle: %s</a><br><br>' % (lightin_spu.handle)
 
-            lightin_skus = lightin_spu.spu_sku.filter( (Q(skuattr__contains ="Size"),q_attr)|~Q(skuattr__contains ="Size"),o_sellable__gt=0).distinct()
+            #lightin_skus = lightin_spu.spu_sku.filter( (Q(skuattr__contains ="Size"),q_attr)|~Q(skuattr__contains ="Size"),o_sellable__gt=0).distinct()
+            lightin_skus = lightin_spu.spu_sku.filter(o_sellable__gt=0).distinct()
             if not lightin_skus:
                 img += '<br><a>out of stock</a><br><br>'
                 continue
@@ -320,7 +321,8 @@ class CustomerAdmin(object):
             con.add(q_attr, 'AND')
             con.add(q_spu, 'AND')
 
-            lightin_skus = Lightin_SKU.objects.filter( Q(SKU__in=handles) | ( Q(lightin_spu__handle__in=handles) &((Q(skuattr__contains="Size"), q_attr) | ~Q(skuattr__contains="Size"))) , o_sellable__gt=0)
+            #lightin_skus = Lightin_SKU.objects.filter( Q(SKU__in=handles) | ( Q(lightin_spu__handle__in=handles) &((Q(skuattr__contains="Size"), q_attr) | ~Q(skuattr__contains="Size"))) , o_sellable__gt=0)
+            lightin_skus = Lightin_SKU.objects.filter( Q(SKU__in=handles) | Q(lightin_spu__handle__in=handles) , o_sellable__gt=0)
 
             for lightin_sku in lightin_skus:
                 if lightin_sku.comboed ==True or lightin_sku.SKU.find("579815")>=0 :
