@@ -294,7 +294,7 @@ class CustomerAdmin(object):
     '''
 
 
-    actions = ['batch_prepare_draft','batch_submit_draft',]
+    actions = ['batch_prepare_draft','batch_submit_draft','batch_init',]
     relfield_style = 'fk_ajax'
     inlines = [ ConversationInline ]
 
@@ -501,6 +501,26 @@ class CustomerAdmin(object):
         return
 
     batch_submit_draft.short_description = "提交订单"
+
+    def batch_init(self, request, queryset):
+        for customer in queryset:
+            customer.handles = ""
+            customer.attrs = ""
+            customer.discount = 0
+            customer.order_amount = 0
+            customer.comments = ""
+            customer.message = ""
+            customer.gift = ""
+            customer.save()
+
+            customer.customer_draft.delete()
+
+            # 记录操作日志
+            self.deal_log(queryset, "重新开始", customer)
+
+        return
+
+    batch_init.short_description = "重新开始"
 
 @xadmin.sites.register(Draft)
 class DraftAdmin(object):
