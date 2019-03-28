@@ -212,6 +212,16 @@ class OrderAdmin(object):
 
     show_settle_status.short_description = "结算状态"
 
+    def cal_amount(self, obj):
+        details = obj.order_orderdetail.all()
+        amount = 0
+        for detail in details:
+            amount += float(detail.product_quantity) * float(detail.price)
+
+        return int(amount)
+
+    cal_amount.short_description = "产品金额小计"
+
     def show_conversation(self, obj):
 
 
@@ -226,7 +236,7 @@ class OrderAdmin(object):
     import_export_args = {"import_resource_class": OrderResource, "export_resource_class": OrderResource}
 
     #"stock", "cal_barcode", "inventory_status",
-    list_display = ["order_no", "status", "stock",  "wms_status","fulfill_error","order_amount", "order_time", "logistic_no","order_comment"]
+    list_display = ["order_no", "status", "stock",  "wms_status","fulfill_error","cal_amount", "order_amount", "order_time", "logistic_no","order_comment"]
     list_editable = ["status"]
     # list_display_links = ["show_conversation"]
     search_fields = ["order_no",'logistic_no', ]
