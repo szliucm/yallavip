@@ -278,8 +278,8 @@ class CustomerAdmin(object):
 
     color_message.short_description = "message"
 
-    list_display = ['name',"active","color_message", 'handles',"attrs", 'photo', "discount", "abs_draft","abs_customer","abs_receiver", "sales"]
-    list_editable = ["handles","attrs", "discount","active", ]
+    list_display = ['name',"active","color_message", 'handles',"attrs", 'photo', "discount", "abs_draft","abs_customer","abs_receiver","comments", "sales"]
+    list_editable = ["handles","attrs", "discount","active", "comments",]
     search_fields = ['name']
     ordering = ["-update_time"]
     list_filter = ('name',"sales","active")
@@ -407,10 +407,10 @@ class CustomerAdmin(object):
                 status="open",
                 financial_status="paid",
                 order_no = order_no,
-
+                order_comment = customer.comments,
                 buyer_name = customer.name,
+                #facebook 客户名和客服信息 ,现在是存放在审单系统里了
                 #facebook_user_name =",".join(list(customer.customer_conversation.values_list("name",flat=True))),
-
                 #sales = customer.sales,
                 #conversation_link = ",".join(list(customer.customer_conversation.values_list("coversation",flat=True))),
 
@@ -467,7 +467,7 @@ class CustomerAdmin(object):
                         customer.sales = str(self.request.user)
                         customer.save()
                         # 记录操作日志
-                        self.deal_log(queryset, "提交订单", order_no)
+                        self.deal_log(queryset, "提交订单", order_no + " "+ customer.comments)
                 # 更新订单状态
                 order.save()
             else:
