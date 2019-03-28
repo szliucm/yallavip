@@ -409,10 +409,10 @@ class CustomerAdmin(object):
                 order_no = order_no,
 
                 buyer_name = customer.name,
-                facebook_user_name =",".join(list(customer.customer_conversation.values_list("name",flat=True))),
+                #facebook_user_name =",".join(list(customer.customer_conversation.values_list("name",flat=True))),
 
-                sales = customer.sales,
-                conversation_link = ",".join(list(customer.customer_conversation.values_list("coversation",flat=True))),
+                #sales = customer.sales,
+                #conversation_link = ",".join(list(customer.customer_conversation.values_list("coversation",flat=True))),
 
                 receiver_name= receiver.name,
                 receiver_addr1= receiver.address1,
