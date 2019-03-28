@@ -2064,8 +2064,10 @@ def get_barcodes(sku, quantity, price):
 
 @shared_task
 def fulfill_orders_lightin():
-    orders = Order.objects.filter(financial_status="paid",
-                                  fulfillment_status__isnull=True,
+    orders = Order.objects.filter(
+        Q(fulfillment_status__isnull=True)|Q(fulfillment_status=""),
+                                financial_status="paid",
+
                                   status="open",
                                   verify__verify_status="SUCCESS",
                                   verify__sms_status="CHECKED",
