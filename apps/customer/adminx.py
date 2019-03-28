@@ -72,8 +72,11 @@ class CustomerAdmin(object):
             for attr in obj.attrs.split(" "):
                 q_attr.children.append(('skuattr__contains', "="+attr))
 
+
+
         con = Q()
         con.add(q_attr, 'AND')
+
 
 
         lightin_spus = Lightin_SPU.objects.filter( handle__in=handles).distinct()
@@ -84,7 +87,7 @@ class CustomerAdmin(object):
         for lightin_spu in lightin_spus:
             img += '<br><a>handle: %s</a><br><br>' % (lightin_spu.handle)
 
-            lightin_skus = lightin_spu.spu_sku.filter(con,o_sellable__gt=0).distinct()
+            lightin_skus = lightin_spu.spu_sku.filter( (Q(skuattr__contains ="Size"),q_attr)|~Q(skuattr__contains ="Size"),o_sellable__gt=0).distinct()
             if not lightin_skus:
                 img += '<br><a>out of stock</a><br><br>'
                 continue
@@ -310,17 +313,14 @@ class CustomerAdmin(object):
                 for attr in row.attrs.split(" "):
                     q_attr.children.append(('skuattr__contains', "=" + attr))
 
-            q_spu = Q()
-            q_spu.connector = 'OR'
-            q_spu.children.append(('lightin_spu__handle__in', handles))
+            q_spu = Q(lightin_spu__handle__in=handles)
 
 
             con = Q()
             con.add(q_attr, 'AND')
             con.add(q_spu, 'AND')
 
-
-            lightin_skus = Lightin_SKU.objects.filter( con | Q(SKU__in=handles), o_sellable__gt=0)
+            lightin_skus = Lightin_SKU.objects.filter( Q(SKU__in=handles) | ( Q(lightin_spu__handle__in=handles) &((Q(skuattr__contains="Size"), q_attr) | ~Q(skuattr__contains="Size"))) , o_sellable__gt=0)
 
             for lightin_sku in lightin_skus:
                 if lightin_sku.comboed ==True or lightin_sku.SKU.find("579815")>=0 :
@@ -407,9 +407,10 @@ class CustomerAdmin(object):
                 order_no = order_no,
 
                 buyer_name = customer.name,
-                facebook_user_name = customer.customer_conversation.name,
+                facebook_user_name =",".join(list(customer.customer_conversation.values_list("name",flat=True))),
+
                 sales = customer.sales,
-                conversation_link = customer.customer_conversation.coversation,
+                conversation_link = ",".join(list(customer.customer_conversation.values_list("coversation",flat=True))),
 
                 receiver_name= receiver.name,
                 receiver_addr1= receiver.address1,
