@@ -105,6 +105,11 @@ def valid_phone(x):
 
 def show_conversation_tmp( obj):
     #print('orderconversation')
+    if obj.conversation_link:
+        return mark_safe(
+            u'<a href="%s" target="view_window">%s</a>' % (obj.conversation_link, u'会话'))
+
+
     orderconversation = OrderConversation.objects.filter(order=obj.order)
 
     #print(orderconversation)
@@ -1189,10 +1194,8 @@ class VerifyAdmin(object):
     fulfill_error.short_description = "wms发货错误"
 
     def show_conversation(self, obj):
-        if obj.conversation_link:
-            return mark_safe( obj.conversation_link)
-        else:
-            return  show_conversation_tmp(obj)
+
+        return  show_conversation_tmp(obj)
 
     show_conversation.allow_tags = True
 
