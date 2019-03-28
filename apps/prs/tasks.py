@@ -2326,7 +2326,7 @@ def sync_Shipped_order_shopify():
     from prs.shop_action import fulfill_order_shopify
     from django.db.models import F
 
-    orders = Order.objects.filter(~Q(fulfillment_status = "fulfilled" ), status="open", wms_status__in=["W"], logistic_no__isnull=False,
+    orders = Order.objects.filter(~Q(order_no__startswith="yalla"),~Q(fulfillment_status = "fulfilled" ), status="open", wms_status__in=["W"], logistic_no__isnull=False,
                                   order_id__isnull=False)
 
     n = orders.count()
