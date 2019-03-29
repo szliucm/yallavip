@@ -25,7 +25,7 @@ from .shop_action import sync_shop
 my_app_id = "562741177444068"
 my_app_secret = "e6df363351fb5ce4b7f0080adad08a4d"
 #my_access_token = "EAAHZCz2P7ZAuQBABHO6LywLswkIwvScVqBP2eF5CrUt4wErhesp8fJUQVqRli9MxspKRYYA4JVihu7s5TL3LfyA0ZACBaKZAfZCMoFDx7Tc57DLWj38uwTopJH4aeDpLdYoEF4JVXHf5Ei06p7soWmpih8BBzadiPUAEM8Fw4DuW5q8ZAkSc07PrAX4pGZA4zbSU70ZCqLZAMTQZDZD"
-my_access_token = "EAAcGAyHVbOEBAAL2mne8lmKC55lbDMndPYEVR2TRmOWf9ePUN97SiZCqwCd3KOZBrEkC57rVt3ZClhXi6oxxf1i0hRCK50QALuAQOCs60U30FjNYimeP97xLjfl7wZAAjThdkXPJujsWcAXOwkTNKvKlmP6tZBPUtSYb3i4i1vUs40MZAUOzNIG9v7HNjnyyIZD"
+my_access_token = "EAAcGAyHVbOEBAPaGWppZCGRlyzkWlXSZCZBNZBTZCWkeKoZCGl2dy65L0r9GSoKbdp2QcgN7mDbzQom9KtePe8RNIVZAsQTx8ZBAdHRHfYoOhdc9rJJLfnEt6V0sJ0By3urpBSrZCHGJVx5YDsLPZBUM4OIqGZBsBOIc5S9ToNhQJ4tvmyvwypmM3AivC5OGBiXc8a4A5XpZCSP6IJtTLFER2Nr4"
 
 DEBUG = False
 
@@ -1714,7 +1714,9 @@ def delete_out_lightin_album(lightinalbums_out):
     # 选择所有可用的page
 
     for page_no in lightinalbums_out:
-        FacebookAdsApi.init(access_token=get_token(page_no))
+        #FacebookAdsApi.init(access_token=get_token(page_no))
+        FacebookAdsApi.init(access_token=my_access_token)
+
 
         photo_nos = lightinalbums_out[page_no]
         print("page %s 待删除数量 %s  " % (page_no, len(photo_nos)))
