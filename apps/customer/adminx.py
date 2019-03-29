@@ -633,6 +633,21 @@ class DealLogAdmin(object):
     def has_delete_permission(self):
         return False
 
+    def get_context(self):
+        context = super().get_context()
+        print(context.get("title"))
+        deallog = context.get("results")[0].get("object")
+        print(deallog.customer,deallog.content)
+        context.update(
+            {
+                'title': deallog.customer,
+
+            }
+        )
+        #file = open("context", 'w', encoding='utf-8')
+        #file.write(str(tuple(context.items())))
+        return context
+
 '''
 # adminx.py
 from xadmin.views.base import CommAdminView
