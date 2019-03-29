@@ -1707,6 +1707,41 @@ def delete_outstock_lightin_album():
     delete_oversea_photo()
 
 
+# 把所有sku都没有库存，spu还在发布状态的从Facebook删除
+@shared_task
+def delete_lightin_album_cate(cate):
+    # 更新还在发布中的spu的库存
+    from django.db import connection, transaction
+
+
+
+    lightinalbums_all = LightinAlbum.objects.filter(lightin_spu__breadcrumb__contains = "Underwear", published=True).values_list("myalbum__page_no", "fb_id").order_by(
+        "myalbum__page_no")
+    print("一共有%s 个图片待删除" % (lightinalbums_all.count()))
+
+    lightinalbums_out = {}
+
+    for lightinalbum in lightinalbums_all:
+        page_no = lightinalbum[0]
+        fb_id = lightinalbum[1]
+        photo_list = lightinalbums_out.get(page_no)
+        if not photo_list:
+            photo_list = []
+
+        if fb_id not in photo_list:
+            photo_list.append(fb_id)
+
+        lightinalbums_out[page_no] = photo_list
+
+    # 删除子集
+
+    delete_out_lightin_album(lightinalbums_out)
+    if not all:
+        Order.objects.filter(updated=True).update(updated=False)
+
+    delete_missed_photo()
+    delete_oversea_photo()
+
 # 删除lightin_album 的某个特定子集
 def delete_out_lightin_album(lightinalbums_out):
     from facebook_business.api import FacebookAdsApi
