@@ -467,7 +467,7 @@ import  random
 
 from shop.photo_mark import  photo_mark
 
-
+'''
 my_app_id = "562741177444068"
 my_app_secret = "e6df363351fb5ce4b7f0080adad08a4d"
 my_access_token = "EAAHZCz2P7ZAuQBAIbIGvWqJIAxHAXIDcEkXOYDkGCHwLXwSRuKuFWR4WQYhLysvpuOhwS4AtLZC2my0ibEbBbAP6pkUx5PYcgHZCpZADrqVoprBlueE5EAx1xKCm5qVCKEaphV2io2citFLrzc6ZADaWipBTjiOB74cZCYGUoMZAYWuDpvmi8TLU"
@@ -483,7 +483,7 @@ my_access_token = "EAAcGAyHVbOEBALr3fbZBvB0ICBNpB0zbzBiokAXrS2ppiAOvyugxOVJoFL2t
 
 second_app_id = "437855903410360"
 second_token = "EAAGOOkWV6LgBAIGWTMe3IRKJQNp5ld7nxmiafOdWwlPn8BksJxFUsCiAqzMQ1ZC1LJipR2tcHXZBO949i0ZB5xOOfHbut2hk7sIP3YZB5MfuqjFtm9LGq3J7xrBtUFPLZBT9pe2UcUTXann8DXhwMPQOlIBANiNJE6RA11vNrZC0fGijUsDJds"
-'''
+
 
 import requests
 import json
