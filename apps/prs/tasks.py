@@ -1750,7 +1750,8 @@ def delete_out_lightin_album(lightinalbums_out):
     # 选择所有可用的page
 
     for page_no in lightinalbums_out:
-        FacebookAdsApi.init(access_token=get_token(page_no))
+        #FacebookAdsApi.init(access_token=get_token(page_no))
+        FacebookAdsApi.init(access_token=my_access_token)
 
 
 
