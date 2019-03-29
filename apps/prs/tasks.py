@@ -1956,12 +1956,15 @@ def delete_photos(photo_nos):
             # response = "delete photo_no "+ photo_no
         '''
         try:
+            error = ""
             url = "https://graph.facebook.com/v3.2/%s"%(photo_no)
             param = dict()
             param["access_token"] = my_access_token
             param["status"] = "DELETED"
 
             r = requests.post(url, param)
+            print ("删除图片的返回",r ,r.text)
+
 
 
         except Exception as e:
