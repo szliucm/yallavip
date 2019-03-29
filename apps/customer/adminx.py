@@ -612,10 +612,10 @@ class ConversationAdmin(object):
     list_display = ['name', 'customer', 'coversation','comments',]
     list_editable = [ ]
 
-    search_fields = []
+    search_fields = ['comments']
 
     ordering = []
-    list_filter = ()
+    list_filter = ('name', )
 
     actions = [ ]
 
@@ -624,7 +624,7 @@ class DealLogAdmin(object):
     list_display = ['deal_action', 'customer', "content", 'deal_staff','deal_time',]
     list_editable = [ ]
 
-    search_fields = []
+    search_fields = ["content",]
 
     ordering = ["-deal_time"]
     list_filter = ( 'customer','deal_staff',)
