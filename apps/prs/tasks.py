@@ -1750,8 +1750,10 @@ def delete_out_lightin_album(lightinalbums_out):
     # 选择所有可用的page
 
     for page_no in lightinalbums_out:
+
         #FacebookAdsApi.init(access_token=get_token(page_no))
-        FacebookAdsApi.init(access_token=my_access_token)
+
+
 
 
 
@@ -1937,7 +1939,7 @@ def delete_photos(photo_nos):
     from facebook_business.adobjects.photo import Photo
 
     for photo_no in photo_nos:
-
+        '''
         fields = [
         ]
         params = {
@@ -1945,13 +1947,21 @@ def delete_photos(photo_nos):
         }
         error = ""
         try:
-
+            
             response = Photo(photo_no).api_delete(
                 fields=fields,
                 params=params,
             )
 
             # response = "delete photo_no "+ photo_no
+        '''
+        try:
+            url = "https://graph.facebook.com/v3.2/%s"%(photo_no)
+            param = dict()
+            param["access_token"] = my_access_token
+
+
+            r = requests.delete(url, param)
         except Exception as e:
             print("删除图片出错", photo_no, e)
             error = "删除图片出错"
