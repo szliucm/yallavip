@@ -467,12 +467,12 @@ import  random
 
 from shop.photo_mark import  photo_mark
 
-'''
+
 my_app_id = "562741177444068"
 my_app_secret = "e6df363351fb5ce4b7f0080adad08a4d"
 my_access_token = "EAAHZCz2P7ZAuQBAIbIGvWqJIAxHAXIDcEkXOYDkGCHwLXwSRuKuFWR4WQYhLysvpuOhwS4AtLZC2my0ibEbBbAP6pkUx5PYcgHZCpZADrqVoprBlueE5EAx1xKCm5qVCKEaphV2io2citFLrzc6ZADaWipBTjiOB74cZCYGUoMZAYWuDpvmi8TLU"
 
-
+'''
 my_app_id_dev = "1976935359278305"
 my_app_secret_dev = "f4ee797596ed236c0bc74d33f52e6a54"
 my_access_token_dev = "EAAcGAyHVbOEBAAL2mne8lmKC55lbDMndPYEVR2TRmOWf9ePUN97SiZCqwCd3KOZBrEkC57rVt3ZClhXi6oxxf1i0hRCK50QALuAQOCs60U30FjNYimeP97xLjfl7wZAAjThdkXPJujsWcAXOwkTNKvKlmP6tZBPUtSYb3i4i1vUs40MZAUOzNIG9v7HNjnyyIZD"
