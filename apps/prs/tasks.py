@@ -45,9 +45,7 @@ else:
 
 
 def get_token(target_page, token=None):
-    return  my_access_token
 
-    '''
     url = "https://graph.facebook.com/v3.2/{}?fields=access_token".format(target_page)
     param = dict()
     if token is None:
@@ -59,8 +57,9 @@ def get_token(target_page, token=None):
     data = json.loads(r.text)
     print("get_token ", data)
     # print("request response is ", data["access_token"])
+
     return data["access_token"]
-    '''
+
 
 # 更新ali产品数据，把vendor和产品信息连接起来
 @shared_task
@@ -1935,8 +1934,7 @@ def delete_oversea_photo():
 
 def delete_photos(photo_nos):
     from facebook_business.adobjects.photo import Photo
-    from facebook_business.api import FacebookAdsApi
-    FacebookAdsApi.init(access_token=my_access_token)
+
     for photo_no in photo_nos:
 
         fields = [
