@@ -398,12 +398,12 @@ class CustomerAdmin(object):
                 continue
 
             # 先检查客户已有订单状态
-            ori_order = customer.customer_order.filter(~Q(status="cancel")).order_by("-order_time").first()
+            ori_order = customer.customer_order.filter(~Q(status="cancelled")).order_by("-order_time").first()
             if ori_order:
 
                 if ori_order.status == "open":
                     print("还没有发货，先把订单关闭，重新创建新订单")
-                    ori_order.status = "cancel"
+                    ori_order.status = "cancelled"
                     ori_order.save()
                 elif ori_order.status == "delivered":
                     print("订单已签收，可以创建新订单")
