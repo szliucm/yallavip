@@ -627,8 +627,52 @@ class DealLogAdmin(object):
     search_fields = ["content",]
 
     ordering = ["-deal_time"]
-    list_filter = ( 'customer','deal_staff',)
+    list_filter = ( 'deal_action','customer','deal_staff',)
 
     actions = [ ]
     def has_delete_permission(self):
         return False
+
+'''
+# adminx.py
+from xadmin.views.base import CommAdminView
+
+@xadmin.sites.register(change_into)
+class ChangeIntoAdmin(object):
+    # 指向自定义的页面
+    object_list_template = 'change_into.html'
+
+    # 重写方法，把要展示的数据更新到 context
+    def get_context(self):
+        context = CommAdminView.get_context(self)
+
+        bill_message = DealLog.objects.all()
+        context.update(
+            {
+                'title': '转入分析',
+                'bill_message': bill_message,
+            }
+        )
+
+        return context
+
+@xadmin.sites.register(change_out)
+class ChangeOutAdmin(object):
+    object_list_template = 'change_out.html'
+
+    def get_context(self):
+        context = CommAdminView.get_context(self)
+
+        bill_message = DealLog.objects.all()
+        context.update(
+            {
+                'title': '转出分析',
+                'bill_message': bill_message,
+            }
+        )
+
+        return context
+
+#xadmin.site.register(change_into, ChangeIntoAdmin)
+#xadmin.site.register(change_out, ChangeOutAdmin)
+'''
