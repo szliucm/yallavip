@@ -1956,6 +1956,8 @@ def delete_photos(photo_nos):
         except Exception as e:
             print("删除图片出错", photo_no, e)
             error = "删除图片出错"
+            print (my_access_token)
+            return
             # continue
         # 更新lightinalbum的发布记录
         # print("facebook 返回结果",response)
