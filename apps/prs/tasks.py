@@ -1746,7 +1746,7 @@ def delete_lightin_album_cate(cate):
 
 # 删除lightin_album 的某个特定子集
 def delete_out_lightin_album(lightinalbums_out):
-    from facebook_business.api import FacebookAdsApi
+
 
     # 选择所有可用的page
 
@@ -1935,6 +1935,7 @@ def delete_oversea_photo():
 
 def delete_photos(photo_nos):
     from facebook_business.adobjects.photo import Photo
+    from facebook_business.api import FacebookAdsApi
     FacebookAdsApi.init(access_token=my_access_token)
     for photo_no in photo_nos:
 
