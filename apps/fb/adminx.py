@@ -1904,9 +1904,11 @@ import hashlib
 import hmac
 key = b'e6df363351fb5ce4b7f0080adad08a4d'
 msg = b'EAAHZCz2P7ZAuQBADxdcqbOZCw8R8mKl4R4AZCTU8er02GNwzNu7Oj9ZAJZB6zxoVZBKmLZA4qZBeznC8TFcE90uZCNprKkdTUPCNGniH7q9vsALK4AW95VR2wH6oo9ypk6tjyAsqc5aFFZAgZCVCP32c7IeJcnCUsNhILrz4QqCbjA3aOoxOfcqEStoVjAg6doROP9Fbln5MjEfFczgw8PGiYr00'
+        
 h = hmac.new(key, msg, digestmod='sha256')
 print(h.hexdigest())
 
+fa8c74c300fdc57ab7128d50f96fe6b073d749f1f61292c2f27a48d84b37d99e
 
 APP_SCOPED_SYSTEM_USER_ID 100029952330435
 business_app 562741177444068
