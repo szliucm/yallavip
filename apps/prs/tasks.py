@@ -20,7 +20,7 @@ from customer.models import  Draft
 
 from .models import *
 from .shop_action import sync_shop
-
+from facebook_business.api import FacebookAdsApi
 
 my_app_id = "562741177444068"
 my_app_secret = "e6df363351fb5ce4b7f0080adad08a4d"
