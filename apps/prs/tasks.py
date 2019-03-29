@@ -55,7 +55,7 @@ def get_token(target_page, token=None):
     r = requests.get(url, param)
 
     data = json.loads(r.text)
-
+    print("get_token ", data)
     # print("request response is ", data["access_token"])
     return data["access_token"]
 
