@@ -1752,7 +1752,7 @@ def delete_out_lightin_album(lightinalbums_out):
 
     for page_no in lightinalbums_out:
         #FacebookAdsApi.init(access_token=get_token(page_no))
-        FacebookAdsApi.init(access_token=my_access_token)
+
 
 
         photo_nos = lightinalbums_out[page_no]
@@ -1935,7 +1935,7 @@ def delete_oversea_photo():
 
 def delete_photos(photo_nos):
     from facebook_business.adobjects.photo import Photo
-
+    FacebookAdsApi.init(access_token=my_access_token)
     for photo_no in photo_nos:
 
         fields = [
