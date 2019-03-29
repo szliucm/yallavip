@@ -1959,7 +1959,7 @@ def delete_photos(photo_nos):
             error = ""
             url = "https://graph.facebook.com/v3.2/%s"%(photo_no)
             param = dict()
-            param["access_token"] = my_access_token
+            param["access_token"] = "EAAcGAyHVbOEBAEtwMPUeTci0x3G6XqlAwIhuQiZBZCVhZBRx88Rki0Lo7WNSxvAw7jAhhRlxsLjARbAZCnDvIoQ68Baj9TJrQC8KvEzyDhRWlnILGxRyc49b02aPInvpI9bcfgRowJfDrIt0kFE01LGD86vLKuLixtB0aTvTHww9SkedBzFZA"
             param["status"] = "DELETED"
 
             r = requests.post(url, param)
