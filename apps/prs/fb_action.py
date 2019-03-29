@@ -467,10 +467,10 @@ import  random
 
 from shop.photo_mark import  photo_mark
 
-'''
+
 my_app_id = "562741177444068"
 my_app_secret = "e6df363351fb5ce4b7f0080adad08a4d"
-my_access_token = "EAAHZCz2P7ZAuQBABHO6LywLswkIwvScVqBP2eF5CrUt4wErhesp8fJUQVqRli9MxspKRYYA4JVihu7s5TL3LfyA0ZACBaKZAfZCMoFDx7Tc57DLWj38uwTopJH4aeDpLdYoEF4JVXHf5Ei06p7soWmpih8BBzadiPUAEM8Fw4DuW5q8ZAkSc07PrAX4pGZA4zbSU70ZCqLZAMTQZDZD"
+my_access_token = "EAAHZCz2P7ZAuQBAIbIGvWqJIAxHAXIDcEkXOYDkGCHwLXwSRuKuFWR4WQYhLysvpuOhwS4AtLZC2my0ibEbBbAP6pkUx5PYcgHZCpZADrqVoprBlueE5EAx1xKCm5qVCKEaphV2io2citFLrzc6ZADaWipBTjiOB74cZCYGUoMZAYWuDpvmi8TLU"
 
 
 my_app_id_dev = "1976935359278305"
@@ -483,6 +483,7 @@ my_access_token = "EAAcGAyHVbOEBALr3fbZBvB0ICBNpB0zbzBiokAXrS2ppiAOvyugxOVJoFL2t
 
 second_app_id = "437855903410360"
 second_token = "EAAGOOkWV6LgBAIGWTMe3IRKJQNp5ld7nxmiafOdWwlPn8BksJxFUsCiAqzMQ1ZC1LJipR2tcHXZBO949i0ZB5xOOfHbut2hk7sIP3YZB5MfuqjFtm9LGq3J7xrBtUFPLZBT9pe2UcUTXann8DXhwMPQOlIBANiNJE6RA11vNrZC0fGijUsDJds"
+'''
 
 import requests
 import json
