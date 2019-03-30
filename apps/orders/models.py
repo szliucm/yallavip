@@ -524,7 +524,7 @@ class Verify(models.Model):
     sales = models.CharField(u'销售客服', max_length=100, null=True, blank=True)
     facebook_user_name = models.CharField(u'客户facebook姓名', default='', max_length=500, null=True, blank=True)
 
-    conversation_link = models.CharField(u'会话链接', max_length=200, null=True, blank=True)
+    conversation_link = models.CharField(u'会话链接', max_length=500, null=True, blank=True)
 
     CITY = (
         ("None", "暂不支持"),
