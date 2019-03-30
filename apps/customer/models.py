@@ -49,6 +49,8 @@ class Receiver(models.Model):
         ("riyadh", "Riyadh"),
         ("jeddah", "Jeddah"),
         ("dammam", "Dammam"),
+        ("madinah", "Madinah"),
+        ("Medina", "Madinah"),
         ("al khobar", "Al Khobar"),
         ("hofuf", "Hofuf"),
         ("jubail", "Jubail"),

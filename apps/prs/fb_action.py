@@ -900,6 +900,7 @@ def post_lightin_album(lightinalbum):
     else:
         product_no = lightinalbum.lightin_sku.SKU
 
+
     adobjects = FacebookAdsApi.init(my_app_id, my_app_secret, access_token=get_token(page_no), debug=True)
     fields = ["id","name","created_time", "updated_time","picture","link",
                       "likes.summary(true)","comments.summary(true)"
@@ -945,6 +946,75 @@ def post_lightin_album(lightinalbum):
 
     #print("new_photo saved ", obj, created)
     return  "成功", photo["id"]
+
+
+def post_lightin_album_v0330(lightinalbum):
+    page_no = lightinalbum.myalbum.page_no
+    album_no = lightinalbum.myalbum.album_no
+    if lightinalbum.lightin_spu:
+
+        product_no = lightinalbum.lightin_spu.SPU
+    else:
+        product_no = lightinalbum.lightin_sku.SKU
+
+    '''
+    adobjects = FacebookAdsApi.init(my_app_id, my_app_secret, access_token=get_token(page_no), debug=True)
+    fields = ["id", "name", "created_time", "updated_time", "picture", "link",
+              "likes.summary(true)", "comments.summary(true)"
+              ]
+    params = {
+        "published": "true",
+
+        "url": lightinalbum.image_marked,
+
+        "name": lightinalbum.name,
+
+    }
+    try:
+        photo = Album(album_no).create_photo(
+            fields=fields,
+            params=params,
+        )
+    except Exception as e:
+        error = str(e)
+        return error, None
+    '''
+
+    url = "https://graph.facebook.com/v3.2/%s"/photos % (album_no)
+    param = dict()
+    param[
+        "access_token"] = "EAAcGAyHVbOEBAEtwMPUeTci0x3G6XqlAwIhuQiZBZCVhZBRx88Rki0Lo7WNSxvAw7jAhhRlxsLjARbAZCnDvIoQ68Baj9TJrQC8KvEzyDhRWlnILGxRyc49b02aPInvpI9bcfgRowJfDrIt0kFE01LGD86vLKuLixtB0aTvTHww9SkedBzFZA"
+    param["published"] = True
+    param["url"] = lightinalbum.image_marked
+    param["caption"] = lightinalbum.name
+    param["fields"] = "id, name, created_time, updated_time, picture, link,likes.summary(true), comments.summary(true)"
+
+    r = requests.post(url, param)
+    if r.code == 200:
+        photo = json.loads(r.text)
+        obj, created = MyPhoto.objects.update_or_create(photo_no=photo["id"],
+                                                        defaults={
+                                                            'page_no': page_no,
+                                                            'album_no': album_no,
+                                                            "product_no": product_no,
+                                                            'listing_status': True,
+                                                            'created_time':
+                                                                photo["created_time"],  # .split('+')[0],
+                                                            'updated_time':
+                                                                photo["updated_time"],  # .split('+')[0],
+
+                                                            'name': photo.get("name"),
+                                                            'picture': photo["picture"],
+                                                            'link': photo["link"],
+                                                            'like_count': photo["likes"]["summary"]["total_count"],
+                                                            'comment_count': photo["comments"]["summary"][
+                                                                "total_count"]
+
+                                                        }
+                                                        )
+
+    # print("new_photo saved ", obj, created)
+    return "成功", photo["id"]
 
 def post_ads():
     page_nos = MyPage.objects.filter(active=True, is_published=True).values_list('page_no', flat=True)
