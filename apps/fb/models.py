@@ -310,6 +310,45 @@ class ConversationUpdate(MyPage):
     def __str__(self):
         return self.page_no
 
+class PostToFeed(models.Model):
+
+    mypage = models.ForeignKey(MyPage, null=True, blank=True, verbose_name="FB Page",
+                               related_name="post_feed_page", on_delete=models.CASCADE)
+    feed_no = models.CharField(default='',  max_length=200, blank=True, verbose_name="FeedID")
+
+    message = models.TextField(default='', null=True, blank=True, verbose_name="message")
+    post_now = models.BooleanField(u"Post Now", default=True)
+    posted = models.BooleanField(u"Posted", default=False)
+
+    created_time = models.DateTimeField(null=True, blank=True, verbose_name="创建时间")
+    class Meta:
+        verbose_name = "Post to FB Page"
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        if self.message:
+            return self.message
+        else:
+            return ""
+
+class SysConfig(models.Model):
+
+
+    user = models.CharField(default='', unique=True, max_length=50, blank=True, verbose_name="User")
+    token = models.CharField(default='', max_length=300, blank=True, verbose_name="token")
+
+
+
+    class Meta:
+        verbose_name = "Facebook Config"
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        if self.user:
+            return self.user
+        else:
+            return ""
+
 
 
 

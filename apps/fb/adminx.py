@@ -41,18 +41,24 @@ APP_SCOPED_SYSTEM_USER_ID=100029952330435
 my_access_token = "EAAHZCz2P7ZAuQBABHO6LywLswkIwvScVqBP2eF5CrUt4wErhesp8fJUQVqRli9MxspKRYYA4JVihu7s5TL3LfyA0ZACBaKZAfZCMoFDx7Tc57DLWj38uwTopJH4aeDpLdYoEF4JVXHf5Ei06p7soWmpih8BBzadiPUAEM8Fw4DuW5q8ZAkSc07PrAX4pGZA4zbSU70ZCqLZAMTQZDZD"
 my_access_token_dev = "EAAcGAyHVbOEBAAL2mne8lmKC55lbDMndPYEVR2TRmOWf9ePUN97SiZCqwCd3KOZBrEkC57rVt3ZClhXi6oxxf1i0hRCK50QALuAQOCs60U30FjNYimeP97xLjfl7wZAAjThdkXPJujsWcAXOwkTNKvKlmP6tZBPUtSYb3i4i1vUs40MZAUOzNIG9v7HNjnyyIZD"
 
-def get_token(target_page):
+def get_token(target_page,token=None):
+
 
     url = "https://graph.facebook.com/v3.2/{}?fields=access_token".format(target_page)
-
     param = dict()
-    param["access_token"] = my_access_token
+    if token is None:
+        param["access_token"] = my_access_token
+    else:
+        param["access_token"] = token
 
     r = requests.get(url, param)
 
-    data = json.loads(r.text)
 
-    #print("request response is ", data["access_token"])
+    data = json.loads(r.text)
+    print(r, r.text)
+
+
+    # print("request response is ", data["access_token"])
     return data["access_token"]
 
 @xadmin.sites.register(MyPage)
@@ -1892,7 +1898,68 @@ class ConversationUpdateAdmin(object):
 
     batch_update.short_description = "批量更新主页会话"
 
+@xadmin.sites.register(PostToFeed)
+class PostToFeedAdmin(object):
+    def page(self, obj):
+        return obj.mypage.page
+    page.short_description = "Page"
 
+    actions = [ ]
+    list_display = ('page', 'feed_no', 'message','created_time',)
+    list_editable = []
+    search_fields = ['message', ]
+    list_filter = ('mypage', 'feed_no',)
+    #model_icon = '<i class="fa fa-camera-retro fa-5x"></i> fa-5x'
+
+    exclude = ["created_time","feed_no"]
+    ordering = ['-created_time']
+
+
+
+    def save_models(self):
+        from django.utils import timezone as dt
+        obj = self.new_obj
+        if not obj.posted:
+            page_no = obj.mypage.page_no
+
+
+            sysuser_token = SysConfig.objects.first().token
+
+            token = get_token(page_no,sysuser_token)
+            FacebookAdsApi.init(access_token=token, debug=True)
+
+            fields = [
+                'object_id',
+            ]
+            params = {
+                'message': obj.message,
+
+            }
+
+            feed = Page(page_no).create_feed(
+                fields=fields,
+                params=params,
+            )
+
+            #feed_no = "123"
+
+            obj.feed_no = feed.get("id")
+            obj.created_time = dt.now()
+            obj.posted = True
+
+        obj.save()
+
+@xadmin.sites.register(SysConfig)
+class SysConfigAdmin(object):
+
+    actions = [ ]
+    list_display = ('user', 'token')
+    list_editable = ['user', 'token',]
+    search_fields = [ ]
+    list_filter = ()
+
+    exclude = []
+    ordering = []
 
 
 '''
