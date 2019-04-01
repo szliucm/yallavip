@@ -555,7 +555,20 @@ class CustomerAdmin(object):
 
     batch_init.short_description = "重新开始"
 
+    def get_context(self):
+        context = super().get_context()
+        print(context.get("title"))
+        ca = context.get("results")[0].get("object")
+        print(ca.customer,ca.content)
+        context.update(
+            {
+                'title': ca.customer,
 
+            }
+        )
+        #file = open("context", 'w', encoding='utf-8')
+        #file.write(str(tuple(context.items())))
+        return context
 
 @xadmin.sites.register(Draft)
 class DraftAdmin(object):
@@ -566,6 +579,7 @@ class DraftAdmin(object):
 
     ordering = ["-quantity"]
     list_filter = ()
+    list_per_page = 1
 
     actions = [ ]
 
@@ -625,6 +639,8 @@ class DraftAdmin(object):
         obj = self.new_obj
 
         obj.save()
+
+
 
 
 
