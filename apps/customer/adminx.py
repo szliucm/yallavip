@@ -607,7 +607,7 @@ class DraftAdmin(object):
 
         order_details = OrderDetail.objects.filter(order__status ="open", order__customer = obj.customer,sku = obj.lightin_sku.SKU )
         if order_details:
-            order_quantity = order_details[0].quantity
+            order_quantity = int(order_details[0].quantity)
         else:
             order_quantity = 0
 
