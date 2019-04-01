@@ -46,6 +46,7 @@ class Receiver(models.Model):
                                     null=False)
 
     CITIES = (
+        ("None", "暂不支持"),
         ("riyadh", "Riyadh"),
         ("jeddah", "Jeddah"),
         ("dammam", "Dammam"),
