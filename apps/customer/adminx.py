@@ -284,6 +284,7 @@ class CustomerAdmin(object):
     search_fields = ['name']
     ordering = ["-update_time"]
     list_filter = ('name',"sales","active")
+    list_per_page = 1
     '''
     list_bookmarks = [{
         "title": "只看自己的客户",
@@ -579,7 +580,7 @@ class DraftAdmin(object):
 
     ordering = ["-quantity"]
     list_filter = ()
-    list_per_page = 1
+
 
     actions = [ ]
 
