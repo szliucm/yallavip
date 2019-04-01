@@ -463,6 +463,13 @@ class CustomerAdmin(object):
 
             #创建新订单
             receiver = customer.receiver
+            if not  receiver :
+                customer.message = info("red", "没有收件人信息")
+                customer.save()
+
+                self.deal_log(queryset, "提交订单",  " 没有收件人信息")
+                continue
+
             order = Order.objects.create(
                 customer=customer,
 
