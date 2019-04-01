@@ -603,7 +603,15 @@ class DraftAdmin(object):
     skuattr.short_description = "skuattr"
 
     def sellable(self, obj):
-        return obj.lightin_sku.o_sellable
+        #sellable + 客户订单占用的库存
+
+        order_details = OrderDetail.objects.filter(order__status ="open", order__customer = obj.customer,sku = lightin_sku.SKU )
+        if order_details:
+            order_quantity = order_details[0].quantity
+        else:
+            order_quantity = 0
+
+        return obj.lightin_sku.o_sellable + order_quantity
 
     sellable.short_description = "sellable"
 
