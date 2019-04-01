@@ -3857,6 +3857,7 @@ def auto_smscode():
         v = Verify(
             order=Order.objects.get(id=row.id),
             verify_status="PROCESSING",
+            city = row.receiver_city,
             phone_1=valid_phone(row.receiver_phone),
             sms_status="NOSTART",
             start_time=datetime.now(),
@@ -3878,13 +3879,13 @@ def auto_smscode():
 
     # 检验城市是否在派送范围
     # 更新城市名到标准
-    mysql = 'update orders_verify l, orders_order o set l.city = trim( lower(o.receiver_city)) where l.order_id = o.id and trim( lower(o.receiver_city)) in ' \
-            '("riyadh","jeddah","madinah","medina", "makkah","mecca","dammam","al khobar","hofuf","jubail","dhahran","tabuk","buraydah","al hassa","jizan","jazan","qatif")'
-    my_custom_sql(mysql)
+    #直接引用订单里的城市名
+    #mysql = 'update orders_verify l, orders_order o set l.city = trim( lower(o.receiver_city)) where l.order_id = o.id and trim( lower(o.receiver_city)) in ("riyadh","jeddah","dammam","makkah","madinah","buraidah","tabuk","khobar","jubail","khamis mushait","qatif","hail","kharj","onaiza","abha","dhahran","hawea/taif","dawadmi","hafer al batin","yanbu","hofuf","alrass","majma","yanbu al baher","mubaraz","qunfudah","baha","seihat","afif","bukeiriah","qassim","nwariah","badaya","hawtat bani tamim","hinakeya","muzahmiah","aflaj","rabigh","ras tanura","majarda","namas","khulais","abqaiq","hotat sudair","jouf","mikhwa","jumum","sajir","tarut","al-jsh","biljurashi","haqil","sabt el alaya","sarat obeida","uyun","zulfi","alhada","anak","artawiah","awamiah","ayn fuhayd","qarah","nabiya","shefa","tanuma","turaif","damad","horaimal","kara","rahima","mahad al dahab","thumair","al tuwal","balasmar","batha","hadeethah","karboos","wadi fatmah",)'
+    #my_custom_sql(mysql)
 
-    mysql = 'update orders_verify l set l.city = "jazan" where l.city ="jizan"'
+    #mysql = 'update orders_verify l set l.city = "jazan" where l.city ="jizan"'
 
-    my_custom_sql(mysql)
+    #my_custom_sql(mysql)
 
     #不在派送范围的直接标记问题单
     verify_orders_outrang = verify_orders.filter(city ="None").update(verify_comments ="out of range")
