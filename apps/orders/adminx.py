@@ -1279,10 +1279,10 @@ class VerifyAdmin(object):
 
 
 
-    def order_financial_status(self, obj):
+    def order_status(self, obj):
         return obj.order.financial_status
 
-    order_financial_status.short_description = "订单支付状态"
+    order_status.short_description = "订单状态"
 
     def order_fulfillment_status(self, obj):
         return obj.order.fulfillment_status
@@ -1317,7 +1317,7 @@ class VerifyAdmin(object):
     '''
 
     readonly_fields = ('order', 'order_time',)
-    list_display = ('order','order_time',"order_financial_status","stock",'colored_verify_status', \
+    list_display = ('order','order_time',"order_status","stock",'colored_verify_status', \
                     'colored_sms_status',"sms_code",
                     'receiver_city','city','receiver_addr',
 

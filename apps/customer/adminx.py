@@ -555,6 +555,8 @@ class CustomerAdmin(object):
 
     batch_init.short_description = "重新开始"
 
+
+
 @xadmin.sites.register(Draft)
 class DraftAdmin(object):
     list_display = [ 'lightin_sku', 'customer','handle','sellable','quantity','price', 'skuattr', "photo",]
@@ -609,6 +611,15 @@ class DraftAdmin(object):
         return obj.lightin_sku.lightin_spu.handle
 
     handle.short_description = "handle"
+
+    def save_models(self):
+        print("##############################", obj)
+        obj = self.new_obj
+
+        obj.save()
+
+
+
 
 @xadmin.sites.register(Receiver)
 class ReceiverAdmin(object):
