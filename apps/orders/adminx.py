@@ -1280,7 +1280,7 @@ class VerifyAdmin(object):
 
 
     def order_status(self, obj):
-        return obj.order.financial_status
+        return obj.order.status
 
     order_status.short_description = "订单状态"
 
