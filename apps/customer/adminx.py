@@ -610,7 +610,7 @@ class DraftAdmin(object):
             order_quantity = order_details[0].quantity
         else:
             order_quantity = 0
-        pint("aaaaaaaaaaaaaaa",obj.lightin_sku.o_sellable,order_quantity )
+        print("aaaaaaaaaaaaaaa",obj.lightin_sku.o_sellable,order_quantity )
         return obj.lightin_sku.o_sellable + int(order_quantity)
 
     sellable.short_description = "sellable"
