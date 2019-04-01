@@ -656,12 +656,6 @@ class DraftAdmin(object):
         obj.save()
         return
 
-    def do_post(self, request):
-        context = super().do_post(self, request)
-        print("xxxxxxxxxxxxxx")
-        return
-
-
 
 @xadmin.sites.register(Receiver)
 class ReceiverAdmin(object):
