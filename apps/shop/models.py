@@ -475,7 +475,7 @@ class ShopOriDraft(models.Model):
     def __str__(self):
         return self.order_id
 
-class Draft(models.Model):
+class ShopifyDraft(models.Model):
     order_id = models.CharField(u'订单id', default='', max_length=100, blank=True)
     order_no = models.CharField(u'订单号', default='', max_length=50, blank=True)
     status = models.CharField(u'shopify订单状态', max_length=30, default='', blank=True)
@@ -495,7 +495,7 @@ class Draft(models.Model):
 
 
 class DraftItem(models.Model):
-    draft = models.ForeignKey(Draft, related_name='draft_item', null=False, on_delete=models.CASCADE,
+    draft = models.ForeignKey(ShopifyDraft, related_name='draft_item', null=False, on_delete=models.CASCADE,
                               verbose_name="Draft")
     sku = models.CharField(u'SKU', default='', max_length=100, null=True, blank=True)
 
