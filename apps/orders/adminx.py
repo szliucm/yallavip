@@ -1333,7 +1333,7 @@ class VerifyAdmin(object):
 
     model_icon = 'fa fa-address-book-o'
 
-    actions = ['batch_copy',  'batch_simple','batch_complex', 'batch_sms', 'batch_confirmSMS','batch_timeoutSMS','batch_verify', 'batch_customercancel','batch_cscancel','batch_timeoutcancel', 'batch_notstart','batch_restart', ]
+    actions = ['batch_copy',  'batch_simple','batch_complex', 'batch_sms', 'batch_confirmSMS','batch_timeoutSMS','batch_verify', 'batch_customercancel','batch_cscancel','batch_timeoutcancel', 'batch_notstart','batch_restart','batch_cancel_order', ]
     #'batch_error_money', 'batch_error_contact', 'batch_error_address', 'batch_error_cod', 'batch_error_note',
     #自定义django的admin后台action
 
@@ -1617,6 +1617,19 @@ class VerifyAdmin(object):
         return
 
     batch_copy.short_description = "复制所选单号"
+
+    def batch_cancel_order(self, request, queryset):
+
+        for verify in queryset:
+            verify.order.status = "cancelled"
+            verify.order.save()
+
+            # 记录操作日志
+            #self.deal_log(queryset, "取消订单", customer.name )
+
+        return
+
+    batch_cancel_order.short_description = "取消订单"
 
 
     def get_search_results(self, request, queryset, search_term):

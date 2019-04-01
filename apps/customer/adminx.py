@@ -294,7 +294,7 @@ class CustomerAdmin(object):
     '''
 
 
-    actions = ['batch_prepare_draft','batch_submit_draft',]
+    actions = ['batch_prepare_draft','batch_submit_draft','batch_cancel_order',]
     relfield_style = 'fk_ajax'
     inlines = [ ConversationInline ]
 
@@ -517,6 +517,22 @@ class CustomerAdmin(object):
         return
 
     batch_submit_draft.short_description = "提交订单"
+
+    def batch_cancel_order(self, request, queryset):
+
+
+        for customer in queryset:
+            orders = customer.customer_order.filter(status="open")
+            if orders:
+                orders.update(status = "cancelled")
+
+            # 记录操作日志
+            self.deal_log(queryset, "取消订单", customer.name )
+
+        return
+
+    batch_cancel_order.short_description = "取消订单"
+
 
     def batch_init(self, request, queryset):
         for customer in queryset:
