@@ -562,7 +562,7 @@ class CustomerAdmin(object):
         print(ca.customer,ca.content)
         context.update(
             {
-                'title': ca.customer,
+                'title': ca.name,
 
             }
         )
