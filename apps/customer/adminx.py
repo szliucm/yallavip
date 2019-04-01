@@ -559,7 +559,7 @@ class CustomerAdmin(object):
         context = super().get_context()
         print(context.get("title"))
         ca = context.get("results")[0].get("object")
-        print(ca.name,ca.content)
+        print(ca.name)
         context.update(
             {
                 'title': ca.name,
