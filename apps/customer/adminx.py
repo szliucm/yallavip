@@ -558,18 +558,25 @@ class CustomerAdmin(object):
 
     def get_context(self):
         context = super().get_context()
-        print(context.get("title"))
-        ca = context.get("results")[0].get("object")
-        print(ca.name)
-        context.update(
-            {
-                'title': ca.name,
 
-            }
-        )
-        #file = open("context", 'w', encoding='utf-8')
-        #file.write(str(tuple(context.items())))
+        result = context.get("results")
+
+        if result and len(result)>0:
+            ca = result[0].get("object")
+            if ca:
+
+                context.update(
+                    {
+                        'title': ca.name,
+
+                    }
+                )
+            # file = open("context", 'w', encoding='utf-8')
+            # file.write(str(tuple(context.items())))
         return context
+
+
+
 
 @xadmin.sites.register(Draft)
 class DraftAdmin(object):
