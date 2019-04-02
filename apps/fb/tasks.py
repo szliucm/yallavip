@@ -19,7 +19,25 @@ from facebook_business.adobjects.adsinsights import AdsInsights
 from fb.models import  *
 
 my_access_token = "EAAHZCz2P7ZAuQBABHO6LywLswkIwvScVqBP2eF5CrUt4wErhesp8fJUQVqRli9MxspKRYYA4JVihu7s5TL3LfyA0ZACBaKZAfZCMoFDx7Tc57DLWj38uwTopJH4aeDpLdYoEF4JVXHf5Ei06p7soWmpih8BBzadiPUAEM8Fw4DuW5q8ZAkSc07PrAX4pGZA4zbSU70ZCqLZAMTQZDZD"
+def get_token(target_page,token=None):
 
+
+    url = "https://graph.facebook.com/v3.2/{}?fields=access_token".format(target_page)
+    param = dict()
+    if token is None:
+        param["access_token"] = my_access_token
+    else:
+        param["access_token"] = token
+
+    r = requests.get(url, param)
+
+
+    data = json.loads(r.text)
+    print(r, r.text)
+
+
+    # print("request response is ", data["access_token"])
+    return data["access_token"]
 
 def update_albums():
     adobjects = FacebookAdsApi.init(access_token=my_access_token, debug=True)
@@ -73,11 +91,13 @@ def update_albums():
 
 #批量更新相册内容
 def batch_update_albums():
-    adobjects = FacebookAdsApi.init(access_token=my_access_token, debug=True)
+
     queryset = MyAlbum.objects.filter(active=True)
 
     for row in queryset:
         album_no = row.album_no
+        page = row.page_no
+        adobjects = FacebookAdsApi.init(access_token=get_token(page), debug=True)
         # 重置原有相册的图片信息为不活跃
         MyPhoto.objects.filter(album_no=album_no).update(active=False)
 
@@ -95,13 +115,14 @@ def batch_update_albums():
         except Exception as e:
             print("获取Facebook数据出错", fields, e)
             continue
-
+        n=0
+        myphoto_list = []
         for photo in photos:
             try:
                 name = photo["name"]
             except KeyError:
                 name = ""
-
+            '''
             obj, created = MyPhoto.objects.update_or_create(photo_no=photo["id"],
                                                             defaults={'page_no': row.page_no,
                                                                       'album_no': album_no,
@@ -120,4 +141,67 @@ def batch_update_albums():
 
                                                                       }
                                                             )
+            '''
+            
+            myphoto = MyPhoto(
+                photo_no=photo["id"],
+                page_no = row.page_no,
+                          album_no = album_no,
+                          created_time = photo["created_time"],
+                          updated_time = photo["updated_time"],
+                          active = True,
+                          name = name,
+                          picture = photo["picture"],
+                          link = photo["link"],
+                          like_count = photo["likes"]["summary"]["total_count"],
+                          comment_count = photo["comments"]["summary"]["total_count"]
+            )
+            myphoto_list.append(myphoto)
+            if n % 100 == 0:
+                MyInsight.objects.bulk_create(myphoto_list)
+                myphoto_list = []
 
+
+def batch_update_feed(self, request, queryset):
+    adobjects = FacebookAdsApi.init(access_token=my_access_token, debug=True)
+    queryset = MyPage.objects.filter(active=True, is_published=True)
+    for row in queryset:
+        page_no = row.page_no
+        # 重置原有feed信息为不活跃
+        MyFeed.objects.filter(page_no=page_no).update(active=False)
+
+        fields = ["created_time", "description", "id",
+                  "type", "message", "name",
+                  "actions_link","actions_name",
+                  "likes.summary(true)", "comments.summary(true)"
+                  ]
+        params = {
+
+        }
+        feeds = Page(page_no).get_feed(
+            fields=fields,
+            params=params,
+        )
+
+        for feed in feeds:
+            obj, created = MyFeed.objects.update_or_create(feed_no=feed["id"],
+                                                            defaults={'page_no': page_no,
+                                                                      'created_time':
+                                                                          feed["created_time"],
+                                                                      'active': True,
+                                                                      'message': feed.get("message"),
+                                                                      'description': feed.get("description"),
+                                                                      'name': feed.get("name"),
+                                                                      'type': feed.get("type"),
+                                                                      'actions_link': feed.get("actions_link"),
+                                                                      'actions_name': feed.get("actions_name"),
+                                                                      'like_count': feed["likes"]["summary"][
+                                                                          "total_count"],
+                                                                      'comment_count': feed["comments"]["summary"][
+                                                                          "total_count"],
+
+
+                                                                      }
+                                                            )
+
+            print("feed is ", feed)
