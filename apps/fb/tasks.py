@@ -34,7 +34,7 @@ def batch_update_albums():
 
         fields = ["created_time", "description", "id",
                   "name", "count", "updated_time", "link",
-                  "likes.summary(true)", "comments.summary(true)"
+                  #"likes.summary(true)", "comments.summary(true)"
                   ]
         params = {
 
@@ -54,14 +54,13 @@ def batch_update_albums():
 
                                                                       'name': album["name"],
                                                                       'count': album["count"],
-                                                                      'like_count': album["likes"]["summary"][
-                                                                          "total_count"],
-                                                                      'comment_count': album["comments"]["summary"][
-                                                                          "total_count"],
+
                                                                       'link': album["link"],
                                                                       'active': True,
                                                                       }
                                                             )
+            #'like_count': album["likes"]["summary"]["total_count"],
+            #'comment_count': album["comments"]["summary"]["total_count"],
 
             print("album is ", album)
 
