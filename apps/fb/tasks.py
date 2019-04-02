@@ -159,6 +159,7 @@ def batch_update_albums():
                           comment_count = photo["comments"]["summary"]["total_count"]
             )
             myphoto_list.append(myphoto)
+            n += 1
             if n % 100 == 0:
                 MyPhoto.objects.bulk_create(myphoto_list)
                 myphoto_list = []

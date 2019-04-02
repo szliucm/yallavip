@@ -633,13 +633,13 @@ class DraftAdmin(object):
 
     def sellable(self, obj):
         #sellable + 客户订单占用的库存
-        print("aaaaaaaaaaaaaaa",obj.pk, obj.lightin_sku.lightin_spu.handle, obj.lightin_sku.SKU)
+        #print("aaaaaaaaaaaaaaa",obj.pk, obj.lightin_sku.lightin_spu.handle, obj.lightin_sku.SKU)
         order_details = OrderDetail.objects.filter(order__status ="open", order__customer = obj.customer,sku = obj.lightin_sku.SKU )
         if order_details:
             order_quantity = order_details[0].product_quantity
         else:
             order_quantity = 0
-        print("BBBBBBB", obj.lightin_sku.o_sellable + int(order_quantity))
+        #print("BBBBBBB", obj.lightin_sku.o_sellable + int(order_quantity))
         return obj.lightin_sku.o_sellable + int(order_quantity)
 
     sellable.short_description = "sellable"
