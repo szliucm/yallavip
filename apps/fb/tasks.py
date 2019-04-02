@@ -92,9 +92,10 @@ def update_albums():
     transaction.commit()
 
 #批量更新相册内容
-def batch_update_albums():
+def batch_update_albums(limit = None):
 
     queryset = MyAlbum.objects.filter(active=True,updated= False)
+    n = 0
 
     for row in queryset:
         album_no = row.album_no
@@ -117,7 +118,7 @@ def batch_update_albums():
         except Exception as e:
             print("获取Facebook数据出错", fields, e)
             continue
-        n=0
+
         myphoto_list = []
         for photo in photos:
             try:
@@ -167,6 +168,12 @@ def batch_update_albums():
             '''
         row.updated = True
         row.save()
+        n += 1
+        if limit:
+            if n> limit:
+                break
+
+
 
 
 def batch_update_feed(self, request, queryset):
