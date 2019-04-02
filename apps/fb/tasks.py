@@ -101,7 +101,7 @@ def batch_update_albums():
         page = row.page_no
         adobjects = FacebookAdsApi.init(access_token=get_token(page), debug=True)
         # 重置原有相册的图片信息为不活跃
-        #MyPhoto.objects.filter(album_no=album_no).update(active=False)
+        MyPhoto.objects.filter(album_no=album_no).update(active=False)
 
         fields = ["id", "name", "created_time", "updated_time", "picture", "link",
                   "likes.summary(true)", "comments.summary(true)"
@@ -124,7 +124,7 @@ def batch_update_albums():
                 name = photo["name"]
             except KeyError:
                 name = ""
-            '''
+
             obj, created = MyPhoto.objects.update_or_create(photo_no=photo["id"],
                                                             defaults={'page_no': row.page_no,
                                                                       'album_no': album_no,
@@ -164,6 +164,7 @@ def batch_update_albums():
                 print ("##############",n)
                 MyPhoto.objects.bulk_create(myphoto_list)
                 myphoto_list = []
+            '''
         row.updated = True
         row.save()
 
