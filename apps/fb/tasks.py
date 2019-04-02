@@ -23,7 +23,7 @@ my_access_token = "EAAHZCz2P7ZAuQBABHO6LywLswkIwvScVqBP2eF5CrUt4wErhesp8fJUQVqRl
 
 def batch_update_albums():
     adobjects = FacebookAdsApi.init(access_token=my_access_token, debug=True)
-    queryset = Mypage.objects.filter(active= True, is_published= True)
+    queryset = MyPage.objects.filter(active= True, is_published= True)
 
     for row in queryset:
         page_no = row.page_no
