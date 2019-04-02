@@ -21,7 +21,7 @@ from fb.models import  *
 my_access_token = "EAAHZCz2P7ZAuQBABHO6LywLswkIwvScVqBP2eF5CrUt4wErhesp8fJUQVqRli9MxspKRYYA4JVihu7s5TL3LfyA0ZACBaKZAfZCMoFDx7Tc57DLWj38uwTopJH4aeDpLdYoEF4JVXHf5Ei06p7soWmpih8BBzadiPUAEM8Fw4DuW5q8ZAkSc07PrAX4pGZA4zbSU70ZCqLZAMTQZDZD"
 
 
-def batch_update_albums():
+def update_albums():
     adobjects = FacebookAdsApi.init(access_token=my_access_token, debug=True)
     queryset = MyPage.objects.filter(active= True, is_published= True)
 
@@ -70,3 +70,54 @@ def batch_update_albums():
     cursor = connection.cursor()
     cursor.execute("update fb_myalbum a , fb_mypage p set a.mypage_id = p.id where p.page_no = a.page_no")
     transaction.commit()
+
+#批量更新相册内容
+def batch_update_albums():
+    adobjects = FacebookAdsApi.init(access_token=my_access_token, debug=True)
+    queryset = MyAlbum.objects.filter(active=True)
+
+    for row in queryset:
+        album_no = row.album_no
+        # 重置原有相册的图片信息为不活跃
+        MyPhoto.objects.filter(album_no=album_no).update(active=False)
+
+        fields = ["id", "name", "created_time", "updated_time", "picture", "link",
+                  "likes.summary(true)", "comments.summary(true)"
+                  ]
+        params = {
+
+        }
+        try:
+            photos = Album(album_no).get_photos(
+                fields=fields,
+                params=params,
+            )
+        except Exception as e:
+            print("获取Facebook数据出错", fields, e)
+            continue
+
+        for photo in photos:
+            try:
+                name = photo["name"]
+            except KeyError:
+                name = ""
+
+            obj, created = MyPhoto.objects.update_or_create(photo_no=photo["id"],
+                                                            defaults={'page_no': row.page_no,
+                                                                      'album_no': album_no,
+                                                                      'created_time':
+                                                                          photo["created_time"].split('+')[0],
+                                                                      'updated_time':
+                                                                          photo["updated_time"].split('+')[0],
+                                                                      'active': True,
+                                                                      'name': name,
+                                                                      'picture': photo["picture"],
+                                                                      'link': photo["link"],
+                                                                      'like_count': photo["likes"]["summary"][
+                                                                          "total_count"],
+                                                                      'comment_count': photo["comments"]["summary"][
+                                                                          "total_count"]
+
+                                                                      }
+                                                            )
+
