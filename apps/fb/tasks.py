@@ -160,7 +160,7 @@ def batch_update_albums():
             )
             myphoto_list.append(myphoto)
             if n % 100 == 0:
-                MyInsight.objects.bulk_create(myphoto_list)
+                MyPhoto.objects.bulk_create(myphoto_list)
                 myphoto_list = []
 
 
