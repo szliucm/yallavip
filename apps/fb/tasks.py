@@ -164,7 +164,8 @@ def batch_update_albums():
                 print ("##############",n)
                 MyPhoto.objects.bulk_create(myphoto_list)
                 myphoto_list = []
-        row.update(updated=True)
+        row.updated = True
+        row.save()
 
 
 def batch_update_feed(self, request, queryset):
