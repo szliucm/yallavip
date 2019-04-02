@@ -676,6 +676,7 @@ class ConversationAdmin(object):
     list_display = ['name', 'customer', 'coversation','comments',]
     list_editable = [ ]
 
+
     search_fields = ['comments']
 
     ordering = []
