@@ -663,10 +663,11 @@ class ReceiverAdmin(object):
                     'city','phone_1', 'phone_2', "comments",]
     list_editable = [ ]
 
-    search_fields = []
+    search_fields = ['name', 'customer__name', 'address1', 'address2', "address3",
+                    'phone_1', 'phone_2', "comments",]
 
     ordering = []
-    list_filter = ()
+    list_filter = ('city',)
 
     actions = [ ]
 
