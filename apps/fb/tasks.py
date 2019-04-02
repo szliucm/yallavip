@@ -161,6 +161,7 @@ def batch_update_albums():
             myphoto_list.append(myphoto)
             n += 1
             if n % 100 == 0:
+                print ("##############",n)
                 MyPhoto.objects.bulk_create(myphoto_list)
                 myphoto_list = []
 
