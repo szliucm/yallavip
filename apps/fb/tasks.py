@@ -99,8 +99,8 @@ def batch_update_albums(limit = None):
 
     for row in queryset:
         album_no = row.album_no
-        page = row.page_no
-        adobjects = FacebookAdsApi.init(access_token=get_token(page), debug=True)
+        page_no = row.page_no
+        adobjects = FacebookAdsApi.init(access_token=get_token(page_no), debug=True)
         # 重置原有相册的图片信息为不活跃
         MyPhoto.objects.filter(album_no=album_no).update(active=False)
 
@@ -183,7 +183,7 @@ def batch_update_feed():
     for row in queryset:
         page_no = row.page_no
 
-        adobjects = FacebookAdsApi.init(access_token=get_token(page), debug=True)
+        adobjects = FacebookAdsApi.init(access_token=get_token(page_no), debug=True)
         # 重置原有feed信息为不活跃
         MyFeed.objects.filter(page_no=page_no).update(active=False)
 
