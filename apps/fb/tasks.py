@@ -129,9 +129,9 @@ def batch_update_albums():
                                                             defaults={'page_no': row.page_no,
                                                                       'album_no': album_no,
                                                                       'created_time':
-                                                                          photo["created_time"].split('+')[0],
+                                                                          photo["created_time"],
                                                                       'updated_time':
-                                                                          photo["updated_time"].split('+')[0],
+                                                                          photo["updated_time"],
                                                                       'active': True,
                                                                       'name': name,
                                                                       'picture': photo["picture"],
