@@ -95,7 +95,7 @@ def update_albums():
 def batch_update_albums(limit = None):
 
     queryset = MyAlbum.objects.filter(active=True,updated= False)
-    n = 0
+    n = 1
 
     for row in queryset:
         album_no = row.album_no
@@ -108,6 +108,7 @@ def batch_update_albums(limit = None):
                   "likes.summary(true)", "comments.summary(true)"
                   ]
         params = {
+            'limit':100,
 
         }
         try:
