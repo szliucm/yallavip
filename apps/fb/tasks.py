@@ -177,7 +177,7 @@ def batch_update_albums(limit = None):
 
 
 
-def batch_update_feed(self, request, queryset):
+def batch_update_feed():
 
     queryset = MyPage.objects.filter(active=True, is_published=True)
     for row in queryset:
