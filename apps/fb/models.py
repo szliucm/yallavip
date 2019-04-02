@@ -171,7 +171,7 @@ class MyAlbum(models.Model):
     attrs = models.CharField(max_length=300, null=True, blank=True, verbose_name="规格",help_text="多个规格用逗号隔开")
 
     album_promte = models.ImageField(u'相册促销标', upload_to='material/', default="", null=True, blank=True)
-
+    updated = models.BooleanField(u"相册更新状态",default=False)
     class Meta:
         verbose_name = "Album"
         verbose_name_plural = verbose_name

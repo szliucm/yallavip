@@ -94,14 +94,14 @@ def update_albums():
 #批量更新相册内容
 def batch_update_albums():
 
-    queryset = MyAlbum.objects.filter(active=True)
+    queryset = MyAlbum.objects.filter(active=True,updated= False)
 
     for row in queryset:
         album_no = row.album_no
         page = row.page_no
         adobjects = FacebookAdsApi.init(access_token=get_token(page), debug=True)
         # 重置原有相册的图片信息为不活跃
-        MyPhoto.objects.filter(album_no=album_no).update(active=False)
+        #MyPhoto.objects.filter(album_no=album_no).update(active=False)
 
         fields = ["id", "name", "created_time", "updated_time", "picture", "link",
                   "likes.summary(true)", "comments.summary(true)"
@@ -148,15 +148,15 @@ def batch_update_albums():
             myphoto = MyPhoto(
                 photo_no=photo["id"],
                 page_no = row.page_no,
-                          album_no = album_no,
-                          created_time = photo["created_time"],
-                          updated_time = photo["updated_time"],
-                          active = True,
-                          name = name,
-                          picture = photo["picture"],
-                          link = photo["link"],
-                          like_count = photo["likes"]["summary"]["total_count"],
-                          comment_count = photo["comments"]["summary"]["total_count"]
+                album_no = album_no,
+                created_time = photo["created_time"],
+                updated_time = photo["updated_time"],
+                active = True,
+                name = photo.get("name",""),
+                picture = photo["picture"],
+                link = photo["link"],
+                like_count = photo["likes"]["summary"]["total_count"],
+                comment_count = photo["comments"]["summary"]["total_count"]
             )
             myphoto_list.append(myphoto)
             n += 1
@@ -164,6 +164,7 @@ def batch_update_albums():
                 print ("##############",n)
                 MyPhoto.objects.bulk_create(myphoto_list)
                 myphoto_list = []
+        row.update(updated=True)
 
 
 def batch_update_feed(self, request, queryset):
