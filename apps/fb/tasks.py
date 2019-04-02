@@ -178,10 +178,12 @@ def batch_update_albums(limit = None):
 
 
 def batch_update_feed(self, request, queryset):
-    adobjects = FacebookAdsApi.init(access_token=my_access_token, debug=True)
+
     queryset = MyPage.objects.filter(active=True, is_published=True)
     for row in queryset:
         page_no = row.page_no
+
+        adobjects = FacebookAdsApi.init(access_token=get_token(page), debug=True)
         # 重置原有feed信息为不活跃
         MyFeed.objects.filter(page_no=page_no).update(active=False)
 
