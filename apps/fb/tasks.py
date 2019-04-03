@@ -255,8 +255,8 @@ def batch_update_adaccount():
 
 def batch_update_ad():
 
-    adobjects = FacebookAdsApi.init(my_access_token, debug=True)
-    queryset = MyAdAccount.objects.filter(active=True)
+    adobjects = FacebookAdsApi.init(access_token = my_access_token, debug=True)
+    queryset = MyAdAccount.objects.filter(account_status ='1',active=True)
     for row in queryset:
 
         fields =['id','account_id','ad_review_feedback','adlabels','adset_id','campaign_id', 'name','status',
