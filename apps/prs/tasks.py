@@ -1888,7 +1888,7 @@ def delete_combo_photo():
 
             photo_miss[page_no] = photo_list
 
-        myphotos.delete()
+        myphotos.update(active=False)
 
     # 选择所有可用的page
     for page_no in photo_miss:
@@ -1914,7 +1914,7 @@ def delete_oversea_photo():
     photo_miss = {}
     # 在fb的图片里找handle的图片
     for handle in handles:
-        myphotos = MyPhoto.objects.filter(name__contains=handle)
+        myphotos = MyPhoto.objects.filter(name__contains=handle, active = True)
         print("当前处理包裹 ", handle, myphotos.count())
         photos = myphotos.values_list("page_no", "photo_no").distinct()
         for photo in photos:
@@ -1929,7 +1929,7 @@ def delete_oversea_photo():
 
             photo_miss[page_no] = photo_list
 
-        myphotos.delete()
+        myphotos.update(active=False)
 
     # 选择所有可用的page
     for page_no in photo_miss:
