@@ -284,7 +284,7 @@ def get_adaccount_ads(adaccount):
                                                             'name': ad.get("name"),
                                                             #'ad_review_feedback': ad.get("ad_review_feedback"),
                                                             #'adlabels': ad.get("adlabels"),
-                                                            'account_id': ad.get("account_no"),
+                                                            'account_no': ad.get("account_id"),
                                                             'campaign_no': ad.get("campaign_id"),
                                                             'status': ad.get("status"),
                                                             'effective_status': ad.get("effective_status"),
