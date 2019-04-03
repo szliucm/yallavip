@@ -276,8 +276,8 @@ def batch_update_ad():
                                                             defaults={
                                                                 'adset_no': ad.get("adset_id"),
                                                                 'name': ad.get("name"),
-                                                                'ad_review_feedback': ad.get("ad_review_feedback"),
-                                                                'adlabels': ad.get("adlabels"),
+                                                                #'ad_review_feedback': ad.get("ad_review_feedback"),
+                                                                #'adlabels': ad.get("adlabels"),
                                                                 'campaign_no': ad.get("campaign_id"),
                                                                 'status': ad.get("status"),
                                                                 'effective_status': ad.get("effective_status"),
