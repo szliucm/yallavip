@@ -238,9 +238,10 @@ def batch_update_adaccount():
 
 
     for adaccount in adaccounts:
-        obj, created = MyAdAccount.objects.update_or_create(adaccout_no=adaccount["account_id "],
+        print(adaccount)
+        obj, created = MyAdAccount.objects.update_or_create(adaccout_no=adaccount["account_id"],
                                                         defaults={
-                                                            'account_status': adaccount.get("account_status "),
+                                                            'account_status': adaccount.get("account_status"),
                                                             'name': adaccount.get("name"),
                                                             'disable_reason': adaccount.get("disable_reason"),
 
