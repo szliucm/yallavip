@@ -270,7 +270,8 @@ def batch_update_ad():
         adaccout_no = "act_"+row.adaccout_no
         ads = AdAccount(adaccout_no).get_ads(fields=fields, params=params, )
 
-
+        # 重置原有ad信息为不活跃
+        MyAd.objects.update(active=False)
         for ad in ads:
             obj, created = MyAd.objects.update_or_create(ad_no=ad["id"],
                                                             defaults={
@@ -283,6 +284,7 @@ def batch_update_ad():
                                                                 'effective_status': ad.get("effective_status"),
                                                                 'created_time': ad.get("created_time"),
                                                                 'updated_time': ad.get("updated_time"),
+                                                                'active': True,
 
                                                                       }
                                                             )

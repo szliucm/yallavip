@@ -96,7 +96,7 @@ class MyAdset(models.Model):
     targeting = models.CharField(max_length=221, null=True, blank=True, verbose_name="targeting")
 
     use_new_app_click = models.CharField(max_length=223, null=True, blank=True, verbose_name="use_new_app_click")
-
+    active = models.BooleanField(u"状态", default=False)
 
     class Meta:
         verbose_name = "广告组"
