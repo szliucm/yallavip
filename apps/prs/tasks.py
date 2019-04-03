@@ -1662,27 +1662,7 @@ def delete_outdate_lightin_album(batch_no):
 def delete_outstock_lightin_album():
     # 更新还在发布中的spu的库存
     from django.db import connection, transaction
-    '''
-    sql = "UPDATE prs_lightin_spu SET  quantity =(SELECT sum(k.quantity) FROM prs_lightin_sku k WHERE k.SPU = prs_lightin_spu.SPU and prs_lightin_spu.published = true)"
 
-    cursor = connection.cursor()
-    cursor.execute(sql)
-    transaction.commit()
-
-    
-    #选出库存为零，还在发布中的spu
-    lightinalbums_outstock = LightinAlbum.objects.filter(
-        Q(lightin_spu__quantity__isnull=True)|Q(lightin_spu__quantity=0),
-        lightin_spu__published=True)
-    print("库存为零的发布中的相册子集",lightinalbums_outstock)
-    
-    '''
-
-    '''
-    # 先初始化spu的库存
-    mysql = "UPDATE prs_lightin_spu INNER JOIN (SELECT SPU, sum(o_sellable) as quantity FROM prs_lightin_sku GROUP BY SPU ) b ON prs_lightin_spu.SPU = b.SPU) SET prs_lightin_spu.sellable = b.quantity"
-    my_custom_sql(mysql)
-    '''
 
     # 每天更新一次所有在发布的图片，每分钟更新一次订单sku对应的图片
     lightinalbums_all = LightinAlbum.objects.filter(Q(lightin_spu__sellable__lte=0) | Q(lightin_sku__o_sellable__lte=0),

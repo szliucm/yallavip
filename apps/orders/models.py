@@ -1134,4 +1134,14 @@ class Order_History(Order):
     def __str__(self):
         return self.order_no
 
+class Order_Detail_Real(OrderDetail):
+    class Meta:
+        proxy = True
+
+        verbose_name = "真实发货订单明细"
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.order.order_no
+
 
