@@ -227,28 +227,24 @@ def batch_update_adaccount():
 
     adobjects = FacebookAdsApi.init(access_token = my_access_token, debug=True)
 
-    fields =[
+    fields =["account_id","account_status","name","disable_reason",
     ]
     params = {
 
     }
 
     id = "2076017356044262"
-    ads = User(id).get_ad_accounts(fields=fields, params=params, )
+    adaccounts = User(id).get_ad_accounts(fields=fields, params=params, )
 
 
-    for ad in ads:
-        obj, created = MyAd.objects.update_or_create(ad_no=ad["id"],
+    for adaccount in adaccounts:
+        obj, created = MyAdAccount.objects.update_or_create(adaccout_no=adaccount["account_id "],
                                                         defaults={
-                                                            'adset_no': ad.get("adset_id"),
-                                                            'name': ad.get("name"),
-                                                            'ad_review_feedback': ad.get("ad_review_feedback"),
-                                                            'adlabels': ad.get("adlabels"),
-                                                            'campaign_no': ad.get("campaign_id"),
-                                                            'status': ad.get("status"),
-                                                            'effective_status': ad.get("effective_status"),
-                                                            'created_time': ad.get("created_time"),
-                                                            'updated_time': ad.get("updated_time"),
+                                                            'account_status': adaccount.get("account_status "),
+                                                            'name': adaccount.get("name"),
+                                                            'disable_reason': adaccount.get("disable_reason"),
+
+
 
                                                                   }
                                                         )
