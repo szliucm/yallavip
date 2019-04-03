@@ -25,7 +25,7 @@ from facebook_business.api import FacebookAdsApi
 my_app_id = "562741177444068"
 my_app_secret = "e6df363351fb5ce4b7f0080adad08a4d"
 #my_access_token = "EAAHZCz2P7ZAuQBABHO6LywLswkIwvScVqBP2eF5CrUt4wErhesp8fJUQVqRli9MxspKRYYA4JVihu7s5TL3LfyA0ZACBaKZAfZCMoFDx7Tc57DLWj38uwTopJH4aeDpLdYoEF4JVXHf5Ei06p7soWmpih8BBzadiPUAEM8Fw4DuW5q8ZAkSc07PrAX4pGZA4zbSU70ZCqLZAMTQZDZD"
-my_access_token = "	EAAcGAyHVbOEBAEtwMPUeTci0x3G6XqlAwIhuQiZBZCVhZBRx88Rki0Lo7WNSxvAw7jAhhRlxsLjARbAZCnDvIoQ68Baj9TJrQC8KvEzyDhRWlnILGxRyc49b02aPInvpI9bcfgRowJfDrIt0kFE01LGD86vLKuLixtB0aTvTHww9SkedBzFZA"
+#my_access_token = "	EAAcGAyHVbOEBAEtwMPUeTci0x3G6XqlAwIhuQiZBZCVhZBRx88Rki0Lo7WNSxvAw7jAhhRlxsLjARbAZCnDvIoQ68Baj9TJrQC8KvEzyDhRWlnILGxRyc49b02aPInvpI9bcfgRowJfDrIt0kFE01LGD86vLKuLixtB0aTvTHww9SkedBzFZA"
 
 DEBUG = False
 
@@ -44,7 +44,9 @@ else:
     tms_appKey = "883b3289a5e3b55ceaddb2093834c13a574fda321ae620e2aa43c2117abb7553"
 
 
-def get_token(target_page, token=None):
+my_access_token = "EAAcGAyHVbOEBAKmIr9Ctlnz0em8C7ejg6zqD17zh003J9s7ZAftwpPY7KJYwv7N1j5AlLBZCgqBl49Cpm7OernbsoEwPkLgEU5jOKI9KfdZA340tO5nZBoa3VsmYg1W5zbQIdWL7A2FxqmuLFbaMzhgSVQj8MQhLZBCG3bVNRUXDYdY5NbJF3"
+def get_token(target_page,token=None):
+
 
     url = "https://graph.facebook.com/v3.2/{}?fields=access_token".format(target_page)
     param = dict()
@@ -54,11 +56,15 @@ def get_token(target_page, token=None):
         param["access_token"] = token
 
     r = requests.get(url, param)
-    data = json.loads(r.text)
-    print("get_token ", data)
-    # print("request response is ", data["access_token"])
 
+
+    data = json.loads(r.text)
+    print(r, r.text)
+
+
+    # print("request response is ", data["access_token"])
     return data["access_token"]
+
 
 
 # 更新ali产品数据，把vendor和产品信息连接起来
