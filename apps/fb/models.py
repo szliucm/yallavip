@@ -105,12 +105,20 @@ class MyAdset(models.Model):
         return self.adset_no
 
 class MyAd(models.Model):
-
+    ad_no = models.CharField(u'广告', default='', max_length=100, blank=True)
 
     adset_no = models.CharField(u'广告组', default='', max_length=100, blank=True)
-    ad_no = models.CharField(u'广告', default='', max_length=100, blank=True)
+
     name = models.CharField(u'广告名字', max_length=200, null=True, blank=True)
-    #objective = models.CharField(u'目标', max_length=200, null=True, blank=True)
+    ad_review_feedback = models.CharField(u'ad_review_feedback', max_length=200, null=True, blank=True)
+    adlabels = models.CharField(u'adlabels', default='', max_length=100, blank=True)
+    campaign_no = models.CharField(u'campaign_id', default='', max_length=100, blank=True)
+    status = models.CharField(u'status', max_length=200, null=True, blank=True)
+    effective_status = models.CharField(u'effective_status', max_length=200, null=True, blank=True)
+    #creative = models.CharField(u'creative', max_length=200, null=True, blank=True)
+    created_time = models.DateTimeField(u'创建时间', auto_now=False, null=True, blank=True)
+    updated_time = models.DateTimeField(u'创建时间', auto_now=False, null=True, blank=True)
+
 
     local_status = models.CharField(u'本地状态', default="", max_length=50, null=True, blank=True)
 

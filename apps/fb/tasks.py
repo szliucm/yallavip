@@ -193,6 +193,7 @@ def batch_update_feed():
                   "likes.summary(true)", "comments.summary(true)"
                   ]
         params = {
+            'limit': 100,
 
         }
         feeds = Page(page_no).get_feed(
@@ -221,4 +222,36 @@ def batch_update_feed():
                                                                       }
                                                             )
 
-            print("feed is ", feed)
+def batch_update_ad():
+
+    adobjects = FacebookAdsApi.init(my_access_token, debug=True)
+    queryset = MyAdAccount.objects.filter(active=True)
+    for row in queryset:
+
+        fields =['id','account_id','ad_review_feedback','adlabels','adset_id','campaign_id', 'name','status',
+                 'effective_status','creative','created_time','updated_time'
+
+        ]
+        params = {
+            'effective_status': ["ACTIVE"," PAUSED"," DELETED"," PENDING_REVIEW"," DISAPPROVED"," PREAPPROVED"," PENDING_BILLING_INFO"," CAMPAIGN_PAUSED"," ARCHIVED"," ADSET_PAUSED"," WITH_ISSUES",],
+        }
+
+        adaccout_no = row.adaccout_no
+        ads = AdAccount(adaccout_no).get_ads(fields=fields, params=params, )
+
+
+        for ad in ads:
+            obj, created = MyAd.objects.update_or_create(ad_no=ad["id"],
+                                                            defaults={
+                                                                'adset_no': ad.get("adset_id"),
+                                                                'name': ad.get("name"),
+                                                                'ad_review_feedback': ad.get("ad_review_feedback"),
+                                                                'adlabels': ad.get("adlabels"),
+                                                                'campaign_no': ad.get("campaign_id"),
+                                                                'status': ad.get("status"),
+                                                                'effective_status': ad.get("effective_status"),
+                                                                'created_time': ad.get("created_time"),
+                                                                'updated_time': ad.get("updated_time"),
+
+                                                                      }
+                                                            )
