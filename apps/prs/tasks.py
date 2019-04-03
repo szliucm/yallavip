@@ -1778,20 +1778,22 @@ def delete_missed_photo():
     # 在fb的图片里找handle的图片
     for handle in handles:
         myphotos = MyPhoto.objects.filter(name__contains=handle, active=True)
-        photos = myphotos.values_list("page_no", "photo_no").distinct()
-        for photo in photos:
-            page_no = photo[0]
-            fb_id = photo[1]
-            photo_list = photo_miss.get(page_no)
-            if not photo_list:
-                photo_list = []
+        if myphotos:
+            print ("handle %s 缺货 %s"%( handle, myphotos.count()))
+            photos = myphotos.values_list("page_no", "photo_no").distinct()
+            for photo in photos:
+                page_no = photo[0]
+                fb_id = photo[1]
+                photo_list = photo_miss.get(page_no)
+                if not photo_list:
+                    photo_list = []
 
-            if fb_id not in photo_list:
-                photo_list.append(fb_id)
+                if fb_id not in photo_list:
+                    photo_list.append(fb_id)
 
-            photo_miss[page_no] = photo_list
+                photo_miss[page_no] = photo_list
 
-        myphotos.delete()
+            myphotos.delete()
 
     # 选择所有可用的page
     for page_no in photo_miss:
