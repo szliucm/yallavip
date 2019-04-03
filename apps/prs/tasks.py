@@ -1710,7 +1710,7 @@ def delete_outstock_lightin_album():
     if not all:
         Order.objects.filter(updated=True).update(updated=False)
 
-    delete_missed_photo()
+    #delete_missed_photo()
     delete_oversea_photo()
 
 
@@ -1746,7 +1746,7 @@ def delete_lightin_album_cate(cate):
     if not all:
         Order.objects.filter(updated=True).update(updated=False)
 
-    delete_missed_photo()
+    #delete_missed_photo()
     delete_oversea_photo()
 
 # 删除lightin_album 的某个特定子集
