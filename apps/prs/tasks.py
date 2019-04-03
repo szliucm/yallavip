@@ -1799,7 +1799,7 @@ def delete_missed_photo():
 
                 photo_miss[page_no] = photo_list
 
-            myphotos.delete()
+            myphotos.update(active=False)
 
     # 选择所有可用的page
     for page_no in photo_miss:
