@@ -43,6 +43,7 @@ def get_token(target_page,token=None):
     # print("request response is ", data["access_token"])
     return data["access_token"]
 
+#更新相册信息
 def update_albums():
     adobjects = FacebookAdsApi.init(access_token=my_access_token, debug=True)
     queryset = MyPage.objects.filter(active= True, is_published= True)
@@ -93,88 +94,63 @@ def update_albums():
     cursor.execute("update fb_myalbum a , fb_mypage p set a.mypage_id = p.id where p.page_no = a.page_no")
     transaction.commit()
 
-#批量更新相册内容
-def batch_update_albums(limit = None):
-
+#批量更新图片
+def batch_update_photos(limit = None):
     queryset = MyAlbum.objects.filter(active=True,updated= False)
-    n = 1
+    for album in queryset:
+        update_album_photos(album)
 
-    for row in queryset:
-        album_no = row.album_no
-        page_no = row.page_no
-        adobjects = FacebookAdsApi.init(access_token=get_token(page_no), debug=True)
-        # 重置原有相册的图片信息为不活跃
-        MyPhoto.objects.filter(album_no=album_no).update(active=False)
 
-        fields = ["id", "name", "created_time", "updated_time", "picture", "link",
-                  "likes.summary(true)", "comments.summary(true)"
-                  ]
-        params = {
-            'limit':100,
 
-        }
+def update_album_photos(album):
+    album_no = album.album_no
+    page_no = album.page_no
+    adobjects = FacebookAdsApi.init(access_token=get_token(page_no), debug=True)
+    # 重置原有相册的图片信息为不活跃
+    MyPhoto.objects.filter(album_no=album_no).update(active=False)
+
+    fields = ["id", "name", "created_time", "updated_time", "picture", "link",
+              "likes.summary(true)", "comments.summary(true)"
+              ]
+    params = {
+        'limit':100,
+
+    }
+    try:
+        photos = Album(album_no).get_photos(
+            fields=fields,
+            params=params,
+        )
+    except Exception as e:
+        print("获取Facebook数据出错", fields, e)
+        return
+
+    for photo in photos:
         try:
-            photos = Album(album_no).get_photos(
-                fields=fields,
-                params=params,
-            )
-        except Exception as e:
-            print("获取Facebook数据出错", fields, e)
-            continue
+            name = photo["name"]
+        except KeyError:
+            name = ""
 
-        myphoto_list = []
-        for photo in photos:
-            try:
-                name = photo["name"]
-            except KeyError:
-                name = ""
+        obj, created = MyPhoto.objects.update_or_create(photo_no=photo["id"],
+                                                        defaults={'page_no': row.page_no,
+                                                                  'album_no': album_no,
+                                                                  'created_time':
+                                                                      photo["created_time"],
+                                                                  'updated_time':
+                                                                      photo["updated_time"],
+                                                                  'active': True,
+                                                                  'name': name,
+                                                                  'picture': photo["picture"],
+                                                                  'link': photo["link"],
+                                                                  'like_count': photo["likes"]["summary"][
+                                                                      "total_count"],
+                                                                  'comment_count': photo["comments"]["summary"][
+                                                                      "total_count"]
 
-            obj, created = MyPhoto.objects.update_or_create(photo_no=photo["id"],
-                                                            defaults={'page_no': row.page_no,
-                                                                      'album_no': album_no,
-                                                                      'created_time':
-                                                                          photo["created_time"],
-                                                                      'updated_time':
-                                                                          photo["updated_time"],
-                                                                      'active': True,
-                                                                      'name': name,
-                                                                      'picture': photo["picture"],
-                                                                      'link': photo["link"],
-                                                                      'like_count': photo["likes"]["summary"][
-                                                                          "total_count"],
-                                                                      'comment_count': photo["comments"]["summary"][
-                                                                          "total_count"]
-
-                                                                      }
-                                                            )
-            '''
-            
-            myphoto = MyPhoto(
-                photo_no=photo["id"],
-                page_no = row.page_no,
-                album_no = album_no,
-                created_time = photo["created_time"],
-                updated_time = photo["updated_time"],
-                active = True,
-                name = photo.get("name",""),
-                picture = photo["picture"],
-                link = photo["link"],
-                like_count = photo["likes"]["summary"]["total_count"],
-                comment_count = photo["comments"]["summary"]["total_count"]
-            )
-            myphoto_list.append(myphoto)
-            n += 1
-            if n % 100 == 0:
-                print ("##############",n)
-                MyPhoto.objects.bulk_create(myphoto_list)
-                myphoto_list = []
-            '''
-        row.updated = True
-        row.save()
-        n += 1
-        if limit:
-            if n> limit:
-                break
+                                                                  }
+                                                        )
+    album.updated = True
+    album.save()
 
 
 

@@ -725,3 +725,21 @@ class WmsOriOrder(models.Model):
     def __str__(self):
         return self.order_id
 
+#选品规则
+class Selection(models.Model):
+
+    #selection_no = models.CharField(u'选品规则id', default='', max_length=100, blank=True)
+    name = models.CharField(u'选品规则', default='', max_length=200, blank=True)
+
+    cates = models.CharField(max_length=300,null=True, blank=True, verbose_name="关联品类",help_text="多个品类用逗号隔开")
+    prices = models.CharField(max_length=300, null=True, blank=True, verbose_name="价格区间",help_text="最低价最高价，用逗号隔开")
+    attrs = models.CharField(max_length=300, null=True, blank=True, verbose_name="规格",help_text="多个规格用逗号隔开")
+
+
+    class Meta:
+        verbose_name = "选品规则"
+        verbose_name_plural = verbose_name
+
+
+    def __str__(self):
+        return self.order_id
