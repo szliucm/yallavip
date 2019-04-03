@@ -9,6 +9,8 @@ from facebook_business.adobjects.systemuser import SystemUser
 from facebook_business.adobjects.page import Page
 from facebook_business.adobjects.album import Album
 from facebook_business.adobjects.photo import Photo
+from facebook_business.adobjects.business import Business
+from facebook_business.adobjects.user import User
 from facebook_business.adobjects.adaccount import AdAccount
 from facebook_business.adobjects.campaign import Campaign
 from facebook_business.adobjects.adset import AdSet
@@ -20,7 +22,7 @@ from fb.models import  *
 
 import  requests, json
 
-my_access_token = "EAAHZCz2P7ZAuQBABHO6LywLswkIwvScVqBP2eF5CrUt4wErhesp8fJUQVqRli9MxspKRYYA4JVihu7s5TL3LfyA0ZACBaKZAfZCMoFDx7Tc57DLWj38uwTopJH4aeDpLdYoEF4JVXHf5Ei06p7soWmpih8BBzadiPUAEM8Fw4DuW5q8ZAkSc07PrAX4pGZA4zbSU70ZCqLZAMTQZDZD"
+my_access_token = "EAAcGAyHVbOEBAKmIr9Ctlnz0em8C7ejg6zqD17zh003J9s7ZAftwpPY7KJYwv7N1j5AlLBZCgqBl49Cpm7OernbsoEwPkLgEU5jOKI9KfdZA340tO5nZBoa3VsmYg1W5zbQIdWL7A2FxqmuLFbaMzhgSVQj8MQhLZBCG3bVNRUXDYdY5NbJF3"
 def get_token(target_page,token=None):
 
 
@@ -221,6 +223,36 @@ def batch_update_feed():
 
                                                                       }
                                                             )
+def batch_update_adaccount():
+
+    adobjects = FacebookAdsApi.init(access_token = my_access_token, debug=True)
+
+    fields =[
+    ]
+    params = {
+
+    }
+
+    id = "2076017356044262"
+    ads = User(id).get_ad_accounts(fields=fields, params=params, )
+
+
+    for ad in ads:
+        obj, created = MyAd.objects.update_or_create(ad_no=ad["id"],
+                                                        defaults={
+                                                            'adset_no': ad.get("adset_id"),
+                                                            'name': ad.get("name"),
+                                                            'ad_review_feedback': ad.get("ad_review_feedback"),
+                                                            'adlabels': ad.get("adlabels"),
+                                                            'campaign_no': ad.get("campaign_id"),
+                                                            'status': ad.get("status"),
+                                                            'effective_status': ad.get("effective_status"),
+                                                            'created_time': ad.get("created_time"),
+                                                            'updated_time': ad.get("updated_time"),
+
+                                                                  }
+                                                        )
+
 
 def batch_update_ad():
 
