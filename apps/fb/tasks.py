@@ -240,7 +240,7 @@ def batch_update_adaccount():
     MyAdAccount.objects.update(active=False)
     for adaccount in adaccounts:
         print(adaccount)
-        obj, created = MyAdAccount.objects.update_or_create(adaccout_no=adaccount["account_id"],
+        obj, created = MyAdAccount.objects.update_or_create(adaccout_no=adaccount["id"],
                                                         defaults={
                                                             'account_status': adaccount.get("account_status"),
                                                             'name': adaccount.get("name"),
@@ -284,6 +284,7 @@ def get_adaccount_ads(adaccount):
                                                             'name': ad.get("name"),
                                                             #'ad_review_feedback': ad.get("ad_review_feedback"),
                                                             #'adlabels': ad.get("adlabels"),
+                                                            'account_id': ad.get("account_no"),
                                                             'campaign_no': ad.get("campaign_id"),
                                                             'status': ad.get("status"),
                                                             'effective_status': ad.get("effective_status"),
