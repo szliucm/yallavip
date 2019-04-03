@@ -255,36 +255,41 @@ def batch_update_adaccount():
 
 def batch_update_ad():
 
-    adobjects = FacebookAdsApi.init(access_token = my_access_token, debug=True)
+
     queryset = MyAdAccount.objects.filter(account_status ='1',active=True)
-    for row in queryset:
+    for adaccount in queryset:
+        get_adaccount_ads(adaccount)
 
-        fields =['id','account_id','ad_review_feedback','adlabels','adset_id','campaign_id', 'name','status',
-                 'effective_status','creative','created_time','updated_time'
 
-        ]
-        params = {
-            #'effective_status': ["ACTIVE"," PAUSED"," DELETED"," PENDING_REVIEW"," DISAPPROVED"," PREAPPROVED"," PENDING_BILLING_INFO"," CAMPAIGN_PAUSED"," ARCHIVED"," ADSET_PAUSED"," WITH_ISSUES",],
-        }
+def get_adaccount_ads(adaccount):
+    adobjects = FacebookAdsApi.init(access_token=my_access_token, debug=True)
 
-        adaccout_no = "act_"+row.adaccout_no
-        ads = AdAccount(adaccout_no).get_ads(fields=fields, params=params, )
+    fields =['id','account_id','ad_review_feedback','adlabels','adset_id','campaign_id', 'name','status',
+             'effective_status','creative','created_time','updated_time'
 
-        # 重置原有ad信息为不活跃
-        MyAd.objects.update(active=False)
-        for ad in ads:
-            obj, created = MyAd.objects.update_or_create(ad_no=ad["id"],
-                                                            defaults={
-                                                                'adset_no': ad.get("adset_id"),
-                                                                'name': ad.get("name"),
-                                                                #'ad_review_feedback': ad.get("ad_review_feedback"),
-                                                                #'adlabels': ad.get("adlabels"),
-                                                                'campaign_no': ad.get("campaign_id"),
-                                                                'status': ad.get("status"),
-                                                                'effective_status': ad.get("effective_status"),
-                                                                'created_time': ad.get("created_time"),
-                                                                'updated_time': ad.get("updated_time"),
-                                                                'active': True,
+    ]
+    params = {
+        #'effective_status': ["ACTIVE"," PAUSED"," DELETED"," PENDING_REVIEW"," DISAPPROVED"," PREAPPROVED"," PENDING_BILLING_INFO"," CAMPAIGN_PAUSED"," ARCHIVED"," ADSET_PAUSED"," WITH_ISSUES",],
+    }
 
-                                                                      }
-                                                            )
+    adaccout_no = "act_"+adaccount.adaccout_no
+    ads = AdAccount(adaccout_no).get_ads(fields=fields, params=params, )
+
+    # 重置原有ad信息为不活跃
+    MyAd.objects.update(active=False)
+    for ad in ads:
+        obj, created = MyAd.objects.update_or_create(ad_no=ad["id"],
+                                                        defaults={
+                                                            'adset_no': ad.get("adset_id"),
+                                                            'name': ad.get("name"),
+                                                            #'ad_review_feedback': ad.get("ad_review_feedback"),
+                                                            #'adlabels': ad.get("adlabels"),
+                                                            'campaign_no': ad.get("campaign_id"),
+                                                            'status': ad.get("status"),
+                                                            'effective_status': ad.get("effective_status"),
+                                                            'created_time': ad.get("created_time"),
+                                                            'updated_time': ad.get("updated_time"),
+                                                            'active': True,
+
+                                                                  }
+                                                        )
