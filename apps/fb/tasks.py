@@ -236,7 +236,8 @@ def batch_update_adaccount():
     id = "2076017356044262"
     adaccounts = User(id).get_ad_accounts(fields=fields, params=params, )
 
-
+    # 重置原有feed信息为不活跃
+    MyAdAccount.objects.update(active=False)
     for adaccount in adaccounts:
         print(adaccount)
         obj, created = MyAdAccount.objects.update_or_create(adaccout_no=adaccount["account_id"],
@@ -244,6 +245,7 @@ def batch_update_adaccount():
                                                             'account_status': adaccount.get("account_status"),
                                                             'name': adaccount.get("name"),
                                                             'disable_reason': adaccount.get("disable_reason"),
+                                                            'active': True
 
 
 
