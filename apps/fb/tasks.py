@@ -132,7 +132,7 @@ def update_album_photos(album):
             name = ""
 
         obj, created = MyPhoto.objects.update_or_create(photo_no=photo["id"],
-                                                        defaults={'page_no': row.page_no,
+                                                        defaults={'page_no': page_no,
                                                                   'album_no': album_no,
                                                                   'created_time':
                                                                       photo["created_time"],
