@@ -3993,6 +3993,37 @@ def clean_draft(order_list):
     customer.save()
     '''
 
+def sync_outstock_photo():
+    fb_ids = LightinAlbum.objects.filter(lightin_spu__sellable__lte=0).values_list("fb_id",flat=True)
+    myphotos = MyPhoto.objects.filter(photo_no__in=fb_ids,active=True)
+    photos = myphotos.values_list("page_no", "photo_no").distinct()
+
+    photo_miss = {}
+
+    for photo in photos:
+        page_no = photo[0]
+        fb_id = photo[1]
+        photo_list = photo_miss.get(page_no)
+        if not photo_list:
+            photo_list = []
+
+        if fb_id not in photo_list:
+            photo_list.append(fb_id)
+
+        photo_miss[page_no] = photo_list
+
+    myphotos.update(active=False)
+
+    # 选择所有可用的page
+    for page_no in photo_miss:
+        FacebookAdsApi.init(access_token=get_token(page_no))
+
+        photo_nos = photo_miss[page_no]
+        print("page %s 待删除数量 %s  " % (page_no, len(photo_nos)))
+        if photo_nos is None or len(photo_nos) == 0:
+            continue
+
+        delete_photos(photo_nos)
 
 # 更新相册对应的主页外键
 # update fb_myalbum a , fb_mypage p set a.mypage_id = p.id where p.page_no = a.page_no
