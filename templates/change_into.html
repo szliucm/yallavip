@@ -1,0 +1,50 @@
+# change_into.html
+
+{# 继承xadmin的侧边栏和导航栏 #}
+{% extends 'xadmin/base_site.html' %}
+
+{# 去掉标签栏 #}
+{% block content-nav %}
+
+{% endblock %}
+{% block content %}
+{# 要展示的数据 #}
+
+    <<div class="col-sm-3 col-sm-offset-1 panel panel-primary" style="padding: 0;">
+            <div class="panel-heading">表单项目名称表</div>
+            <div style="width:389px; height:347px; overflow:scroll; text-align: center">
+                <table class="table table-hover">
+                    <tr>
+                        <th style="text-align: center">序号</th>
+                        <th style="text-align: center">表单名称</th>
+                    </tr>
+                    {% for a in bill_message %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ a }}</td>
+                            </tr>
+                    {% endfor %}
+                </table>
+            </div>
+            </div>
+            <div class="col-sm-3 col-sm-offset-1 panel panel-success" style="padding: 0;">
+                <div class="panel-heading">表单名称下的标题</div>
+                <div style="width:389px; height:347px; overflow:scroll; text-align: center">
+                    <table class="table" style=" text-align: center">
+                        <tr>
+                            <th style="text-align: center">序号</th>
+                            <th style="text-align: center">标题</th>
+                        </tr>
+
+                        {% for a in bill_message %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ a }}</td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+{% endblock content %}
+
+
