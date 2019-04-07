@@ -2132,7 +2132,7 @@ def fulfill_orders_lightin():
                     # 发货成功的列表
                     order_list.append(order)
         else:
-            print ("库存不足")
+            print ("库存不足", order.order_no)
 
     # 提交仓库准备发货成功的，要更新本地库存
     update_barcode_stock(order_list, "W")
