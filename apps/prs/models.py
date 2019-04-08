@@ -462,6 +462,8 @@ class Lightin_SPU(models.Model):
     shopify_price = models.FloatField(u'shopify售价', default=0, blank=True, null=True)
 
     published = models.BooleanField(default=False, verbose_name="发布到shopify状态")
+    image_published = models.BooleanField(default=False, verbose_name="图片发布到shopify状态")
+    images_shopify =  models.TextField(default='', null=True, blank=True, verbose_name="shopify图片字典")
     publish_error = models.CharField(default='无', max_length=100, null=True, blank=True, verbose_name="发布错误")
     published_time = models.DateTimeField(null=True, blank=True, verbose_name="发布时间")
 

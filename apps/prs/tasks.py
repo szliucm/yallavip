@@ -2339,10 +2339,13 @@ def sync_Shipped_order_lightin(days=1):
                             # 更新本地barcode库存
                             for item in items:
                                 barcode = Lightin_barcode.objects.get(barcode=item.barcode)
-                                barcode.o_reserved = F("o_reserved") - item.quantity
-                                barcode.o_quantity = F("o_quantity") - item.quantity
-                                barcode.save()
-                            print ("更新本地barcode库存")
+                                if F("o_reserved") > item.quantity:
+                                    barcode.o_reserved = F("o_reserved") - item.quantity
+                                    barcode.o_quantity = F("o_quantity") - item.quantity
+                                    barcode.save()
+                                    print ("更新本地barcode库存")
+                                else:
+                                    print ("保留库存小于应释放库存##############")
 
 
 
@@ -3853,9 +3856,9 @@ def auto_smscode():
         )
 
         if row.customer:
-            v.facebook_user_name=",".join(list(row.customer.customer_conversation.values_list("name",flat=True))),
-            v.sales = row.customer.sales,
-            v.conversation_link = ",".join(list(row.customer.customer_conversation.values_list("coversation",flat=True))),
+            v.facebook_user_name=",".join(list(row.customer.customer_conversation.values_list("name",flat=True)))
+            v.sales = row.customer.sales
+            v.conversation_link = ",".join(list(row.customer.customer_conversation.values_list("coversation",flat=True)))
 
 
         v.save()
@@ -4025,6 +4028,112 @@ def sync_outstock_photo():
 
         delete_photos(photo_nos)
 
+#批量上传图片到shpify，并记录图片的id和原始对应的关系，以便以后更新变体图片
+'''
+Update a product by adding a new product image
+PUT /admin/products/#{product_id}.json
+{
+  "product": {
+    "id": 632910392,
+    "images": [
+      {
+        "id": 850703190
+      },
+      {
+        "id": 562641783
+      },
+      {
+        "src": "http://example.com/rails_logo.gif"
+      }
+    ]
+  }
+}
+'''
+def update_shopify_products_images():
+    spus = Lightin_SPU.objects.filter(published=True,image_published=False,sellable__gt=0)
+    for spu in spus:
+        info, updated = update_shopify_product_images(spu)
+        if updated:
+            spu.image_published = True
+            spu.images_shopify = info
+        else:
+            spu.publish_error = info
+
+        spu.save()
+
+
+
+def update_shopify_product_images(spu):
+    from shop.models import Shop, ShopifyProduct
+    from prs.shop_action import post_product_main, update_or_create_product
+    from .models import AliProduct
+
+    dest_shop = "yallasale-com"
+    shop_obj = Shop.objects.get(shop_name=dest_shop)
+
+    shop_url = "https://%s:%s@%s.myshopify.com" % (shop_obj.apikey, shop_obj.password, shop_obj.shop_name)
+
+    # image_no = 0
+
+    if spu.images_dict:
+        images_dict =json.loads(spu.images_dict)
+        shopify_images = []
+        for key in images_dict:
+            shopify_image ={
+                "src": images_dict[key],
+                "alt": key,
+            }
+            shopify_images.append(shopify_image)
+    else:
+        return "没有图片信息",False
+
+
+
+    params = {
+        "product": {
+            "id": spu.product_no,
+            "images": shopify_images,
+        }
+    }
+    headers = {
+        "Content-Type": "application/json",
+        "charset": "utf-8",
+
+    }
+    # 初始化SDK
+    url = shop_url + "/admin/products/%s.json"%(spu.product_no)
+
+    print("开始更新产品图片")
+    print(url, json.dumps(params))
+
+    r = requests.put(url, headers=headers, data=json.dumps(params))
+    if r.text is None:
+        return "更新产品图片失败", False
+    try:
+        data = json.loads(r.text)
+        print("更新产品图片", r, data)
+    except:
+        print("更新产品图片失败")
+        print(url, json.dumps(params))
+        print(r)
+        print(r.text)
+        return "更新产品图片失败", False
+
+    new_product = data.get("product")
+
+    if new_product:
+        images_shopify = {}
+        images = new_product.get("images")
+        for image in images:
+            images_shopify[image.get("alt")] = image.get("id")
+        return images_shopify, True
+    else:
+
+        print("更新产品图片失败！！！！")
+        print(data)
+        return "更新产品图片失败", False
+
+
 # 更新相册对应的主页外键
 # update fb_myalbum a , fb_mypage p set a.mypage_id = p.id where p.page_no = a.page_no
 '''
@@ -4036,5 +4145,3 @@ from django.db import connection, transaction
     cursor.execute(sql)
     transaction.commit()
 '''
-
-
