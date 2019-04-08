@@ -4180,7 +4180,7 @@ def adjust_shopify_inventory(row):
     params = {
         "location_id": location_id,
         "inventory_item_id": row[1],
-        "available": row[2],
+        "available_adjustment": row[2],
 
     }
     headers = {
