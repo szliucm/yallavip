@@ -22,7 +22,7 @@ from fb.models import  *
 
 import  requests, json
 
-my_access_token = "EAAcGAyHVbOEBAKmIr9Ctlnz0em8C7ejg6zqD17zh003J9s7ZAftwpPY7KJYwv7N1j5AlLBZCgqBl49Cpm7OernbsoEwPkLgEU5jOKI9KfdZA340tO5nZBoa3VsmYg1W5zbQIdWL7A2FxqmuLFbaMzhgSVQj8MQhLZBCG3bVNRUXDYdY5NbJF3"
+my_access_token = "EAAcGAyHVbOEBAOnk9TTo3G4ZAocALWZC0YCTdZBWgix6tSzdmM9tvLyJaUiYyx2YbPXIZA10K0Ai5A06HiBgiFpYlAbt9yFJ5naw3PZAFeQaoblpsqrtAuqLBoRiKs0TwqfngtUb2XqrkyRJoaZCEgoIWwNT0ZAeqm4HJMlqbYUQn0f0Ab5nCqw"
 def get_token(target_page,token=None):
 
 
