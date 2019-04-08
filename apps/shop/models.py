@@ -111,6 +111,7 @@ class ShopifyVariant(models.Model):
 
     inventory_policy = models.CharField(u'inventory_policy', default='', max_length=200, blank=True)
     inventory_quantity = models.CharField(u'inventory_quantity', default='', max_length=500, null=True,blank=True)
+    quantity = models.IntegerField(u'库存数量', default=0, blank=True, null=True)
     option1 = models.CharField(u'option1', default='', max_length=500, null=True,blank=True)
     option2 = models.CharField(u'option2', default='', max_length=500, null=True,blank=True)
     option3 = models.CharField(u'option3', default='', max_length=500, null=True,blank=True)
