@@ -2339,7 +2339,8 @@ def sync_Shipped_order_lightin(days=1):
                             # 更新本地barcode库存
                             for item in items:
                                 barcode = Lightin_barcode.objects.get(barcode=item.barcode)
-                                if int(F("o_reserved")) > item.quantity:
+                                o_reserved = F("o_reserved")
+                                if  o_reserved > item.quantity:
                                     barcode.o_reserved = F("o_reserved") - item.quantity
                                     barcode.o_quantity = F("o_quantity") - item.quantity
                                     barcode.save()
