@@ -4133,53 +4133,55 @@ def update_shopify_product_images(spu):
         print(data)
         return "更新产品图片失败", False
 
+def my_custom_sql(mysql):
+    from django.db import connection, transaction
+    with connection.cursor() as c:
+        c.execute(mysql)
+        rows = c.fetchall()
 
-def update_shopify_inventories():
-    lightin_skus = Lightin_SKU.objects.filter(o_sellable__gt=0)
-    skus = lightin_skus.values_list("SKU",flat=True)
-    variants = ShopifyVariant.objects.filter(sku__in = skus, adjusted=False)
+    return  rows
 
-    for variant in variants:
-        info, updated = update_shopify_inventory(variant)
-        if updated:
-            variant.adjusted = True
-            variant.adjust_error = ""
-        else:
-            variant.adjust_error = info
+    # Data retrieval operation - no commit required
+    #cursor.execute("SELECT foo FROM bar WHERE baz = %s", [self.baz])
+    #row = cursor.fetchone()
+    #transaction.commit_unless_managed()
+    return
 
-        variant.save()
+def adjust_shopify_inventories():
+    mysql = "select v.sku , v.inventory_item_no , s.o_sellable " \
+            "from shop_shopifyvariant v, prs_lightin_sku s " \
+            "where v.sku= s.SKU and v.quantity <> s.o_sellable"
 
-def update_shopify_inventory(sku):
+    rows = my_custom_sql(mysql)
+
+    for row in rows:
+        info, adjusted = adjust_shopify_inventory(row)
+        if adjusted:
+            sku = ShopifyVariant.objects.get(sku=row[0])
+            sku.quantity = row[2]
+            sku.save()
+
+def adjust_shopify_inventory(row):
     from shop.models import Shop, ShopifyProduct
     from prs.shop_action import post_product_main, update_or_create_product
     from .models import AliProduct
 
     dest_shop = "yallasale-com"
+    location_id = "11796512810"
     shop_obj = Shop.objects.get(shop_name=dest_shop)
 
     shop_url = "https://%s:%s@%s.myshopify.com" % (shop_obj.apikey, shop_obj.password, shop_obj.shop_name)
 
     # image_no = 0
 
-    if spu.images_dict:
-        images_dict =json.loads(spu.images_dict)
-        shopify_images = []
-        for key in images_dict:
-            shopify_image ={
-                "src": images_dict[key],
-                "alt": key,
-            }
-            shopify_images.append(shopify_image)
-    else:
-        return "没有图片信息",False
 
 
 
     params = {
-        "product": {
-            "id": spu.product_no,
-            "images": shopify_images,
-        }
+        "location_id": location_id,
+        "inventory_item_id": row[1],
+        "available": row[2],
+
     }
     headers = {
         "Content-Type": "application/json",
@@ -4187,37 +4189,16 @@ def update_shopify_inventory(sku):
 
     }
     # 初始化SDK
-    url = shop_url + "/admin/products/%s.json"%(spu.product_no)
+    url = shop_url + "/admin/inventory_levels/adjust.json"
 
-    print("开始更新产品图片")
+    print("开始更新库存")
     print(url, json.dumps(params))
 
-    r = requests.put(url, headers=headers, data=json.dumps(params))
-    if r.text is None:
-        return "更新产品图片失败", False
-    try:
-        data = json.loads(r.text)
-        print("更新产品图片", r, data)
-    except:
-        print("更新产品图片失败")
-        print(url, json.dumps(params))
-        print(r)
-        print(r.text)
-        return "更新产品图片失败", False
-
-    new_product = data.get("product")
-
-    if new_product:
-        images_shopify = {}
-        images = new_product.get("images")
-        for image in images:
-            images_shopify[image.get("alt")] = image.get("id")
-        return images_shopify, True
+    r = requests.post(url, headers=headers, data=json.dumps(params))
+    if res.status_code == 200:
+        return "更新库存成功", True
     else:
-
-        print("更新产品图片失败！！！！")
-        print(data)
-        return "更新产品图片失败", False
+        return "更新库存失败", False
 
 # 更新相册对应的主页外键
 # update fb_myalbum a , fb_mypage p set a.mypage_id = p.id where p.page_no = a.page_no

@@ -174,7 +174,7 @@ def my_custom_sql(mysql):
     # Data retrieval operation - no commit required
     #cursor.execute("SELECT foo FROM bar WHERE baz = %s", [self.baz])
     #row = cursor.fetchone()
-
+    transaction.commit_unless_managed()
     return
 
 ################# 用订单表的发货时间更新包裹表的发货时间
