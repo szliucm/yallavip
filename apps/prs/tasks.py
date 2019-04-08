@@ -4134,6 +4134,91 @@ def update_shopify_product_images(spu):
         return "更新产品图片失败", False
 
 
+def update_shopify_inventories():
+    lightin_skus = Lightin_SKU.objects.filter(o_sellable__gt=0)
+    skus = lightin_skus.values_list("SKU",flat=True)
+    variants = ShopifyVariant.objects.filter(sku__in = skus, adjusted=False)
+
+    for variant in variants:
+        info, updated = update_shopify_inventory(variant)
+        if updated:
+            variant.adjusted = True
+            variant.adjust_error = ""
+        else:
+            variant.adjust_error = info
+
+        variant.save()
+
+def update_shopify_inventory(sku):
+    from shop.models import Shop, ShopifyProduct
+    from prs.shop_action import post_product_main, update_or_create_product
+    from .models import AliProduct
+
+    dest_shop = "yallasale-com"
+    shop_obj = Shop.objects.get(shop_name=dest_shop)
+
+    shop_url = "https://%s:%s@%s.myshopify.com" % (shop_obj.apikey, shop_obj.password, shop_obj.shop_name)
+
+    # image_no = 0
+
+    if spu.images_dict:
+        images_dict =json.loads(spu.images_dict)
+        shopify_images = []
+        for key in images_dict:
+            shopify_image ={
+                "src": images_dict[key],
+                "alt": key,
+            }
+            shopify_images.append(shopify_image)
+    else:
+        return "没有图片信息",False
+
+
+
+    params = {
+        "product": {
+            "id": spu.product_no,
+            "images": shopify_images,
+        }
+    }
+    headers = {
+        "Content-Type": "application/json",
+        "charset": "utf-8",
+
+    }
+    # 初始化SDK
+    url = shop_url + "/admin/products/%s.json"%(spu.product_no)
+
+    print("开始更新产品图片")
+    print(url, json.dumps(params))
+
+    r = requests.put(url, headers=headers, data=json.dumps(params))
+    if r.text is None:
+        return "更新产品图片失败", False
+    try:
+        data = json.loads(r.text)
+        print("更新产品图片", r, data)
+    except:
+        print("更新产品图片失败")
+        print(url, json.dumps(params))
+        print(r)
+        print(r.text)
+        return "更新产品图片失败", False
+
+    new_product = data.get("product")
+
+    if new_product:
+        images_shopify = {}
+        images = new_product.get("images")
+        for image in images:
+            images_shopify[image.get("alt")] = image.get("id")
+        return images_shopify, True
+    else:
+
+        print("更新产品图片失败！！！！")
+        print(data)
+        return "更新产品图片失败", False
+
 # 更新相册对应的主页外键
 # update fb_myalbum a , fb_mypage p set a.mypage_id = p.id where p.page_no = a.page_no
 '''

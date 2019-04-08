@@ -784,22 +784,7 @@ def download_product():
 
     shop_obj = Shop.objects.get(shop_name=shop_name)
 
-    '''
-    #取得系统中已有的最大product_no
-    product = ShopifyProduct.objects.filter(shop_name=shop_name).order_by('-product_no').first()
-    if product is None:
-        max_product_no = "0"
-    else:
-        max_product_no = product.product_no
 
-    print("max_product_no", max_product_no)
-
-    #删除所有可能重复的产品信息
-
-    ShopifyVariant.objects.filter(product_no__gt=max_product_no).delete()
-    ShopifyImage.objects.filter(product_no__gt=max_product_no).delete()
-    ShopifyOptions.objects.filter(product_no__gt=max_product_no).delete()
-    '''
 
     #获取新产品信息
     shop_url = "https://%s:%s@%s.myshopify.com" % (shop_obj.apikey, shop_obj.password, shop_obj.shop_name)
@@ -820,7 +805,7 @@ def download_product():
 
     total_count = data["count"]
 
-    i = 163
+    i = 0
     limit = 200
 
     while True:
@@ -858,4 +843,43 @@ def download_product():
             print("products for the shop {} completed".format(shop_name))
             break
 
+def insert_variant( products):
+    for j in range(len(products)):
 
+        variant_list = []
+        row = products[j]
+        if j == 1:
+            print("row is ", row)
+
+        try:
+
+            for k in range(len(row["variants"])):
+                variant_row = row["variants"][k]
+
+                variant = ShopifyVariant(
+                    variant_no=variant_row["id"],
+                    product_no=variant_row["product_id"],
+                    created_at=variant_row["created_at"].split('+')[0],
+                    updated_at=variant_row["updated_at"].split('+')[0],
+                    sku=variant_row["sku"],
+                    image_no=variant_row["image_id"],
+                    title=variant_row["title"],
+                    inventory_item_no = variant_row["inventory_item_id"],
+                    inventory_policy=variant_row["inventory_policy"],
+                    fulfillment_service=variant_row["fulfillment_service"],
+                    inventory_management=variant_row["inventory_management"],
+                    inventory_quantity=variant_row["inventory_quantity"],
+
+
+                    price=variant_row["price"],
+                    option1=variant_row["option1"],
+                    option2=variant_row["option2"],
+                    option3=variant_row["option3"],
+
+                )
+                variant_list.append(variant)
+
+        except KeyError:
+            print("no variant ".format(row.shop_name))
+            break
+        ShopifyVariant.objects.bulk_create(variant_list)
