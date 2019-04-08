@@ -4198,6 +4198,7 @@ def adjust_shopify_inventory(row):
     if r.status_code == 200:
         return "更新库存成功", True
     else:
+        print(r.text)
         return "更新库存失败", False
 
 # 更新相册对应的主页外键
