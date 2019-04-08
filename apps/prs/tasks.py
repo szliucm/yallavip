@@ -4050,7 +4050,7 @@ PUT /admin/products/#{product_id}.json
 }
 '''
 def update_shopify_products_images():
-    spus = Lightin_SPU.objects.filter(published=True,image_published=False,sellable__gt=0)
+    spus = Lightin_SPU.objects.filter(published=True,image_published=False,sellable__gt=0,images_dict__isnull=False)
     for spu in spus:
         info, updated = update_shopify_product_images(spu)
         if updated:
