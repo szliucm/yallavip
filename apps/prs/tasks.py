@@ -4195,7 +4195,7 @@ def adjust_shopify_inventory(row):
     print(url, json.dumps(params))
 
     r = requests.post(url, headers=headers, data=json.dumps(params))
-    if res.status_code == 200:
+    if r.status_code == 200:
         return "更新库存成功", True
     else:
         return "更新库存失败", False
