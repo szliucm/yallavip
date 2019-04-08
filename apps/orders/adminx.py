@@ -4,6 +4,7 @@ __author__ = 'bobby'
 import requests
 import json
 import time
+from datetime import datetime, timedelta, timezone
 import base64
 
 import numpy as np, re
@@ -1256,7 +1257,7 @@ class VerifyAdmin(object):
     order_no.short_description = "订单号"
 
     def order_time(self, obj):
-        return obj.order.order_time
+        return obj.order.order_time.astimezone(timezone(timedelta(hours=3)))
 
     order_time.short_description = "订单时间"
 
