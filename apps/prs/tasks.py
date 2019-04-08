@@ -4160,9 +4160,8 @@ def adjust_shopify_inventories():
         info, adjusted = adjust_shopify_inventory(row)
         if adjusted:
 
-            sku = ShopifyVariant.objects.get(sku=row[0])
-            sku.quantity = row[2]
-            sku.save()
+            skus = ShopifyVariant.objects.filter(sku=row[0])
+            skus.update(quantity=row[2])
 
 def adjust_shopify_inventory(row):
     from shop.models import Shop, ShopifyProduct
