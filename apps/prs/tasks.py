@@ -2340,7 +2340,7 @@ def sync_Shipped_order_lightin(days=1):
                             for item in items:
                                 barcode = Lightin_barcode.objects.get(barcode=item.barcode)
 
-                                if  barcode.o_reserved > item.quantity:
+                                if  barcode.o_reserved >= item.quantity:
                                     barcode.o_reserved = F("o_reserved") - item.quantity
                                     barcode.o_quantity = F("o_quantity") - item.quantity
                                     barcode.save()
@@ -4156,11 +4156,13 @@ def adjust_shopify_inventories():
     rows = my_custom_sql(mysql)
 
     for row in rows:
+        print ("当前更新变体库存： ",row[0])
         info, adjusted = adjust_shopify_inventory(row)
         if adjusted:
-            sku = ShopifyVariant.objects.get(sku=row[0])
-            sku.quantity = row[2]
-            sku.save()
+
+            skus = ShopifyVariant.objects.filter(sku=row[0])
+            skus.update(quantity=row[2])
+
 
 def adjust_shopify_inventory(row):
     from shop.models import Shop, ShopifyProduct
