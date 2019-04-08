@@ -4055,7 +4055,7 @@ def update_shopify_products_images():
         info, updated = update_shopify_product_images(spu)
         if updated:
             spu.image_published = True
-            spu.images_shopify = info
+            spu.images_shopify = json.dumps(info)
         else:
             spu.publish_error = info
 
