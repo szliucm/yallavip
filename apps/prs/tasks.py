@@ -1534,7 +1534,8 @@ def prepare_lightin_album_material():
                 # 标题
                 title = spu.title
                 # 货号
-                name = title + "  [" + spu.handle + "]"
+                if title.find(spu.handle) == -1:
+                    name = title + "  [" + spu.handle + "]"
                 # 规格
                 lightin_skus = Lightin_SKU.objects.filter(SPU=spu.SPU)
                 options = []
@@ -4379,11 +4380,12 @@ def prepare_yallavip_photoes():
                     product = LightinAlbum(
                         lightin_spu=product_to_add,
                         yallavip_album=album,
+                        name = product_to_add.title
 
                     )
                     product_list.append(product)
 
-            print(product_list)
+            #print(product_list)
             LightinAlbum.objects.bulk_create(product_list)
 
 

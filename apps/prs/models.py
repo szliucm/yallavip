@@ -604,7 +604,7 @@ class LightinAlbum(models.Model):
 
     def __str__(self):
 
-        return  self.myalbum.name
+        return  self.name
 
 class Lightin_barcode(models.Model):
     lightin_sku = models.ForeignKey(Lightin_SKU, null=True, blank=True, verbose_name="SKU",
