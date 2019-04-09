@@ -170,7 +170,7 @@ class Conversation(models.Model):
     name = models.CharField(u'Facebook名字', default='', max_length=100, blank=False,null=False)
 
 
-    coversation = models.CharField(u'聊天链接', default='', max_length=500, blank=False, null=False)
+    conversation = models.CharField(u'聊天链接', default='', max_length=500, blank=False, null=False)
     comments = models.TextField(u'备注', blank=True, null=True)
 
     class Meta:

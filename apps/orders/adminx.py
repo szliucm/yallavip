@@ -3273,7 +3273,7 @@ class CsOrderDetailAdmin(object):
 @xadmin.sites.register(Customer)
 class CustomerAdmin(object):
     list_display = ['name', 'receiver_name', 'country_code','city','address1', 'address2', "address3",
-                    'city','phone_1', 'phone_2', "comments","coversation",]
+                    'city','phone_1', 'phone_2', "comments","conversation",]
     list_editable = [ ]
 
     search_fields = []

@@ -481,7 +481,7 @@ class CustomerAdmin(object):
                 #facebook 客户名和客服信息 ,现在是存放在审单系统里了
                 #facebook_user_name =",".join(list(customer.customer_conversation.values_list("name",flat=True))),
                 #sales = customer.sales,
-                #conversation_link = ",".join(list(customer.customer_conversation.values_list("coversation",flat=True))),
+                #conversation_link = ",".join(list(customer.customer_conversation.values_list("conversation",flat=True))),
 
                 receiver_name= receiver.name,
                 receiver_addr1= receiver.address1,
@@ -673,7 +673,7 @@ class ReceiverAdmin(object):
 
 @xadmin.sites.register(Conversation)
 class ConversationAdmin(object):
-    list_display = ['name', 'customer', 'coversation','comments',]
+    list_display = ['name', 'customer', 'conversation','comments',]
     list_editable = [ ]
 
 

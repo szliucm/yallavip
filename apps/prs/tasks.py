@@ -3861,7 +3861,7 @@ def auto_smscode():
         if row.customer:
             v.facebook_user_name=",".join(list(row.customer.customer_conversation.values_list("name",flat=True)))
             v.sales = row.customer.sales
-            v.conversation_link = ",".join(list(row.customer.customer_conversation.values_list("coversation",flat=True)))
+            v.conversation_link = ",".join(list(row.customer.customer_conversation.values_list("conversation",flat=True)))
 
 
         v.save()

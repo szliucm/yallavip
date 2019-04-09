@@ -1065,7 +1065,7 @@ class Customer(models.Model):
     phone_2 = models.CharField(u'phone_1', default='', max_length=100, blank=True)
 
     comments = models.TextField(u'备注', blank=True, null=True)
-    coversation = models.CharField(u'聊天链接', default='', max_length=100, blank=False,null=False)
+    conversation = models.CharField(u'聊天链接', default='', max_length=100, blank=False,null=False)
 
     class Meta:
         verbose_name = "客户"
