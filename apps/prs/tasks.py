@@ -4577,7 +4577,7 @@ def delete_target_photo(what):
     import re
 
     # 在fb的图片里找含what(579815 \ l00 \ c00 之类的，某种特征字符)的图片
-    myphotos = LightinAlbum.objects.filter(name__contains=what, published=True)
+    myphotos = LightinAlbum.objects.filter(name__icontains=what, published=True)
 
     photo_miss = {}
     photos = myphotos.values_list("yallavip_album__page__page_no", "fb_id", "name").distinct()
