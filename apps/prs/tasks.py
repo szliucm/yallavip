@@ -4392,17 +4392,17 @@ def prepare_yallavip_photoes():
 @shared_task
 def prepare_yallavip_album_material():
     from django.db.models import Max
-    from shop.photo_mark import lightin_mark_image
+    from shop.photo_mark import yallavip_mark_image
    #每次每个相册处理最多100张图片
 
     lightinalbums_all = LightinAlbum.objects.filter(published=False, publish_error="无", material=False,
-                                                    material_error="无", batch_no=0)
+                                                    material_error="无",yallavip_album__isnull = False )
 
     albums_list = lightinalbums_all.values_list('yallavip_album', flat=True).distinct()
     print("albums_list is ", albums_list)
 
     for album in albums_list:
-        lightinalbums = lightinalbums_all.filter(yallavip_album=album).order_by('?')[:100]
+        lightinalbums = lightinalbums_all.filter(yallavip_album=album)[:100]
         print(lightinalbums)
 
         for lightinalbum in lightinalbums:
@@ -4462,7 +4462,7 @@ def prepare_yallavip_album_material():
                     # logo， page促销标
                     # 如果有相册促销标，就打相册促销标，否则打价格标签
 
-                    image_marked, image_marked_url = lightin_mark_image(image, spu.handle, str(price1), str(price2),
+                    image_marked, image_marked_url = yallavip_mark_image(image, spu.handle, str(price1), str(price2),
                                                                         lightinalbum)
                     if not image_marked:
                         error = "打水印失败"
