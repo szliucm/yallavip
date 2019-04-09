@@ -4473,7 +4473,7 @@ def prepare_yallavip_album_material():
                     LightinAlbum.objects.filter(pk=lightinalbum.pk).update(
                         name=name,
                         image_marked=image_marked_url,
-                        batch_no=batch_no,
+                        #batch_no=batch_no,
                         material=True
                     )
                 else:
@@ -4482,7 +4482,8 @@ def prepare_yallavip_album_material():
                     )
 
 def cal_price():
-    spus = Lightin_SPU.objects.filter(sellable__gt=0)
+    #spus = Lightin_SPU.objects.filter(sellable__gt=0)
+    spus = Lightin_SPU.objects.all()
     for spu in spus:
         #采购价的6倍 和销售价的七折，取较大的作为定价
         # 采购价 6倍 =  vendor_supply_price * 3.76 * 0.3 * 6
