@@ -1913,19 +1913,19 @@ def delete_oversea_photo():
 
     # 选择所有可用的page
     for page_no in photo_miss:
-        FacebookAdsApi.init(access_token=get_token(page_no))
+
 
         photo_nos = photo_miss[page_no]
         print("page %s 待删除数量 %s  " % (page_no, len(photo_nos)))
         if photo_nos is None or len(photo_nos) == 0:
             continue
 
-        delete_photos(photo_nos)
+        delete_photos(page_no, photo_nos)
 
 
-def delete_photos(photo_nos):
+def delete_photos(page_no, photo_nos):
     from facebook_business.adobjects.photo import Photo
-
+    FacebookAdsApi.init(access_token=get_token(page_no))
     for photo_no in photo_nos:
 
         fields = [
