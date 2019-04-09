@@ -1927,7 +1927,7 @@ def delete_photos(photo_nos):
     from facebook_business.adobjects.photo import Photo
 
     for photo_no in photo_nos:
-        '''
+
         fields = [
         ]
         params = {
@@ -1942,16 +1942,6 @@ def delete_photos(photo_nos):
             )
 
             # response = "delete photo_no "+ photo_no
-        '''
-        try:
-            error = ""
-            url = "https://graph.facebook.com/v3.2/%s"%(photo_no)
-            param = dict()
-            param["access_token"] = "EAAcGAyHVbOEBAEtwMPUeTci0x3G6XqlAwIhuQiZBZCVhZBRx88Rki0Lo7WNSxvAw7jAhhRlxsLjARbAZCnDvIoQ68Baj9TJrQC8KvEzyDhRWlnILGxRyc49b02aPInvpI9bcfgRowJfDrIt0kFE01LGD86vLKuLixtB0aTvTHww9SkedBzFZA"
-            param["status"] = "DELETED"
-
-            r = requests.post(url, param)
-            print ("删除图片的返回",r ,r.text)
 
 
 
@@ -1961,6 +1951,18 @@ def delete_photos(photo_nos):
             print (my_access_token)
             return
             # continue
+        '''
+               try:
+                   error = ""
+                   url = "https://graph.facebook.com/v3.2/%s"%(photo_no)
+                   param = dict()
+                   param["access_token"] = my_access_token
+                   param["status"] = "DELETED"
+
+                   r = requests.post(url, param)
+                   print ("删除图片的返回",r ,r.text)
+        '''
+
         # 更新lightinalbum的发布记录
         # print("facebook 返回结果",response)
         LightinAlbum.objects.filter(fb_id=photo_no).update(
