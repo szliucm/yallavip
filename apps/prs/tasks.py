@@ -4409,6 +4409,7 @@ def prepare_yallavip_album_material():
             spu = lightinalbum.lightin_spu
             sku = lightinalbum.lightin_sku
 
+
             if sku:
                 LightinAlbum.objects.filter(pk=lightinalbum.pk).update(
                     image_marked=sku.image_marked,
@@ -4417,7 +4418,6 @@ def prepare_yallavip_album_material():
                 )
 
             elif spu:
-
                 error = ""
                 # 准备文字
                 # 标题
@@ -4425,6 +4425,8 @@ def prepare_yallavip_album_material():
                 # 货号
                 if title.find(spu.handle) == -1:
                     name = title + "  [" + spu.handle + "]"
+                else:
+                    name = title
                 # 规格
                 lightin_skus = Lightin_SKU.objects.filter(SPU=spu.SPU)
                 options = []
