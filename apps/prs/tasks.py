@@ -1956,8 +1956,8 @@ def delete_photos(page_no, photo_nos):
             print("删除图片出错", photo_no, e)
             error = "删除图片出错"
             print (my_access_token)
-            return
-            # continue
+
+            continue
         '''
                try:
                    error = ""
@@ -4568,6 +4568,43 @@ def sync_yallavip_album_batch(lightinalbums):
                 publish_error=error[:90],
                 published_time=dt.now()
             )
+
+#按关键词删除相册中的图片
+def delete_target_photo(what):
+    from facebook_business.api import FacebookAdsApi
+    from fb.models import MyPhoto
+    from django.db.models import Sum
+    import re
+
+    # 在fb的图片里找含what(579815 \ l00 \ c00 之类的，某种特征字符)的图片
+    myphotos = LightinAlbum.objects.filter(name__contains=what, puulished=True)
+
+    photo_miss = {}
+    photos = myphotos.values_list("yallavip_album__page__page_no", "fb_id", "name").distinct()
+    for photo in photos:
+        page_no = photo[0]
+        fb_id = photo[1]
+
+
+
+        photo_list = photo_miss.get(page_no)
+        if not photo_list:
+            photo_list = []
+        if fb_id not in photo_list:
+            photo_list.append(fb_id)
+
+        photo_miss[page_no] = photo_list
+
+    # 选择所有可用的page
+    for page_no in photo_miss:
+
+
+        photo_nos = photo_miss[page_no]
+        print("page %s 待删除数量 %s  " % (page_no, len(photo_nos)))
+        if photo_nos is None or len(photo_nos) == 0:
+            continue
+
+        delete_photos(page_no, photo_nos)
 
 
 # 更新相册对应的主页外键
