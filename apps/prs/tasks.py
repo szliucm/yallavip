@@ -4481,6 +4481,44 @@ def prepare_yallavip_album_material():
                         material_error=error
                     )
 
+def cal_price():
+    spus = Lightin_SPU.objects.all()
+    for spus in spus:
+        #采购价的6倍 和销售价的七折，取较大的作为定价
+        # 采购价 6倍 =  vendor_supply_price * 3.76 * 0.3 * 6
+        #售价七折 = vendor_sale_price *3.76* 0.7
+        price_6 = sku.vendor_supply_price * 6.77
+        price_7 = sku.vendor_sale_price *2.63
+
+        if price_6 > price_7:
+            price = price_6
+        else:
+            price = price_7
+
+        if price <=10:
+            price = 21
+        elif price<=20:
+            price = 31
+        elif price <= 30:
+            price = 41
+        elif price <= 40:
+            price = 51
+        elif price <= 50:
+            price = 61
+        elif price <= 60:
+            price = 71
+        else:
+            price = int(price/10)*10
+
+        spu.yallavip_price = price
+        spu.save()
+
+
+
+
+
+
+
 
 # 更新相册对应的主页外键
 # update fb_myalbum a , fb_mypage p set a.mypage_id = p.id where p.page_no = a.page_no
