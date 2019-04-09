@@ -1201,7 +1201,7 @@ def post_yallavip_album(lightinalbum):
         product_no = lightinalbum.lightin_sku.SKU
 
 
-    adobjects = FacebookAdsApi.init(my_app_id, my_app_secret, access_token=get_token(page_no), debug=True)
+    adobjects = FacebookAdsApi.init( access_token=get_token(page_no), debug=True)
     fields = ["id","name","created_time", "updated_time","picture","link",
                       "likes.summary(true)","comments.summary(true)"
     ]
