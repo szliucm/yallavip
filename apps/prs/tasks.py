@@ -4518,10 +4518,56 @@ def cal_price():
         spu.save()
 
 
+@shared_task
+def sync_yallavip_album(album_name=None):
+    from django.db.models import Min
+
+    # 之前只考虑一次统一发一个批次，但因为各个相册建立的时间不同，批次差异很大，所以必须按相册找到当前需要发的批次
+    if album_name:
+        lightinalbums_all = LightinAlbum.objects.filter(
+            Q(lightin_spu__sellable__gt=0) | Q(lightin_sku__o_sellable__gt=0),
+            published=False, publish_error="无",
+            material=True, myalbum__name__contains=album_name)
+    else:
+        lightinalbums_all = LightinAlbum.objects.filter(
+            Q(lightin_spu__sellable__gt=0) | Q(lightin_sku__o_sellable__gt=0),
+            published=False, publish_error="无", material=True, yallvip_album__isnull=False)
+
+    albums = lightinalbums_all.values_list('yallavip_album').distinct()
+    print("有%s个相册待更新" % (albums.count()))
+    for album in albums:
+        lightinalbums = lightinalbums_all.filter(yallavip_album=album)
+        #print("相册%s 批次 %s 有%s 个图片待发" % (batch_no[0], batch_no[1], lightinalbums.count()))
+        sync_yallavip_album_batch(lightinalbums)
 
 
 
+# 把图片发到Facebook相册
+def sync_yallavip_album_batch(lightinalbums):
+    from .fb_action import post_yallavip_album
 
+    for lightinalbum in lightinalbums:
+        error, posted = post_yallavip_album(lightinalbum)
+
+        # 更新Facebook图片数据库记录
+
+        if posted is not None:
+            LightinAlbum.objects.filter(pk=lightinalbum.pk).update(
+
+                fb_id=posted,
+                published=True,
+                published_time=dt.now()
+            )
+            print("发布新产品到相册成功 LightinAlbum %s" % (lightinalbum.pk))
+        else:
+            print(
+                    "发布新产品到相册失败 LightinAlbum %s   error   %s" % (lightinalbum.pk, error))
+            LightinAlbum.objects.filter(pk=lightinalbum.pk).update(
+
+                published=False,
+                publish_error=error[:90],
+                published_time=dt.now()
+            )
 
 
 # 更新相册对应的主页外键
