@@ -459,6 +459,7 @@ class Lightin_SPU(models.Model):
     got_error = models.CharField(default='无', max_length=100, null=True, blank=True, verbose_name="获取错误")
     got_time = models.DateTimeField(null=True, blank=True, verbose_name="更新时间")
 
+    yallavip_price = models.FloatField(u'yallavip售价', default=0, blank=True, null=True)
     shopify_price = models.FloatField(u'shopify售价', default=0, blank=True, null=True)
 
     published = models.BooleanField(default=False, verbose_name="发布到shopify状态")
