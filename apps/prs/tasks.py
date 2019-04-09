@@ -4482,13 +4482,13 @@ def prepare_yallavip_album_material():
                     )
 
 def cal_price():
-    spus = Lightin_SPU.objects.all()
-    for spus in spus:
+    spus = Lightin_SPU.objects.filter(sellable__gt=0)
+    for spu in spus:
         #采购价的6倍 和销售价的七折，取较大的作为定价
         # 采购价 6倍 =  vendor_supply_price * 3.76 * 0.3 * 6
         #售价七折 = vendor_sale_price *3.76* 0.7
-        price_6 = sku.vendor_supply_price * 6.77
-        price_7 = sku.vendor_sale_price *2.63
+        price_6 = spu.vendor_supply_price * 6.77
+        price_7 = spu.vendor_sale_price *2.63
 
         if price_6 > price_7:
             price = price_6
