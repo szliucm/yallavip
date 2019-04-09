@@ -1196,6 +1196,12 @@ def post_yallavip_album(lightinalbum):
     page_no = lightinalbum.yallavip_album.page.page_no
     album_no = lightinalbum.yallavip_album.album.album_no
     print("###########",page_no, album_no)
+
+    if page_no == "2085664208390026":
+        print("这个page被封了")
+        error = "这个page被封了"
+        return error, None
+
     if lightinalbum.lightin_spu:
 
         product_no = lightinalbum.lightin_spu.SPU
