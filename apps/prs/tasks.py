@@ -1748,7 +1748,7 @@ def delete_out_lightin_album(lightinalbums_out):
         if photo_nos is None or len(photo_nos) == 0:
             continue
 
-        delete_photos(photo_nos)
+        delete_photos(page_no,photo_nos)
 
 
 # 删除重复发布且已下架的图片
@@ -1783,14 +1783,14 @@ def delete_missed_photo():
 
     # 选择所有可用的page
     for page_no in photo_miss:
-        FacebookAdsApi.init(access_token=get_token(page_no))
+
 
         photo_nos = photo_miss[page_no]
         print("page %s 待删除数量 %s  " % (page_no, len(photo_nos)))
         if photo_nos is None or len(photo_nos) == 0:
             continue
 
-        delete_photos(photo_nos)
+        delete_photos(page_no, photo_nos)
 
 
 # 删除那些找不到库存的图片
@@ -1829,14 +1829,14 @@ def delete_lost_photo(what):
 
     # 选择所有可用的page
     for page_no in photo_miss:
-        FacebookAdsApi.init(access_token=get_token(page_no))
+
 
         photo_nos = photo_miss[page_no]
         print("page %s 待删除数量 %s  " % (page_no, len(photo_nos)))
         if photo_nos is None or len(photo_nos) == 0:
             continue
 
-        delete_photos(photo_nos)
+        delete_photos(page_no, photo_nos)
 
 
 # 删除缺货的组合商品
@@ -1872,14 +1872,14 @@ def delete_combo_photo():
 
     # 选择所有可用的page
     for page_no in photo_miss:
-        FacebookAdsApi.init(access_token=get_token(page_no))
+
 
         photo_nos = photo_miss[page_no]
         print("page %s 待删除数量 %s  " % (page_no, len(photo_nos)))
         if photo_nos is None or len(photo_nos) == 0:
             continue
 
-        delete_photos(photo_nos)
+        delete_photos(page_no, photo_nos)
 
 
 # 删除无货的海外仓包裹
@@ -4022,14 +4022,14 @@ def sync_outstock_photo():
 
     # 选择所有可用的page
     for page_no in photo_miss:
-        FacebookAdsApi.init(access_token=get_token(page_no))
+
 
         photo_nos = photo_miss[page_no]
         print("page %s 待删除数量 %s  " % (page_no, len(photo_nos)))
         if photo_nos is None or len(photo_nos) == 0:
             continue
 
-        delete_photos(photo_nos)
+        delete_photos(page_no, photo_nos)
 
 #批量上传图片到shpify，并记录图片的id和原始对应的关系，以便以后更新变体图片
 '''
