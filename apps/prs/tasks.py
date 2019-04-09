@@ -4413,6 +4413,7 @@ def prepare_yallavip_album_material():
             if sku:
                 LightinAlbum.objects.filter(pk=lightinalbum.pk).update(
                     image_marked=sku.image_marked,
+
                     #batch_no=batch_no,
                     material=True
                 )
