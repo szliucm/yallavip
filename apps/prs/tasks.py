@@ -4232,7 +4232,7 @@ def create_album(page_no , album_name ):
                         )
     #插入到待返回的相册列表中
     if album:
-        new_album_list.append(album.get("id"))
+
         #保存到数据库中
         obj, created = MyAlbum.objects.update_or_create(album_no=album["id"],
                                                     defaults={'page_no': page_no,
