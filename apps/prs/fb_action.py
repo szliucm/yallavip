@@ -434,7 +434,7 @@ def create_new_album(page_no , new_albums ):
     # 建相册要用开发账号
     #建出来的相册普通客户看不到，所以暂不启用此功能
 
-    adobjects = FacebookAdsApi.init(access_token=get_token(page_no, my_access_token), debug=True)
+    adobjects = FacebookAdsApi.init(access_token=get_token(page_no), debug=True)
     new_album_list = []
     #print("new_albums",new_albums )
     for new_album in new_albums:
@@ -446,7 +446,7 @@ def create_new_album(page_no , new_albums ):
                 'name': new_album,
                 'location': 'Riyadh Region, Saudi Arabia',
                 #'privacy': 'everyone',
-                'place': '111953658894021',
+                #'place': '111953658894021',
                 'message':"Yallavip's most fashion "+ new_album,
 
                     }

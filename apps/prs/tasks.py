@@ -4210,6 +4210,87 @@ def adjust_shopify_inventory(row):
         print(r.text)
         return "更新库存失败", False
 
+def create_album(page_no , album_name ):
+
+    adobjects = FacebookAdsApi.init(access_token=get_token(page_no), debug=True)
+    fields = ["created_time", "description", "id",
+              "name", "count", "updated_time", "link",
+              "likes.summary(true)", "comments.summary(true)"
+              ]
+    params = {
+            'name': album_name,
+            'location': 'Riyadh Region, Saudi Arabia',
+            #'privacy': 'everyone',
+            #'place': '111953658894021',
+            'message':"Yallavip's most fashion "+ new_album,
+
+                }
+    album = Page(page_no).create_album(
+                            fields=fields,
+                            params=params,
+                        )
+    #插入到待返回的相册列表中
+    if album:
+        new_album_list.append(album.get("id"))
+        #保存到数据库中
+        obj, created = MyAlbum.objects.update_or_create(album_no=album["id"],
+                                                    defaults={'page_no': page_no,
+                                                              'created_time': album["created_time"],
+                                                              'updated_time': album["updated_time"],
+
+                                                              'name': album["name"],
+                                                              'count': album["count"],
+                                                              'like_count': album["likes"]["summary"][
+                                                                  "total_count"],
+                                                              'comment_count': album["comments"]["summary"][
+                                                                  "total_count"],
+                                                              'link': album["link"],
+
+                                                              }
+                                                    )
+
+
+
+
+    return  obj
+
+
+@shared_task
+def prepare_yallavip_album():
+    from django.db import connection, transaction
+
+    # 找出所有活跃的page
+    pages = MyPage.objects.filter(active=True)
+    for page in pages:
+
+        print("page is ", page)
+        # 找到那些还没添加对应page的规则
+        #现在是每个page的规则是一样的，以后再优化，每个page可以选择自己的规则
+
+        rules_to_add = SelectionRule.objects.exclude(id__in=
+                                                        YallavipAlbum.objects.filter(
+                                                            page__pk=page.pk).values_list(
+                                                            'rule__pk',
+                                                            flat=True)).distinct()
+
+        #根据规则创建相册，成功后记录到数据库里
+        for rule_to_add in rules_to_add:
+            new_album = create_album(page_no, rule_to_add.name)
+            YallavipAlbum.objects.create(
+                page = page,
+                rule = rule_to_add,
+                album = new_album,
+                published = True,
+                publish_error = "",
+                published_time = dt.now()
+
+            )
+
+
+
+
+
+
 # 更新相册对应的主页外键
 # update fb_myalbum a , fb_mypage p set a.mypage_id = p.id where p.page_no = a.page_no
 '''
