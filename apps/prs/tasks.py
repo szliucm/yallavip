@@ -4402,7 +4402,7 @@ def prepare_yallavip_album_material():
     print("albums_list is ", albums_list)
 
     for album in albums_list:
-        lightinalbums = lightinalbums_all.filter(yallavip_album=album)[:100]
+        lightinalbums = lightinalbums_all.filter(yallavip_album=album)[:10]
         print(lightinalbums)
 
         for lightinalbum in lightinalbums:
