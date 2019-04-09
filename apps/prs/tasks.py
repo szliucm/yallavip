@@ -4275,7 +4275,7 @@ def prepare_yallavip_album():
 
         #根据规则创建相册，成功后记录到数据库里
         for rule_to_add in rules_to_add:
-            new_album = create_album(page_no, rule_to_add.name)
+            new_album = create_album(page.page_no, rule_to_add.name)
             YallavipAlbum.objects.create(
                 page = page,
                 rule = rule_to_add,
