@@ -1888,12 +1888,14 @@ def delete_oversea_photo():
     from fb.models import MyPhoto
 
     # 找出已下架商品的handle
-    handles = Lightin_SKU.objects.filter(o_sellable__lte=0, SKU__startswith="579815").values_list("SKU",
-                                                                                                  flat=True).distinct()
+    #handles = Lightin_SKU.objects.filter(o_sellable__lte=0, SKU__startswith="579815").values_list("SKU",
+     #                                                                                             flat=True).distinct()
 
+    skus = Lightin_SKU.objects.filter(o_sellable__lte=0, SKU__startswith="579815",published=True).distinct()
     photo_miss = {}
     # 在fb的图片里找handle的图片
-    for handle in handles:
+    for sku in skus:
+        handle = sku.SKU
         myphotos = MyPhoto.objects.filter(name__contains=handle, active = True)
         print("当前处理包裹 ", handle, myphotos.count())
         photos = myphotos.values_list("page_no", "photo_no").distinct()
@@ -1909,7 +1911,10 @@ def delete_oversea_photo():
 
             photo_miss[page_no] = photo_list
 
+        sku.published=False
+        sku.save()
         myphotos.update(active=False)
+
 
     # 选择所有可用的page
     for page_no in photo_miss:

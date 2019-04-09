@@ -520,6 +520,7 @@ class Lightin_SKU(models.Model):
     locked = models.BooleanField(u'库存锁定', default=False, null=True)
     imaged = models.BooleanField(u'图片已生成', default=False, null=True)
     listed = models.BooleanField(u'已发布到主站', default=False, null=True)
+    published = models.BooleanField(u'已发布到Facebook', default=False, null=True)
 
     combo_error = models.CharField(default='', max_length=100, null=True, blank=True, verbose_name="组合错误")
     sku_price = models.IntegerField(u'sku售价', default=0, blank=True, null=True)
