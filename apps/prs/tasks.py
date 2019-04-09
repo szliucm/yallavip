@@ -4536,7 +4536,7 @@ def sync_yallavip_album(album_name=None):
     albums = lightinalbums_all.values_list('yallavip_album').distinct()
     print("有%s个相册待更新" % (albums.count()))
     for album in albums:
-        lightinalbums = lightinalbums_all.filter(yallavip_album=album)
+        lightinalbums = lightinalbums_all.filter(yallavip_album=album)[:100]
         #print("相册%s 批次 %s 有%s 个图片待发" % (batch_no[0], batch_no[1], lightinalbums.count()))
         sync_yallavip_album_batch(lightinalbums)
 
