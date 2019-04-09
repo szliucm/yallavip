@@ -817,6 +817,7 @@ class LogisticCustomerServiceAdmin(object):
             if (order == None):
                 continue
 
+            '''
             orderconversation = OrderConversation.objects.filter(order=order)
             for item in orderconversation:
                 conversation = item.conversation
@@ -825,6 +826,16 @@ class LogisticCustomerServiceAdmin(object):
                     link = mark_safe(
                         u'<a href="http://business.facebook.com%s" target="view_window">%s</a>' % (
                             conversation.link, u'  ' + order.order_no))
+                    links = links + link
+            '''
+            orderconversation = order.customer.customer_conversation.all()
+            for item in orderconversation:
+                conversation = item.conversation
+
+                if (conversation != None):
+                    link = mark_safe(
+                        u'<a href="%s" target="view_window">%s</a>' % (
+                            conversation, u'  ' + order.order_no))
                     links = links + link
         return (links)
     show_conversation.allow_tags = True
