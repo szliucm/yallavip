@@ -429,7 +429,7 @@ def post_order_feed():
 
 
 
-'''
+
 def create_new_album(page_no , new_albums ):
     # 建相册要用开发账号
     #建出来的相册普通客户看不到，所以暂不启用此功能
@@ -479,7 +479,7 @@ def create_new_album(page_no , new_albums ):
 
         #print("created albums ", album)
     return  new_album_list
-
+'''
 #之前的，从shopify中生成相册
 def post_photo_to_album(targer_page,album_no,product ):
     from django.db.models import Max
