@@ -828,7 +828,9 @@ class LogisticCustomerServiceAdmin(object):
                             conversation.link, u'  ' + order.order_no))
                     links = links + link
             '''
+            print(order)
             orderconversation = order.customer.customer_conversation.all()
+            print(orderconversation)
             for item in orderconversation:
                 conversation = item.conversation
 
@@ -837,6 +839,8 @@ class LogisticCustomerServiceAdmin(object):
                         u'<a href="%s" target="view_window">%s</a>' % (
                             conversation, u'  ' + order.order_no))
                     links = links + link
+                    print(link)
+        print(links)
         return (links)
     show_conversation.allow_tags = True
     show_conversation.short_description = "会话"
