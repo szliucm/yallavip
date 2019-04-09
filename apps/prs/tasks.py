@@ -4222,7 +4222,7 @@ def create_album(page_no , album_name ):
             'location': 'Riyadh Region, Saudi Arabia',
             #'privacy': 'everyone',
             #'place': '111953658894021',
-            'message':"Yallavip's most fashion "+ new_album,
+            'message':"Yallavip's most fashion flash sale "+ album_name,
 
                 }
     album = Page(page_no).create_album(
