@@ -1,5 +1,5 @@
 from django.db import models
-from fb.models import MyPhoto,MyFeed,MyAd,MyAlbum
+from fb.models import MyPage,MyPhoto,MyFeed,MyAd,MyAlbum
 from commodity.models import SelectionRule
 
 from datetime import datetime
