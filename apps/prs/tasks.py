@@ -4495,18 +4495,18 @@ def cal_price():
         else:
             price = price_7
 
-        if price <=10:
-            price = 21
+        if price <=5:
+            price = 5
         elif price<=20:
-            price = 31
+            price = 29
         elif price <= 30:
-            price = 41
+            price = 39
         elif price <= 40:
-            price = 51
+            price = 49
         elif price <= 50:
-            price = 61
+            price = 59
         elif price <= 60:
-            price = 71
+            price = 69
         else:
             price = int(price/10)*10
 
