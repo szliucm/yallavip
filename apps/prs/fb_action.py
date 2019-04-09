@@ -1195,6 +1195,7 @@ def post_album_ad(page_no):
 def post_yallavip_album(lightinalbum):
     page_no = lightinalbum.yallavip_album.page.page_no
     album_no = lightinalbum.yallavip_album.album.album_no
+    print("###########",page_no, album_no)
     if lightinalbum.lightin_spu:
 
         product_no = lightinalbum.lightin_spu.SPU
