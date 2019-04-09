@@ -1,6 +1,6 @@
 from django.db import models
 from fb.models import MyPhoto,MyFeed,MyAd,MyAlbum
-
+from commodity.models import SelectionRule
 
 from datetime import datetime
 
@@ -537,6 +537,35 @@ class Lightin_SKU(models.Model):
     def __str__(self):
         return self.SKU
 
+class YallavipAlbum(models.Model):
+
+    page = models.ForeignKey(MyPage, null=True, blank=True, verbose_name="Page",
+                                related_name="page_album", on_delete=models.CASCADE)
+
+    rule = models.ForeignKey(SelectionRule, null=True, blank=True, verbose_name="SelectionRule",
+                                    related_name="rule_album", on_delete=models.CASCADE)
+
+    album = models.ForeignKey(MyAlbum, null=True, blank=True, verbose_name="fb相册",
+                                  related_name="myalbum_album", on_delete=models.SET_NULL)
+
+    published = models.BooleanField(default=False, verbose_name="发布状态")
+    publish_error = models.CharField(default='无',max_length=256, null=True, blank=True, verbose_name="发布错误(或图片数量)")
+    published_time = models.DateTimeField(null=True, blank=True, verbose_name="发布时间")
+
+    deleted = models.BooleanField(default=False, verbose_name="删除状态")
+    delete_error = models.CharField(default='无', max_length=256, null=True, blank=True, verbose_name="删除结果")
+    deleted_time = models.DateTimeField(null=True, blank=True, verbose_name="删除时间")
+
+
+    class Meta:
+        verbose_name = "allavip 相册"
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+
+        return  self.rule.name
+
+
 class LightinAlbum(models.Model):
 
     lightin_spu = models.ForeignKey(Lightin_SPU, null=True, blank=True, verbose_name="SPU",
@@ -567,7 +596,7 @@ class LightinAlbum(models.Model):
 
 
     class Meta:
-        verbose_name = "Lightin 相册"
+        verbose_name = "相册图片"
         verbose_name_plural = verbose_name
 
     def __str__(self):
