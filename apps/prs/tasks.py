@@ -4360,8 +4360,8 @@ def prepare_yallavip_photoes():
                     name = name + "\n\nPrice:  " + str(sku_to_add.sku_price) + "SAR"
 
                     product = LightinAlbum(
-                        lightin_sku=Lightin_SKU.objects.get(pk=sku_to_add.pk),
-                        myalbum=MyAlbum.objects.get(pk=album.pk),
+                        lightin_sku=sku_to_add,
+                        yallavip_album=album,
                         name=name
 
                     )
@@ -4369,16 +4369,16 @@ def prepare_yallavip_photoes():
 
             else:
                 products_to_add = Lightin_SPU.objects.filter(con, published=True,sellable__gt=0).exclude(id__in=
-                LightinAlbum.objects.filter(
-                    myalbum__pk=album.pk,
-                    lightin_spu__isnull=False).values_list(
-                    'lightin_spu__id',
-                    flat=True)).distinct()
+                                                LightinAlbum.objects.filter(
+                                                    myalbum__pk=album.pk,
+                                                    lightin_spu__isnull=False).values_list(
+                                                    'lightin_spu__id',
+                                                    flat=True)).distinct()
 
                 for product_to_add in products_to_add:
                     product = LightinAlbum(
-                        lightin_spu=Lightin_SPU.objects.get(pk=product_to_add.pk),
-                        myalbum=MyAlbum.objects.get(pk=album.pk),
+                        lightin_spu=product_to_add,
+                        yallavip_album=album,
 
                     )
                     product_list.append(product)

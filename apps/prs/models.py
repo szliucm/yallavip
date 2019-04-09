@@ -577,6 +577,9 @@ class LightinAlbum(models.Model):
     myalbum = models.ForeignKey('fb.MyAlbum', null=True, blank=True, verbose_name="相册",
                                   related_name="lightin_myalbum", on_delete=models.SET_NULL)
 
+    yallavip_album = models.ForeignKey(YallavipAlbum, null=True, blank=True, verbose_name="yallavip相册",
+                                related_name="yallavip_album", on_delete=models.SET_NULL)
+
     fb_id = models.CharField(default='',max_length=100, null=True, blank=True, verbose_name="接触点代码")
 
     batch_no = models.IntegerField(u'批次号', default=0, blank=True, null=True)
