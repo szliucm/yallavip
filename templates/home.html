@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form action="/hello/" method="POST">{% csrf_token %}
+    <input type="text" name="user"/>
+    <input type="submit"/>
+</form>
+<div><button type="button" id="testBotton" onclick="Ssss('{{ x }}')">测试</button></div>
+
+<script src="http://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script>
+<script language="JavaScript">
+    $.ajaxSetup({
+        data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
+    });
+
+    function Ssss() {
+        $.ajax({
+            url:'/hello/',
+            type:'POST',
+            data:{'a':3333,'b':444},
+            success:function(data){
+                alert(data.message);
+            }
+        })
+    }
+
+</script>
+</body>
+</html>

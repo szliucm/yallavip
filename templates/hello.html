@@ -5,6 +5,7 @@
 <meta charset="UTF-8">
 </head>
 <body>
+<script src="http://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script>
 <script>
   // This is called with the results from from FB.getLoginStatus().
   function statusChangeCallback(response) {
@@ -16,7 +17,15 @@
     // for FB.getLoginStatus().
     if (response.status === 'connected') {
       // Logged into your app and Facebook.
-        alert("口令："+ response.authResponse.accessToken)
+        $.ajax({
+            url:'/hello/',
+            type:'POST',
+            data:{'token':response.authResponse.accessToken},
+            success:function(data){
+                alert(data.message);
+            }
+        })
+
         //console.log(response.authResponse.accessToken);
       testAPI();
     } else {

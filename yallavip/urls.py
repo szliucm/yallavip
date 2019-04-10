@@ -29,9 +29,8 @@ urlpatterns = [
     path('xadmin/', xadmin.site.urls),
     # 二级联动页面请求
     path('select/mypage_myalbum/', SelectView.as_view(), name='mypage_myalbum'),
-    path('hello/', view.hello),
-    path('p1/', view.p1),
-    path('p2/', view.p2),
+    path('hello/', view.Hello.as_view()),
+
 
     #path('ueditor/', include('DjangoUeditor.urls')),
     #url(r'^media/(?P<path>.*)', serve, {"document_root":MEDIA_ROOT}),
