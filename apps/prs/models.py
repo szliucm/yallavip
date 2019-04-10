@@ -761,3 +761,20 @@ class WmsOriOrder(models.Model):
     def __str__(self):
         return self.order_id
 
+class Token(models.Model):
+
+    user_no = models.CharField(u'用户Facebookid', default='', max_length=100, blank=True)
+    user_name = models.CharField(u'用户Facebook名字', default='', max_length=100, blank=True)
+    long_token = models.CharField(u'token', default='', max_length=300, blank=True)
+
+    update_at = models.DateTimeField(u'更新时间', auto_now=False, blank=True, null=True)
+    active = models.BooleanField(u'客户状态', default=False)
+
+    class Meta:
+        verbose_name = "token 管理"
+        verbose_name_plural = verbose_name
+
+
+    def __str__(self):
+        return self.user
+

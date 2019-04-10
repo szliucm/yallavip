@@ -15,6 +15,8 @@
     });
   // This is called with the results from from FB.getLoginStatus().
   function statusChangeCallback(response) {
+      var user_token, user_name, user_id;
+
     console.log('statusChangeCallback');
     console.log(response);
     // The response object is returned with a status field that lets the
@@ -23,14 +25,21 @@
     // for FB.getLoginStatus().
     if (response.status === 'connected') {
       // Logged into your app and Facebook.
+        user_token = response.authResponse.accessToken
+        FB.api('/me', function(response) {
+            user_name =  response.name;
+            user_id =  response.id;
+        });
+
         $.ajax({
             url:'/hello/',
             type:'POST',
-            data:{'token':response.authResponse.accessToken},
+            data:{'token':user_token,"user_id":user_id, "user_name":user_name},
             success:function(data){
                 alert(data.message);
             }
         })
+
 
         //console.log(response.authResponse.accessToken);
       testAPI();
@@ -106,13 +115,15 @@
   Below we include the Login Button social plugin. This button uses
   the JavaScript SDK to present a graphical Login button that triggers
   the FB.login() function when clicked.
+  <fb:login-button scope="public_profile,email" onlogin="checkLoginState();">
+</fb:login-button>
 -->
 
-<fb:login-button scope="public_profile,email" onlogin="checkLoginState();">
-</fb:login-button>
 
 <div class="fb-login-button" data-width="200" data-size="large" data-button-type="continue_with"
-     data-auto-logout-link="false" data-use-continue-as="true" scope="public_profile,email" onlogin="checkLoginState();">
+     data-auto-logout-link="false" data-use-continue-as="true"
+     scope="email, manage_pages, pages_show_list, publish_pages, pages_messaging, pages_messaging_phone_number, pages_messaging_subscriptions, public_profile"
+     onlogin="checkLoginState();">
 
 </div>
 
