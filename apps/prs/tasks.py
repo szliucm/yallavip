@@ -4264,7 +4264,7 @@ def adjust_shopify_price(row):
     if r.status_code == 200:
         return "更新变体成功", True
     else:
-        print(r.text)
+        print("更新变体失败", r.text)
         return "更新变体失败", False
 
 def create_album(page_no , album_name ):
