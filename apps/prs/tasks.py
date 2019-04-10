@@ -4165,7 +4165,7 @@ def adjust_shopify_inventories():
     rows = my_custom_sql(mysql)
 
     for row in rows:
-        print ("当前更新变体库存： ",row[0])
+
         info, adjusted = adjust_shopify_inventory(row)
         if adjusted:
 
@@ -4211,6 +4211,61 @@ def adjust_shopify_inventory(row):
     else:
         print(r.text)
         return "更新库存失败", False
+
+
+#更新价格,顺便把库存策略改成无货后不不能下单
+def adjust_shopify_prices():
+    mysql = "select v.sku , v.variant_no, s.sku_price " \
+            "from shop_shopifyvariant v, prs_lightin_sku s " \
+            "where v.sku= s.SKU and v.price <> s.sku_price"
+
+    rows = my_custom_sql(mysql)
+
+    for row in rows:
+        print ("更新变体价格： ",row[0],row[2])
+
+        info, adjusted = adjust_shopify_price(row)
+        if adjusted:
+
+            skus = ShopifyVariant.objects.filter(sku=row[0])
+            skus.update(price=row[1],inventory_policy = "deny")
+
+def adjust_shopify_price(row):
+    from shop.models import Shop, ShopifyProduct
+    from prs.shop_action import post_product_main, update_or_create_product
+    from .models import AliProduct
+
+    dest_shop = "yallasale-com"
+    location_id = "11796512810"
+    shop_obj = Shop.objects.get(shop_name=dest_shop)
+
+    shop_url = "https://%s:%s@%s.myshopify.com" % (shop_obj.apikey, shop_obj.password, shop_obj.shop_name)
+
+
+    params = {
+        "variant": {
+                "id": row[1],
+                "inventory_policy": "deny",
+                "price": row[2]
+              }
+    }
+    headers = {
+        "Content-Type": "application/json",
+        "charset": "utf-8",
+
+    }
+    # 初始化SDK
+    url = shop_url + "/admin/variants/%s.json"%(row[1])
+
+    print("开始更新变体")
+    print(url, json.dumps(params))
+
+    r = requests.post(url, headers=headers, data=json.dumps(params))
+    if r.status_code == 200:
+        return "更新变体成功", True
+    else:
+        print(r.text)
+        return "更新变体失败", False
 
 def create_album(page_no , album_name ):
 
