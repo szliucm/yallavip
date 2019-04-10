@@ -48,14 +48,13 @@ def get_token(target_page,token=None):
         param["access_token"] = token
 
     r = requests.get(url, param)
-
-
     data = json.loads(r.text)
-    print(r, r.text)
+    if r.status_code == 200:
+        return data["access_token"]
+    else:
+        print(r, r.text)
+        return  None
 
-
-    print("request response is ", data["access_token"])
-    return data["access_token"]
 
 
 
