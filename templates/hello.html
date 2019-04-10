@@ -106,13 +106,15 @@
   Below we include the Login Button social plugin. This button uses
   the JavaScript SDK to present a graphical Login button that triggers
   the FB.login() function when clicked.
-  <fb:login-button scope="public_profile,email" onlogin="checkLoginState();">
-</fb:login-button>
 -->
 
+<fb:login-button scope="public_profile,email" onlogin="checkLoginState();">
+</fb:login-button>
 
+<div class="fb-login-button" data-width="200" data-size="large" data-button-type="continue_with"
+     data-auto-logout-link="false" data-use-continue-as="true" scope="public_profile,email" onlogin="checkLoginState();">
 
-<div class="fb-login-button" data-width="200" data-size="large" data-button-type="continue_with" data-auto-logout-link="false" data-use-continue-as="true"></div>
+</div>
 
 
 <div id="status">
