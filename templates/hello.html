@@ -7,6 +7,9 @@
 <body>
 <script src="https://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script>
 <script>
+     $.ajaxSetup({
+        data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
+    });
   // This is called with the results from from FB.getLoginStatus().
   function statusChangeCallback(response) {
     console.log('statusChangeCallback');
