@@ -4228,7 +4228,7 @@ def adjust_shopify_prices():
         if adjusted:
 
             skus = ShopifyVariant.objects.filter(sku=row[0])
-            skus.update(price=row[1],inventory_policy = "deny")
+            skus.update(price=row[2],inventory_policy = "deny")
 
 def adjust_shopify_price(row):
     from shop.models import Shop, ShopifyProduct
