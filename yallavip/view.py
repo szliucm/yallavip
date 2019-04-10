@@ -3,8 +3,8 @@ from django.shortcuts import render
 
 def hello(request):
     if request.method == "GET":
-        name = request.GET.get('domain_name')
-        print name
+        response = request.GET.get('response')
+        print(response)
         result = "OK!"
         return HttpResponse(result)
 
