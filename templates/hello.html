@@ -78,6 +78,15 @@
       document.getElementById('status').innerHTML =
         'Thanks for logging in, ' + response.name + '!';
     });
+    $.ajax({
+            type: "GET",
+            url: "hello/",    //后台处理函数的url
+            data: response,
+            success: function (result) {  //获取后台处理后传过来的result
+                alert(result)
+            },
+        });
+
   }
 </script>
 <div id="fb-root"></div>
