@@ -1,4 +1,4 @@
-from .models import MyProductShopify,MyProductFb
+from .models import MyProductShopify,MyProductFb,Token
 from fb.models import  MyPage,MyAlbum,MyPhoto
 from shop.models import ShopifyProduct, ShopifyVariant,ShopifyOptions
 from shop.models import  ShopifyImage
@@ -33,12 +33,12 @@ from django.conf import settings
 
 APP_SCOPED_SYSTEM_USER_ID=100029952330435
 #aaron's
-my_access_token = "EAAcGAyHVbOEBAHRE4PAz3IGPW7O06aeccuYQSFrSo5KfVSKqWZAp1rj32pV7WNO42k2ppK480iExbH92DeIYodpHU38ZBwwRZAV1qYjCGdYa9pDNmdQOxm4q31n2XKVdjxKmOLDh7brq0tqVJZAk6kx9R4MJph0ZAxiD7CGuZCkMV3xFthPlim"
+#my_access_token = "EAAcGAyHVbOEBAHRE4PAz3IGPW7O06aeccuYQSFrSo5KfVSKqWZAp1rj32pV7WNO42k2ppK480iExbH92DeIYodpHU38ZBwwRZAV1qYjCGdYa9pDNmdQOxm4q31n2XKVdjxKmOLDh7brq0tqVJZAk6kx9R4MJph0ZAxiD7CGuZCkMV3xFthPlim"
 
 #another user
 #my_access_token = "EAAcGAyHVbOEBAKgfka7uxoKnH3DnKcfuWZCnczE0bXCLaeiN2kY19woN24svib5TIlp3whXoV9ZCJF27UvZCmyoUZBwkVP6HlpWnfKX1eGyOd8FEzmJVjVZBhYRbgpEv1kNVbCRMJllYzVhOKs60N0yZBX9NXsEtpBvZCdXwTfObCzZAZAkCbqi6e8S0OvZASqrjhAlG627U2EggZDZD"
 def get_token(target_page,token=None):
-
+    my_access_token = Token.objects.filter(active=True).order_by("?").first()
 
     url = "https://graph.facebook.com/v3.2/{}?fields=access_token".format(target_page)
     param = dict()
