@@ -38,22 +38,27 @@ APP_SCOPED_SYSTEM_USER_ID=100029952330435
 #another user
 #my_access_token = "EAAcGAyHVbOEBAKgfka7uxoKnH3DnKcfuWZCnczE0bXCLaeiN2kY19woN24svib5TIlp3whXoV9ZCJF27UvZCmyoUZBwkVP6HlpWnfKX1eGyOd8FEzmJVjVZBhYRbgpEv1kNVbCRMJllYzVhOKs60N0yZBX9NXsEtpBvZCdXwTfObCzZAZAkCbqi6e8S0OvZASqrjhAlG627U2EggZDZD"
 def get_token(target_page,token=None):
-    my_access_token = Token.objects.filter(active=True).order_by("?").first()
+    my_access_tokens = Token.objects.filter(active=True)
 
-    url = "https://graph.facebook.com/v3.2/{}?fields=access_token".format(target_page)
-    param = dict()
-    if token is None:
-        param["access_token"] = my_access_token
-    else:
-        param["access_token"] = token
+    for my_access_token in my_access_tokens:
+        url = "https://graph.facebook.com/v3.2/{}?fields=access_token".format(target_page)
+        param = dict()
+        if token is None:
+            param["access_token"] = my_access_token.long_token
+        else:
+            param["access_token"] = token
 
-    r = requests.get(url, param)
-    data = json.loads(r.text)
-    if r.status_code == 200:
-        return data["access_token"]
-    else:
-        print(r, r.text)
-        return  None
+        r = requests.get(url, param)
+        data = json.loads(r.text)
+        if r.status_code == 200:
+            return data["access_token"]
+        else:
+            print(r, r.text)
+            my_access_token.active = False
+            my_access_token.save()
+            continue
+
+    return  None
 
 
 
@@ -1197,19 +1202,18 @@ def post_yallavip_album(lightinalbum):
     album_no = lightinalbum.yallavip_album.album.album_no
     print("###########",page_no, album_no)
 
-    if page_no == "2085664208390026":
-        print("这个page被封了")
-        error = "这个page被封了"
-        return error, None
-
     if lightinalbum.lightin_spu:
 
         product_no = lightinalbum.lightin_spu.SPU
     else:
         product_no = lightinalbum.lightin_sku.SKU
 
+    access_token = get_token(page_no)
+    if not access_token:
+        error = "获取token失败"
+        return error, None
 
-    adobjects = FacebookAdsApi.init( access_token=get_token(page_no), debug=True)
+    adobjects = FacebookAdsApi.init( access_token=access_token, debug=True)
     fields = ["id","name","created_time", "updated_time","picture","link",
                       "likes.summary(true)","comments.summary(true)"
     ]
