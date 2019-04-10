@@ -8,6 +8,8 @@ from django.views import View
 from django.utils import timezone as dt
 import requests
 
+from prs.models import  Token
+
 def get_token(short_lived_token):
     app_id = "1976935359278305"
     app_secret = "f4ee797596ed236c0bc74d33f52e6a54"
