@@ -16,6 +16,7 @@
     // for FB.getLoginStatus().
     if (response.status === 'connected') {
       // Logged into your app and Facebook.
+        console.log(response.authResponse.accessToken);
       testAPI();
     } else {
       // The person is not logged into your app or we are unable to tell.
@@ -75,7 +76,7 @@
     console.log('Welcome!  Fetching your information.... ');
     FB.api('/me', function(response) {
       console.log('Successful login for: ' + response.name);
-      console.log(response.authResponse.accessToken);
+
       document.getElementById('status').innerHTML =
         'Thanks for logging in, ' + response.name + '!';
     });
