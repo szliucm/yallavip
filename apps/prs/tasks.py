@@ -4260,7 +4260,7 @@ def adjust_shopify_price(row):
     print("开始更新变体")
     print(url, json.dumps(params))
 
-    r = requests.post(url, headers=headers, data=json.dumps(params))
+    r = requests.put(url, headers=headers, data=json.dumps(params))
     if r.status_code == 200:
         return "更新变体成功", True
     else:
