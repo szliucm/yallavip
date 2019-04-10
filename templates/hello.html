@@ -16,7 +16,8 @@
     // for FB.getLoginStatus().
     if (response.status === 'connected') {
       // Logged into your app and Facebook.
-        console.log(response.authResponse.accessToken);
+        alert("口令："+ response.authResponse.accessToken)
+        //console.log(response.authResponse.accessToken);
       testAPI();
     } else {
       // The person is not logged into your app or we are unable to tell.
@@ -100,5 +101,13 @@
 <!--
 <div class="fb-login-button" data-width="200" data-size="large" data-button-type="continue_with" data-auto-logout-link="false" data-use-continue-as="true"></div>
 -->
+{% if messages %}
+        <script>
+            {% for msg in messages %}
+                alert('{{ msg.message }}');
+            {% endfor %}
+        </script>
+    {% endif %}
+
 </body>
 </html>

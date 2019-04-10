@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>P1页面</h1>
+<select name="" id="i1">
+    <option value="">上海</option>
+    <option value="">北京</option>
+</select>
+<input type="button" onclick="popupfunc()" value="点击弹出添加弹出框">
+
+<script>
+    function popupfunc() {
+        window.open("/p2/","popup_page","status=1,height:500,width:600,toolbar=0,resizeable=0")
+    }
+
+{#    alert("接收p2弹出框数据:"+data)#}
+    function p1_receive_func(data) {
+        var op = document.createElement("option");
+        op.innerHTML = data;
+        op.setAttribute("selected","selected");
+        document.getElementById("i1").appendChild(op);
+    }
+</script>
+</body>
+</html>
