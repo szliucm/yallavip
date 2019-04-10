@@ -4217,7 +4217,7 @@ def adjust_shopify_inventory(row):
 def adjust_shopify_prices():
     mysql = "select v.sku , v.variant_no, s.sku_price " \
             "from shop_shopifyvariant v, prs_lightin_sku s " \
-            "where v.sku= s.SKU and v.price <> s.sku_price"
+            "where v.sku= s.SKU and v.price <> s.sku_price and update_error=''"
 
     rows = my_custom_sql(mysql)
 
@@ -4225,10 +4225,12 @@ def adjust_shopify_prices():
         print ("更新变体价格： ",row[0],row[2])
 
         info, adjusted = adjust_shopify_price(row)
+        vs = ShopifyVariant.objects.filter(variant_no=row[1])
         if adjusted:
+            vs.update(price=row[2],inventory_policy = "deny",update_error="")
+        else:
+            vs.update(update_error = info)
 
-            skus = ShopifyVariant.objects.filter(sku=row[0])
-            skus.update(price=row[2],inventory_policy = "deny")
 
 def adjust_shopify_price(row):
     from shop.models import Shop, ShopifyProduct

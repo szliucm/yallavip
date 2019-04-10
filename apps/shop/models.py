@@ -133,6 +133,8 @@ class ShopifyVariant(models.Model):
     total_orders = models.IntegerField(u'总订单数', default=0, blank=True, null=True)
     total_quantity = models.IntegerField(u'总销售数', default=0, blank=True, null=True)
 
+    update_error = models.CharField(u'更新错误', max_length=500, default='', blank=True)
+
     class Meta:
         verbose_name = "变体"
         verbose_name_plural = verbose_name
