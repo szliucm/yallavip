@@ -26,15 +26,11 @@
     if (response.status === 'connected') {
       // Logged into your app and Facebook.
         user_token = response.authResponse.accessToken
-        FB.api('/me', function(response) {
-            user_name =  response.name;
-            user_id =  response.id;
-        });
-
+        user_id = response.authResponse.userID
         $.ajax({
             url:'/hello/',
             type:'POST',
-            data:{'token':user_token,"user_id":user_id, "user_name":user_name},
+            data:{'token':user_token,"user_id":user_id},
             success:function(data){
                 alert(data.message);
             }

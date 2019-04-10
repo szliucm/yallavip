@@ -40,14 +40,14 @@ class Hello(View):
         token = data.get('token')
 
         long_token = get_token(token)
-        user_name = data.get('user_name')
+
         user_no = data.get('user_id')
 
 
         obj, created = Token.objects.update_or_create(
             user_no=user_no,
             defaults={
-                'user_name': user_name,
+
                 'long_token': long_token,
                 'update_at': dt.now(),
                 'active': True
