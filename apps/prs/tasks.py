@@ -4737,7 +4737,7 @@ def get_token_status():
         except Exception as e:
             print(e)
             token.active = False
-            token.info = e
+            token.info = "不可用"
 
         token.save()
 
