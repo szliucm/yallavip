@@ -544,8 +544,9 @@ class Lightin_SKU(models.Model):
 
 class YallavipAlbum(models.Model):
 
+    page = models.ForeignKey(MyPage, null=True, blank=True, verbose_name="Page",
+                                related_name="page_album", on_delete=models.CASCADE)
 
-    page = models.OneToOneField(MyPage, on_delete=models.CASCADE, primary_key=True, verbose_name="Page")
 
     rule = models.ForeignKey(SelectionRule, null=True, blank=True, verbose_name="SelectionRule",
                                     related_name="rule_album", on_delete=models.CASCADE)
