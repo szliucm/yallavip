@@ -4357,7 +4357,7 @@ def delete_yallavip_album():
             rule__in=PageRule.objects.get(mypage__pk=page.pk
             ).rules.all().distinct())
 
-        print("page %s 待删除 %s  待创建 %s 已有 %s "%(rules_to_del,rules_to_add,rules_have))
+        print("page %s 待删除 %s  待创建 %s 已有 %s "%(page, rules_to_del,rules_to_add,rules_have))
         #根据规则创建相册，成功后记录到数据库里
         '''
         for rule_to_add in rules_to_add:
