@@ -4709,6 +4709,33 @@ def delete_lost_photo_0409(what):
 
         delete_photos(page_no, photo_nos)
 
+def get_token_status():
+    from facebook_business.api import FacebookAdsApi
+    from facebook_business.adobjects.user import User
+
+
+
+
+    tokens = Token.objects.all()
+
+
+    for token in tokens:
+        FacebookAdsApi.init(access_token=token.long_token)
+        fields = [
+        ]
+        params = {
+        }
+        user = User(token.user_no).api_get(
+            fields=fields,
+            params=params,
+        )
+        if user:
+            token.user_name = user.get("name")
+        else:
+            token.active = False
+        token.save()
+
+
 # 更新相册对应的主页外键
 # update fb_myalbum a , fb_mypage p set a.mypage_id = p.id where p.page_no = a.page_no
 '''
