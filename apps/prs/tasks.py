@@ -4331,6 +4331,46 @@ def prepare_yallavip_album():
 
             )
 
+#将page中失效的相册找出来并删掉
+def delete_yallavip_album():
+    from django.db import connection, transaction
+
+    # 找出所有活跃的page
+    pages = MyPage.objects.filter(active=True)
+    for page in pages:
+
+        print("page is ", page)
+        # 找到那些还没添加对应page的规则
+        #现在是每个page的规则是一样的，以后再优化，每个page可以选择自己的规则
+
+        #相册里有，但page规则里没有的，要删除 ((先标记成无效)
+        rules_to_del = YallavipAlbum.objects.filter(page__pk=page.pk).exclude(
+            rule__in=PageRule.objects.get(mypage__pk=page.pk).rules.all().distinct())
+        #page规则里有，但相册里没有的，要创建
+        rules_to_add = PageRule.objects.get( mypage__pk=page.pk).rules.all().exclude(
+            id__in = YallavipAlbum.objects.filter(page__pk=page.pk).values("rule__pk")
+        ).distinct()
+
+        #相册里有，page里也有的，显示一下
+        rules_have = YallavipAlbum.objects.filter(page__pk=page.pk).filter(
+            rule__in=PageRule.objects.get(mypage__pk=page.pk
+            ).rules.all().distinct())
+
+        print("page %s 待删除 %s  待创建 %s 已有 %s "%(rules_to_del,rules_to_add,rules_have))
+        #根据规则创建相册，成功后记录到数据库里
+        '''
+        for rule_to_add in rules_to_add:
+            new_album = create_album(page.page_no, rule_to_add.name)
+            YallavipAlbum.objects.create(
+                page = page,
+                rule = rule_to_add,
+                album = new_album,
+                published = True,
+                publish_error = "",
+                published_time = dt.now()
+
+            )
+            '''
 
 @shared_task
 def prepare_yallavip_photoes():

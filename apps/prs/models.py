@@ -561,6 +561,7 @@ class YallavipAlbum(models.Model):
     delete_error = models.CharField(default='无', max_length=256, null=True, blank=True, verbose_name="删除结果")
     deleted_time = models.DateTimeField(null=True, blank=True, verbose_name="删除时间")
 
+    active = models.BooleanField(default=False, verbose_name="有效性")
 
     class Meta:
         verbose_name = "allavip 相册"
