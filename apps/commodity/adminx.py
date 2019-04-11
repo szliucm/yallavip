@@ -16,3 +16,16 @@ class SelectionRuleAdmin(object):
 
     exclude = []
     ordering = []
+
+
+@xadmin.sites.register(PageRule)
+class PageRuleAdmin(object):
+
+    actions = [ ]
+    list_display = ('mypage', 'selectionrule','active', 'update_time', 'staff',)
+    list_editable = []
+    search_fields = []
+    list_filter = ("mypage","active",)
+
+    exclude = []
+    ordering = ["mypage"]

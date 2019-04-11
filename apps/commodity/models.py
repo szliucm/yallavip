@@ -59,3 +59,23 @@ class PriceRule(models.Model):
 
     def __str__(self):
         return self.name
+
+#page选品规则
+class PageRule(models.Model):
+    mypage = models.ForeignKey(MyPage, null=False, blank=False, verbose_name="Page",
+                                 related_name="page_rule", on_delete=models.CASCADE)
+
+    selectionrule = models.ForeignKey(SelectionRule, null=False, blank=False, verbose_name="SelectionRule",
+                               related_name="page_selection", on_delete=models.CASCADE)
+
+    active = models.BooleanField(default=True, verbose_name="可用")
+
+    update_time = models.DateTimeField(null=True, blank=True, verbose_name="更新时间")
+    staff = models.CharField(u'运营', default='', max_length=100, null=True, blank=True)
+
+    class Meta:
+        verbose_name = "page选品规则"
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.mypage.page
