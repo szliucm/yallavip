@@ -777,6 +777,8 @@ class Token(models.Model):
     active = models.BooleanField(u'客户状态', default=False)
     info = models.CharField(u'token', default='', max_length=300, blank=True)
 
+    page_no = models.CharField(u'page_no', default='', max_length=100, blank=True)
+
     class Meta:
         verbose_name = "token 管理"
         verbose_name_plural = verbose_name

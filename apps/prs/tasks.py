@@ -4331,9 +4331,10 @@ def prepare_yallavip_album():
                 published_time = dt.now()
 
             )
-
+#根据page规则，更新page的相册
 #将page中失效的相册找出来并删掉
-def delete_yallavip_album():
+#未创建的则创建之
+def update_yallavip_album():
     from django.db import connection, transaction
 
     # 找出所有活跃的page
@@ -4766,8 +4767,9 @@ def get_token_status():
             token.active = True
             token.info = ""
         except Exception as e:
-            print(e)
+            print(e,json.loads(e))
             token.active = False
+            token.page_no = ""
             token.info = "不可用"
 
         token.save()

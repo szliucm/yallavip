@@ -38,7 +38,12 @@ APP_SCOPED_SYSTEM_USER_ID=100029952330435
 #another user
 #my_access_token = "EAAcGAyHVbOEBAKgfka7uxoKnH3DnKcfuWZCnczE0bXCLaeiN2kY19woN24svib5TIlp3whXoV9ZCJF27UvZCmyoUZBwkVP6HlpWnfKX1eGyOd8FEzmJVjVZBhYRbgpEv1kNVbCRMJllYzVhOKs60N0yZBX9NXsEtpBvZCdXwTfObCzZAZAkCbqi6e8S0OvZASqrjhAlG627U2EggZDZD"
 def get_token(target_page,token=None):
-    my_access_tokens = Token.objects.filter(active=True)
+
+    active_tokens = Token.objects.filter(active=True)
+    # 先找page对应的token，如果没有可用的，就从还没有page占用的token里取一个
+    my_access_tokens = active_tokens.filter(page_no=target_page)
+    if not my_access_tokens:
+        my_access_tokens = active_tokens.filter(page_no = "")
 
     for my_access_token in my_access_tokens:
         url = "https://graph.facebook.com/v3.2/{}?fields=access_token".format(target_page)
@@ -50,7 +55,10 @@ def get_token(target_page,token=None):
 
         r = requests.get(url, param)
         data = json.loads(r.text)
+        #token可用，就要标识占用
         if r.status_code == 200:
+            my_access_token.page_no = target_page
+            my_access_token.save()
             return data["access_token"]
         else:
             print(r, r.text)
