@@ -17,6 +17,7 @@ from orders.models import Order, OrderDetail, OrderDetail_lightin,Verify,Sms
 from shop.models import ProductCategoryMypage
 from shop.models import Shop, ShopifyProduct, ShopifyVariant, ShopifyImage, ShopifyOptions
 from customer.models import  Draft
+from commodity.models import  PageRule
 
 from .models import *
 from .shop_action import sync_shop
