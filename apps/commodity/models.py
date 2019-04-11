@@ -1,4 +1,5 @@
 from django.db import models
+from fb.models import  MyPage
 
 # Create your models here.
 #选品规则
