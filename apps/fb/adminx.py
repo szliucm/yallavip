@@ -844,9 +844,9 @@ class MyAlbumAdmin(object):
     topublish_count.short_description = "可发布图片数量"
 
 
-    list_display = [ "album_no","mypage", "name","selection_rule", "cates", "prices","attrs","show_album_promte", "count", "like_count", "comment_count","created_time",]
+    list_display = [ "album_no","mypage", "name", "cates", "prices","attrs","show_album_promte", "count", "like_count", "comment_count","created_time",]
     #"published_count","readypublish_count","topublish_count",
-    list_editable = ["selection_rule","cates", "prices","attrs",]
+    list_editable = ["cates", "prices","attrs",]
     search_fields = ['album_no',  "name",]
     list_filter = ("mypage","active", )
     ordering = ["-count"]
