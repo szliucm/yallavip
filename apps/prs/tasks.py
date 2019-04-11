@@ -4347,7 +4347,7 @@ def delete_yallavip_album():
         #相册里有，但page规则里没有的，先标记成无效,等page的相册丰富了，再删除
         rules_to_del = YallavipAlbum.objects.filter(page__pk=page.pk).exclude(
             rule__in=PageRule.objects.get(mypage__pk=page.pk).rules.all().distinct())
-        rules_to_add.update(active = False)
+        rules_to_del.update(active = False)
 
         #page规则里有，但相册里没有的，要创建
         rules_to_add = PageRule.objects.get( mypage__pk=page.pk).rules.all().exclude(
