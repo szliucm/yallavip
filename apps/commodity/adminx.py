@@ -26,6 +26,8 @@ class PageRuleAdmin(object):
     list_editable = []
     search_fields = []
     list_filter = ("mypage","active",)
+    filter_horizontal = ('pages',)
+    style_fields = {'pages':'m2m_transfer'}
 
     exclude = [ 'update_time', 'staff',]
     ordering = ["mypage"]
