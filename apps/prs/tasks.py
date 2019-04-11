@@ -4364,7 +4364,6 @@ def delete_yallavip_album():
                 published=True,
                 publish_error="",
                 published_time=dt.now()
-
             )
 
         #相册里有，page里也有的，显示一下
