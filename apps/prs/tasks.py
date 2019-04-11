@@ -45,26 +45,7 @@ else:
     tms_appKey = "883b3289a5e3b55ceaddb2093834c13a574fda321ae620e2aa43c2117abb7553"
 
 
-my_access_token = "EAAcGAyHVbOEBACnbuL1eJzZBWsbNKvLn9kn8i80W40TUNlcguXFZCZCy1knYzjCR6PV8edZBbEt9Ps6faWjXVO6raK6TZB5IUypxExfwX8r2TqESrbKOBYeB3VYK0s8QmCX5DNDbd1fR1ej5xJvc6qv43jZAMmYkUI6wvB1vUUuXEMdGHxrxwVIGgrlNkDxzsPn153hhkIe1604XXt0RKd"
-def get_token(target_page,token=None):
-
-
-    url = "https://graph.facebook.com/v3.2/{}?fields=access_token".format(target_page)
-    param = dict()
-    if token is None:
-        param["access_token"] = my_access_token
-    else:
-        param["access_token"] = token
-
-    r = requests.get(url, param)
-
-
-    data = json.loads(r.text)
-    print(r, r.text)
-
-
-    print("request response is ", data["access_token"])
-    return data["access_token"]
+from prs.fb_action import  get_token
 
 
 
