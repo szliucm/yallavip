@@ -1936,7 +1936,7 @@ def delete_photos(page_no, photo_nos):
         except Exception as e:
             print("删除图片出错", photo_no, e)
             error = "删除图片出错"
-            print (my_access_token)
+            #print (my_access_token)
 
             continue
         '''
