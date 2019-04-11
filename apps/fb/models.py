@@ -161,8 +161,8 @@ class MyFeed(models.Model):
 
 
 class MyAlbum(models.Model):
-    selection_rule = models.ForeignKey(SelectionRule, related_name='selection_album', null=True, blank=True,
-                                      verbose_name="选品规则", on_delete=models.CASCADE)
+    #selection_rule = models.ForeignKey(SelectionRule, related_name='selection_album', null=True, blank=True,
+     #                                 verbose_name="选品规则", on_delete=models.CASCADE)
 
     mypage = models.ForeignKey(MyPage, null=True, blank=True, verbose_name="主页",
                                related_name="myalbum_page", on_delete=models.CASCADE)
