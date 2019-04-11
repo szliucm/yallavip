@@ -4654,7 +4654,7 @@ def sync_yallavip_album_batch(lightinalbums):
         else:
             print(
                     "发布新产品到相册失败 LightinAlbum %s   error   %s" % (lightinalbum.pk, error))
-            print(json.loads(error))
+
             LightinAlbum.objects.filter(pk=lightinalbum.pk).update(
 
                 published=False,
