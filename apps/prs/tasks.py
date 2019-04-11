@@ -4365,13 +4365,15 @@ def update_yallavip_album():
                 album=new_album,
                 published=True,
                 publish_error="",
-                published_time=dt.now()
+                published_time=dt.now(),
+                active = True
             )
 
-        #相册里有，page里也有的，显示一下
+        #相册里有，page里也有的，把状态更新成active
         rules_have = YallavipAlbum.objects.filter(page__pk=page.pk).filter(
             rule__in=PageRule.objects.get(mypage__pk=page.pk
             ).rules.all().distinct())
+        rules_have.update(active=True)
 
         #print("page %s 待删除 %s  待创建 %s 已有 %s "%(page, rules_to_del,rules_to_add,rules_have))
         print("page %s 待删除 %s  待创建 %s 已有 %s " % (page, rules_to_del.count(), rules_to_add.count(), rules_have.count()))
