@@ -64,7 +64,7 @@ class PriceRule(models.Model):
 #page选品规则
 class PageRule(models.Model):
 
-    mypage = models.OneToOneField(MyPage, on_delete=models.CASCADE, primary_key=True, verbose_name="Page")
+    mypage = models.OneToOneField(MyPage, on_delete=models.CASCADE,  verbose_name="Page")
 
     rules  = models.ManyToManyField(SelectionRule, blank=False, verbose_name="Rules",
                                  related_name="page_selection")
