@@ -22,12 +22,12 @@ class SelectionRuleAdmin(object):
 class PageRuleAdmin(object):
 
     actions = [ ]
-    list_display = ('mypage', 'selectionrule','active',)
+    list_display = ('mypage', 'rules','active',)
     list_editable = []
     search_fields = []
     list_filter = ("mypage","active",)
-    filter_horizontal = ('pages',)
-    style_fields = {'pages':'m2m_transfer'}
+    filter_horizontal = ('rules',)
+    style_fields = {'rules':'m2m_transfer'}
 
     exclude = [ 'update_time', 'staff',]
     ordering = ["mypage"]
