@@ -1938,7 +1938,7 @@ def delete_photos(page_no, photo_nos):
             error = "删除图片出错"
             #print (my_access_token)
 
-            continue
+            #continue
         '''
                try:
                    error = ""
