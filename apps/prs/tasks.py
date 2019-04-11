@@ -4234,7 +4234,7 @@ def adjust_shopify_prices():
 #根据库存更新产品可视状态
 #所有sku都没有货的，就隐藏
 #有库存，但是没有发布到channels 的，就要发布
-def adjust_listing():
+#def adjust_listing():
 
 
 def adjust_shopify_price(row):
