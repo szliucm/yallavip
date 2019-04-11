@@ -22,10 +22,10 @@ class SelectionRuleAdmin(object):
 class PageRuleAdmin(object):
 
     actions = [ ]
-    list_display = ('mypage', 'selectionrule','active', 'update_time', 'staff',)
+    list_display = ('mypage', 'selectionrule','active',)
     list_editable = []
     search_fields = []
     list_filter = ("mypage","active",)
 
-    exclude = []
+    exclude = [ 'update_time', 'staff',]
     ordering = ["mypage"]
