@@ -66,7 +66,7 @@ class PageRule(models.Model):
     mypage = models.ForeignKey(MyPage, null=False, blank=False, verbose_name="Page",
                                  related_name="page_rule", on_delete=models.CASCADE)
     pages  = models.ManyToManyField(MyPage, null=False, blank=False, verbose_name="Pages",
-                                 related_name="pages_rule", on_delete=models.CASCADE)
+                                 related_name="pages_rule")
     selectionrule = models.ForeignKey(SelectionRule, null=False, blank=False, verbose_name="SelectionRule",
                                related_name="page_selection", on_delete=models.CASCADE)
 
