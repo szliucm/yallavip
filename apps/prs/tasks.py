@@ -4302,6 +4302,7 @@ def create_album(page_no , album_name ):
 
 
 @shared_task
+#这个应该是不用了
 def prepare_yallavip_album():
     from django.db import connection, transaction
 
@@ -4387,7 +4388,7 @@ def prepare_yallavip_photoes():
     for page in pages:
         # 遍历page对应的相册
         print("page is ", page)
-        albums = YallavipAlbum.objects.filter(page__pk= page.pk )
+        albums = YallavipAlbum.objects.filter(page__pk= page.pk, active=True  )
         print("albums is ", albums)
         for album in albums:
             is_sku = False
