@@ -468,6 +468,9 @@ class Lightin_SPU(models.Model):
     publish_error = models.CharField(default='无', max_length=100, null=True, blank=True, verbose_name="发布错误")
     published_time = models.DateTimeField(null=True, blank=True, verbose_name="发布时间")
 
+    shopify_product = models.ForeignKey(ShopifyProduct, null=True, blank=True, verbose_name="shopify产品",
+                                    related_name="shopify_spu", on_delete=models.CASCADE)
+
     product_no = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="shopify product_no")
     handle = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="handle")
 
