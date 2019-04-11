@@ -1,6 +1,6 @@
 from django.db import models
 
-from commodity.models import  SelectionRule
+#from commodity.models import  SelectionRule
 
 # Create your models here.
 class MyPage(models.Model):
