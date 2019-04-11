@@ -769,6 +769,7 @@ class Token(models.Model):
 
     update_at = models.DateTimeField(u'更新时间', auto_now=False, blank=True, null=True)
     active = models.BooleanField(u'客户状态', default=False)
+    info = models.CharField(u'token', default='', max_length=300, blank=True)
 
     class Meta:
         verbose_name = "token 管理"

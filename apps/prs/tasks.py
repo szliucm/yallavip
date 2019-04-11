@@ -4725,14 +4725,20 @@ def get_token_status():
         ]
         params = {
         }
-        user = User(token.user_no).api_get(
-            fields=fields,
-            params=params,
-        )
-        if user:
+        user = None
+        try:
+            user = User(token.user_no).api_get(
+                fields=fields,
+                params=params,
+            )
             token.user_name = user.get("name")
-        else:
+            token.active = True
+            token.info = ""
+        except Exception as e:
+            print(e)
             token.active = False
+            token.info = e
+
         token.save()
 
 
