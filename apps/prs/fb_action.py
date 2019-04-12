@@ -1328,6 +1328,12 @@ def post_yallavip_ad(page_no):
         spus_name = '[' + ','.join(spus_list) + ']'
 
         image_marked_url = combo_ad_image(spus, spus_name)
+        message = "💋💋Flash Sale ！！！💋💋" \
+               "90% off！Lowest Price Online ！！！" \
+               "🥳🥳🥳 10:00-22:00 Everyday ,Update 100 New items Every Hour !! The quantity is limited !!😇😇" \
+               "All goods are in Riyadh stock,It will be delivered to you in 3-5 days! ❣️❣️" \
+               "How to order?Pls choice the product that you like it , then send us the picture, we will order it for you!🤩🤩"
+        message = message + "\n[" + spus_name + "]"
 
         obj, created = YallavipAd.objects.update_or_create(page_no=page_no,
                                                            spus_name = spus_name,
