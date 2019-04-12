@@ -1330,7 +1330,8 @@ def post_yallavip_ad():
                "How to order?Pls choice the product that you like it , then send us the picture, we will order it for you!🤩🤩"
         message = message + "\n" + spus_name
 
-        obj, created = YallavipAd.objects.update_or_create(yallavip_album=yallavip_album,
+        yallavip_album_instance = YallavipAlbum.objects.get(pk=yallavip_album )
+        obj, created = YallavipAd.objects.update_or_create(yallavip_album=yallavip_album_instance,
                                                            spus_name = spus_name,
                                                        defaults={'image_marked_url': image_marked_url,
                                                                  'message': message,
