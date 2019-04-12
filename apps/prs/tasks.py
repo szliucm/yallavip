@@ -4749,6 +4749,40 @@ def delete_lost_photo_0409(what):
 
         delete_photos(page_no, photo_nos)
 
+def delete_album_photo_cate(what):
+    from facebook_business.api import FacebookAdsApi
+    from fb.models import MyPhoto
+    from django.db.models import Sum
+    import re
+
+    #在相册里找某个特定的品类，面包屑里的关键字
+    myphotos = LightinAlbum.objects.filter(lightin_spu__breadcrumb__icontains=what, material=True)
+
+    photo_miss = {}
+    photos = myphotos.values_list("myalbum__page_no", "fb_id").distinct()
+    for photo in photos:
+        page_no = photo[0]
+        fb_id = photo[1]
+
+        photo_list = photo_miss.get(page_no)
+        if not photo_list:
+            photo_list = []
+        if fb_id not in photo_list:
+            photo_list.append(fb_id)
+
+        photo_miss[page_no] = photo_list
+
+    # 选择所有可用的page
+    for page_no in photo_miss:
+
+
+        photo_nos = photo_miss[page_no]
+        print("page %s 待删除数量 %s  " % (page_no, len(photo_nos)))
+        if photo_nos is None or len(photo_nos) == 0:
+            continue
+
+        delete_photos(page_no, photo_nos)
+
 def get_token_status():
     from facebook_business.api import FacebookAdsApi
     from facebook_business.adobjects.user import User

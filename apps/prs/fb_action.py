@@ -1253,7 +1253,7 @@ def post_yallavip_album(lightinalbum):
         print(type)
         if type == "OAuthException":
             print("更新token状态", long_token, error)
-            Token.objects.filter(long_token = long_token).update(active=False,info=error)
+            Token.objects.filter(long_token = long_token).update(active=False,info=error,page_no="")
         return error, None
 
     obj, created = MyPhoto.objects.update_or_create(photo_no=photo["id"],
