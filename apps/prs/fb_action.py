@@ -127,7 +127,7 @@ def sycn_ad_product():
 def post_creative_feed():
 
 
-    pages = MyPage.objects.filter(active=True)  # .values_list('page_no', flat=True)
+    pages = MyPage.objects.filter(active=True,is_published=True)  # .values_list('page_no', flat=True)
     # page_nos = ["358078964734730"]   #for debug
     for page in pages:
         post_creative_feed_page(page)
@@ -176,6 +176,9 @@ def post_creative_feed_page_fb(page,fb):
     page_id = page.page_no
 
     access_token, long_token = get_token(page_id)
+    if not access_token:
+        print("获取token失败", access_token,page_id)
+        return None
     FacebookAdsApi.init(access_token=access_token)
 
     # domain = "http://dev.yallavip.com:8000"
