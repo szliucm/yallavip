@@ -1083,8 +1083,8 @@ def unlisting_overseas_package():
             print("myphotos %s" % (myphotos), myphotos.count())
             if myphotos is None or myphotos.count() == 0:
                 continue
-
-            FacebookAdsApi.init(access_token=get_token(mypage.page_no))
+            access_token, long_token = get_token(mypage.page_no)
+            FacebookAdsApi.init(access_token=access_token)
             n = 1
             for myphoto in myphotos:
 
@@ -1141,7 +1141,8 @@ def unlisting_overseas_package_new():
             if myphotos is None or myphotos.count() == 0:
                 continue
 
-            FacebookAdsApi.init(access_token=get_token(mypage.page_no))
+            access_token, long_token = get_token(mypage.page_no)
+            FacebookAdsApi.init(access_token=access_token)
             n = 1
             for myphoto in myphotos:
 
@@ -1914,7 +1915,8 @@ def delete_oversea_photo():
 
 def delete_photos(page_no, photo_nos):
     from facebook_business.adobjects.photo import Photo
-    FacebookAdsApi.init(access_token=get_token(page_no))
+    access_token, long_token = get_token(page_no)
+    FacebookAdsApi.init(access_token=access_token)
     for photo_no in photo_nos:
 
         fields = [
@@ -4257,8 +4259,9 @@ def adjust_shopify_price(row):
         return "更新变体失败", False
 
 def create_album(page_no , album_name ):
+    access_token, long_token = get_token(page_no)
+    FacebookAdsApi.init(access_token=access_token)
 
-    adobjects = FacebookAdsApi.init(access_token=get_token(page_no), debug=True)
     fields = ["created_time", "description", "id",
               "name", "count", "updated_time", "link",
               "likes.summary(true)", "comments.summary(true)"
@@ -4749,9 +4752,6 @@ def delete_lost_photo_0409(what):
 def get_token_status():
     from facebook_business.api import FacebookAdsApi
     from facebook_business.adobjects.user import User
-
-
-
 
     tokens = Token.objects.all()
 

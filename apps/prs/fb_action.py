@@ -60,14 +60,14 @@ def get_token(target_page,token=None):
         if r.status_code == 200:
             my_access_token.page_no = target_page
             my_access_token.save()
-            return data["access_token"]
+            return data["access_token"], my_access_token
         else:
             print(r, r.text)
             my_access_token.active = False
             my_access_token.save()
             continue
 
-    return  None
+    return  None,None
 
 
 
@@ -174,8 +174,10 @@ def post_creative_feed_page_fb(page,fb):
     from shop.photo_mark import  photo_mark_url
 
     page_id = page.page_no
-    token = get_token(page_id)
-    FacebookAdsApi.init(access_token=token,debug=True)
+
+    access_token, long_token = get_token(page_id)
+    FacebookAdsApi.init(access_token=access_token)
+
     # domain = "http://dev.yallavip.com:8000"
     domain = "http://admin.yallavip.com"
     resource = str(fb.myresource.resource)
@@ -448,8 +450,9 @@ def post_order_feed():
 def create_new_album(page_no , new_albums ):
     # 建相册要用开发账号
     #建出来的相册普通客户看不到，所以暂不启用此功能
+    access_token, long_token = get_token(page_no)
+    FacebookAdsApi.init(access_token=access_token)
 
-    adobjects = FacebookAdsApi.init(access_token=get_token(page_no), debug=True)
     new_album_list = []
     #print("new_albums",new_albums )
     for new_album in new_albums:
@@ -628,8 +631,8 @@ def post_photo_to_album(targer_page,album_no,aliproduct ):
     else:
         print("now we need to create new photos for %s"%(aliproduct.handle))
 
-
-    adobjects = FacebookAdsApi.init(my_app_id, my_app_secret, access_token=get_token(page_no), debug=True)
+    access_token, long_token = get_token(page_no)
+    FacebookAdsApi.init(access_token=access_token)
 
 
     #print("product.product_no ", product.product_no)
@@ -837,8 +840,8 @@ def post_lightin_album(lightinalbum):
     else:
         product_no = lightinalbum.lightin_sku.SKU
 
-
-    adobjects = FacebookAdsApi.init(my_app_id, my_app_secret, access_token=get_token(page_no), debug=True)
+    access_token, long_token = get_token(page_no)
+    FacebookAdsApi.init(access_token=access_token)
     fields = ["id","name","created_time", "updated_time","picture","link",
                       "likes.summary(true)","comments.summary(true)"
     ]
@@ -1217,7 +1220,8 @@ def post_yallavip_album(lightinalbum):
     else:
         product_no = lightinalbum.lightin_sku.SKU
 
-    access_token = get_token(page_no)
+    access_token, long_token = get_token(mypage.page_no)
+
     if not access_token:
         error = "获取token失败"
         return error, None
@@ -1249,7 +1253,7 @@ def post_yallavip_album(lightinalbum):
         print(type)
         if type == "OAuthException":
             print("更新token状态", access_token, error)
-            Token.objects.filter(long_token = access_token).update(active=False,info=error)
+            Token.objects.filter(long_token = long_token).update(active=False,info=error)
         return error, None
 
     obj, created = MyPhoto.objects.update_or_create(photo_no=photo["id"],
