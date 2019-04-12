@@ -1025,11 +1025,10 @@ class ComboItemAdmin(object):
 @xadmin.sites.register(YallavipAd)
 class YallavipAdAdmin(object):
     def photo(self, obj):
-
         try:
-            img = '<a><img src="%s" width="384px"></a>' % (obj.photo)
+            img = '<a><img src="%s" width="384px"></a>' % (obj.image_marked_url)
         except Exception as e:
-            img = "获取图片出错 "+ e
+            img = "获取图片出错 "
 
 
         return mark_safe(img)
