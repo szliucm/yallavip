@@ -789,6 +789,8 @@ class Token(models.Model):
 
 
 class YallavipAd(models.Model):
+    yallavip_album = models.ForeignKey(YallavipAlbum, null=True, blank=True, verbose_name="yallavip_album",
+                                    related_name="yallavip_album_ad", on_delete=models.CASCADE)
     page_no = models.CharField(u'page_no', default='', max_length=300, blank=True)
 
     spus_name = models.CharField(u'spus_name', default='', max_length=300, blank=True)
