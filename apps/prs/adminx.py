@@ -824,6 +824,39 @@ class Lightin_barcodeAdmin(object):
     readonly_fields = ()
     actions = []
 
+@xadmin.sites.register(YallavipAlbum)
+class YallavipAlbumAdmin(object):
+
+    def published_count(self, obj):
+        return LightinAlbum.objects.filter(yallavip_album=obj, published=True).count()
+
+    published_count.short_description = "已发布图片数量"
+
+    def readypublish_count(self, obj):
+        return LightinAlbum.objects.filter(yallavip_album=obj, published=False, material=True,lightin_spu__sellable__gt=0).count()
+
+    readypublish_count.short_description = "待发布图片数量"
+
+    def topublish_count(self, obj):
+        return LightinAlbum.objects.filter(yallavip_album=obj, material=False,lightin_spu__sellable__gt=0).count()
+
+    topublish_count.short_description = "可发布图片数量"
+
+    def sellable(self, obj):
+        return  obj.lightin_spu.sellable
+
+    sellable.short_description = "sellable"
+
+    list_display = ["page","rule",  "album","published","published_count","readypublish_count", "topublish_count", "deleted", "active",]
+    # 'sku_name','img',
+
+    search_fields = ["album",]
+    list_filter = [ "page","rule", "published", "deleted", "active",]
+    list_editable = []
+    readonly_fields = ()
+    actions = []
+
+
 @xadmin.sites.register(LightinAlbum)
 class LightinAlbumAdmin(object):
 
