@@ -1316,7 +1316,7 @@ def post_yallavip_ad():
         lightinalbums = lightinalbums_all.filter(yallavip_album=yallavip_album).order_by("?")[:4]
 
         spu_ims = lightinalbums.values_list("image_marked",flat=True)
-        spus = lightinalbums.values_list("lightin_spu__SPU",flat=True)
+        spus = lightinalbums.values_list("lightin_spu__handle",flat=True)
         if spus.count() <4:
             print ("数量不够", spus.count())
             continue
