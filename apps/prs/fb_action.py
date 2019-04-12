@@ -1246,7 +1246,9 @@ def post_yallavip_album(lightinalbum):
 
         #如果是token的问题，就要把token暂停
         type = e.api_error_type()
+        print(type)
         if type == "OAuthException":
+            print("更新token状态", access_token, error)
             Token.objects.filter(long_token = access_token).update(active=False,info=error)
         return error, None
 
