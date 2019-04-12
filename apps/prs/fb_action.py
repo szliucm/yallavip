@@ -1319,7 +1319,7 @@ def post_yallavip_ad(page_no):
         lightinalbums = lightinalbums_all.filter(yallavip_album=yallavip_album)
 
 
-        spus = Lightin_SPU.objects.filter(pk__in = lightinalbums.values_list("lightin_spu",flat=True))[:4]
+        spus = Lightin_SPU.objects.filter(pk__in = lightinalbums.values_list("lightin_spu",flat=True)).order_by("?")[:4]
         if spus.count() <4:
             print ("数量不够拼图了")
             continue
