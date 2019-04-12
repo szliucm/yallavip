@@ -24,7 +24,7 @@ from facebook_business.adobjects.adset import AdSet
 from facebook_business.adobjects.ad import Ad
 from facebook_business.adobjects.adsinsights import AdsInsights
 
-
+from django.utils import timezone as dt
 import os
 import requests
 import json
