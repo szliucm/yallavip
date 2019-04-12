@@ -1284,8 +1284,6 @@ def post_yallavip_ads():
     page_nos = MyPage.objects.filter(active=True, is_published=True).values_list('page_no', flat=True)
     #page_nos = ["2084015718575745"]   #for debug
 
-
-
     for page_no in page_nos:
         print("processing ",page_no)
         post_yallavip_ad(page_no)
@@ -1306,7 +1304,7 @@ def post_yallavip_ad(page_no):
 
 
     lightinalbums_all = LightinAlbum.objects.filter(lightin_spu__sellable__gt=5,lightin_spu__SPU__istartswith = "s",
-                                                lightin_spu__shopify_price__gt=30, lightin_spu__shopify_price__lt=50,
+                                                lightin_spu__shopify_price__gt=30, #lightin_spu__shopify_price__lt=50,
                                                 lightin_spu__aded=False,
                                                 myalbum__page_no=page_no, published=True).distinct()
 
