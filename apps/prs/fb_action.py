@@ -1538,7 +1538,7 @@ def post_ad():
     active_tokens = "EAAHZCz2P7ZAuQBAHby3HRhCQMHbZA95KYnqAcQghjNQqZBz1fDZBvTyr5FP5GUUCZAW77u4E7RKxJVnj8rpNlT6m9H8ZARWU6A2yedF9I7b8QDTUxMTg8Vej6O2XyqVIRB4Bs9MPCjZA5CxvDfsbaIC3oVEUmJSfejFhC0ZCTZBG8fp37NPb175bG0"
     adobjects = FacebookAdsApi.init(access_token=active_tokens, debug=True)
     adacount_no = "act_1903121643086425"
-    adset_no = "23843265435620510"
+    adset_no = "23843303803340510"
 
 
     ads = YallavipAd.objects.filter(active=True, published=False )
