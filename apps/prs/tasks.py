@@ -4777,7 +4777,7 @@ def get_token_status():
 
             token.active = False
             token.page_no = ""
-            token.info = e.get_message()
+            token.info = e.api_error_message()
 
         token.save()
 
