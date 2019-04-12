@@ -1431,7 +1431,7 @@ def combo_ad_image(spus, spus_name):
 
     # 开始拼图
 
-    item_count = items.count()
+    item_count = spus.count()
     if item_count == 4:
         # 四张图
         # 先做个1080x1080的画布
