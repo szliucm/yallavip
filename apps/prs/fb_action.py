@@ -23,6 +23,7 @@ from facebook_business.adobjects.campaign import Campaign
 from facebook_business.adobjects.adset import AdSet
 from facebook_business.adobjects.ad import Ad
 from facebook_business.adobjects.adsinsights import AdsInsights
+from facebook_business.exceptions import FacebookRequestError
 
 import os
 import requests
@@ -1240,7 +1241,7 @@ def post_yallavip_album(lightinalbum):
             params=params,
         )
     except Exception as e:
-        error = str(e)
+        error = e.get_message
         return error, None
 
     obj, created = MyPhoto.objects.update_or_create(photo_no=photo["id"],
