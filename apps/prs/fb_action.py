@@ -60,7 +60,7 @@ def get_token(target_page,token=None):
         if r.status_code == 200:
             my_access_token.page_no = target_page
             my_access_token.save()
-            return data["access_token"], my_access_token
+            return data["access_token"], my_access_token.long_token
         else:
             print(r, r.text)
             my_access_token.active = False
