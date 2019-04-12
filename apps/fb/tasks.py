@@ -45,11 +45,19 @@ def get_token(target_page,token=None):
 
 #更新相册信息
 def update_albums():
-    adobjects = FacebookAdsApi.init(access_token=my_access_token, debug=True)
+
     queryset = MyPage.objects.filter(active= True, is_published= True)
 
     for row in queryset:
         page_no = row.page_no
+        access_token, long_token = get_token(page_no)
+
+        if not access_token:
+            error = "获取token失败"
+            return error, None
+
+        adobjects = FacebookAdsApi.init(access_token=access_token, debug=True)
+
         # 重置原有相册信息为不活跃
         myalbums =  MyAlbum.objects.filter(page_no=page_no)
         myalbums.update(active=False)
@@ -80,6 +88,7 @@ def update_albums():
 
                                                                       'link': album["link"],
                                                                       'active': True,
+                                                                      'updated': False
                                                                       }
                                                             )
             #'like_count': album["likes"]["summary"]["total_count"],
@@ -105,7 +114,14 @@ def batch_update_photos(limit = None):
 def update_album_photos(album):
     album_no = album.album_no
     page_no = album.page_no
-    adobjects = FacebookAdsApi.init(access_token=get_token(page_no), debug=True)
+
+    access_token, long_token = get_token(page_no)
+
+    if not access_token:
+        error = "获取token失败"
+        return error, None
+
+    adobjects = FacebookAdsApi.init(access_token=access_token, debug=True)
     # 重置原有相册的图片信息为不活跃
     MyPhoto.objects.filter(album_no=album_no).update(active=False)
 

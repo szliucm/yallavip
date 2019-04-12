@@ -4756,7 +4756,8 @@ def delete_album_photo_cate(what):
     import re
 
     #在相册里找某个特定的品类，面包屑里的关键字
-    myphotos = LightinAlbum.objects.filter(lightin_spu__breadcrumb__icontains=what, material=True)
+    myphotos = LightinAlbum.objects.filter(lightin_spu__breadcrumb__icontains=what, material=True,fb_id__in=
+                MyPhoto.objects.filter(active=True).values_list("photo_no",flat=True)  )
 
     photo_miss = {}
     photos = myphotos.values_list("myalbum__page_no", "fb_id").distinct()
