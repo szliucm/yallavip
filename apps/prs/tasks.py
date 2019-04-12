@@ -1917,7 +1917,7 @@ def delete_photos(page_no, photo_nos):
     from facebook_business.adobjects.photo import Photo
     access_token, long_token = get_token(page_no)
     if not access_token:
-        error = "获取token失败"
+        error = "获取token失败" + page_no
         print(error)
         return error, None
 
@@ -4765,10 +4765,17 @@ def delete_album_photo_cate(what):
                 MyPhoto.objects.filter(active=True).values_list("photo_no",flat=True)  )
 
     photo_miss = {}
-    photos = myphotos.values_list("myalbum__page_no", "fb_id").distinct()
+    photos = myphotos.values_list("myalbum__page_no", "yallavip_album__page__page_no", "fb_id").distinct()
     for photo in photos:
-        page_no = photo[0]
-        fb_id = photo[1]
+        if photo[0]:
+            page_no = photo[0]
+        elif photo[1]:
+            page_no = photo[0]
+        else:
+            print("no page")
+            continue
+
+        fb_id = photo[2]
 
         photo_list = photo_miss.get(page_no)
         if not photo_list:
