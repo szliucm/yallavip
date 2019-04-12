@@ -4774,9 +4774,10 @@ def get_token_status():
         except Exception as e:
             #print(e,json.loads(e))
             print(e)
+
             token.active = False
             token.page_no = ""
-            token.info = "不可用"
+            token.info = e.get_message()
 
         token.save()
 
