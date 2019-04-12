@@ -809,4 +809,4 @@ class YallavipAd(models.Model):
 
     def __str__(self):
 
-        return  self.rule.name
+        return  self.yallavip_album

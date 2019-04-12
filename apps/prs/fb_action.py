@@ -1310,7 +1310,7 @@ def post_yallavip_ad():
     limit = 1
     n = 1
     #每次处理一个相册， 从相册里选4张拼成一张，发广告
-    yallavip_albums = lightinalbums_all.values_list("yallavip_album").distinct()
+    yallavip_albums = lightinalbums_all.values_list("yallavip_album",flat=True).distinct()
     for yallavip_album in yallavip_albums:
 
         lightinalbums = lightinalbums_all.filter(yallavip_album=yallavip_album).order_by("?")[:4]
