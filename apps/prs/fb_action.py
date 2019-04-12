@@ -1220,7 +1220,7 @@ def post_yallavip_album(lightinalbum):
     else:
         product_no = lightinalbum.lightin_sku.SKU
 
-    access_token, long_token = get_token(mypage.page_no)
+    access_token, long_token = get_token(page_no)
 
     if not access_token:
         error = "获取token失败"
