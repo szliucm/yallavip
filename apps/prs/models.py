@@ -809,4 +809,4 @@ class YallavipAd(models.Model):
 
     def __str__(self):
 
-        return  self.yallavip_album
+        return  self.spus_name
