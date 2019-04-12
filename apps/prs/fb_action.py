@@ -1280,15 +1280,9 @@ def post_yallavip_album(lightinalbum):
     #print("new_photo saved ", obj, created)
     return  "成功", photo["id"]
 
-def post_yallavip_ads():
-    page_nos = MyPage.objects.filter(active=True, is_published=True).values_list('page_no', flat=True)
-    #page_nos = ["2084015718575745"]   #for debug
 
-    for page_no in page_nos:
-        print("processing ",page_no)
-        post_yallavip_ad(page_no)
 
-def post_yallavip_ad(page_no):
+def post_yallavip_ad():
     from shop.photo_mark import lightin_mark_image_page
 
     import requests
@@ -1306,7 +1300,8 @@ def post_yallavip_ad(page_no):
     lightinalbums_all = LightinAlbum.objects.filter(lightin_spu__sellable__gt=5,lightin_spu__SPU__istartswith = "s",
                                                 lightin_spu__shopify_price__gt=30, #lightin_spu__shopify_price__lt=50,
                                                 lightin_spu__aded=False,
-                                                myalbum__page_no=page_no, published=True).distinct()
+                                                yallavip_album__page__active=True,yallavip_album__page__is_published=True,
+                                                    published=True).distinct()
 
     limit = 1
     n = 1
@@ -1314,24 +1309,22 @@ def post_yallavip_ad(page_no):
     yallavip_albums = lightinalbums_all.values_list("yallavip_album").distinct()
     for yallavip_album in yallavip_albums:
 
-        lightinalbums = lightinalbums_all.filter(yallavip_album=yallavip_album)
+        lightinalbums = lightinalbums_all.filter(yallavip_album=yallavip_album).order_by("?")[:4]
 
+        spu_ims = lightinalbums.values_list("image_marked",flat=True)
+        spus = lightinalbums.values_list("lightin_spu__SPU",flat=True)
 
-        spus = Lightin_SPU.objects.filter(pk__in = lightinalbums.values_list("lightin_spu",flat=True)).order_by("?")[:4]
-        if spus.count() <4:
-            print ("数量不够拼图了")
-            continue
         #把spus的图拼成一张
-        spus_list = spus.values_list("SPU", flat=True)
-        spus_name = '[' + ','.join(spus_list) + ']'
 
-        image_marked_url = combo_ad_image(spus, spus_name)
+        spus_name = '[' + ','.join(spus) + ']'
+
+        image_marked_url = combo_ad_image(spu_ims, spus_name)
         message = "💋💋Flash Sale ！！！💋💋" \
                "90% off！Lowest Price Online ！！！" \
                "🥳🥳🥳 10:00-22:00 Everyday ,Update 100 New items Every Hour !! The quantity is limited !!😇😇" \
                "All goods are in Riyadh stock,It will be delivered to you in 3-5 days! ❣️❣️" \
                "How to order?Pls choice the product that you like it , then send us the picture, we will order it for you!🤩🤩"
-        message = message + "\n[" + spus_name + "]"
+        message = message + "\n" + spus_name
 
         obj, created = YallavipAd.objects.update_or_create(page_no=page_no,
                                                            spus_name = spus_name,
@@ -1401,7 +1394,7 @@ def post_yallavip_ad(page_no):
             time.sleep(10)
 
 
-def combo_ad_image(spus, spus_name):
+def combo_ad_image(spu_ims, spus_name):
     from shop.photo_mark import clipResizeImg_new, get_remote_image
     import os
     from django.conf import settings
@@ -1414,32 +1407,18 @@ def combo_ad_image(spus, spus_name):
         import Image, ImageDraw, ImageFont, ImageEnhance
 
 
-    #image_dict = {}
     ims=[]
-    for spu in spus:
-        image = None
-        if spu.images_dict:
-            image = json.loads(spu.images_dict).values()
-            if image and len(image) > 0:
-                a = "/"
-                image_split = list(image)[0].split(a)
 
-                image_split[4] = '800x800'
-                image = a.join(image_split)
-                print("spu 图片", spu, image)
-
-
-        im = get_remote_image(image)
+    for spu_im in spu_ims:
+        im = get_remote_image(spu_im)
         if not im:
             print ("image打不开")
-            return
-
-        #image_dict[spu] = im
+            return None
         ims.append(im)
 
     # 开始拼图
 
-    item_count = spus.count()
+    item_count = spu_ims.count()
     if item_count == 4:
         # 四张图
         # 先做个1080x1080的画布
