@@ -1339,9 +1339,9 @@ def post_yallavip_ad():
 
                                                                  }
                                                            )
-        for spu in spus:
-            spu.aded=True
-            spu.save()
+        for lightinalbum in lightinalbums:
+            lightinalbum.aded=True
+            lightinalbum.save()
 
 
         '''
