@@ -1407,8 +1407,8 @@ def combo_ad_image(spus, spus_name):
         import Image, ImageDraw, ImageFont, ImageEnhance
 
 
-    image_dict = {}
-
+    #image_dict = {}
+    ims=[]
     for spu in spus:
         image = None
         if spu.images_dict:
@@ -1427,7 +1427,8 @@ def combo_ad_image(spus, spus_name):
             print ("image打不开")
             return
 
-        image_dict[spu] = im
+        #image_dict[spu] = im
+        ims.append(im)
 
     # 开始拼图
 
@@ -1531,5 +1532,10 @@ def combo_ad_image(spus, spus_name):
 
     else:
         print( "items数量问题")
-        return  None
+        destination_url =  None
+
+    for im in ims:
+        im.close()
+
+    return  destination_url
 
