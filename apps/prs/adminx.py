@@ -1025,18 +1025,12 @@ class ComboItemAdmin(object):
 @xadmin.sites.register(YallavipAd)
 class YallavipAdAdmin(object):
     def photo(self, obj):
-        if obj.lightin_spu.images is not None and len(obj.lightin_spu.images)>0 :
-            photos = json.loads(obj.lightin_spu.images)
-            img = ''
 
-            for photo in photos:
-                try:
-                    img = img + '<a><img src="%s" width="384px"></a>' % (photo)
-                except Exception as e:
-                    img = "获取图片出错 "+ e
+        try:
+            img = '<a><img src="%s" width="384px"></a>' % (obj.photo)
+        except Exception as e:
+            img = "获取图片出错 "+ e
 
-        else:
-            img = "no photo"
 
         return mark_safe(img)
 
