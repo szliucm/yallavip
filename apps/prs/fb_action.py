@@ -1292,12 +1292,12 @@ def post_yallavip_ad():
     import requests
     import base64
     import time
-
+    '''
     active_tokens = Token.objects.filter(active=True,page_no=page_no )
     adobjects = FacebookAdsApi.init(access_token=active_tokens, debug=True)
     adacount_no = "act_1903121643086425"
     adset_no = "23843265435620510"
-
+    '''
     # 取库存大、单价高、已经发布到相册 且还未打广告的商品
 
 
