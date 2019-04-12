@@ -1292,12 +1292,7 @@ def post_yallavip_ad():
     import requests
     import base64
     import time
-    '''
-    active_tokens = Token.objects.filter(active=True,page_no=page_no )
-    adobjects = FacebookAdsApi.init(access_token=active_tokens, debug=True)
-    adacount_no = "act_1903121643086425"
-    adset_no = "23843265435620510"
-    '''
+
     # 取库存大、单价高、已经发布到相册 且还未打广告的商品
 
 
@@ -1538,3 +1533,58 @@ def combo_ad_image(spu_ims, spus_name):
 
     return  destination_url
 
+def post_ad():
+
+    active_tokens = "EAAHZCz2P7ZAuQBAHby3HRhCQMHbZA95KYnqAcQghjNQqZBz1fDZBvTyr5FP5GUUCZAW77u4E7RKxJVnj8rpNlT6m9H8ZARWU6A2yedF9I7b8QDTUxMTg8Vej6O2XyqVIRB4Bs9MPCjZA5CxvDfsbaIC3oVEUmJSfejFhC0ZCTZBG8fp37NPb175bG0"
+    adobjects = FacebookAdsApi.init(access_token=active_tokens, debug=True)
+    adacount_no = "act_1903121643086425"
+    adset_no = "23843265435620510"
+
+
+    ads = YallavipAd.objects.filter(active=True, published=False )
+    page_nos = ads.values_list("yallavip_album__page__page_no",flat=True)
+    for page_no in page_nos:
+        ad = ads.filter(yallavip_album__page__page_no = page_no).first()
+
+        # 上传到adimage
+        fields = [
+        ]
+
+        # link ad
+        params = {
+            'name': page_no + '_' + ad.spus_name,
+            'object_story_spec': {'page_id': page_no,
+                                  'link_data': {"call_to_action": {"type": "MESSAGE_PAGE",
+                                                                   "value": {"app_destination": "MESSENGER"}},
+                                                # "image_hash": adimagehash,
+                                                "picture": ad.image_marked_url,
+                                                "link": "https://facebook.com/%s" % (page_no),
+
+                                                "message": ad.message,
+                                                "name": "Yallavip.com",
+                                                "description": "Online Flash Sale Everyhour",
+                                                "use_flexible_image_aspect_ratio": True, }},
+        }
+        adCreative = AdAccount(adacount_no).create_ad_creative(
+            fields=fields,
+            params=params,
+        )
+
+        print("adCreative is ", adCreative)
+
+        fields = [
+        ]
+        params = {
+            'name': page_no + '_' + ad.spus_name,
+            'adset_id': adset_no,
+            'creative': {'creative_id': adCreative["id"]},
+            'status': 'PAUSED',
+            # "access_token": my_access_token,
+        }
+
+        ad = AdAccount(adacount_no).create_ad(
+            fields=fields,
+            params=params,
+        )
+
+        print("ad is ", ad)
