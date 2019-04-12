@@ -1279,3 +1279,244 @@ def post_yallavip_album(lightinalbum):
 
     #print("new_photo saved ", obj, created)
     return  "成功", photo["id"]
+
+def post_yallavip_ads():
+    page_nos = MyPage.objects.filter(active=True, is_published=True).values_list('page_no', flat=True)
+    #page_nos = ["2084015718575745"]   #for debug
+
+
+
+    for page_no in page_nos:
+        print("processing ",page_no)
+        post_yallavip_ad(page_no)
+
+def post_yallavip_ad(page_no):
+    from shop.photo_mark import lightin_mark_image_page
+
+    import requests
+    import base64
+    import time
+
+    active_tokens = Token.objects.filter(active=True,page_no=page_no )
+    adobjects = FacebookAdsApi.init(access_token=active_tokens, debug=True)
+    adacount_no = "act_1903121643086425"
+    adset_no = "23843265435620510"
+
+    # 取库存大、单价高、已经发布到相册 且还未打广告的商品
+
+
+    lightinalbums_all = LightinAlbum.objects.filter(lightin_spu__sellable__gt=5,lightin_spu__SPU__istartswith = "s",
+                                                lightin_spu__shopify_price__gt=30, lightin_spu__shopify_price__lt=50,
+                                                lightin_spu__aded=False,
+                                                myalbum__page_no=page_no, published=True).distinct()
+
+    limit = 1
+    n = 1
+    #每次处理一个相册， 从相册里选4张拼成一张，发广告
+    yallavip_albums = lightinalbums_all.values_list("yallavip_album").distinct()
+    for yallavip_album in yallavip_albums:
+
+        lightinalbums = lightinalbums_all.filter(yallavip_album=yallavip_album)
+
+
+        spus = Lightin_SPU.objects.filter(pk__in = lightinalbums.values_list("lightin_spu",flat=True))[:4]
+        if spus.count() <4:
+            print ("数量不够拼图了")
+            continue
+        #把spus的图拼成一张
+        spus_list = spus.values_list("SPU", flat=True)
+        spus_name = '[' + ','.join(spus_list) + ']'
+
+        combo_ad_image(spus, spus_name)
+
+        # 上传到adimage
+        fields = [
+        ]
+
+        # link ad
+        params = {
+            'name': 'Creative for ' + spu.handle,
+            'object_story_spec': {'page_id': page_no,
+                                  'link_data': {"call_to_action": {"type": "MESSAGE_PAGE",
+                                                                   "value": {"app_destination": "MESSENGER"}},
+                                                # "image_hash": adimagehash,
+                                                "picture": image_marked_url,
+                                                "link": "https://facebook.com/%s" % (page_no),
+
+                                                "message": name,
+                                                "name": "Yallavip.com",
+                                                "description": "Online Flash Sale Everyhour",
+                                                "use_flexible_image_aspect_ratio": True, }},
+        }
+        adCreative = AdAccount(adacount_no).create_ad_creative(
+            fields=fields,
+            params=params,
+        )
+
+        print("adCreative is ", adCreative)
+
+        fields = [
+        ]
+        params = {
+            'name': page_no + '_' + spus_name,
+            'adset_id': adset_no,
+            'creative': {'creative_id': adCreative["id"]},
+            'status': 'PAUSED',
+            # "access_token": my_access_token,
+        }
+
+        ad = AdAccount(adacount_no).create_ad(
+            fields=fields,
+            params=params,
+        )
+
+        print("ad is ", ad)
+        spu.aded = True
+        spu.save()
+
+        n += 1
+
+        if n > limit:
+            break
+        else:
+
+            time.sleep(10)
+
+
+def combo_ad_image(spus, spus_name):
+    from shop.photo_mark import clipResizeImg_new, get_remote_image
+    import os
+    from django.conf import settings
+    domain = "http://admin.yallavip.com"
+
+    try:
+        from PIL import Image, ImageDraw, ImageFont, ImageEnhance
+
+    except ImportError:
+        import Image, ImageDraw, ImageFont, ImageEnhance
+
+
+    image_dict = {}
+
+    for spu in spus:
+        image = None
+        if spu.images_dict:
+            image = json.loads(spu.images_dict).values()
+            if image and len(image) > 0:
+                a = "/"
+                image_split = list(image)[0].split(a)
+
+                image_split[4] = '800x800'
+                image = a.join(image_split)
+                print("spu 图片", spu, image)
+
+
+        im = get_remote_image(image)
+        if not im:
+            print ("image打不开")
+            return
+
+        image_dict[spu] = im
+
+    # 开始拼图
+
+    item_count = items.count()
+    if item_count == 4:
+        # 四张图
+        # 先做个1080x1080的画布
+        layer = Image.new("RGB", (1080, 1080), "red")
+
+        layer.paste(clipResizeImg_new(ims[0], 540, 540), (0, 0))
+        layer.paste(clipResizeImg_new(ims[1], 540, 540), (0, 540))
+        layer.paste(clipResizeImg_new(ims[2], 540, 540), (540, 0))
+        layer.paste(clipResizeImg_new(ims[3], 540, 540), (540, 540))
+
+    elif item_count == 5:
+        # 五张图
+        # 先做个900x1000的画布
+        layer = Image.new("RGB", (900, 1180), "red")
+        layer.paste(clipResizeImg_new(ims[0], 540, 540), (0, 0))
+        layer.paste(clipResizeImg_new(ims[1], 540, 540), (0, 540))
+        layer.paste(clipResizeImg_new(ims[2], 360, 360), (540, 0))
+        layer.paste(clipResizeImg_new(ims[3], 360, 360), (540, 360))
+        layer.paste(clipResizeImg_new(ims[4], 360, 360), (540, 720))
+
+    elif item_count == 6:
+        # 六张图
+        # 先做个900x900的画布
+        layer = Image.new("RGB", (900, 1000), "red")
+
+        layer.paste(clipResizeImg_new(ims[0], 600, 600), (0, 0))
+        layer.paste(clipResizeImg_new(ims[1], 300, 300), (0, 600))
+        layer.paste(clipResizeImg_new(ims[2], 300, 300), (300, 600))
+        layer.paste(clipResizeImg_new(ims[3], 300, 300), (600, 0))
+        layer.paste(clipResizeImg_new(ims[4], 300, 300), (600, 300))
+        layer.paste(clipResizeImg_new(ims[5], 300, 300), (600, 600))
+    elif item_count == 7:
+        # 先做个900x130的画布
+        layer = Image.new("RGB", (900, 1300), "red")
+        layer.paste(clipResizeImg_new(ims[0], 450, 450), (0, 0))
+        layer.paste(clipResizeImg_new(ims[1], 450, 450), (450, 0))
+        layer.paste(clipResizeImg_new(ims[2], 450, 450), (0, 450))
+        layer.paste(clipResizeImg_new(ims[3], 450, 450), (450, 450))
+        layer.paste(clipResizeImg_new(ims[4], 300, 300), (0, 900))
+        layer.paste(clipResizeImg_new(ims[5], 300, 300), (300, 900))
+        layer.paste(clipResizeImg_new(ims[6], 300, 300), (600, 900))
+    elif item_count == 8:
+        # 先做个900x1150的画布
+        layer = Image.new("RGB", (900, 1150), "red")
+        layer.paste(clipResizeImg_new(ims[0], 450, 450), (0, 0))
+        layer.paste(clipResizeImg_new(ims[1], 450, 450), (450, 0))
+        layer.paste(clipResizeImg_new(ims[2], 300, 300), (0, 450))
+        layer.paste(clipResizeImg_new(ims[3], 300, 300), (0, 750))
+        layer.paste(clipResizeImg_new(ims[4], 300, 300), (300, 450))
+        layer.paste(clipResizeImg_new(ims[5], 300, 300), (300, 750))
+        layer.paste(clipResizeImg_new(ims[6], 300, 300), (600, 450))
+        layer.paste(clipResizeImg_new(ims[7], 300, 300), (600, 750))
+    elif item_count == 9:
+        # 先做个900x1000的画布
+        layer = Image.new("RGB", (900, 1000), "red")
+        layer.paste(clipResizeImg_new(ims[0], 300, 300), (0, 0))
+        layer.paste(clipResizeImg_new(ims[1], 300, 300), (0, 300))
+        layer.paste(clipResizeImg_new(ims[2], 300, 300), (0, 600))
+        layer.paste(clipResizeImg_new(ims[3], 300, 300), (300, 0))
+        layer.paste(clipResizeImg_new(ims[4], 300, 300), (300, 300))
+        layer.paste(clipResizeImg_new(ims[5], 300, 300), (300, 600))
+        layer.paste(clipResizeImg_new(ims[6], 300, 300), (600, 0))
+        layer.paste(clipResizeImg_new(ims[7], 300, 300), (600, 300))
+        layer.paste(clipResizeImg_new(ims[8], 300, 300), (600, 600))
+    elif item_count == 10:
+        # 先做个900x130的画布
+        layer = Image.new("RGB", (900, 925), "red")
+        layer.paste(clipResizeImg_new(ims[0], 300, 300), (0, 0))
+        layer.paste(clipResizeImg_new(ims[1], 300, 300), (0, 300))
+        layer.paste(clipResizeImg_new(ims[2], 300, 300), (300, 0))
+        layer.paste(clipResizeImg_new(ims[3], 300, 300), (300, 300))
+        layer.paste(clipResizeImg_new(ims[4], 300, 300), (600, 0))
+        layer.paste(clipResizeImg_new(ims[5], 300, 300), (600, 300))
+        layer.paste(clipResizeImg_new(ims[6], 225, 225), (0, 600))
+        layer.paste(clipResizeImg_new(ims[7], 225, 225), (225, 600))
+        layer.paste(clipResizeImg_new(ims[8], 225, 225), (450, 600))
+        layer.paste(clipResizeImg_new(ims[9], 225, 225), (675, 600))
+    else:
+        layer = None
+
+    if layer:
+        out = layer.convert('RGB')
+
+
+        image_filename = spus_name+'.jpg'
+
+        destination = os.path.join(settings.MEDIA_ROOT, "ad/", image_filename)
+
+        out.save(destination, 'JPEG', quality=95)
+        # out.save('target%s.jpg'%(combo.SKU), 'JPEG')
+
+        destination_url = domain + os.path.join(settings.MEDIA_URL, "ad/", image_filename)
+        print("destination_url", destination_url)
+
+
+
+    else:
+        print( "items数量问题")
+
