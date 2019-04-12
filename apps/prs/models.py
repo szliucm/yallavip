@@ -787,3 +787,23 @@ class Token(models.Model):
     def __str__(self):
         return self.user_no
 
+
+class YallavipAd(models.Model):
+    page_no = models.CharField(u'page_no', default='', max_length=300, blank=True)
+
+    spus_name = models.CharField(u'spus_name', default='', max_length=300, blank=True)
+    image_marked_url = models.CharField(u'image_marked_url', default='', max_length=300, blank=True)
+    message = models.CharField(u'message', default='', max_length=500, blank=True)
+    adset_no = models.CharField(u'adset_no', default='', max_length=500, blank=True)
+    creative_id = models.CharField(u'creative_id', default='', max_length=500, blank=True)
+    ad_id = models.CharField(u'ad_id', default='', max_length=500, blank=True)
+
+    active = models.BooleanField(default=False, verbose_name="有效性")
+
+    class Meta:
+        verbose_name = "Yallavip 广告"
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+
+        return  self.rule.name

@@ -1327,15 +1327,26 @@ def post_yallavip_ad(page_no):
         spus_list = spus.values_list("SPU", flat=True)
         spus_name = '[' + ','.join(spus_list) + ']'
 
-        combo_ad_image(spus, spus_name)
+        image_marked_url = combo_ad_image(spus, spus_name)
 
+        obj, created = YallavipAd.objects.update_or_create(page_no=page_no,
+                                                           spus_name = spus_name,
+                                                       defaults={'image_marked_url': image_marked_url,
+                                                                 'message': message,
+                                                                 'active': True,
+
+                                                                 }
+                                                       )
+        spus.update(aded=True)
+
+        '''
         # 上传到adimage
         fields = [
         ]
 
         # link ad
         params = {
-            'name': 'Creative for ' + spu.handle,
+            'name': page_no + '_' + spus_name,
             'object_story_spec': {'page_id': page_no,
                                   'link_data': {"call_to_action": {"type": "MESSAGE_PAGE",
                                                                    "value": {"app_destination": "MESSENGER"}},
@@ -1343,7 +1354,7 @@ def post_yallavip_ad(page_no):
                                                 "picture": image_marked_url,
                                                 "link": "https://facebook.com/%s" % (page_no),
 
-                                                "message": name,
+                                                "message": message,
                                                 "name": "Yallavip.com",
                                                 "description": "Online Flash Sale Everyhour",
                                                 "use_flexible_image_aspect_ratio": True, }},
@@ -1371,8 +1382,8 @@ def post_yallavip_ad(page_no):
         )
 
         print("ad is ", ad)
-        spu.aded = True
-        spu.save()
+
+        '''
 
         n += 1
 
@@ -1514,9 +1525,11 @@ def combo_ad_image(spus, spus_name):
 
         destination_url = domain + os.path.join(settings.MEDIA_URL, "ad/", image_filename)
         print("destination_url", destination_url)
+        return  destination_url
 
 
 
     else:
         print( "items数量问题")
+        return  None
 
