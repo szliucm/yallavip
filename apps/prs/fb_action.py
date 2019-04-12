@@ -177,8 +177,9 @@ def post_creative_feed_page_fb(page,fb):
 
     access_token, long_token = get_token(page_id)
     if not access_token:
+        error = "获取token失败"
         print("获取token失败", access_token,page_id)
-        return None
+        return error, None
     FacebookAdsApi.init(access_token=access_token)
 
     # domain = "http://dev.yallavip.com:8000"
