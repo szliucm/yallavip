@@ -1342,8 +1342,11 @@ def post_yallavip_ad(page_no):
                                                                  'active': True,
 
                                                                  }
-                                                       )
-        spus.update(aded=True)
+                                                           )
+        for spu in spus:
+            spu.aded=True
+            spu.save()
+
 
         '''
         # 上传到adimage
