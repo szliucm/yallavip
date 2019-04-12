@@ -1,4 +1,4 @@
-from .models import MyProductShopify,MyProductFb,Token, LightinAlbum,Lightin_SPU,YallavipAd
+from .models import MyProductShopify,MyProductFb,Token, LightinAlbum,Lightin_SPU,YallavipAd,YallavipAlbum
 from fb.models import  MyPage,MyAlbum,MyPhoto
 from shop.models import ShopifyProduct, ShopifyVariant,ShopifyOptions
 from shop.models import  ShopifyImage
