@@ -1022,3 +1022,33 @@ class ComboItemAdmin(object):
 
 
 
+@xadmin.sites.register(YallavipAd)
+class YallavipAdAdmin(object):
+    def photo(self, obj):
+        if obj.lightin_spu.images is not None and len(obj.lightin_spu.images)>0 :
+            photos = json.loads(obj.lightin_spu.images)
+            img = ''
+
+            for photo in photos:
+                try:
+                    img = img + '<a><img src="%s" width="384px"></a>' % (photo)
+                except Exception as e:
+                    img = "获取图片出错 "+ e
+
+        else:
+            img = "no photo"
+
+        return mark_safe(img)
+
+    photo.short_description = "spu图片"
+
+
+
+    list_display = ["page_no", "spus_name", 'photo', "adset_no","creative_id", "ad_id",]
+
+    # 'sku_name','img',
+    search_fields = ["spus_name", ]
+    list_filter = ["page_no", "adset_no",]
+    list_editable = []
+    readonly_fields = ()
+    actions = []
