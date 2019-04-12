@@ -23,7 +23,7 @@ from facebook_business.adobjects.campaign import Campaign
 from facebook_business.adobjects.adset import AdSet
 from facebook_business.adobjects.ad import Ad
 from facebook_business.adobjects.adsinsights import AdsInsights
-from facebook_business.exceptions import FacebookRequestError
+
 
 import os
 import requests
@@ -1533,7 +1533,7 @@ def combo_ad_image(spu_ims, spus_name):
 
     return  destination_url
 
-def post_ad():
+def post_yallavip_ad():
 
     active_tokens = "EAAHZCz2P7ZAuQBAHby3HRhCQMHbZA95KYnqAcQghjNQqZBz1fDZBvTyr5FP5GUUCZAW77u4E7RKxJVnj8rpNlT6m9H8ZARWU6A2yedF9I7b8QDTUxMTg8Vej6O2XyqVIRB4Bs9MPCjZA5CxvDfsbaIC3oVEUmJSfejFhC0ZCTZBG8fp37NPb175bG0"
     adobjects = FacebookAdsApi.init(access_token=active_tokens, debug=True)
@@ -1545,46 +1545,59 @@ def post_ad():
     page_nos = ads.values_list("yallavip_album__page__page_no",flat=True)
     for page_no in page_nos:
         ad = ads.filter(yallavip_album__page__page_no = page_no).first()
-
+        error = ""
         # 上传到adimage
-        fields = [
-        ]
+        try:
+            fields = [
+            ]
 
-        # link ad
-        params = {
-            'name': page_no + '_' + ad.spus_name,
-            'object_story_spec': {'page_id': page_no,
-                                  'link_data': {"call_to_action": {"type": "MESSAGE_PAGE",
-                                                                   "value": {"app_destination": "MESSENGER"}},
-                                                # "image_hash": adimagehash,
-                                                "picture": ad.image_marked_url,
-                                                "link": "https://facebook.com/%s" % (page_no),
+            # link ad
+            params = {
+                'name': page_no + '_' + ad.spus_name,
+                'object_story_spec': {'page_id': page_no,
+                                      'link_data': {"call_to_action": {"type": "MESSAGE_PAGE",
+                                                                       "value": {"app_destination": "MESSENGER"}},
+                                                    # "image_hash": adimagehash,
+                                                    "picture": ad.image_marked_url,
+                                                    "link": "https://facebook.com/%s" % (page_no),
 
-                                                "message": ad.message,
-                                                "name": "Yallavip.com",
-                                                "description": "Online Flash Sale Everyhour",
-                                                "use_flexible_image_aspect_ratio": True, }},
-        }
-        adCreative = AdAccount(adacount_no).create_ad_creative(
-            fields=fields,
-            params=params,
-        )
+                                                    "message": ad.message,
+                                                    "name": "Yallavip.com",
+                                                    "description": "Online Flash Sale Everyhour",
+                                                    "use_flexible_image_aspect_ratio": True, }},
+            }
+            adCreative = AdAccount(adacount_no).create_ad_creative(
+                fields=fields,
+                params=params,
+            )
 
-        print("adCreative is ", adCreative)
+            print("adCreative is ", adCreative)
 
-        fields = [
-        ]
-        params = {
-            'name': page_no + '_' + ad.spus_name,
-            'adset_id': adset_no,
-            'creative': {'creative_id': adCreative["id"]},
-            'status': 'PAUSED',
-            # "access_token": my_access_token,
-        }
+            fields = [
+            ]
+            params = {
+                'name': page_no + '_' + ad.spus_name,
+                'adset_id': adset_no,
+                'creative': {'creative_id': adCreative["id"]},
+                'status': 'PAUSED',
+                # "access_token": my_access_token,
+            }
 
-        ad = AdAccount(adacount_no).create_ad(
-            fields=fields,
-            params=params,
-        )
+            fb_ad = AdAccount(adacount_no).create_ad(
+                fields=fields,
+                params=params,
+            )
+        except Exception as e:
+            print(e)
+            error = e.api_error_message()
 
-        print("ad is ", ad)
+
+        if error == "":
+            print("fb ad is ", fb_ad)
+            ad.published= True
+            ad.published_time = dt.now()
+        else:
+            ad.publish_error = error
+
+        ad.save()
+
