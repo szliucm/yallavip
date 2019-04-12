@@ -346,7 +346,7 @@ class CustomerAdmin(object):
             if row.handles.find("gift")>-1 and row.gift==False:
                 print ("添加gift")
                 lightin_gifts = Lightin_SKU.objects.filter(
-                    sku_price__lt =5,
+                    sku_price__lte =5,
                     o_sellable__gt=0)[:10]
                 for lightin_gift in lightin_gifts:
                     price = lightin_gift.sku_price
