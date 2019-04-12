@@ -4631,7 +4631,7 @@ def sync_yallavip_album(album_name=None):
     else:
         lightinalbums_all = LightinAlbum.objects.filter(
             Q(lightin_spu__sellable__gt=0) | Q(lightin_sku__o_sellable__gt=0),
-            published=False, publish_error="无", material=True, yallavip_album__active=True)
+            published=False, publish_error="无", material=True, yallavip_album__active=True,yallavip_album__page__active=True)
 
     albums = lightinalbums_all.values_list('yallavip_album').distinct()
     print("有%s个相册待更新" % (albums.count()))

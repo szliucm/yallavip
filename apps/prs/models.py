@@ -565,7 +565,7 @@ class YallavipAlbum(models.Model):
     active = models.BooleanField(default=False, verbose_name="有效性")
 
     class Meta:
-        verbose_name = "allavip 相册"
+        verbose_name = "Yallavip 相册"
         verbose_name_plural = verbose_name
 
     def __str__(self):
