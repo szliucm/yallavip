@@ -4770,7 +4770,7 @@ def delete_album_photo_cate(what):
         if photo[0]:
             page_no = photo[0]
         elif photo[1]:
-            page_no = photo[0]
+            page_no = photo[1]
         else:
             print("no page")
             continue
@@ -4787,7 +4787,9 @@ def delete_album_photo_cate(what):
 
     # 选择所有可用的page
     for page_no in photo_miss:
-
+        if not page_no:
+            print("page_no 为空")
+            continue
 
         photo_nos = photo_miss[page_no]
         print("page %s 待删除数量 %s  " % (page_no, len(photo_nos)))
