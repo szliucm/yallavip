@@ -59,10 +59,8 @@ def update_albums():
         for album in albums:
             obj, created = MyAlbum.objects.update_or_create(album_no=album["id"],
                                                             defaults={'page_no': page_no,
-                                                                      'created_time': album["created_time"].split('+')[
-                                                                          0],
-                                                                      'updated_time': album["updated_time"].split('+')[
-                                                                          0],
+                                                                      'created_time': album["created_time"],
+                                                                      'updated_time': album["updated_time"],
 
                                                                       'name': album["name"],
                                                                       'count': album["count"],

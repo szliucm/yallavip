@@ -1916,6 +1916,11 @@ def delete_oversea_photo():
 def delete_photos(page_no, photo_nos):
     from facebook_business.adobjects.photo import Photo
     access_token, long_token = get_token(page_no)
+    if not access_token:
+        error = "获取token失败"
+        print(error)
+        return error, None
+
     FacebookAdsApi.init(access_token=access_token)
     for photo_no in photo_nos:
 
