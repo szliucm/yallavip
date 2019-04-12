@@ -604,6 +604,7 @@ class LightinAlbum(models.Model):
     delete_error = models.CharField(default='无', max_length=256, null=True, blank=True, verbose_name="删除结果")
     deleted_time = models.DateTimeField(null=True, blank=True, verbose_name="删除时间")
 
+    aded = models.BooleanField(default=False, verbose_name="广告状态")
 
     class Meta:
         verbose_name = "相册图片"

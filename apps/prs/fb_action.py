@@ -1303,7 +1303,7 @@ def post_yallavip_ad():
 
     lightinalbums_all = LightinAlbum.objects.filter(lightin_spu__sellable__gt=5,lightin_spu__SPU__istartswith = "s",
                                                 lightin_spu__shopify_price__gt=30, #lightin_spu__shopify_price__lt=50,
-                                                lightin_spu__aded=False,
+                                                aded=False,
                                                 yallavip_album__page__active=True,yallavip_album__page__is_published=True,
                                                     published=True).distinct()
 
