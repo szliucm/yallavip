@@ -22,26 +22,7 @@ from fb.models import  *
 
 import  requests, json
 
-my_access_token = "EAAcGAyHVbOEBAOnk9TTo3G4ZAocALWZC0YCTdZBWgix6tSzdmM9tvLyJaUiYyx2YbPXIZA10K0Ai5A06HiBgiFpYlAbt9yFJ5naw3PZAFeQaoblpsqrtAuqLBoRiKs0TwqfngtUb2XqrkyRJoaZCEgoIWwNT0ZAeqm4HJMlqbYUQn0f0Ab5nCqw"
-def get_token(target_page,token=None):
-
-
-    url = "https://graph.facebook.com/v3.2/{}?fields=access_token".format(target_page)
-    param = dict()
-    if token is None:
-        param["access_token"] = my_access_token
-    else:
-        param["access_token"] = token
-
-    r = requests.get(url, param)
-
-
-    data = json.loads(r.text)
-    print(r, r.text)
-
-
-    # print("request response is ", data["access_token"])
-    return data["access_token"]
+from prs.fb_action import  get_token
 
 #更新相册信息
 def update_albums():
