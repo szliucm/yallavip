@@ -1241,7 +1241,9 @@ def post_yallavip_album(lightinalbum):
             params=params,
         )
     except Exception as e:
+        print(e)
         error = e.api_error_message()
+
         #如果是token的问题，就要把token暂停
         type = e.api_error_type()
         if type == "OAuthException":
