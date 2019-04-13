@@ -1286,7 +1286,7 @@ def post_yallavip_album(lightinalbum):
 
 
 
-def post_yallavip_ad():
+def prepare_yallavip_ad():
     from shop.photo_mark import lightin_mark_image_page
 
     import requests
@@ -1601,3 +1601,54 @@ def post_yallavip_ad():
 
         ad.save()
 
+#创建系统用户的密钥
+def get_appsecret_proof(msg):
+    import hashlib
+    import hmac
+    #appsecret
+    key = b'e6df363351fb5ce4b7f0080adad08a4d'
+    #token
+    #msg = b'EAAHZCz2P7ZAuQBADxdcqbOZCw8R8mKl4R4AZCTU8er02GNwzNu7Oj9ZAJZB6zxoVZBKmLZA4qZBeznC8TFcE90uZCNprKkdTUPCNGniH7q9vsALK4AW95VR2wH6oo9ypk6tjyAsqc5aFFZAgZCVCP32c7IeJcnCUsNhILrz4QqCbjA3aOoxOfcqEStoVjAg6doROP9Fbln5MjEfFczgw8PGiYr00'
+
+    h = hmac.new(key, msg, digestmod='sha256')
+    #appsecret_proof
+    print(h.hexdigest())
+    #还需要
+
+
+#原文
+
+'''
+curl -i -X POST \
+    https://graph.facebook.com/v3.2/100029952330435/access_tokens?business_app=562741177444068&scope=ads_management%2Cads_read%2Cbusiness_management%2Cmanage_pages%2Cpages_manage_cta%2Cpages_manage_instant_articles%2Cpages_show_list%2Cpublish_pages%2Cread_insights%2Cread_page_mailboxes&appsecret_proof=7f47c397a667ca645a375863fcc00df53d8bef08ae1b158e22b49b2be4c91282&access_token=
+    
+    APP_SCOPED_SYSTEM_USER_ID 100029952330435
+    business_app 562741177444068
+    scope ads_management,ads_read,business_management,manage_pages,pages_manage_cta,pages_manage_instant_articles,pages_show_list,publish_pages,read_insights,read_page_mailboxes
+
+
+
+
+获取system user token
+https://developers.facebook.com/docs/marketing-api/businessmanager/systemuser#systemuser
+
+
+import hashlib
+import hmac
+key = b'e6df363351fb5ce4b7f0080adad08a4d'
+msg = b'EAAHZCz2P7ZAuQBADxdcqbOZCw8R8mKl4R4AZCTU8er02GNwzNu7Oj9ZAJZB6zxoVZBKmLZA4qZBeznC8TFcE90uZCNprKkdTUPCNGniH7q9vsALK4AW95VR2wH6oo9ypk6tjyAsqc5aFFZAgZCVCP32c7IeJcnCUsNhILrz4QqCbjA3aOoxOfcqEStoVjAg6doROP9Fbln5MjEfFczgw8PGiYr00'
+
+h = hmac.new(key, msg, digestmod='sha256')
+print(h.hexdigest())
+
+fa8c74c300fdc57ab7128d50f96fe6b073d749f1f61292c2f27a48d84b37d99e
+
+APP_SCOPED_SYSTEM_USER_ID 100029952330435
+business_app 562741177444068
+scope ads_management,ads_read,business_management,manage_pages,pages_manage_cta,pages_manage_instant_articles,pages_show_list,publish_pages,read_insights,read_page_mailboxes
+appsecret_proof 0810bd9dce0f345ffdb7d3440dbead7c9714ba221d03a8084a42f66ae5c6db2b
+
+access_token 
+EAAHZCz2P7ZAuQBABHO6LywLswkIwvScVqBP2eF5CrUt4wErhesp8fJUQVqRli9MxspKRYYA4JVihu7s5TL3LfyA0ZACBaKZAfZCMoFDx7Tc57DLWj38uwTopJH4aeDpLdYoEF4JVXHf5Ei06p7soWmpih8BBzadiPUAEM8Fw4DuW5q8ZAkSc07PrAX4pGZA4zbSU70ZCqLZAMTQZDZD
+
+'''

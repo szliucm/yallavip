@@ -1963,27 +1963,3 @@ class SysConfigAdmin(object):
     ordering = []
 
 
-'''
-获取system user token
-https://developers.facebook.com/docs/marketing-api/businessmanager/systemuser#systemuser
-
-
-import hashlib
-import hmac
-key = b'e6df363351fb5ce4b7f0080adad08a4d'
-msg = b'EAAHZCz2P7ZAuQBADxdcqbOZCw8R8mKl4R4AZCTU8er02GNwzNu7Oj9ZAJZB6zxoVZBKmLZA4qZBeznC8TFcE90uZCNprKkdTUPCNGniH7q9vsALK4AW95VR2wH6oo9ypk6tjyAsqc5aFFZAgZCVCP32c7IeJcnCUsNhILrz4QqCbjA3aOoxOfcqEStoVjAg6doROP9Fbln5MjEfFczgw8PGiYr00'
-        
-h = hmac.new(key, msg, digestmod='sha256')
-print(h.hexdigest())
-
-fa8c74c300fdc57ab7128d50f96fe6b073d749f1f61292c2f27a48d84b37d99e
-
-APP_SCOPED_SYSTEM_USER_ID 100029952330435
-business_app 562741177444068
-scope ads_management,ads_read,business_management,manage_pages,pages_manage_cta,pages_manage_instant_articles,pages_show_list,publish_pages,read_insights,read_page_mailboxes
-appsecret_proof 0810bd9dce0f345ffdb7d3440dbead7c9714ba221d03a8084a42f66ae5c6db2b
-
-access_token 
-EAAHZCz2P7ZAuQBABHO6LywLswkIwvScVqBP2eF5CrUt4wErhesp8fJUQVqRli9MxspKRYYA4JVihu7s5TL3LfyA0ZACBaKZAfZCMoFDx7Tc57DLWj38uwTopJH4aeDpLdYoEF4JVXHf5Ei06p7soWmpih8BBzadiPUAEM8Fw4DuW5q8ZAkSc07PrAX4pGZA4zbSU70ZCqLZAMTQZDZD
-
-'''
