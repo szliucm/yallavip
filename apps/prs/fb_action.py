@@ -1535,7 +1535,7 @@ def combo_ad_image(spu_ims, spus_name):
 
 def post_yallavip_ad():
 
-    active_tokens = "EAAcGAyHVbOEBAG3h7DlmO8mo0LQpZCkDCl1oI5rD2fDfyr6ZAPCk3YNbyuPKKITCPfktEsfn0DerQyR9MJj2JUkt0FmDxUnRpUZB2VsRJ9ZBOPypXXGLKq4iuNLpCCRs9A75dCXZBSaRN9CyTCcOHilWKN9CJZA2vSryzytZCSvHOQhF9ZAsZBCuK"
+    active_tokens = "EAAHZCz2P7ZAuQBANFqtKylEZC24rtUcB7AfBOjIzLiTChMzNtwyQBuYmEYNgIvKFZBmSZA6f0MwuRc6LxAfoZBjSBZC4eGtcSConoxdszZB6q2uRuzoinYvy0psXhgysIumwiMoZAw0tOKPQZAizQ7wQmYvcj2m1hm7ldgwt7Cn1LugUL9vkJrZBtd6"
     adobjects = FacebookAdsApi.init(access_token=active_tokens, debug=True)
     adacount_no = "act_1903121643086425"
     adset_no = "23843303803340510"
