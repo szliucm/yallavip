@@ -4620,16 +4620,16 @@ def cal_price():
 
 
 @shared_task
-def sync_yallavip_album(album_no=None):
+def sync_yallavip_album(album_id=None):
     from django.db.models import Min
 
     lightinalbums_all = LightinAlbum.objects.filter(
         Q(lightin_spu__sellable__gt=0) | Q(lightin_sku__o_sellable__gt=0),
         published=False, publish_error="无", material=True, yallavip_album__active=True,yallavip_album__page__active=True)
 
-    if album_name:
+    if album_id:
         lightinalbums_all = lightinalbums_all.filter(
-            myalbum__album_no=album_no)
+            myalbum__pk=album_id)
 
     albums = lightinalbums_all.values_list('yallavip_album').distinct()
     print("有%s个相册待更新" % (albums.count()))
