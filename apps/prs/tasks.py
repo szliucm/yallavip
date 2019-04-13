@@ -4620,19 +4620,16 @@ def cal_price():
 
 
 @shared_task
-def sync_yallavip_album(album_name=None):
+def sync_yallavip_album(album_no=None):
     from django.db.models import Min
 
-    # 之前只考虑一次统一发一个批次，但因为各个相册建立的时间不同，批次差异很大，所以必须按相册找到当前需要发的批次
+    lightinalbums_all = LightinAlbum.objects.filter(
+        Q(lightin_spu__sellable__gt=0) | Q(lightin_sku__o_sellable__gt=0),
+        published=False, publish_error="无", material=True, yallavip_album__active=True,yallavip_album__page__active=True)
+
     if album_name:
-        lightinalbums_all = LightinAlbum.objects.filter(
-            Q(lightin_spu__sellable__gt=0) | Q(lightin_sku__o_sellable__gt=0),
-            published=False, publish_error="无",
-            material=True, myalbum__name__contains=album_name)
-    else:
-        lightinalbums_all = LightinAlbum.objects.filter(
-            Q(lightin_spu__sellable__gt=0) | Q(lightin_sku__o_sellable__gt=0),
-            published=False, publish_error="无", material=True, yallavip_album__active=True,yallavip_album__page__active=True)
+        lightinalbums_all = lightinalbums_all.filter(
+            myalbum__album_no=album_no)
 
     albums = lightinalbums_all.values_list('yallavip_album').distinct()
     print("有%s个相册待更新" % (albums.count()))
