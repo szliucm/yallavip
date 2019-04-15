@@ -1292,7 +1292,7 @@ def post_yallavip_album(lightinalbum):
 
 
 
-def prepare_yallavip_ad():
+def prepare_yallavip_ad(pageno=None):
     from shop.photo_mark import lightin_mark_image_page
 
     import requests
@@ -1307,6 +1307,8 @@ def prepare_yallavip_ad():
                                                 aded=False,
                                                 yallavip_album__page__active=True,yallavip_album__page__is_published=True,
                                                     published=True).distinct()
+    if pageno:
+        lightinalbums_all.filter(yallavip_album__page__page_no=pageno)
 
     limit = 10
     n = 1
@@ -1351,51 +1353,7 @@ def prepare_yallavip_ad():
             lightinalbum.save()
 
 
-        '''
-        # 上传到adimage
-        fields = [
-        ]
 
-        # link ad
-        params = {
-            'name': page_no + '_' + spus_name,
-            'object_story_spec': {'page_id': page_no,
-                                  'link_data': {"call_to_action": {"type": "MESSAGE_PAGE",
-                                                                   "value": {"app_destination": "MESSENGER"}},
-                                                # "image_hash": adimagehash,
-                                                "picture": image_marked_url,
-                                                "link": "https://facebook.com/%s" % (page_no),
-
-                                                "message": message,
-                                                "name": "Yallavip.com",
-                                                "description": "Online Flash Sale Everyhour",
-                                                "use_flexible_image_aspect_ratio": True, }},
-        }
-        adCreative = AdAccount(adacount_no).create_ad_creative(
-            fields=fields,
-            params=params,
-        )
-
-        print("adCreative is ", adCreative)
-
-        fields = [
-        ]
-        params = {
-            'name': page_no + '_' + spus_name,
-            'adset_id': adset_no,
-            'creative': {'creative_id': adCreative["id"]},
-            'status': 'PAUSED',
-            # "access_token": my_access_token,
-        }
-
-        ad = AdAccount(adacount_no).create_ad(
-            fields=fields,
-            params=params,
-        )
-
-        print("ad is ", ad)
-
-        '''
 
         n += 1
 
@@ -1541,7 +1499,7 @@ def combo_ad_image(spu_ims, spus_name):
 
 def post_yallavip_ad():
     #这里只有开发账号，有广告账号权限的才能用
-    active_tokens = "EAAHZCz2P7ZAuQBANFqtKylEZC24rtUcB7AfBOjIzLiTChMzNtwyQBuYmEYNgIvKFZBmSZA6f0MwuRc6LxAfoZBjSBZC4eGtcSConoxdszZB6q2uRuzoinYvy0psXhgysIumwiMoZAw0tOKPQZAizQ7wQmYvcj2m1hm7ldgwt7Cn1LugUL9vkJrZBtd6"
+    active_tokens = "EAAcGAyHVbOEBAJSZCZCUWoTevzYCHp0EKqukzVsQQAZB0ia4QZBTV2Jd55fZAZADyEmMLYN3h0yeWhnoZBczviuY5pFGRTNxXHET3kL4g4uzAuNxc4irLxNZA5VhZBBruKGvfhgUz5EZBogLEQoWGtZBmHiazs96Q9SjrQMtOl8r6CTWThiery36XZBj"
     adobjects = FacebookAdsApi.init(access_token=active_tokens, debug=True)
     adacount_no = "act_1903121643086425"
     adset_no = "23843303803340510"
