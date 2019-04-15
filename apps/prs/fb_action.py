@@ -1499,7 +1499,7 @@ def combo_ad_image(spu_ims, spus_name):
 
 def post_yallavip_ad():
     #这里只有开发账号，有广告账号权限的才能用
-    active_tokens = "EAAcGAyHVbOEBAJSZCZCUWoTevzYCHp0EKqukzVsQQAZB0ia4QZBTV2Jd55fZAZADyEmMLYN3h0yeWhnoZBczviuY5pFGRTNxXHET3kL4g4uzAuNxc4irLxNZA5VhZBBruKGvfhgUz5EZBogLEQoWGtZBmHiazs96Q9SjrQMtOl8r6CTWThiery36XZBj"
+    active_tokens = "EAAHZCz2P7ZAuQBAE1AAIkXgnrhqnnNb77Ej6YeXbo5KlluLeDxjcf3J1VHCpS6cZC4hRg6YAAFd51SYAXWyZAmbdE2dYJbZBH6v3NLr3ViCCqR0RzNfiYT41mueiyarBjy2SB9aBtQEVDY8MkwIPqHYvtzlqc0KLIonrv4LGYEz8yqFiaYfjM"
     adobjects = FacebookAdsApi.init(access_token=active_tokens, debug=True)
     adacount_no = "act_1903121643086425"
     adset_no = "23843303803340510"
