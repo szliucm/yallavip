@@ -596,6 +596,9 @@ class LightinAlbum(models.Model):
     material =  models.BooleanField(default=False, verbose_name="素材准备")
     material_error = models.CharField(default='无',max_length=256, null=True, blank=True, verbose_name="素材错误")
 
+    material = models.BooleanField(default=False, verbose_name="素材准备")
+    material_error = models.CharField(default='无', max_length=256, null=True, blank=True, verbose_name="素材错误")
+
     published = models.BooleanField(default=False, verbose_name="发布状态")
     publish_error = models.CharField(default='无',max_length=256, null=True, blank=True, verbose_name="发布错误(或图片数量)")
     published_time = models.DateTimeField(null=True, blank=True, verbose_name="发布时间")

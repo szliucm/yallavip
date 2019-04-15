@@ -4491,6 +4491,53 @@ def prepare_yallavip_photoes():
             #print(product_list)
             LightinAlbum.objects.bulk_create(product_list)
 
+@shared_task
+def prepare_yallavip_album_source():
+    from django.db.models import Max
+    from shop.photo_mark import yallavip_mark_image
+
+
+    lightinalbums_all = LightinAlbum.objects.filter(sourced=False,source_error="",yallavip_album__isnull = False )
+
+    albums_list = lightinalbums_all.values_list('yallavip_album', flat=True).distinct()
+    print("albums_list is ", albums_list)
+
+    for album in albums_list:
+        lightinalbums = lightinalbums_all.filter(yallavip_album=album)
+        print(lightinalbums)
+
+        for lightinalbum in lightinalbums:
+            spu = lightinalbum.lightin_spu
+            sku = lightinalbum.lightin_sku
+
+
+            if sku:
+
+                lightinalbum.source_image=sku.image_marked
+                lightinalbum.sourced=True
+
+
+            elif spu:
+
+                # 准备图片
+                # 先取第一张，以后考虑根据实际有库存的sku的图片（待优化）
+                if spu.images_dict:
+                    image = json.loads(spu.images_dict).values()
+                    if image and len(image) > 0:
+                        a = "/"
+                        image_split = list(image)[0].split(a)
+
+                        image_split[4] = '800x800'
+
+                        lightinalbum.source_image = a.join(image_split)
+                        lightinalbum.sourced = True
+
+                else:
+                    print(album, spu.SPU, "没有图片")
+                    lightinalbum.source_error = "没有图片"
+
+            lightinalbum.save()
+
 
 @shared_task
 def prepare_yallavip_album_material():
