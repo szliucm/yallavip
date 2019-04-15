@@ -1328,7 +1328,7 @@ def prepare_yallavip_ad(pageno=None):
 
         spus_name = '[' + ','.join(spus) + ']'
 
-        image_marked_url = combo_ad_image(spu_ims, spus_name)
+        image_marked_url = combo_ad_image(spu_ims, spus_name, yallavip_album.)
         if not image_marked_url:
             print("没有生成广告图片")
             continue
@@ -1364,7 +1364,7 @@ def prepare_yallavip_ad(pageno=None):
             time.sleep(10)
 
 
-def combo_ad_image(spu_ims, spus_name):
+def combo_ad_image(spu_ims, spus_name,album_name):
     from shop.photo_mark import clipResizeImg_new, get_remote_image
     import os
     from django.conf import settings
@@ -1394,12 +1394,39 @@ def combo_ad_image(spu_ims, spus_name):
     if item_count == 4:
         # 四张图
         # 先做个1080x1080的画布
+        '''
         layer = Image.new("RGB", (1080, 1080), "red")
 
         layer.paste(clipResizeImg_new(ims[0], 540, 540), (0, 0))
         layer.paste(clipResizeImg_new(ims[1], 540, 540), (0, 540))
         layer.paste(clipResizeImg_new(ims[2], 540, 540), (540, 0))
         layer.paste(clipResizeImg_new(ims[3], 540, 540), (540, 540))
+        '''
+
+        layer = Image.new("RGB", (1080, 1130), "red")
+
+        layer.paste(clipResizeImg_new(ims[0], 540, 540), (0, 0))
+        layer.paste(clipResizeImg_new(ims[1], 540, 540), (0, 540))
+        layer.paste(clipResizeImg_new(ims[2], 540, 540), (540, 0))
+        layer.paste(clipResizeImg_new(ims[3], 540, 540), (540, 540))
+
+        # 最下面写相册名字
+        font = ImageFont.truetype(FONT, 35)
+        draw1 = ImageDraw.Draw(layer)
+
+        lw, lh = layer.size
+        x = 0
+        y = lh - 50
+        # 写货号
+        draw1.rectangle((x + 10, y + 5, x + 10 + length(album_name)*5 , y + 45), fill='yellow')
+        draw1.text((x + 30, y + 10), album_name, font=font,
+                   fill="black")  # 设置文字位置/内容/颜色/字体
+
+        # 写包邮
+        promote = "Free Shipping"
+        draw1.rectangle((x + 50 + length(album_name)*5, y + 55, x + 150 + length(album_name)*5, y + 95), fill='yellow')
+        draw1.text((x + 60 + length(album_name)*5, y + 60), promote, font=font,
+                   fill=(0, 0, 0))  # 设置文字位置/内容/颜色/字体
 
     elif item_count == 5:
         # 五张图
