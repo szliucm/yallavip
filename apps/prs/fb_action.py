@@ -1395,7 +1395,7 @@ def combo_ad_image(spu_ims, spus_name,album_name):
     if item_count == 4:
         # 四张图
         # 先做个1080x1080的画布
-        '''
+
         layer = Image.new("RGB", (1080, 1080), "red")
 
         layer.paste(clipResizeImg_new(ims[0], 540, 540), (0, 0))
@@ -1428,7 +1428,7 @@ def combo_ad_image(spu_ims, spus_name,album_name):
         draw1.rectangle((x + 50 + length(album_name)*5, y + 55, x + 150 + length(album_name)*5, y + 95), fill='yellow')
         draw1.text((x + 60 + length(album_name)*5, y + 60), promote, font=font,
                    fill=(0, 0, 0))  # 设置文字位置/内容/颜色/字体
-
+       '''
     elif item_count == 5:
         # 五张图
         # 先做个900x1000的画布
