@@ -4498,12 +4498,15 @@ def prepare_yallavip_photoes(page_no=None):
             LightinAlbum.objects.bulk_create(product_list)
 
 @shared_task
-def prepare_yallavip_album_source():
+def prepare_yallavip_album_source(page_no=None):
     from django.db.models import Max
     from shop.photo_mark import yallavip_mark_image
 
 
     lightinalbums_all = LightinAlbum.objects.filter(sourced=False,source_error="",yallavip_album__isnull = False )
+    if page_no:
+        lightinalbums_all.filter(yallavip_album__page__page_no=page_no)
+
 
     albums_list = lightinalbums_all.values_list('yallavip_album', flat=True).distinct()
     print("albums_list is ", albums_list)
