@@ -2100,7 +2100,7 @@ def get_barcodes(sku, quantity, price):
     print("quantity", quantity)
     if quantity > 0:
 
-        error = sku + "  缺货"
+        error = str(sku) + "  缺货"
         return None, error
     else:
 
