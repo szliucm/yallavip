@@ -4396,11 +4396,14 @@ def update_yallavip_album(page_no=None):
 
 
 @shared_task
-def prepare_yallavip_photoes():
+def prepare_yallavip_photoes(page_no=None):
     from django.db import connection, transaction
 
     # 找出所有活跃的page
     pages = MyPage.objects.filter(active=True)
+    if page_no:
+        pages = pages.filter(page_no=page_no)
+
     for page in pages:
         # 遍历page对应的相册
         print("page is ", page)
