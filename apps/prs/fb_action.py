@@ -40,6 +40,11 @@ APP_SCOPED_SYSTEM_USER_ID=100029952330435
 #my_access_token = "EAAcGAyHVbOEBAKgfka7uxoKnH3DnKcfuWZCnczE0bXCLaeiN2kY19woN24svib5TIlp3whXoV9ZCJF27UvZCmyoUZBwkVP6HlpWnfKX1eGyOd8FEzmJVjVZBhYRbgpEv1kNVbCRMJllYzVhOKs60N0yZBX9NXsEtpBvZCdXwTfObCzZAZAkCbqi6e8S0OvZASqrjhAlG627U2EggZDZD"
 def get_token(target_page,token=None):
 
+    pages = Page.objects.filter(page_no = target_page, active=True)
+    if not pages:
+        print ("page 不存在或者失活")
+        return  None,None
+
     active_tokens = Token.objects.filter(active=True)
     # 先找page对应的token，如果没有可用的，就从还没有page占用的token里取一个
     my_access_tokens = active_tokens.filter(page_no=target_page)
