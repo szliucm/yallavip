@@ -40,7 +40,7 @@ APP_SCOPED_SYSTEM_USER_ID=100029952330435
 #my_access_token = "EAAcGAyHVbOEBAKgfka7uxoKnH3DnKcfuWZCnczE0bXCLaeiN2kY19woN24svib5TIlp3whXoV9ZCJF27UvZCmyoUZBwkVP6HlpWnfKX1eGyOd8FEzmJVjVZBhYRbgpEv1kNVbCRMJllYzVhOKs60N0yZBX9NXsEtpBvZCdXwTfObCzZAZAkCbqi6e8S0OvZASqrjhAlG627U2EggZDZD"
 def get_token(target_page,token=None):
 
-    pages = Page.objects.filter(page_no = target_page, active=True)
+    pages = MyPage.objects.filter(page_no = target_page, active=True)
     if not pages:
         print ("page 不存在或者失活")
         return  None,None
