@@ -594,7 +594,7 @@ class LightinAlbum(models.Model):
     image_marked = models.CharField(default='',max_length=100, null=True, blank=True, verbose_name="水印图")
 
     sourced = models.BooleanField(default=False, verbose_name="资源准备")
-    source_error = models.CharField(default='无', max_length=256, null=True, blank=True, verbose_name="资源错误")
+    source_error = models.CharField(default='', max_length=256, null=True, blank=True, verbose_name="资源错误")
     source_image = models.CharField(default='', max_length=100, null=True, blank=True, verbose_name="资源图")
 
     material =  models.BooleanField(default=False, verbose_name="素材准备")
