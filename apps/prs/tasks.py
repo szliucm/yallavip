@@ -2098,7 +2098,7 @@ def get_barcodes(sku, quantity, price):
     # 需求没有被满足，标识订单缺货
     print("quantity", quantity)
     if quantity > 0:
-        error = sku.SKU + "  缺货"
+        error = sku + "  缺货"
         return None, error
     else:
 
