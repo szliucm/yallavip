@@ -4549,13 +4549,16 @@ def prepare_yallavip_album_source(page_no=None):
 
 
 @shared_task
-def prepare_yallavip_album_material():
+def prepare_yallavip_album_material(page_no=None):
     from django.db.models import Max
     from shop.photo_mark import yallavip_mark_image
    #每次每个相册处理最多100张图片
 
     lightinalbums_all = LightinAlbum.objects.filter(published=False, publish_error="无", material=False,
                                                     material_error="无",yallavip_album__isnull = False )
+    if page_no:
+        lightinalbums_all.filter(yallavip_album__page__page_no=page_no)
+
 
     albums_list = lightinalbums_all.values_list('yallavip_album', flat=True).distinct()
     print("albums_list is ", albums_list)
