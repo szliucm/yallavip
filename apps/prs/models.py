@@ -593,11 +593,14 @@ class LightinAlbum(models.Model):
     name  = models.TextField(default='', null=True, blank=True, verbose_name="文案")
     image_marked = models.CharField(default='',max_length=100, null=True, blank=True, verbose_name="水印图")
 
+    sourced = models.BooleanField(default=False, verbose_name="资源准备")
+    source_error = models.CharField(default='无', max_length=256, null=True, blank=True, verbose_name="资源错误")
+    source_image = models.CharField(default='', max_length=100, null=True, blank=True, verbose_name="资源图")
+
     material =  models.BooleanField(default=False, verbose_name="素材准备")
     material_error = models.CharField(default='无',max_length=256, null=True, blank=True, verbose_name="素材错误")
 
-    material = models.BooleanField(default=False, verbose_name="素材准备")
-    material_error = models.CharField(default='无', max_length=256, null=True, blank=True, verbose_name="素材错误")
+
 
     published = models.BooleanField(default=False, verbose_name="发布状态")
     publish_error = models.CharField(default='无',max_length=256, null=True, blank=True, verbose_name="发布错误(或图片数量)")
