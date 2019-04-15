@@ -900,7 +900,7 @@ class LightinAlbumAdmin(object):
 
     sellable.short_description = "sellable"
 
-    list_display = ["lightin_spu","sellable",  "myalbum","page","batch_no","name","photo", "fb_id", "published","publish_error","published_time",]
+    list_display = ["lightin_spu","sellable",  "myalbum","page","batch_no","name","source_photo", "fb_id", "published","publish_error","published_time",]
     # 'sku_name','img',
 
     search_fields = ["lightin_spu__SPU","myalbum__name","name",]
