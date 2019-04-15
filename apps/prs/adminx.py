@@ -876,6 +876,20 @@ class LightinAlbumAdmin(object):
 
     photo.short_description = "图片"
 
+    def source_photo(self, obj):
+
+        try:
+            img = '<a><img src="%s" width="100px"></a>' % (obj.source_image)
+        except Exception as e:
+            print("获取图片出错", e)
+            img = "no photo"
+
+        return mark_safe(img)
+
+
+
+    source_photo.short_description = "源图片"
+
     def page(self, obj):
         return  obj.myalbum.mypage
 
