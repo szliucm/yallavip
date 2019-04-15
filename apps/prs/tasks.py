@@ -2068,7 +2068,7 @@ def get_barcodes(sku, quantity, price):
     inventory_list = []
     lightin_barcodes = Lightin_barcode.objects.filter(SKU=sku)
 
-    print ("get_barcodes",  sku, type(sky))
+    print ("get_barcodes",  sku, type(sku))
     if lightin_barcodes is None:
         print("找不到映射，也就意味着无法管理库存！")
         # 需要标识为异常订单
