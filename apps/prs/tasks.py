@@ -4631,7 +4631,7 @@ def sync_yallavip_album(album_id=None):
 
     if album_id:
         lightinalbums_all = lightinalbums_all.filter(
-            myalbum__pk=album_id)
+            yallavip_album__album__album_no=album_id)
 
     albums = lightinalbums_all.values_list('yallavip_album').distinct()
     print("有%s个相册待更新" % (albums.count()))
