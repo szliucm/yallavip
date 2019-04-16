@@ -4450,7 +4450,7 @@ def prepare_yallavip_photoes(page_no=None):
 
             # 根据品类找已经上架到shopify 但还未添加到相册的产品
 
-            print(con)
+
             product_list = []
 
             if is_sku:
@@ -4484,6 +4484,15 @@ def prepare_yallavip_photoes(page_no=None):
                                                     lightin_spu__isnull=False).values_list(
                                                     'lightin_spu__id',
                                                     flat=True)).distinct()
+
+                a = Lightin_SPU.objects.filter(con, published=True,sellable__gt=0)
+                b =  LightinAlbum.objects.filter(
+                                                    yallavip_album__pk=album.pk,
+                                                    lightin_spu__isnull=False).values_list(
+                                                    'lightin_spu__id',
+                                                    flat=True)
+
+                print("~~~~~~~~~~~~~",a,b)
 
                 for product_to_add in products_to_add:
                     product = LightinAlbum(
