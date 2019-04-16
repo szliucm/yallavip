@@ -1292,7 +1292,7 @@ def post_yallavip_album(lightinalbum):
 
 
 
-def prepare_yallavip_ad(pageno=None):
+def prepare_yallavip_ad(page_no=None):
     from shop.photo_mark import lightin_mark_image_page
 
     import requests
@@ -1308,7 +1308,7 @@ def prepare_yallavip_ad(pageno=None):
                                                 yallavip_album__page__active=True,yallavip_album__page__is_published=True,
                                                     published=True).distinct()
     if pageno:
-        lightinalbums_all.filter(yallavip_album__page__page_no=pageno)
+        lightinalbums_all.filter(yallavip_album__page__page_no=page_no)
 
     limit = 10
     n = 1
