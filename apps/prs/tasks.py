@@ -4454,12 +4454,12 @@ def prepare_yallavip_photoes(page_no=None):
             product_list = []
 
             if is_sku:
-                skus_to_add = Lightin_SKU.objects.filter(con, listed=True, locked=True, imaged=True,o_sellable__gt=0).exclude(id__in=
-                LightinAlbum.objects.filter(
-                    yallavip_album__pk=album.pk,
-                    lightin_sku__isnull=False).values_list(
-                    'lightin_sku__id',
-                    flat=True)).distinct()
+                skus_to_add = Lightin_SKU.objects.filter(con, listed=True, locked=True, imaged=True,o_sellable__gt=0).\
+                    exclude(id__in = LightinAlbum.objects.filter(
+                                            yallavip_album__pk=album.pk,
+                                            lightin_sku__isnull=False).values_list(
+                                            'lightin_sku__id',
+                                            flat=True)).distinct()
 
                 for sku_to_add in skus_to_add:
 
@@ -4485,26 +4485,14 @@ def prepare_yallavip_photoes(page_no=None):
                                                     'lightin_spu__id',
                                                     flat=True)).distinct()
 
-                a = Lightin_SPU.objects.filter(con, published=True,sellable__gt=0)
-                b =  LightinAlbum.objects.filter(
-                                                    yallavip_album__pk=album.pk,
-                                                    lightin_spu__isnull=False).values_list(
-                                                    'lightin_spu__id',
-                                                    flat=True)
-
-                print("~~~~~~~~~~~~~",con, a,b)
-
                 for product_to_add in products_to_add:
-                    product = LightinAlbum(
-                        lightin_spu=product_to_add,
-                        yallavip_album=album,
-                        name = product_to_add.title
+                    obj, created = LightinAlbum.objects.update_or_create(lightin_spu=product_to_add,
+                                                                         yallavip_album=album,
+                                                                   defaults={'name': product_to_add.title
 
-                    )
-                    product_list.append(product)
+                                                                             }
+                                                                   )
 
-            #print(product_list)
-            LightinAlbum.objects.bulk_create(product_list)
 
 @shared_task
 def prepare_yallavip_album_source(page_no=None):
