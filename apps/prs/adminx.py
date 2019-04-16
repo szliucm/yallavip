@@ -854,7 +854,7 @@ class YallavipAlbumAdmin(object):
     list_filter = [ "page","rule", "published", "deleted", "active",]
     list_editable = []
     readonly_fields = ()
-    actions = []
+    actions = ["prepare_yallavip_ad",]
 
     def prepare_yallavip_ad(self, request, queryset):
         from prs.fb_action import  prepare_yallavip_ad_album
