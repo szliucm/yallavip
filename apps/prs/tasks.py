@@ -4457,9 +4457,7 @@ def prepare_yallavip_photoes(page_no=None):
                 skus_to_add = Lightin_SKU.objects.filter(con, listed=True, locked=True, imaged=True,o_sellable__gt=0).\
                     exclude(id__in = LightinAlbum.objects.filter(
                                             yallavip_album__pk=album.pk,
-                                            lightin_sku__isnull=False).values_list(
-                                            'lightin_sku__id',
-                                            flat=True)).distinct()
+                                            lightin_sku__isnull=False).values_list('lightin_sku__id',flat=True)).distinct()
 
                 for sku_to_add in skus_to_add:
 
