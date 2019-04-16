@@ -1525,14 +1525,19 @@ def combo_ad_image(spu_ims, spus_name,album_name):
 
     return  destination_url
 
-def post_yallavip_ad():
+def post_yallavip_ad(page_no= None):
     active_tokens = "EAAHZCz2P7ZAuQBAE1AAIkXgnrhqnnNb77Ej6YeXbo5KlluLeDxjcf3J1VHCpS6cZC4hRg6YAAFd51SYAXWyZAmbdE2dYJbZBH6v3NLr3ViCCqR0RzNfiYT41mueiyarBjy2SB9aBtQEVDY8MkwIPqHYvtzlqc0KLIonrv4LGYEz8yqFiaYfjM"
     adobjects = FacebookAdsApi.init(access_token=active_tokens, debug=True)
     adacount_no = "act_1903121643086425"
-    adset_no = "23843303803340510"
-
+    #yallavip 加速
+    #adset_no = "23843303803340510"
+    # yallavip mall  匀速
+    adset_no = "23843310378170510"
 
     ads = YallavipAd.objects.filter(active=True, published=False )
+    if page_no:
+        ads.filter(page_no=page_no)
+
     page_nos = ads.values_list("yallavip_album__page__page_no",flat=True)
     for page_no in page_nos:
         ad = ads.filter(yallavip_album__page__page_no = page_no).first()
