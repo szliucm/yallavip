@@ -856,6 +856,19 @@ class YallavipAlbumAdmin(object):
     readonly_fields = ()
     actions = []
 
+    def prepare_yallavip_ad(self, request, queryset):
+        from prs.fb_action import  prepare_yallavip_ad_album
+        lightinalbums_all = LightinAlbum.objects.filter(lightin_spu__sellable__gt=0, lightin_spu__SPU__istartswith="s",
+                                                        lightin_spu__shopify_price__gt=30,
+                                                        # lightin_spu__shopify_price__lt=50,
+                                                        aded=False,
+                                                        yallavip_album__page__active=True,
+                                                        yallavip_album__page__is_published=True,
+                                                        published=True).distinct()
+        for yallavip_album in queryset:
+            prepare_yallavip_ad_album(yallavip_album, lightinalbums_all)
+
+
 
 @xadmin.sites.register(LightinAlbum)
 class LightinAlbumAdmin(object):

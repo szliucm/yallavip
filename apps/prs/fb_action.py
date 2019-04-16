@@ -1316,45 +1316,7 @@ def prepare_yallavip_ad(page_no=None):
     yallavip_albums = lightinalbums_all.values_list("yallavip_album",flat=True).distinct()
     for yallavip_album in yallavip_albums:
 
-        lightinalbums = lightinalbums_all.filter(yallavip_album=yallavip_album).order_by("?")[:4]
-
-        spu_ims = lightinalbums.values_list("image_marked",flat=True)
-        spus = lightinalbums.values_list("lightin_spu__handle",flat=True)
-        if spus.count() <4:
-            print ("数量不够", spus.count())
-            continue
-
-        #把spus的图拼成一张
-
-        spus_name = ','.join(spus)
-        yallavip_album_instance = YallavipAlbum.objects.get(pk=yallavip_album)
-
-        image_marked_url = combo_ad_image(spu_ims, spus_name, yallavip_album_instance.album.name)
-        if not image_marked_url:
-            print("没有生成广告图片")
-            continue
-        message = "💋💋Flash Sale ！！！💋💋" \
-               "90% off！Lowest Price Online ！！！" \
-               "🥳🥳🥳 10:00-22:00 Everyday ,Update 100 New items Every Hour !! The quantity is limited !!😇😇" \
-               "All goods are in Riyadh stock,It will be delivered to you in 3-5 days! ❣️❣️" \
-               "How to order?Pls choice the product that you like it , then send us the picture, we will order it for you!🤩🤩"
-        message = message + "\n" + spus_name
-
-
-        obj, created = YallavipAd.objects.update_or_create(yallavip_album=yallavip_album_instance,
-                                                           spus_name = spus_name,
-                                                       defaults={'image_marked_url': image_marked_url,
-                                                                 'message': message,
-                                                                 'active': True,
-
-                                                                 }
-                                                           )
-        for lightinalbum in lightinalbums:
-            lightinalbum.aded=True
-            lightinalbum.save()
-
-
-
+        prepare_yallavip_ad_album(yallavip_album, lightinalbums_all)
 
         n += 1
 
@@ -1363,6 +1325,45 @@ def prepare_yallavip_ad(page_no=None):
         else:
 
             time.sleep(10)
+
+
+def prepare_yallavip_ad_album(yallavip_album, lightinalbums_all):
+    lightinalbums = lightinalbums_all.filter(yallavip_album=yallavip_album).order_by("?")[:4]
+
+    spu_ims = lightinalbums.values_list("image_marked", flat=True)
+    spus = lightinalbums.values_list("lightin_spu__handle", flat=True)
+    if spus.count() < 4:
+        print ("数量不够", spus.count())
+        return
+
+    # 把spus的图拼成一张
+
+    spus_name = ','.join(spus)
+    yallavip_album_instance = YallavipAlbum.objects.get(pk=yallavip_album)
+
+    image_marked_url = combo_ad_image(spu_ims, spus_name, yallavip_album_instance.album.name)
+    if not image_marked_url:
+        print("没有生成广告图片")
+        continue
+    message = "💋💋Flash Sale ！！！💋💋" \
+              "90% off！Lowest Price Online ！！！" \
+              "🥳🥳🥳 10:00-22:00 Everyday ,Update 100 New items Every Hour !! The quantity is limited !!😇😇" \
+              "All goods are in Riyadh stock,It will be delivered to you in 3-5 days! ❣️❣️" \
+              "How to order?Pls choice the product that you like it , then send us the picture, we will order it for you!🤩🤩"
+    message = message + "\n" + spus_name
+
+    obj, created = YallavipAd.objects.update_or_create(yallavip_album=yallavip_album_instance,
+                                                       spus_name=spus_name,
+                                                       defaults={'image_marked_url': image_marked_url,
+                                                                 'message': message,
+                                                                 'active': True,
+
+                                                                 }
+                                                       )
+    for lightinalbum in lightinalbums:
+        lightinalbum.aded = True
+        lightinalbum.save()
+
 
 
 def combo_ad_image(spu_ims, spus_name,album_name):
