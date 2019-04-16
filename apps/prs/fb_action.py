@@ -1344,7 +1344,7 @@ def prepare_yallavip_ad_album(yallavip_album, lightinalbums_all):
     image_marked_url = combo_ad_image(spu_ims, spus_name, yallavip_album_instance.album.name)
     if not image_marked_url:
         print("没有生成广告图片")
-        continue
+        return
     message = "💋💋Flash Sale ！！！💋💋" \
               "90% off！Lowest Price Online ！！！" \
               "🥳🥳🥳 10:00-22:00 Everyday ,Update 100 New items Every Hour !! The quantity is limited !!😇😇" \
