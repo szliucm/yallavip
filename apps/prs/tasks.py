@@ -4550,7 +4550,8 @@ def prepare_yallavip_album_material(page_no=None):
    #每次每个相册处理最多100张图片
 
     lightinalbums_all = LightinAlbum.objects.filter(published=False, publish_error="无", material=False,
-                                                    material_error="无",yallavip_album__isnull = False )
+                                                    material_error="无",
+                                                    yallavip_album__isnull = False,yallavip_album__active = True  )
     if page_no:
         lightinalbums_all.filter(yallavip_album__page__page_no=page_no)
 
@@ -4676,16 +4677,16 @@ def cal_price():
 
 
 @shared_task
-def sync_yallavip_album(album_id=None):
+def sync_yallavip_album(page_no=None):
     from django.db.models import Min
 
     lightinalbums_all = LightinAlbum.objects.filter(
         Q(lightin_spu__sellable__gt=0) | Q(lightin_sku__o_sellable__gt=0),
         published=False, publish_error="无", material=True, yallavip_album__active=True,yallavip_album__page__active=True)
 
-    if album_id:
+    if page_no:
         lightinalbums_all = lightinalbums_all.filter(
-            yallavip_album__album__album_no=album_id)
+            yallavip_album__page__page_no=page_no)
 
     albums = lightinalbums_all.values_list('yallavip_album').distinct()
     print("有%s个相册待更新" % (albums.count()))
@@ -4884,6 +4885,12 @@ def get_token_status():
 
         token.save()
 
+def check_ad_sellable():
+    ads = YallavipAd.objects.filter(active=True)
+
+    for ad in ads:
+        spus = Lightin_SPU.objects.filter(handle__in=ad.spus_name.split(','), sellable__gt=0)
+        print(ad.spus_name, spus.count())
 
 # 更新相册对应的主页外键
 # update fb_myalbum a , fb_mypage p set a.mypage_id = p.id where p.page_no = a.page_no

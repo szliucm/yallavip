@@ -1326,7 +1326,7 @@ def prepare_yallavip_ad(pageno=None):
 
         #把spus的图拼成一张
 
-        spus_name = '[' + ','.join(spus) + ']'
+        spus_name = ','.join(spus)
         yallavip_album_instance = YallavipAlbum.objects.get(pk=yallavip_album)
 
         image_marked_url = combo_ad_image(spu_ims, spus_name, yallavip_album_instance.album.name)
