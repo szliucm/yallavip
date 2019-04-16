@@ -4456,7 +4456,7 @@ def prepare_yallavip_photoes(page_no=None):
             if is_sku:
                 skus_to_add = Lightin_SKU.objects.filter(con, listed=True, locked=True, imaged=True,o_sellable__gt=0).exclude(id__in=
                 LightinAlbum.objects.filter(
-                    myalbum__pk=album.pk,
+                    yallavip_album__pk=album.pk,
                     lightin_sku__isnull=False).values_list(
                     'lightin_sku__id',
                     flat=True)).distinct()
@@ -4480,7 +4480,7 @@ def prepare_yallavip_photoes(page_no=None):
             else:
                 products_to_add = Lightin_SPU.objects.filter(con, published=True,sellable__gt=0).exclude(id__in=
                                                 LightinAlbum.objects.filter(
-                                                    myalbum__pk=album.pk,
+                                                    yallavip_album__pk=album.pk,
                                                     lightin_spu__isnull=False).values_list(
                                                     'lightin_spu__id',
                                                     flat=True)).distinct()
