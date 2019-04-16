@@ -4416,7 +4416,7 @@ def prepare_yallavip_photoes(page_no=None):
 
             # 拼接相册的筛选产品的条件
             q_cate = Q()
-            q_cate.connector = 'AND'
+            q_cate.connector = 'OR'
             if rule.cates:
                 if rule.cates == "Combo":
                     is_sku = True
