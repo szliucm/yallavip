@@ -1327,8 +1327,8 @@ def prepare_yallavip_ad(page_no=None):
             time.sleep(10)
 
 
-def prepare_yallavip_ad_album(yallavip_album, lightinalbums_all):
-    lightinalbums = lightinalbums_all.filter(yallavip_album=yallavip_album).order_by("?")[:4]
+def prepare_yallavip_ad_album(yallavip_album_pk, lightinalbums_all):
+    lightinalbums = lightinalbums_all.filter(yallavip_album__pk=yallavip_album_pk).order_by("?")[:4]
 
     spu_ims = lightinalbums.values_list("image_marked", flat=True)
     spus = lightinalbums.values_list("lightin_spu__handle", flat=True)
@@ -1339,7 +1339,7 @@ def prepare_yallavip_ad_album(yallavip_album, lightinalbums_all):
     # 把spus的图拼成一张
 
     spus_name = ','.join(spus)
-    yallavip_album_instance = YallavipAlbum.objects.get(pk=yallavip_album)
+    yallavip_album_instance = YallavipAlbum.objects.get(pk=yallavip_album_pk)
 
     image_marked_url = combo_ad_image(spu_ims, spus_name, yallavip_album_instance.album.name)
     if not image_marked_url:

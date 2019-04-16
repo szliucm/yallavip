@@ -866,7 +866,7 @@ class YallavipAlbumAdmin(object):
                                                         yallavip_album__page__is_published=True,
                                                         published=True).distinct()
         for yallavip_album in queryset:
-            prepare_yallavip_ad_album(yallavip_album, lightinalbums_all)
+            prepare_yallavip_ad_album(yallavip_album.pk, lightinalbums_all)
 
 
 
