@@ -4492,7 +4492,7 @@ def prepare_yallavip_photoes(page_no=None):
                                                     'lightin_spu__id',
                                                     flat=True)
 
-                print("~~~~~~~~~~~~~",a,b)
+                print("~~~~~~~~~~~~~",con, a,b)
 
                 for product_to_add in products_to_add:
                     product = LightinAlbum(
