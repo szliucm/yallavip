@@ -211,7 +211,7 @@ def batch_update_adaccount():
     MyAdAccount.objects.update(active=False)
     for adaccount in adaccounts:
         print(adaccount)
-        obj, created = MyAdAccount.objects.update_or_create(adaccout_no=adaccount["id"],
+        obj, created = MyAdAccount.objects.update_or_create(adaccount_no=adaccount["id"],
                                                         defaults={
                                                             'account_status': adaccount.get("account_status"),
                                                             'name': adaccount.get("name"),
@@ -243,8 +243,8 @@ def get_adaccount_ads(adaccount):
         #'effective_status': ["ACTIVE"," PAUSED"," DELETED"," PENDING_REVIEW"," DISAPPROVED"," PREAPPROVED"," PENDING_BILLING_INFO"," CAMPAIGN_PAUSED"," ARCHIVED"," ADSET_PAUSED"," WITH_ISSUES",],
     }
 
-    adaccout_no = "act_"+adaccount.adaccout_no
-    ads = AdAccount(adaccout_no).get_ads(fields=fields, params=params, )
+    adaccount_no = "act_"+adaccount.adaccount_no
+    ads = AdAccount(adaccount_no).get_ads(fields=fields, params=params, )
 
     # 重置原有ad信息为不活跃
     MyAd.objects.update(active=False)

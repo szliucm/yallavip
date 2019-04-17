@@ -311,7 +311,7 @@ class MyPageAdmin(object):
         # print("data is ",data)
 
         for ad in data["data"]:
-            obj, created = MyAdAccount.objects.update_or_create(adaccout_no=ad["id"],
+            obj, created = MyAdAccount.objects.update_or_create(adaccount_no=ad["id"],
                                                            defaults={'account_status': ad["account_status"],
                                                                      'name': ad["name"],
                                                                      }
@@ -395,8 +395,8 @@ class MyFeedAdmin(object):
 @xadmin.sites.register(MyAdAccount)
 class MyAdAccountAdmin(object):
 
-    list_display = [ "adaccout_no",'name','account_status' ]
-    search_fields = ['adaccout_no', ]
+    list_display = [ "adaccount_no",'name','account_status' ]
+    search_fields = ['adaccount_no', ]
     actions = [ "batch_update_campaigns",'create_campaign']
     list_filter = ('active',)
 
@@ -412,7 +412,7 @@ class MyAdAccountAdmin(object):
                 'status': 'PAUSED',
             }
 
-            campaign = AdAccount(row.adaccout_no).create_campaign(
+            campaign = AdAccount(row.adaccount_no).create_campaign(
                             fields=fields,
                             params=params,
                         )
@@ -423,19 +423,19 @@ class MyAdAccountAdmin(object):
     def batch_update_campaigns(self, request, queryset):
         adobjects = FacebookAdsApi.init(access_token=my_access_token_dev, debug=True)
         for row in queryset:
-            adaccout_no = row.adaccout_no
+            adaccount_no = row.adaccount_no
             fields = ['id','name',
                         'objective',
             ]
             params = {
                 'effective_status': ['ACTIVE', 'PAUSED'],
             }
-            campaigns = AdAccount(adaccout_no).get_campaigns(fields=fields, params=params, )
-            MyCampaign.objects.filter(adaccout_no=adaccout_no).update(active = False)
+            campaigns = AdAccount(adaccount_no).get_campaigns(fields=fields, params=params, )
+            MyCampaign.objects.filter(adaccount_no=adaccount_no).update(active = False)
             for campaign in campaigns:
                 obj, created = MyCampaign.objects.update_or_create(campaign_no=campaign["id"],
                                                                 defaults={
-                                                                        'adaccout_no': adaccout_no,
+                                                                        'adaccount_no': adaccount_no,
                                                                           'name':campaign["name"],
                                                                           'objective':  campaign["objective"],
                                                                         'active':True
@@ -549,7 +549,7 @@ class MyAdAccountAdmin(object):
 @xadmin.sites.register(MyCampaign)
 class MyCampaignAdmin(object):
 
-    list_display = [ "adaccout_no","campaign_no",'name','objective' ]
+    list_display = [ "adaccount_no","campaign_no",'name','objective' ]
     search_fields = ['campaign_no', ]
     actions = [ "batch_update_adset","batch_update_insight",]
     list_filter = ( "active",)
@@ -559,7 +559,7 @@ class MyCampaignAdmin(object):
     def batch_update_adset(self, request, queryset):
         adobjects = FacebookAdsApi.init(access_token=my_access_token, debug=True)
         for row in queryset:
-            adaccout_no = row.adaccout_no
+            adaccount_no = row.adaccount_no
             campaign_no = row.campaign_no
             fields =[ "attribution_spec","bid_amount","bid_info","billing_event","budget_remaining",
                       "campaign","configured_status","created_time","destination_type",
@@ -579,7 +579,7 @@ class MyCampaignAdmin(object):
             for adset in adsets:
                 obj, created = MyAdset.objects.update_or_create(adset_no=adset["id"],
                                                                 defaults={
-                                                                        'adaccout_no':adaccout_no,
+                                                                        'adaccount_no':adaccount_no,
                                                                         'campaign_no': campaign_no,
                                                                         'name':adset["name"],
 
@@ -657,7 +657,7 @@ class MyAdsetAdmin(object):
 
         FacebookAdsApi.init(access_token=my_access_token)
         for row in queryset:
-            ad_account = row.adaccout_no
+            ad_account = row.adaccount_no
             campaign = row.campaign_no
             adset = AdSet(parent_id='act_<AD_ACCOUNT_ID>')
             adset.update({

@@ -38,6 +38,7 @@ APP_SCOPED_SYSTEM_USER_ID=100029952330435
 
 #another user
 #my_access_token = "EAAcGAyHVbOEBAKgfka7uxoKnH3DnKcfuWZCnczE0bXCLaeiN2kY19woN24svib5TIlp3whXoV9ZCJF27UvZCmyoUZBwkVP6HlpWnfKX1eGyOd8FEzmJVjVZBhYRbgpEv1kNVbCRMJllYzVhOKs60N0yZBX9NXsEtpBvZCdXwTfObCzZAZAkCbqi6e8S0OvZASqrjhAlG627U2EggZDZD"
+ad_tokens = "EAAHZCz2P7ZAuQBAE1AAIkXgnrhqnnNb77Ej6YeXbo5KlluLeDxjcf3J1VHCpS6cZC4hRg6YAAFd51SYAXWyZAmbdE2dYJbZBH6v3NLr3ViCCqR0RzNfiYT41mueiyarBjy2SB9aBtQEVDY8MkwIPqHYvtzlqc0KLIonrv4LGYEz8yqFiaYfjM"
 def get_token(target_page,token=None):
 
     pages = MyPage.objects.filter(page_no = target_page, active=True)
@@ -1526,14 +1527,82 @@ def combo_ad_image(spu_ims, spus_name,album_name):
 
     return  destination_url
 
+def get_ad_sets(adaccount_no):
+    adobjects = FacebookAdsApi.init(access_token=ad_tokens, debug=True)
+
+    fields =[ "attribution_spec","bid_amount","bid_info","billing_event","budget_remaining",
+              "campaign","configured_status","created_time","destination_type",
+              "effective_status","id","is_dynamic_creative","lifetime_imps","name",
+              "optimization_goal","recurring_budget_semantics","source_adset_id",
+              "start_time","status","targeting","updated_time","use_new_app_click",
+
+
+    ]
+    params = {
+
+    }
+    adsets = AdAccount(adaccount_no).get_ad_sets(fields=fields, params=params, )
+    print("adaccount_no is ", adaccount_no)
+    print("adsets is ", adsets)
+
+
+    #先把这个adaccount_no的adset全部置为false
+    MyAdset.objects.filter(adaccount_no=adaccount_no).update(active=False)
+
+    for adset in adsets:
+        obj, created = MyAdset.objects.update_or_create(adset_no=adset["id"],
+                                                        defaults={
+                                                                'adaccount_no':adaccount_no,
+                                                                'campaign_no': adset["campaign"]["id"],
+                                                                'name':adset["name"],
+
+                                                                'attribution_spec': adset.get("attribution_spec"),
+                                                                #'bid_amount': adset["bid_amount"],
+                                                                #'bid_info': adset["bid_info"],
+                                                                'billing_event': adset["billing_event"],
+                                                                'budget_remaining': adset["budget_remaining"],
+
+                                                                'configured_status': adset["configured_status"],
+                                                                'created_time': adset["created_time"],
+                                                                'destination_type': adset["destination_type"],
+                                                                'effective_status': adset["effective_status"],
+
+                                                                'is_dynamic_creative': adset["is_dynamic_creative"],
+                                                                'lifetime_imps': adset["lifetime_imps"],
+
+                                                                'optimization_goal': adset["optimization_goal"],
+                                                                'recurring_budget_semantics': adset[
+                                                                           "recurring_budget_semantics"],
+                                                                'source_adset_id': adset["source_adset_id"],
+                                                                'start_time': adset["start_time"].split('+')[0],
+                                                                'status': adset["status"],
+                                                                #'targeting': adset["targeting"],
+                                                                'updated_time': adset["updated_time"].split('+')[0],
+                                                                'use_new_app_click': adset["use_new_app_click"],
+                                                                'active':True
+
+                                                                  }
+                                                        )
+
+
+def choose_ad_set(page_no):
+    try:
+        page = MyPage.objects.get(page_no=page_no).page
+        adsets = MyAdset.objects.filter(name__icontains=page)
+        return adsets[0].adset_no
+    except:
+        return  None
+
+
 def post_yallavip_ad(page_no= None):
-    active_tokens = "EAAHZCz2P7ZAuQBAE1AAIkXgnrhqnnNb77Ej6YeXbo5KlluLeDxjcf3J1VHCpS6cZC4hRg6YAAFd51SYAXWyZAmbdE2dYJbZBH6v3NLr3ViCCqR0RzNfiYT41mueiyarBjy2SB9aBtQEVDY8MkwIPqHYvtzlqc0KLIonrv4LGYEz8yqFiaYfjM"
-    adobjects = FacebookAdsApi.init(access_token=active_tokens, debug=True)
+
+    adobjects = FacebookAdsApi.init(access_token=ad_tokens, debug=True)
     adacount_no = "act_1903121643086425"
     #yallavip 加速
     #adset_no = "23843303803340510"
     # yallavip mall  匀速
-    adset_no = "23843310378170510"
+    #adset_no = "23843310378170510"
+    adset_no = choose_ad_set(page_no)
 
     ads = YallavipAd.objects.filter(active=True, published=False )
     if page_no:

@@ -33,7 +33,7 @@ class MyPage(models.Model):
         return self.page
 
 class MyAdAccount(models.Model):
-    adaccout_no = models.CharField(u'广告账户', default='', max_length=100, blank=True)
+    adaccount_no = models.CharField(u'广告账户', default='', max_length=100, blank=True)
     account_status = models.CharField(u'广告账户状态', max_length=200, null=True, blank=True)
     disable_reason = models.CharField(u'disable_reason', max_length=200, null=True, blank=True)
     name = models.CharField(u'广告账户名', max_length=200, null=True, blank=True)
@@ -44,11 +44,11 @@ class MyAdAccount(models.Model):
         verbose_name_plural = verbose_name
 
     def __str__(self):
-        return self.adaccout_no
+        return self.adaccount_no
 
 
 class MyCampaign(models.Model):
-    adaccout_no = models.CharField(u'广告账户', default='', max_length=100, null=True,blank=True)
+    adaccount_no = models.CharField(u'广告账户', default='', max_length=100, null=True,blank=True)
     campaign_no = models.CharField(u'广告系列', default='', max_length=100, null=True,blank=True)
     name = models.CharField(u'广告系列名字', max_length=200, null=True, blank=True)
     objective = models.CharField(u'目标', max_length=200, null=True, blank=True)
@@ -62,7 +62,7 @@ class MyCampaign(models.Model):
         return self.campaign_no
 
 class MyAdset(models.Model):
-    adaccout_no = models.CharField(max_length=200, null=True, blank=True, verbose_name="广告账户")
+    adaccount_no = models.CharField(max_length=200, null=True, blank=True, verbose_name="广告账户")
     campaign_no = models.CharField(u'广告系列', default='', max_length=100, blank=True)
     adset_no = models.CharField(u'广告组', default='', max_length=100, blank=True)
     name = models.CharField(u'广告组名字', max_length=200, null=True, blank=True)
