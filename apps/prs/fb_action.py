@@ -1308,6 +1308,14 @@ def prepare_yallavip_ad(page_no=None):
                                                 aded=False,
                                                 yallavip_album__page__active=True,yallavip_album__page__is_published=True,
                                                     published=True).distinct()
+    '''
+    Lightin_SPU.objects.filter(sellable__gt=0,SPU__istartswith = "s",
+                                shopify_price__gt=30, #lightin_spu__shopify_price__lt=50,
+                                myfb_product__aded=False,
+                                myfb_product__yallavip_album__page__active=True,myfb_product__yallavip_album__page__is_published=True,
+                                myfb_product__published=True).order_by("sellable").distinct()
+    '''
+
     if pageno:
         lightinalbums_all.filter(yallavip_album__page__page_no=page_no)
 
@@ -1329,7 +1337,8 @@ def prepare_yallavip_ad(page_no=None):
 
 
 def prepare_yallavip_ad_album(yallavip_album_pk, lightinalbums_all):
-    lightinalbums = lightinalbums_all.filter(yallavip_album__pk=yallavip_album_pk).order_by("?")[:4]
+    #从库存多的开始推
+    lightinalbums = lightinalbums_all.filter(yallavip_album__pk=yallavip_album_pk).order_by("lightin_spu__sellable")[:4]
 
     spu_ims = lightinalbums.values_list("image_marked", flat=True)
     spus = lightinalbums.values_list("lightin_spu__handle", flat=True)
@@ -1574,10 +1583,10 @@ def get_ad_sets(adaccount_no):
                                                                 'recurring_budget_semantics': adset[
                                                                            "recurring_budget_semantics"],
                                                                 'source_adset_id': adset["source_adset_id"],
-                                                                'start_time': adset["start_time"].split('+')[0],
+                                                                'start_time': adset["start_time"],
                                                                 'status': adset["status"],
                                                                 #'targeting': adset["targeting"],
-                                                                'updated_time': adset["updated_time"].split('+')[0],
+                                                                'updated_time': adset["updated_time"],
                                                                 'use_new_app_click': adset["use_new_app_click"],
                                                                 'active':True
 
@@ -1588,7 +1597,7 @@ def get_ad_sets(adaccount_no):
 def choose_ad_set(page_no):
     try:
         page = MyPage.objects.get(page_no=page_no).page
-        adsets = MyAdset.objects.filter(name__icontains=page)
+        adsets = MyAdset.objects.filter(name__icontains=page,active=True)
         return adsets[0].adset_no
     except:
         return  None
