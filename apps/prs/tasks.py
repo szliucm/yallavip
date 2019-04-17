@@ -6,6 +6,8 @@ import numpy as np
 import random
 import re
 import requests
+import time
+
 from celery import shared_task, task
 from django.db.models import Q, Count
 from django.utils import timezone as datetime
@@ -601,7 +603,7 @@ def ali_list_get_info():
 @task
 def get_aliproduct(pk, offer_id, cate_code):
     from .ali import get_ali_product_info
-    import time
+
 
     time.sleep(random.uniform(30, 60))
     message, status = get_ali_product_info(offer_id, cate_code)
@@ -4163,6 +4165,7 @@ def adjust_shopify_inventories():
 
             skus = ShopifyVariant.objects.filter(sku=row[0])
             skus.update(quantity=row[2])
+        time.sleep(1)
 
 def adjust_shopify_inventory(row):
     from shop.models import Shop, ShopifyProduct
