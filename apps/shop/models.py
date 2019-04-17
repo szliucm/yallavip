@@ -56,7 +56,7 @@ class ShopifyProduct(models.Model):
 
     product_type = models.CharField(u'product_type', default='', max_length=100,null=True, blank=True)
 
-    tags = models.models.TextField(u'tags', default='', max_length=1024,null=True, blank=True)
+    tags = models.TextField(u'tags', default='', max_length=1024,null=True, blank=True)
 
     metafields_global_title_tag = models.CharField(u'SEO_name', default='', max_length=200,null=True, blank=True)
     metafields_global_description_tag = models.CharField(u'SEO_desc', default='', max_length=500, null=True,blank=True)
