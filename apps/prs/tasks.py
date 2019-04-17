@@ -3935,7 +3935,11 @@ def auto_smscode():
     #已发送验证码的订单
     wait_orders = Verify.objects.filter( sms_status = "WAIT",order__status="open", order__financial_status="paid")
     for wait_order in wait_orders:
-        code = re.findall("\d+",  wait_order.cs_reply)
+        if wait_order.sms_code:
+            code = re.findall("\d+",  wait_order.sms_code)
+        else:
+            code = re.findall("\d+",  wait_order.cs_reply)
+
         if not code:
             continue
 
