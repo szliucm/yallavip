@@ -443,7 +443,8 @@ class CustomerAdmin(object):
 
             # 更新总金额
             tax = subtotal * 0.05
-            COD = 20
+            #COD = 20
+            COD = 0
             order_amount = int(subtotal + COD + tax - float(customer.discount))
 
 
