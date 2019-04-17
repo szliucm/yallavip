@@ -290,12 +290,14 @@ def insert_product(shop_name, products):
             handle=row["handle"],
             body_html=row["body_html"],
             title=row["title"],
-            created_at=row["created_at"].split('+')[0],
+            created_at=row["created_at"],
 
-            updated_at=row["updated_at"].split('+')[0],
+            updated_at=row["updated_at"],
             tags=row["tags"],
             vendor=row["vendor"],
             product_type=row["product_type"],
+            published_scope=row["published_scope"],
+            published_at=row.get("published_at"),
 
         )
         product_list.append(product)

@@ -50,8 +50,10 @@ class ShopifyProduct(models.Model):
     title = models.CharField(u'产品名', default='', max_length=500, null=True,blank=True)
     created_at =  models.DateTimeField(u'创建时间', auto_now=False, null=True, blank=True)
 
+    published_scope = models.CharField(u'published_scope', default='', max_length=256, null=True, blank=True)
     published_at = models.DateTimeField(u'发布时间', auto_now=False, null=True, blank=True)
     updated_at = models.DateTimeField(u'更新时间', auto_now=False, null=True, blank=True)
+
     product_type = models.CharField(u'product_type', default='', max_length=100,null=True, blank=True)
 
     tags = models.CharField(u'tags', default='', max_length=256,null=True, blank=True)
