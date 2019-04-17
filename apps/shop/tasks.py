@@ -839,7 +839,9 @@ def download_product():
 
             print("当前是第%s页" % (i))
 
-        except KeyError:
+
+        except Exception as e:
+            print(e)
             print("products for the shop {} completed".format(shop_name))
             break
 
