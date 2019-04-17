@@ -4882,23 +4882,50 @@ from django.db import connection, transaction
     transaction.commit()
 '''
 
-
+#根据库存，动态调整shopify的发布状态
 def change_products_publish_status():
 
-    #将 ligthin_spu 里有库存,shopify里没上架 的上架
-    product_nos = ShopifyProduct.objects.filter(published_at__isnull=True).values_list("product_no", flat=True)
-    to_publish_products = Lightin_SPU.objects.filter(sellable__gt=0, product_no__in=product_nos)
+    #将 ligthin_spu 里有库存,但shopify没上架 的上架
+    to_publish_products = Lightin_SPU.objects.filter(sellable__gt=0,shopify_published=False)
+
     for to_publish_product in to_publish_products:
 
         info, published = change_product_publish_status(to_publish_product.product_no, published=True)
         if published:
-            to_publish_product.published_at = dt.now()
+            to_publish_product.shopify_published =True
             to_publish_product.save()
 
 
 
-    #将 ligthin_spu 里没库存的下架
-    #将在shopify里有 但不在 ligthin_spu 里的下架
+    #将 ligthin_spu 里没库存的但shopify在上架 的下架
+    to_unpublish_products = Lightin_SPU.objects.filter(sellable__lte=0, shopify_published=True)
+
+    for to_unpublish_product in to_unpublish_products:
+
+        info, published = change_product_publish_status(to_unpublish_product.product_no, published=False)
+        if published:
+            to_unpublish_product.shopify_published = False
+            to_unpublish_product.save()
+
+
+#将在shopify里已经发布 但不在ligthin_spu 里的下架
+#这个可能是一次性动作
+def unpubulish_shopify():
+    to_unpublish_products = ShopifyProduct.objects.filter(published_at__isnull=False).exclude(
+        product_no__in=Lightin_SPU.objects.all()
+    )
+    for to_unpublish_product in to_unpublish_products:
+
+        info, published = change_product_publish_status(to_unpublish_product.product_no, published=False)
+        if published:
+            to_unpublish_product.published_at = None
+            to_unpublish_product.save()
+
+
+
+
+
+
 
 
 def change_product_publish_status(product_no, published):
