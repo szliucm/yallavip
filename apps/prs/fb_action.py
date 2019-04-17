@@ -1308,15 +1308,7 @@ def prepare_yallavip_ad(page_no=None):
                                                 aded=False,
                                                 yallavip_album__page__active=True,yallavip_album__page__is_published=True,
                                                     published=True).distinct()
-    '''
-    Lightin_SPU.objects.filter(sellable__gt=0,SPU__istartswith = "s",
-                                shopify_price__gt=30, #lightin_spu__shopify_price__lt=50,
-                                myfb_product__aded=False,
-                                myfb_product__yallavip_album__page__active=True,myfb_product__yallavip_album__page__is_published=True,
-                                myfb_product__published=True).order_by("sellable").distinct()
-    '''
-
-    if pageno:
+    if page_no:
         lightinalbums_all.filter(yallavip_album__page__page_no=page_no)
 
     limit = 10
