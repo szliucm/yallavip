@@ -885,3 +885,4 @@ def insert_variant( products):
             print("no variant ".format(row.shop_name))
             break
         ShopifyVariant.objects.bulk_create(variant_list)
+

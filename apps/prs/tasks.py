@@ -4212,6 +4212,7 @@ def adjust_shopify_inventory(row):
         return "更新库存失败", False
 
 
+
 #更新价格,顺便把库存策略改成无货后不不能下单
 def adjust_shopify_prices():
     mysql = "select v.sku , v.variant_no, s.sku_price " \
@@ -4880,3 +4881,60 @@ from django.db import connection, transaction
     cursor.execute(sql)
     transaction.commit()
 '''
+
+
+def change_products_publish_status():
+
+    #将 ligthin_spu 里有库存,shopify里没上架 的上架
+    product_nos = ShopifyProduct.objects.filter(published_at__isnull=True).values_list("product_no", flat=True)
+    to_publish_products = Lightin_SPU.objects.filter(sellable__gt=0, product_no__in=product_nos)
+    for to_publish_product in to_publish_products:
+
+        info, published = change_product_publish_status(to_publish_product.product_no, published=True)
+        if published:
+            to_publish_product.published_at = dt.now()
+            to_publish_product.save()
+
+
+
+    #将 ligthin_spu 里没库存的下架
+    #将在shopify里有 但不在 ligthin_spu 里的下架
+
+
+def change_product_publish_status(product_no, published):
+    from shop.models import Shop, ShopifyProduct
+    from prs.shop_action import post_product_main, update_or_create_product
+    from .models import AliProduct
+
+    dest_shop = "yallasale-com"
+    location_id = "11796512810"
+    shop_obj = Shop.objects.get(shop_name=dest_shop)
+
+    shop_url = "https://%s:%s@%s.myshopify.com" % (shop_obj.apikey, shop_obj.password, shop_obj.shop_name)
+
+
+    params = {
+        "product":{
+            "id": product_no,
+            "published": published,
+        }
+
+
+    }
+    headers = {
+        "Content-Type": "application/json",
+        "charset": "utf-8",
+
+    }
+    # 初始化SDK
+    url = shop_url + "/admin/products/%s.json"%(product_no)
+
+    print("开始更新发布状态")
+    print(url, json.dumps(params))
+
+    r = requests.put(url, headers=headers, data=json.dumps(params))
+    if r.status_code == 200:
+        return "更新发布状态成功", True
+    else:
+        print(r.text)
+        return "更新发布状态失败", False

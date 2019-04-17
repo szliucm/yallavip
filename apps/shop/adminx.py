@@ -310,8 +310,8 @@ def insert_product(shop_name, products):
                 variant = ShopifyVariant(
                     variant_no=variant_row["id"],
                     product_no=variant_row["product_id"],
-                    created_at=variant_row["created_at"].split('+')[0],
-                    updated_at=variant_row["updated_at"].split('+')[0],
+                    created_at=variant_row["created_at"],
+                    updated_at=variant_row["updated_at"],
                     sku=variant_row["sku"],
                     image_no=variant_row["image_id"],
                     title=variant_row["title"],
@@ -342,8 +342,8 @@ def insert_product(shop_name, products):
                 image = ShopifyImage(
                     image_no=image_row["id"],
                     product_no=image_row["product_id"],
-                    created_at=image_row["created_at"].split('+')[0],
-                    updated_at=image_row["updated_at"].split('+')[0],
+                    created_at=image_row["created_at"],
+                    updated_at=image_row["updated_at"],
                     position=image_row["position"],
                     width=image_row["width"],
                     height=image_row["height"],
