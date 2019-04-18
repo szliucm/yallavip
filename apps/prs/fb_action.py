@@ -1335,7 +1335,7 @@ def prepare_yallavip_ad_album(yallavip_album_pk, lightinalbums_all):
     spu_ims = lightinalbums.values_list("image_marked", flat=True)
     spus = lightinalbums.values_list("lightin_spu__handle", flat=True)
     if spus.count() < 4:
-        print ("数量不够", spus.count())
+        print (lightinalbums.name, "数量不够", spus.count())
         return
 
     # 把spus的图拼成一张
