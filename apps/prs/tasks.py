@@ -4177,7 +4177,7 @@ def zero_shopify_inventories():
         sku__in=Lightin_SKU.objects.values_list("SKU",flat=True)
     )
 
-    rows = to_zero_products.values_list("SKU","inventory_item_no")
+    rows = to_zero_products.values_list("sku","inventory_item_no")
     for row in rows:
 
         info, adjusted = adjust_shopify_inventory(row[1],0)
