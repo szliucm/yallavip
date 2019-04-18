@@ -1551,6 +1551,7 @@ def get_ad_sets(adaccount_no):
     MyAdset.objects.filter(adaccount_no=adaccount_no).update(active=False)
 
     for adset in adsets:
+        print("#################", adset)
         obj, created = MyAdset.objects.update_or_create(adset_no=adset["id"],
                                                         defaults={
                                                                 'adaccount_no':adaccount_no,
@@ -1603,8 +1604,8 @@ def post_yallavip_ad(page_no= None):
     #adset_no = "23843303803340510"
     # yallavip mall  匀速
     #adset_no = "23843310378170510"
-    #adset_no = choose_ad_set(page_no)
-    adset_no = "23843265435590510"
+    adset_no = choose_ad_set(page_no)
+    #adset_no = "23843265435590510"
 
     ads = YallavipAd.objects.filter(active=True, published=False )
     if page_no:
