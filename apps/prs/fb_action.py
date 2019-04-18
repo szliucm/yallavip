@@ -1652,7 +1652,7 @@ def post_yallavip_ad(page_no= None):
                 # "access_token": my_access_token,
             }
 
-            fb_ad = AdAccount(adacount_no).create_ad(
+            fb_ad = AdAccount(adaccount_no).create_ad(
                 fields=fields,
                 params=params,
             )
