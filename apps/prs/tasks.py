@@ -4686,8 +4686,8 @@ def sync_yallavip_album(page_no=None):
     print("有%s个相册待更新" % (albums.count()))
     for album in albums:
         lightinalbums = lightinalbums_all.filter(yallavip_album=album).order_by("lightin_spu__sellable")[:9]
-        sync_yallavip_album_batch.apply_async((lightinalbums,), queue='fb')
-
+        #sync_yallavip_album_batch.apply_async((lightinalbums,), queue='fb')
+        sync_yallavip_album_batch(lightinalbums)
 
 
 # 把图片发到Facebook相册
