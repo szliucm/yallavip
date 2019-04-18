@@ -843,8 +843,8 @@ def post_photo_to_album(targer_page,album_no,aliproduct ):
     return  "成功", photo["id"]
 
 #直接从aliproduct发布到相册
-def post_lightin_album(lightinalbum_pk):
-    lightinalbum = LightinAlbum.objects.get(pk=lightinalbum_pk)
+def post_lightin_album(lightinalbum):
+
     page_no = lightinalbum.myalbum.page_no
     album_no = lightinalbum.myalbum.album_no
     if lightinalbum.lightin_spu:
@@ -1223,7 +1223,8 @@ def post_album_ad(page_no):
             break
 
 @shared_task
-def post_yallavip_album(lightinalbum):
+def post_yallavip_album(lightinalbum_pk):
+    lightinalbum = LightinAlbum.objects.get(pk=lightinalbum_pk)
     page_no = lightinalbum.yallavip_album.page.page_no
     album_no = lightinalbum.yallavip_album.album.album_no
     print("###########",page_no, album_no)
