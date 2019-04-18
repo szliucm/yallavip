@@ -4164,14 +4164,30 @@ def adjust_shopify_inventories():
 
     for row in rows:
 
-        info, adjusted = adjust_shopify_inventory(row)
+        info, adjusted = adjust_shopify_inventory(row[1],row[2])
         if adjusted:
 
             skus = ShopifyVariant.objects.filter(sku=row[0])
             skus.update(quantity=row[2])
         time.sleep(1)
 
-def adjust_shopify_inventory(row):
+#把不在lightin_sku 里且库存大于0 的variant的库存都改成0
+def zero_shopify_inventories():
+    to_zero_products = ShopifyVariant.objects.filter(inventory_quantity__gt=0).exclude(
+        sku__in=Lightin_SKU.objects.values_list("SKU",flat=True)
+    )
+
+    rows = to_zero_products.values_list("SKU","inventory_item_no")
+    for row in rows:
+
+        info, adjusted = adjust_shopify_inventory(row[1],0)
+        if adjusted:
+
+            skus = ShopifyVariant.objects.filter(sku=row[0])
+            skus.update(quantity=0)
+        time.sleep(1)
+
+def adjust_shopify_inventory(inventory_item_id,available_adjustment ):
     from shop.models import Shop, ShopifyProduct
     from prs.shop_action import post_product_main, update_or_create_product
     from .models import AliProduct
@@ -4189,8 +4205,8 @@ def adjust_shopify_inventory(row):
 
     params = {
         "location_id": location_id,
-        "inventory_item_id": row[1],
-        "available_adjustment": row[2],
+        "inventory_item_id": inventory_item_id,
+        "available_adjustment": available_adjustment,
 
     }
     headers = {
@@ -4886,7 +4902,7 @@ from django.db import connection, transaction
 def change_products_publish_status():
 
     #将 ligthin_spu 里有库存,但shopify没上架 的上架
-    to_publish_products = Lightin_SPU.objects.filter(sellable__gt=0,shopify_published=False)
+    to_publish_products = Lightin_SPU.objects.filter(sellable__gt=0, published=True, shopify_published=False)
 
     for to_publish_product in to_publish_products:
 
@@ -4898,7 +4914,7 @@ def change_products_publish_status():
 
 
     #将 ligthin_spu 里没库存的但shopify在上架 的下架
-    to_unpublish_products = Lightin_SPU.objects.filter(sellable__lte=0, shopify_published=True)
+    to_unpublish_products = Lightin_SPU.objects.filter(sellable__lte=0, published=True,shopify_published=True)
 
     for to_unpublish_product in to_unpublish_products:
 
@@ -4912,7 +4928,7 @@ def change_products_publish_status():
 #这个可能是一次性动作
 def unpubulish_shopify():
     to_unpublish_products = ShopifyProduct.objects.filter(published_at__isnull=False).exclude(
-        product_no__in=Lightin_SPU.objects.all()
+        product_no__in=Lightin_SPU.objects.values_list("product_no",flat=True)
     )
     for to_unpublish_product in to_unpublish_products:
 
