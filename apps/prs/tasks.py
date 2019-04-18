@@ -4691,6 +4691,7 @@ def sync_yallavip_album(page_no=None):
 
 
 # 把图片发到Facebook相册
+@shared_task
 def sync_yallavip_album_batch(album):
     from .fb_action import post_yallavip_album
     lightinalbums = lightinalbums_all.filter(yallavip_album=album).order_by("lightin_spu__sellable")[:9]
