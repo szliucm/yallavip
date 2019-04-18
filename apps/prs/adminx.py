@@ -1062,13 +1062,18 @@ class YallavipAdAdmin(object):
 
     photo.short_description = "spu图片"
 
+    def page(self, obj):
+        return  obj.yallavip_album.page.page
 
 
-    list_display = ["page_no", "spus_name", 'photo', "adset_no","creative_id", "ad_id",]
+    page.short_description = "page"
+
+
+    list_display = ["yallavip_album", "page", "spus_name", 'photo', "adset_no","creative_id", "ad_id",]
 
     # 'sku_name','img',
     search_fields = ["spus_name", ]
-    list_filter = ["page_no", "adset_no",]
+    list_filter = ["page_no", "adset_no","active","published",]
     list_editable = []
     readonly_fields = ()
     actions = []

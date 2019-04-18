@@ -1307,6 +1307,7 @@ def prepare_yallavip_ad(page_no=None):
                                                 lightin_spu__shopify_price__gt=50, #lightin_spu__shopify_price__lt=50,
                                                 aded=False,
                                                 yallavip_album__page__active=True,yallavip_album__page__is_published=True,
+                                                    yallavip_album__isnull=False,
                                                     published=True).distinct()
     if page_no:
         lightinalbums_all.filter(yallavip_album__page__page_no=page_no)
