@@ -1588,8 +1588,8 @@ def get_ad_sets(adaccount_no):
 
 def choose_ad_set(page_no):
     try:
-        page = MyPage.objects.get(page_no=page_no).page
-        adsets = MyAdset.objects.filter(name__icontains=page,active=True)
+
+        adsets = MyAdset.objects.filter(name__icontains=page_no,active=True)
         return adsets[0].adset_no
     except:
         return  None
@@ -1598,7 +1598,7 @@ def choose_ad_set(page_no):
 def post_yallavip_ad(page_no= None):
 
     adobjects = FacebookAdsApi.init(access_token=ad_tokens, debug=True)
-    adacount_no = "act_1903121643086425"
+    adaccount_no = "act_1903121643086425"
     #yallavip 加速
     #adset_no = "23843303803340510"
     # yallavip mall  匀速
@@ -1634,7 +1634,7 @@ def post_yallavip_ad(page_no= None):
                                                     "description": "Online Flash Sale Everyhour",
                                                     "use_flexible_image_aspect_ratio": True, }},
             }
-            adCreative = AdAccount(adacount_no).create_ad_creative(
+            adCreative = AdAccount(adaccount_no).create_ad_creative(
                 fields=fields,
                 params=params,
             )
