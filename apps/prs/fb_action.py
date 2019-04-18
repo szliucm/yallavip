@@ -1220,6 +1220,7 @@ def post_album_ad(page_no):
         if n > limit:
             break
 
+@shared_task
 def post_yallavip_album(lightinalbum):
     page_no = lightinalbum.yallavip_album.page.page_no
     album_no = lightinalbum.yallavip_album.album.album_no

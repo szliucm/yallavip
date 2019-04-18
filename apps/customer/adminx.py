@@ -219,7 +219,7 @@ class CustomerAdmin(object):
 
         if error == "":
             tax = subtotal * 0.05
-            COD = 20
+            COD = 0
             content = "<br><a>Subtotal  %sitems    %s SR<a><br>"%(count,int(subtotal))
             content += "<a>COD Fee              %s SR<a><br>" % (COD)
             content += "<a>VAT Tax              %s SR<a><br>"%(tax)
