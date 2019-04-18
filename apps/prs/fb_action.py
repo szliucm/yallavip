@@ -1,3 +1,4 @@
+from celery import shared_task, task
 from .models import MyProductShopify,MyProductFb,Token, LightinAlbum,Lightin_SPU,YallavipAd,YallavipAlbum
 from fb.models import  MyPage,MyAlbum,MyPhoto,MyAdset
 from shop.models import ShopifyProduct, ShopifyVariant,ShopifyOptions
