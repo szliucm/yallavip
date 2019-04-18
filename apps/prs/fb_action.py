@@ -1224,7 +1224,7 @@ def post_yallavip_album(lightinalbum):
     page_no = lightinalbum.yallavip_album.page.page_no
     album_no = lightinalbum.yallavip_album.album.album_no
     print("###########",page_no, album_no)
-
+    posted = None
     if lightinalbum.lightin_spu:
 
         product_no = lightinalbum.lightin_spu.SPU
@@ -1235,61 +1235,89 @@ def post_yallavip_album(lightinalbum):
 
     if not access_token:
         error = "获取token失败"
-        return error, None
+        #return error, None
+    else:
 
-    adobjects = FacebookAdsApi.init( access_token=access_token, debug=True)
-    fields = ["id","name","created_time", "updated_time","picture","link",
-                      "likes.summary(true)","comments.summary(true)"
-    ]
-    params = {
-        "published": "true",
+        adobjects = FacebookAdsApi.init( access_token=access_token, debug=True)
+        fields = ["id","name","created_time", "updated_time","picture","link",
+                          "likes.summary(true)","comments.summary(true)"
+        ]
+        params = {
+            "published": "true",
 
-        "url": lightinalbum.image_marked,
+            "url": lightinalbum.image_marked,
 
-        "name": lightinalbum.name,
+            "name": lightinalbum.name,
 
 
-    }
-    try:
-        photo = Album(album_no).create_photo(
-            fields=fields,
-            params=params,
-        )
-    except Exception as e:
-        print(e)
-        error = e.api_error_message()
-
-        #如果是token的问题，就要把token暂停
-        type = e.api_error_type()
-        print(type)
-        if type == "OAuthException":
-            print("更新token状态", long_token, error)
-            Token.objects.filter(long_token = long_token).update(active=False,info=error,page_no="")
-        return error, None
-
-    obj, created = MyPhoto.objects.update_or_create(photo_no=photo["id"],
-                                                    defaults={
-                                                            'page_no': page_no,
+        }
+        try:
+            photo = Album(album_no).create_photo(
+                fields=fields,
+                params=params,
+            )
+            obj, created = MyPhoto.objects.update_or_create(photo_no=photo["id"],
+                                                            defaults={
+                                                                'page_no': page_no,
                                                                 'album_no': album_no,
-                                                              "product_no": product_no,
-                                                                'listing_status':True,
-                                                              'created_time':
-                                                                  photo["created_time"],#.split('+')[0],
-                                                              'updated_time':
-                                                                  photo["updated_time"],#.split('+')[0],
+                                                                "product_no": product_no,
+                                                                'listing_status': True,
+                                                                'created_time':
+                                                                    photo["created_time"],  # .split('+')[0],
+                                                                'updated_time':
+                                                                    photo["updated_time"],  # .split('+')[0],
 
-                                                              'name': photo.get("name"),
-                                                              'picture': photo["picture"],
-                                                              'link': photo["link"],
-                                                              'like_count': photo["likes"]["summary"]["total_count"],
-                                                              'comment_count': photo["comments"]["summary"][
-                                                                  "total_count"]
+                                                                'name': photo.get("name"),
+                                                                'picture': photo["picture"],
+                                                                'link': photo["link"],
+                                                                'like_count': photo["likes"]["summary"]["total_count"],
+                                                                'comment_count': photo["comments"]["summary"][
+                                                                    "total_count"]
 
-                                                              }
-                                                    )
+                                                            }
+                                                            )
 
-    #print("new_photo saved ", obj, created)
-    return  "成功", photo["id"]
+            # print("new_photo saved ", obj, created)
+            # return  "成功", photo["id"]
+            posted = photo["id"]
+        except Exception as e:
+            print(e)
+            error = e.api_error_message()
+
+            #如果是token的问题，就要把token暂停
+            type = e.api_error_type()
+            print(type)
+            if type == "OAuthException":
+                print("更新token状态", long_token, error)
+                Token.objects.filter(long_token = long_token).update(active=False,info=error,page_no="")
+
+            #return error, None
+
+
+
+
+
+
+    # 更新Facebook图片数据库记录
+
+    if posted is not None:
+        LightinAlbum.objects.filter(pk=lightinalbum.pk).update(
+
+            fb_id=posted,
+            published=True,
+            published_time=dt.now()
+        )
+        print("发布新产品到相册成功 LightinAlbum %s" % (lightinalbum.pk))
+    else:
+        print(
+                "发布新产品到相册失败 LightinAlbum %s   error   %s" % (lightinalbum.pk, error))
+
+        LightinAlbum.objects.filter(pk=lightinalbum.pk).update(
+
+            published=False,
+            publish_error=error[:90],
+            published_time=dt.now()
+        )
 
 
 

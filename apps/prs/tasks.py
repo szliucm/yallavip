@@ -4700,7 +4700,7 @@ def sync_yallavip_album_batch(lightinalbums):
         error, posted = post_yallavip_album(lightinalbum)
 
         # 更新Facebook图片数据库记录
-
+        '''
         if posted is not None:
             LightinAlbum.objects.filter(pk=lightinalbum.pk).update(
 
@@ -4720,6 +4720,7 @@ def sync_yallavip_album_batch(lightinalbums):
                 published_time=dt.now()
             )
             break
+        '''
 
 #按关键词删除相册中的图片
 def delete_target_photo(what):
