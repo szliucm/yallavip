@@ -1612,11 +1612,11 @@ def post_yallavip_ad(page_no= None):
 
     ads = YallavipAd.objects.filter(active=True, published=False )
     if page_no:
-        ads.filter(page_no=page_no)
+        ads.filter(yallavip_album__page__page_no=page_no)
 
-    page_nos = ads.values_list("yallavip_album__page__page_no",flat=True)
-    for page_no in page_nos:
-        ad = ads.filter(yallavip_album__page__page_no = page_no).first()
+    page_nos = ads.values_list("yallavip_album__page__page_no",flat=True).distinct()
+    for ad_page_no in page_nos:
+        ad = ads.filter(yallavip_album__page__page_no = ad_page_no).first()
         error = ""
         # 上传到adimage
         try:
@@ -1625,13 +1625,13 @@ def post_yallavip_ad(page_no= None):
 
             # link ad
             params = {
-                'name': page_no + '_' + ad.spus_name,
-                'object_story_spec': {'page_id': page_no,
+                'name': ad_page_no + '_' + ad.spus_name,
+                'object_story_spec': {'page_id': ad_page_no,
                                       'link_data': {"call_to_action": {"type": "MESSAGE_PAGE",
                                                                        "value": {"app_destination": "MESSENGER"}},
                                                     # "image_hash": adimagehash,
                                                     "picture": ad.image_marked_url,
-                                                    "link": "https://facebook.com/%s" % (page_no),
+                                                    "link": "https://facebook.com/%s" % (ad_page_no),
 
                                                     "message": ad.message,
                                                     "name": "Yallavip.com",
@@ -1648,7 +1648,7 @@ def post_yallavip_ad(page_no= None):
             fields = [
             ]
             params = {
-                'name': page_no + '_' + ad.spus_name,
+                'name': ad_page_no + '_' + ad.spus_name,
                 'adset_id': adset_no,
                 'creative': {'creative_id': adCreative["id"]},
                 'status': 'PAUSED',
