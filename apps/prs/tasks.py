@@ -4336,7 +4336,7 @@ def update_yallavip_album(page_no=None):
 
         print("page is ", page)
         # 找到那些还没添加对应page的规则
-        #现在是每个page的规则是一样的，以后再优化，每个page可以选择自己的规则
+
 
         #相册里有，但page规则里没有的，先标记成无效,等page的相册丰富了，再删除
         rules_to_del = YallavipAlbum.objects.filter(page__pk=page.pk).exclude(
@@ -4961,6 +4961,11 @@ def change_product_publish_status(product_no, published):
 
     r = requests.put(url, headers=headers, data=json.dumps(params))
     if r.status_code == 200:
+        products = ShopifyProduct.objects.filter(product_no=product_no)
+        if published:
+            products.update(published_at=dt.now())
+        else:
+            products.update(published_at=None)
         return "更新发布状态成功", True
     else:
         print(r.text)
