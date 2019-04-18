@@ -4688,7 +4688,7 @@ def sync_yallavip_album(page_no=None):
         lightinalbums = lightinalbums_all.filter(yallavip_album=album).order_by("lightin_spu__sellable")[:9]
         #print("相册%s 批次 %s 有%s 个图片待发" % (batch_no[0], batch_no[1], lightinalbums.count()))
         #sync_yallavip_album_batch(lightinalbums)
-        sync_yallavip_album_batch.apply_async((lightinalbums), queue='fb')
+        sync_yallavip_album_batch.apply_async((lightinalbums,), queue='fb')
 
 
 
