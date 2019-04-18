@@ -1310,7 +1310,7 @@ def prepare_yallavip_ad(page_no=None):
                                                     yallavip_album__isnull=False,
                                                     published=True).distinct()
     if page_no:
-        lightinalbums_all.filter(yallavip_album__page__page_no=page_no)
+        lightinalbums_all = lightinalbums_all.filter(yallavip_album__page__page_no=page_no)
 
     limit = 10
     n = 1
@@ -1612,7 +1612,7 @@ def post_yallavip_ad(page_no= None):
 
     ads = YallavipAd.objects.filter(active=True, published=False )
     if page_no:
-        ads.filter(yallavip_album__page__page_no=page_no)
+        ads = ads.filter(yallavip_album__page__page_no=page_no)
 
     page_nos = ads.values_list("yallavip_album__page__page_no",flat=True).distinct()
     for ad_page_no in page_nos:
