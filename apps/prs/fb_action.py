@@ -1315,10 +1315,10 @@ def prepare_yallavip_ad(page_no=None):
     limit = 10
     n = 1
     #每次处理一个相册， 从相册里选4张拼成一张，发广告
-    #yallavip_albums = lightinalbums_all.values_list("yallavip_album",flat=True).distinct()
+    yallavip_albums = lightinalbums_all.values_list("yallavip_album",flat=True).distinct()
     for yallavip_album in yallavip_albums:
-        print("正在处理相册 ", yallavip_album.album.name)
-        prepare_yallavip_ad_album(yallavip_album.pk, lightinalbums_all)
+
+        prepare_yallavip_ad_album(yallavip_album, lightinalbums_all)
 
         n += 1
 
@@ -1331,6 +1331,8 @@ def prepare_yallavip_ad(page_no=None):
 
 def prepare_yallavip_ad_album(yallavip_album_pk, lightinalbums_all):
     #从库存多的开始推
+    yallavip_album_instance = YallavipAlbum.objects.get(pk=yallavip_album_pk)
+    print ("正在处理相册 ", yallavip_album_instance.album.name)
     lightinalbums = lightinalbums_all.filter(yallavip_album__pk=yallavip_album_pk).order_by("lightin_spu__sellable")[:4]
 
     spu_ims = lightinalbums.values_list("image_marked", flat=True)
@@ -1342,7 +1344,7 @@ def prepare_yallavip_ad_album(yallavip_album_pk, lightinalbums_all):
     # 把spus的图拼成一张
 
     spus_name = ','.join(spus)
-    yallavip_album_instance = YallavipAlbum.objects.get(pk=yallavip_album_pk)
+
 
     image_marked_url = combo_ad_image(spu_ims, spus_name, yallavip_album_instance.album.name)
     if not image_marked_url:
