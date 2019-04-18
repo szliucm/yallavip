@@ -4158,7 +4158,7 @@ def my_custom_sql(mysql):
 def adjust_shopify_inventories():
     mysql = "select v.sku , v.inventory_item_no , s.o_sellable " \
             "from shop_shopifyvariant v, prs_lightin_sku s " \
-            "where v.sku= s.SKU and v.quantity <> s.o_sellable"
+            "where v.sku= s.SKU and v.inventory_quantity <> s.o_sellable"
 
     rows = my_custom_sql(mysql)
 
@@ -4168,7 +4168,7 @@ def adjust_shopify_inventories():
         if adjusted:
 
             skus = ShopifyVariant.objects.filter(sku=row[0])
-            skus.update(quantity=row[2])
+            skus.update(inventory_quantity=row[2])
         time.sleep(1)
 
 #把不在lightin_sku 里且库存大于0 的variant的库存都改成0
@@ -4184,7 +4184,7 @@ def zero_shopify_inventories():
         if adjusted:
 
             skus = ShopifyVariant.objects.filter(sku=row[0])
-            skus.update(quantity=0)
+            skus.update(inventory_quantity=0)
         time.sleep(1)
 
 def adjust_shopify_inventory(inventory_item_id,available_adjustment ):
