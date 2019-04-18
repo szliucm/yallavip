@@ -843,7 +843,8 @@ def post_photo_to_album(targer_page,album_no,aliproduct ):
     return  "成功", photo["id"]
 
 #直接从aliproduct发布到相册
-def post_lightin_album(lightinalbum):
+def post_lightin_album(lightinalbum_pk):
+    lightinalbum = LightinAlbum.objects.get(pk=lightinalbum_pk)
     page_no = lightinalbum.myalbum.page_no
     album_no = lightinalbum.myalbum.album_no
     if lightinalbum.lightin_spu:
