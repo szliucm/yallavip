@@ -4538,7 +4538,7 @@ def prepare_yallavip_album_material(page_no=None):
     print("albums_list is ", albums_list)
 
     for album in albums_list:
-        lightinalbums = lightinalbums_all.filter(yallavip_album=album)[:10]
+        lightinalbums = lightinalbums_all.filter(yallavip_album=album).order_by("lightin_spu__sellable")[:10]
         print(lightinalbums)
 
         for lightinalbum in lightinalbums:
@@ -4669,7 +4669,7 @@ def sync_yallavip_album(page_no=None):
     albums = lightinalbums_all.values_list('yallavip_album').distinct()
     print("有%s个相册待更新" % (albums.count()))
     for album in albums:
-        lightinalbums = lightinalbums_all.filter(yallavip_album=album).order_by('?')[:9]
+        lightinalbums = lightinalbums_all.filter(yallavip_album=album).order_by("lightin_spu__sellable")[:9]
         #print("相册%s 批次 %s 有%s 个图片待发" % (batch_no[0], batch_no[1], lightinalbums.count()))
         sync_yallavip_album_batch(lightinalbums)
 
