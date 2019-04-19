@@ -1,4 +1,3 @@
-
 import xadmin
 
 from .models import Yallavip_SKU
