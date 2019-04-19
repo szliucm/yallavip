@@ -114,12 +114,12 @@ class CartAdmin(object):
         quantity = obj.cart_detail.aggregate(nums=Sum('quantity')).get("nums")
         return str(quantity)
 
-    quantity.short_description = "SKU 数量小计"
+    quantity.short_description = "SKU 数量"
 
     def amount(self, obj):
         return str(obj.cart_detail.aggregate(nums=Sum('amount')).get("nums"))
 
-    amount.short_description = "金额小计"
+    amount.short_description = "金额(CNY)"
 
 
     list_display = ["distributor","quantity", "amount", "create_time", 'update_time', ]
