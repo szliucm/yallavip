@@ -117,7 +117,7 @@ class CartAdmin(object):
     quantity.short_description = "SKU 数量"
 
     def amount(self, obj):
-        cart_items = obj.cart_detail
+        cart_items = obj.cart_detail.all()
         cart_amount = 0
         for cart_item in cart_items:
             cart_amount += cart_item.amount
