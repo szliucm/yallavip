@@ -105,7 +105,7 @@ class Yallavip_SKUAdmin(object):
     def queryset(self):
         qs = super().queryset()
         distributor = str(self.request.user)
-        return qs.filter( ~Q(sku_detail__cart__distributor=distributor),lightin_spu__vendor = "gw", o_quantity__isnull=False)
+        return qs.filter( ~Q(sku_detail__cart__distributor=distributor),lightin_spu__vendor = "gw", o_quantity__gt=0)
 
 
 @xadmin.sites.register(Cart)
