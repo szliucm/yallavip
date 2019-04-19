@@ -147,12 +147,12 @@ class CartDetailAdmin(object):
 
     sku_photo.short_description = "sku图片"
 
-    list_display = ["cart", "sku", 'amount', 'sku_photo', ]
+    list_display = ["cart", "sku", 'price','quantity', 'amount', 'sku_photo', ]
 
 
     search_fields = []
     list_filter = []
-    list_editable = []
+    list_editable = ['quantity',]
     readonly_fields = ()
     actions = []
 
