@@ -29,6 +29,7 @@ class Yallavip_SPUAdmin(object):
     list_editable = []
     readonly_fields = ()
     actions = []
+    ordering = ['-sellable']
 
     def queryset(self):
         qs = super().queryset()
@@ -36,20 +37,7 @@ class Yallavip_SPUAdmin(object):
 
 
 
-@xadmin.sites.register(Cart)
-class CartAdmin(object):
 
-
-
-
-    list_display = ["pk", "create_time", 'update_time', ]
-
-    # 'sku_name','img',
-    search_fields = []
-    list_filter = []
-    list_editable = []
-    readonly_fields = ()
-    actions = []
 
 
 
@@ -85,8 +73,41 @@ class Yallavip_SKUAdmin(object):
     list_editable = []
     readonly_fields = ()
     actions = []
+    ordering = ['-o_quantity']
 
     def queryset(self):
         qs = super().queryset()
         return qs.filter( lightin_spu__vendor = "gw")
 
+
+@xadmin.sites.register(Cart)
+class CartAdmin(object):
+    list_display = ["pk", "create_time", 'update_time', ]
+
+    search_fields = []
+    list_filter = []
+    list_editable = []
+    readonly_fields = ()
+    actions = []
+
+    def queryset(self):
+        qs = super().queryset()
+        distributor = str(self.request.user)
+        return qs.filter( distributor = distributor)
+
+@xadmin.sites.register(CartDetail)
+class CartDetailAdmin(object):
+
+    list_display = ["cart", "sku", 'amount', ]
+
+
+    search_fields = []
+    list_filter = []
+    list_editable = []
+    readonly_fields = ()
+    actions = []
+
+    def queryset(self):
+        qs = super().queryset()
+        distributor = str(self.request.user)
+        return qs.filter(cart__distributor=distributor)
