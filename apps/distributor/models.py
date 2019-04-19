@@ -37,9 +37,12 @@ class Cart(models.Model):
 
 
 class CartDetail(models.Model):
-    cart = models.ForeignKey(Cart, related_name='cart_detail', null=True, blank=True)
 
-    sku = models.ForeignKey(Yallavip_SKU, related_name='sku_detail', null=True, blank=True)
+    cart = models.ForeignKey(Cart, related_name='cart_detail', null=False, on_delete=models.CASCADE,
+                              verbose_name="Cart")
+
+    sku = models.ForeignKey(Yallavip_SKU, related_name='sku_detail', null=False, on_delete=models.CASCADE,
+                              verbose_name="SKU")
 
     amount = models.IntegerField(u'数量',default='',blank=True, null=True)
 
