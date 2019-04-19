@@ -1,4 +1,6 @@
+'''
 import xadmin
+
 from .models import Yallavip_SKU
 
 @xadmin.sites.register(Yallavip_SKU)
@@ -50,3 +52,4 @@ class Yallavip_SKUAdmin(object):
     list_editable = []
     readonly_fields = ()
     actions = []
+'''
