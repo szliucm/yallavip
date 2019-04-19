@@ -117,7 +117,11 @@ class CartAdmin(object):
     quantity.short_description = "SKU 数量"
 
     def amount(self, obj):
-        return str(obj.cart_detail.aggregate(nums=Sum('amount')).get("nums"))
+        cart_items = obj.cart_detail
+        cart_amount = 0
+        for cart_item in cart_items:
+            cart_amount += cart_item.amount
+        return str(cart_amount)
 
     amount.short_description = "金额(CNY)"
 
