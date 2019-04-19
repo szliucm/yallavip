@@ -93,7 +93,7 @@ class Yallavip_SKUAdmin(object):
                                                                sku = sku,
                                                            defaults={'price': sku.vendor_supply_price,
                                                                      'quantity': sku.o_quantity,
-                                                                     'amount': sku.vendor_supply_price * sku.o_quantity,
+
 
                                                                      }
                                                            )
