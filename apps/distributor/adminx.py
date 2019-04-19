@@ -24,11 +24,16 @@ class Yallavip_SPUAdmin(object):
 
     photo.short_description = "图片"
 
-    list_display = [ "SPU","handle", "sellable", "en_name","cn_name", "cate_1","cate_2","cate_3", ]
+    def quantity(self, obj):
+        return  obj.spu_sku.aggregate(nums=Sum('o_quantity')).get("nums")
+
+    quantity.short_description = "可售数量"
+
+    list_display = [ "SPU", "quantity",  "en_name", "cate_1","cate_2","cate_3", ]
     # 'sku_name','img',
 
     search_fields = ["SPU","handle", ]
-    list_filter = ["cate_1","cate_2","cate_3","got","got_time","got_error","vendor"]
+    list_filter = ["cate_1","cate_2","cate_3",]
     list_editable = []
     readonly_fields = ()
     actions = []
@@ -51,17 +56,17 @@ class Yallavip_SKUAdmin(object):
 
     sku_photo.short_description = "sku图片"
 
-    def shopify_price(self, obj):
-        return obj.lightin_spu.shopify_price
+    def supply_price(self, obj):
+        return obj.vendor_supply_price
 
-    shopify_price.short_description = "price"
+    supply_price.short_description = "供货价"
 
-    def cn_name(self, obj):
-        return obj.lightin_spu.cn_name
+    def en_name(self, obj):
+        return obj.lightin_spu.en_name
 
-    cn_name.short_description = "cn_name"
+    en_name.short_description = "商品名"
 
-    list_display = ["SKU", "SPU", 'cn_name', "o_sellable", "sku_photo",  "skuattr", ]
+    list_display = ["SKU", "SPU", 'en_name', "o_quantity", "supply_price", "sku_photo",  "skuattr", ]
 
     # 'sku_name','img',
     search_fields = ["SPU", "SKU",  ]
