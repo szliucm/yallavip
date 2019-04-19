@@ -4,7 +4,7 @@ from django.db.models import Count,Sum
 
 
 from .models import *
-
+'''
 @xadmin.sites.register(Yallavip_SPU)
 class Yallavip_SPUAdmin(object):
 
@@ -37,7 +37,7 @@ class Yallavip_SPUAdmin(object):
         qs = super().queryset()
         return qs.filter( vendor = "gw")
 
-
+'''
 
 
 
@@ -111,12 +111,12 @@ class Yallavip_SKUAdmin(object):
 class CartAdmin(object):
 
     def quantity(self, obj):
-        return obj.cart_detail.aggregate(nums=Count('sku')).get("nums")
+        return obj.cart_detail.aggregate(nums=sum('quantity')).get("nums")
 
     quantity.short_description = "SKU 数量小计"
 
     def amount(self, obj):
-        return obj.cart_detail.aggregate(nums=Count('amount')).get("nums")
+        return obj.cart_detail.aggregate(nums=sum('amount')).get("nums")
 
     amount.short_description = "金额小计"
 

@@ -2,6 +2,7 @@ from django.db import models
 from prs.models import Lightin_SPU, Lightin_SKU
 
 # Create your models here.
+'''
 class Yallavip_SPU(Lightin_SPU):
     class Meta:
         proxy = True
@@ -11,6 +12,7 @@ class Yallavip_SPU(Lightin_SPU):
 
     def __str__(self):
         return self.SPU
+'''
 
 class Yallavip_SKU(Lightin_SKU):
     class Meta:
