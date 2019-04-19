@@ -49,7 +49,7 @@ class Yallavip_SKUAdmin(object):
 
     def sku_photo(self, obj):
         if obj.image is not None and len(obj.image)>0 :
-           img = '<a><img src="%s" width="384px"></a>' % (obj.image)
+           img = '<a><img src="%s" width="100px"></a>' % (obj.image)
         else:
             img = "no photo"
 
