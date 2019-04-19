@@ -33,7 +33,7 @@ class Cart(models.Model):
         verbose_name_plural = verbose_name
 
     def __str__(self):
-        return self.pk
+        return self.distributor
 
 
 class CartDetail(models.Model):
@@ -51,4 +51,4 @@ class CartDetail(models.Model):
         verbose_name_plural = verbose_name
 
     def __str__(self):
-        return self.pk
+        return self.sku
