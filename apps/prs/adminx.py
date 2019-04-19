@@ -688,7 +688,7 @@ class Lightin_SPUResource(resources.ModelResource):
         skip_unchanged = True
         report_skipped = True
         import_id_fields = ('SPU',)
-        fields = ("SPU", "en_name","cn_name", "cate_1","cate_2","cate_3","vendor_sale_price","vendor_supply_price","link", )
+        fields = ("SPU", "en_name","cn_name", "cate_1","cate_2","cate_3","vendor_sale_price","vendor_supply_price","link","vendor" )
         # exclude = ()
 
 @xadmin.sites.register(Lightin_SPU)
@@ -715,11 +715,11 @@ class Lightin_SPUAdmin(object):
     import_export_args = {"import_resource_class": Lightin_SPUResource,
                           "export_resource_class": Lightin_SPUResource}
 
-    list_display = [ "SPU","handle", "sellable", "en_name","cn_name", "cate_1","cate_2","cate_3","vendor_supply_price","title","photo","got","got_time", ]
+    list_display = [ "SPU","handle", "sellable", "en_name","cn_name", "cate_1","cate_2","cate_3","vendor_supply_price","title","photo","got","got_time","vendor", ]
     # 'sku_name','img',
 
     search_fields = ["SPU","handle", ]
-    list_filter = ["cate_1","cate_2","cate_3","got","got_time","got_error",]
+    list_filter = ["cate_1","cate_2","cate_3","got","got_time","got_error","vendor"]
     list_editable = []
     readonly_fields = ()
     actions = []

@@ -436,6 +436,8 @@ class AliProduct_vendor(models.Model):
 class Lightin_SPU(models.Model):
     SPU = models.CharField(default='',max_length=300, null=True, blank=True, verbose_name="SPU")
 
+    vendor = models.CharField(default='',max_length=20, null=True, blank=True, verbose_name="Vendor")
+
     en_name = models.CharField(default='',max_length=300, null=True, blank=True, verbose_name="en_name")
     cn_name = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="cn_name")
     cate_1 = models.CharField(u'cate_1', default='', max_length=256, null=True, blank=True)
@@ -498,6 +500,7 @@ class Lightin_SKU(models.Model):
 
     SPU = models.CharField(default='',max_length=300, null=True, blank=True, verbose_name="SPU")
     SKU = models.CharField(default='', max_length=100, null=True, blank=True, verbose_name="SKU")
+
     #barcode = models.CharField(u'barcode', default='', max_length=100, blank=True)
 
     o_quantity = models.IntegerField(u'oms_可用数量', default=0, blank=True, null=True)
@@ -543,6 +546,8 @@ class Lightin_SKU(models.Model):
 
     def __str__(self):
         return self.SKU
+
+
 
 class YallavipAlbum(models.Model):
 
@@ -627,6 +632,7 @@ class Lightin_barcode(models.Model):
                                     related_name="sku_barcode", on_delete=models.CASCADE)
 
     SKU = models.CharField(default='',max_length=300, null=True, blank=True, verbose_name="SKU")
+
     barcode = models.CharField(u'barcode', default='', max_length=100, blank=True)
     quantity = models.IntegerField(u'数量', default=0, blank=True, null=True)
     #sellable = models.IntegerField(u'可销售库存', default=0, blank=True, null=True)
@@ -648,7 +654,9 @@ class Lightin_barcode(models.Model):
     product_title = models.CharField(u'product_title', default='', max_length=100, blank=True)
     product_weight = models.CharField(u'product_weight', default='', max_length=100, blank=True)
 
+    warehouse = models.CharField(u'warehouse', default='', max_length=100, blank=True)
     warehouse_code = models.CharField(u'warehouse_code', default='', max_length=100, blank=True)
+
     y_onway = models.IntegerField(u'wms_在途数量', default=0, blank=True, null=True)
     y_pending = models.IntegerField(u'wms_待上架数量', default=0, blank=True, null=True)
     y_sellable = models.IntegerField(u'wms_可售数量', default=0, blank=True, null=True)
