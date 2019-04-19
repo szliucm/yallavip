@@ -108,7 +108,6 @@ class Yallavip_SKUAdmin(object):
         return qs.filter( ~Q(sku_detail__cart__distributor=distributor),lightin_spu__vendor = "gw", o_quantity__isnull=False)
 
 
-
 @xadmin.sites.register(Cart)
 class CartAdmin(object):
 
@@ -150,8 +149,9 @@ class CartAdmin(object):
 class CartDetailAdmin(object):
 
     def sku_photo(self, obj):
-        if obj.image is not None and len(obj.image)>0 :
-           img = '<a><img src="%s" width="384px"></a>' % (obj.image)
+        sku = obj.sku
+        if sku.image is not None and len(sku.image)>0 :
+           img = '<a><img src="%s" width="384px"></a>' % (sku.image)
         else:
             img = "no photo"
 
