@@ -1,5 +1,5 @@
 import xadmin
-from .models import *
+from .models import Yallavip_SKU
 
 @xadmin.sites.register(Yallavip_SKU)
 class Yallavip_SKUAdmin(object):
