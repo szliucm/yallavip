@@ -1,3 +1,4 @@
+import xadmin
 from .models import *
 
 @xadmin.sites.register(Yallavip_SKU)
