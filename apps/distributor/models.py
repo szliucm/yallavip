@@ -27,7 +27,10 @@ class Yallavip_SKU(Lightin_SKU):
 class Cart(models.Model):
     distributor = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="分销商")
     create_time = models.DateTimeField(u'创建时间', auto_now=False, null=True, blank=True)
-    update_time = models.DateTimeField(u'更新时间', auto_now=False, null=True, blank=True)
+
+    checked = models.BooleanField(u"订单确认状态", default=False)
+    checked_time = models.DateTimeField(u'确认时间', auto_now=False, null=True, blank=True)
+
 
 
     class Meta:
@@ -49,7 +52,12 @@ class CartDetail(models.Model):
     price = models.IntegerField(verbose_name="供方价(CNY)", default=0,blank=True, null=True)
     quantity = models.IntegerField(u'数量',default=0,blank=True, null=True)
 
-    amount = models.IntegerField(verbose_name="金额小计(CNY)", default=0,blank=True, null=True)
+    def cal_amount(self):
+        return price * quantity
+
+    cal_amount.short_description = "金额小计(CNY)"
+    amount = property(cal_amount)
+
 
     class Meta:
         verbose_name = "购物车明细"

@@ -104,7 +104,7 @@ class Yallavip_SKUAdmin(object):
 
     def queryset(self):
         qs = super().queryset()
-        return qs.filter( lightin_spu__vendor = "gw")
+        return qs.filter( lightin_spu__vendor = "gw", o_quantity__isnull=False)
 
 
 @xadmin.sites.register(Cart)
@@ -122,13 +122,18 @@ class CartAdmin(object):
     amount.short_description = "金额(CNY)"
 
 
-    list_display = ["distributor","quantity", "amount", "create_time",  ]
+    list_display = ["distributor","quantity", "amount", "create_time","checked", "checked_time",  ]
 
     search_fields = []
     list_filter = []
     list_editable = []
     readonly_fields = ()
-    actions = []
+    actions = ['check_cart',]
+
+    #提交购物车到订单
+    def check_cart(self, request, queryset):
+        queryset.update(checked=True)
+    batch_add_cart.short_description = "提交订单"
 
     def queryset(self):
         qs = super().queryset()
