@@ -111,12 +111,12 @@ class Yallavip_SKUAdmin(object):
 class CartAdmin(object):
 
     def quantity(self, obj):
-        return obj.cart_detail.aggregate(nums=sum('quantity')).get("nums")
+        return obj.cart_detail.aggregate(nums=Sum('quantity')).get("nums")
 
     quantity.short_description = "SKU 数量小计"
 
     def amount(self, obj):
-        return obj.cart_detail.aggregate(nums=sum('amount')).get("nums")
+        return obj.cart_detail.aggregate(nums=Sum('amount')).get("nums")
 
     amount.short_description = "金额小计"
 
