@@ -84,7 +84,7 @@ class Yallavip_SKUAdmin(object):
         #如果还没有购物车，就新增一个购物车
         #如果已经有，就在原有的基础上增加或更新
         cart, created = Cart.objects.get_or_create(
-            distributor = str(self.request.user),
+            distributor = str(self.request.user),checked=False,
             defaults={'create_time':dt.now},
         )
 
