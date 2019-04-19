@@ -70,7 +70,7 @@ class Yallavip_SKUAdmin(object):
 
     # 'sku_name','img',
     search_fields = ["SPU", "SKU",  ]
-    list_filter = ["skuattr", "SPU",  ]
+    list_filter = ["skuattr", "SPU", "o_quantity", ]
     list_editable = []
     readonly_fields = ()
     actions = []
