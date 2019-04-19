@@ -688,7 +688,7 @@ class Lightin_SPUResource(resources.ModelResource):
         skip_unchanged = True
         report_skipped = True
         import_id_fields = ('SPU',)
-        fields = ("SPU", "en_name","cn_name", "cate_1","cate_2","cate_3","vendor_sale_price","vendor_supply_price","link","vendor" )
+        fields = ("SPU", "en_name","cn_name", "cate_1","cate_2","cate_3","vendor_sale_price","vendor_supply_price","vendor" ,"link",)
         # exclude = ()
 
 @xadmin.sites.register(Lightin_SPU)
