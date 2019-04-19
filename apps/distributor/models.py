@@ -44,7 +44,10 @@ class CartDetail(models.Model):
     sku = models.ForeignKey(Yallavip_SKU, related_name='sku_detail', null=False, on_delete=models.CASCADE,
                               verbose_name="SKU")
 
-    amount = models.IntegerField(u'数量',default='',blank=True, null=True)
+    price = models.IntegerField(verbose_name="供方价", default=0,blank=True, null=True)
+    quantity = models.IntegerField(u'数量',default=0,blank=True, null=True)
+
+    amount = models.IntegerField(verbose_name="小计", default=0,blank=True, null=True)
 
     class Meta:
         verbose_name = "购物车明细"

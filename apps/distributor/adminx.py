@@ -1,5 +1,7 @@
 import xadmin
 from django.utils.safestring import mark_safe
+from django.db.models import Count,Sum
+
 
 from .models import *
 
@@ -89,7 +91,9 @@ class Yallavip_SKUAdmin(object):
         for sku in queryset:
             obj, created = CartDetail.objects.update_or_create(cart=cart,
                                                                sku = sku,
-                                                           defaults={'amount': sku.o_quantity,
+                                                           defaults={'price': sku.vendor_supply_price,
+                                                                     'quantity': sku.o_quantity,
+                                                                     'amount': sku.vendor_supply_price * sku.o_quantity,
 
                                                                      }
                                                            )
@@ -105,7 +109,19 @@ class Yallavip_SKUAdmin(object):
 
 @xadmin.sites.register(Cart)
 class CartAdmin(object):
-    list_display = ["pk", "create_time", 'update_time', ]
+
+    def quantity(self, obj):
+        return obj.cart_detail.aggregate(nums=Count('sku')).get("nums")
+
+    quantity.short_description = "SKU 数量小计"
+
+    def amount(self, obj):
+        return obj.cart_detail.aggregate(nums=Count('amount')).get("nums")
+
+    amount.short_description = "金额小计"
+
+
+    list_display = ["distributor","quantity", "amount", "create_time", 'update_time', ]
 
     search_fields = []
     list_filter = []
@@ -121,7 +137,17 @@ class CartAdmin(object):
 @xadmin.sites.register(CartDetail)
 class CartDetailAdmin(object):
 
-    list_display = ["cart", "sku", 'amount', ]
+    def sku_photo(self, obj):
+        if obj.image is not None and len(obj.image)>0 :
+           img = '<a><img src="%s" width="384px"></a>' % (obj.image)
+        else:
+            img = "no photo"
+
+        return mark_safe(img)
+
+    sku_photo.short_description = "sku图片"
+
+    list_display = ["cart", "sku", 'amount', 'sku_photo', ]
 
 
     search_fields = []
