@@ -41,7 +41,6 @@ INSTALLED_APPS = [
 
     #'rules',
     'users',      #注册app
-
     #'goods',
     #'trade',
     #'user_operation',
