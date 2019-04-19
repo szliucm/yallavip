@@ -133,7 +133,7 @@ class CartAdmin(object):
     #提交购物车到订单
     def check_cart(self, request, queryset):
         queryset.update(checked=True)
-    batch_add_cart.short_description = "提交订单"
+    check_cart.short_description = "提交订单"
 
     def queryset(self):
         qs = super().queryset()
