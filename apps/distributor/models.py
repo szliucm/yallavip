@@ -53,7 +53,7 @@ class CartDetail(models.Model):
     quantity = models.IntegerField(u'数量',default=0,blank=True, null=True)
 
     def cal_amount(self):
-        return price * quantity
+        return self.price * self.quantity
 
     cal_amount.short_description = "金额小计(CNY)"
     amount = property(cal_amount)
