@@ -60,7 +60,7 @@ class Yallavip_SKUAdmin(object):
     def supply_price(self, obj):
         return obj.vendor_supply_price
 
-    supply_price.short_description = "供货价"
+    supply_price.short_description = "供货价(CNY)"
 
     def en_name(self, obj):
         return obj.lightin_spu.en_name
