@@ -122,7 +122,7 @@ class CartAdmin(object):
     amount.short_description = "金额(CNY)"
 
 
-    list_display = ["distributor","quantity", "amount", "create_time", 'update_time', ]
+    list_display = ["distributor","quantity", "amount", "create_time",  ]
 
     search_fields = []
     list_filter = []
@@ -156,6 +156,7 @@ class CartDetailAdmin(object):
     list_editable = ['quantity',]
     readonly_fields = ()
     actions = []
+    readonly_fields = ["cart", "sku", 'price', 'amount',]
 
     def queryset(self):
         qs = super().queryset()
