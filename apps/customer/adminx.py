@@ -445,7 +445,11 @@ class CustomerAdmin(object):
             tax = subtotal * 0.05
             #COD = 20
             COD = 0
-            order_amount = int(subtotal + COD + tax - float(customer.discount))
+            if customer.discount:
+                discount = float(customer.discount)
+            else:
+                discount = 0
+            order_amount = int(subtotal + COD + tax - discount)
 
 
 

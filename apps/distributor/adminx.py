@@ -1,27 +1,19 @@
 import xadmin
 from django.utils.safestring import mark_safe
 
-from .models import Yallavip_SPU, Yallavip_SKU
+from .models import *
 
 @xadmin.sites.register(Yallavip_SPU)
 class Yallavip_SPUAdmin(object):
 
     def photo(self, obj):
-        if obj.images is not None and len(obj.images)>0 :
-            photos = json.loads(obj.images)
-            img = ''
-
-            for photo in photos:
-                try:
-                    img = img + '<a><img src="%s" width="100px"></a>' % (photo)
-                except Exception as e:
-                    print("获取图片出错", e)
-
-            return mark_safe(img)
-
+        sku = obj.spu_sku.first()
+        if sku.image is not None and len(sku.image)>0 :
+           img = '<a><img src="%s" width="384px"></a>' % (sku.image)
         else:
-            photos = "no photo"
+            img = "no photo"
 
+        return mark_safe(img)
     photo.short_description = "图片"
 
     def quantity(self, obj):
@@ -29,7 +21,7 @@ class Yallavip_SPUAdmin(object):
 
     quantity.short_description = "可售数量"
 
-    list_display = [ "SPU", "quantity",  "en_name", "cate_1","cate_2","cate_3", ]
+    list_display = [ "SPU", "quantity",  "en_name", "cate_1","cate_2","cate_3","photo", ]
     # 'sku_name','img',
 
     search_fields = ["SPU","handle", ]
@@ -41,6 +33,25 @@ class Yallavip_SPUAdmin(object):
     def queryset(self):
         qs = super().queryset()
         return qs.filter( vendor = "gw")
+
+
+
+@xadmin.sites.register(Cart)
+class CartAdmin(object):
+
+
+
+
+    list_display = ["pk", "create_time", 'update_time', ]
+
+    # 'sku_name','img',
+    search_fields = []
+    list_filter = []
+    list_editable = []
+    readonly_fields = ()
+    actions = []
+
+
 
 @xadmin.sites.register(Yallavip_SKU)
 class Yallavip_SKUAdmin(object):
@@ -78,3 +89,4 @@ class Yallavip_SKUAdmin(object):
     def queryset(self):
         qs = super().queryset()
         return qs.filter( lightin_spu__vendor = "gw")
+
