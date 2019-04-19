@@ -1,6 +1,6 @@
 import xadmin
 from django.utils.safestring import mark_safe
-from django.db.models import Count,Sum
+from django.db.models import Count,Sum,Q
 
 
 from .models import *
@@ -84,7 +84,7 @@ class Yallavip_SKUAdmin(object):
         #如果还没有购物车，就新增一个购物车
         #如果已经有，就在原有的基础上增加或更新
         cart, created = Cart.objects.get_or_create(
-            distributor = str(self.request.user),checked=False,
+            distributor = str(self.request.user),
             defaults={'create_time':dt.now},
         )
 
@@ -104,7 +104,9 @@ class Yallavip_SKUAdmin(object):
 
     def queryset(self):
         qs = super().queryset()
-        return qs.filter( lightin_spu__vendor = "gw", o_quantity__isnull=False)
+        distributor = str(self.request.user)
+        return qs.filter( ~Q(sku_detail__cart__distributor=distributor),lightin_spu__vendor = "gw", o_quantity__isnull=False)
+
 
 
 @xadmin.sites.register(Cart)
