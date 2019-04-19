@@ -148,7 +148,13 @@ class CartDetailAdmin(object):
 
     sku_photo.short_description = "sku图片"
 
-    list_display = ["cart", "sku", 'price','quantity', 'amount', 'sku_photo', ]
+    def sellable(self, obj):
+
+        return obj.sku.o_quantity
+
+    sellable.short_description = "可用数量"
+
+    list_display = ["cart", "sku", 'price','sellable', 'quantity', 'amount', 'sku_photo', ]
 
 
     search_fields = []
