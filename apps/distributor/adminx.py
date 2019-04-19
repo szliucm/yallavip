@@ -78,6 +78,7 @@ class Yallavip_SKUAdmin(object):
 
 
     def batch_add_cart(self, request, queryset):
+        from django.utils import timezone as dt
         #如果还没有购物车，就新增一个购物车
         #如果已经有，就在原有的基础上增加或更新
         cart, created = Cart.objects.get_or_create(
