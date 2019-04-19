@@ -72,8 +72,30 @@ class Yallavip_SKUAdmin(object):
     list_filter = ["skuattr", "SPU", "o_quantity", ]
     list_editable = []
     readonly_fields = ()
-    actions = []
+    actions = ["batch_add_cart",]
     ordering = ['-o_quantity']
+
+
+
+    def batch_add_cart(self, request, queryset):
+        #如果还没有购物车，就新增一个购物车
+        #如果已经有，就在原有的基础上增加或更新
+        cart, created = Cart.objects.get_or_create(
+            distributor = str(self.request.user),
+            defaults={'create_time':dt.now},
+        )
+
+        for sku in queryset:
+            obj, created = CartDetail.objects.update_or_create(cart=cart,
+                                                               sku = sku,
+                                                           defaults={'amount': sku.o_quantity,
+
+                                                                     }
+                                                           )
+
+
+
+    batch_add_cart.short_description = "加入购物车"
 
     def queryset(self):
         qs = super().queryset()
