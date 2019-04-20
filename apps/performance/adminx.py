@@ -24,9 +24,9 @@ def update_performance(days=None):
 
     sales = {}
     for order_count in order_counts:
-        obj, created = Sales.objects.update_or_create(order_date=order_count.date,
-                                                      type=order_count.status,
-                                                      defaults={'count': order_count.orders,
+        obj, created = Sales.objects.update_or_create(order_date=order_count.get("date"),
+                                                      type=order_count.get("status"),
+                                                      defaults={'count': order_count.get("orders"),
 
                                                                 }
                                                       )
