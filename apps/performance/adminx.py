@@ -8,13 +8,17 @@ from orders.models import Order
 def update_performance(days=None):
     from django.db.models import Count, Sum, Q
     import pytz
-    import datetime
+    from datetime import datetime
     # from django.utils import timezone as dt
     from django.db.models.functions import TruncDate
 
-    today = datetime.date.today()
+
 
     riyadh = pytz.timezone('Asia/Riyadh')
+    now = datetime.now(riyadh)
+    today = datetime(now.year, now.month, now.day, tzinfo=riyadh)
+
+
     orders = Order.objects.all()
     if days:
         orders = orders.filter(order_time__range=(today - datetime.timedelta(days=days), today))
