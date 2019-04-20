@@ -1,6 +1,7 @@
 import xadmin
 
 from .models import *
+from orders.models import Order
 
 
 
