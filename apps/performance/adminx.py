@@ -8,7 +8,7 @@ from orders.models import Order
 def update_performance(days=None):
     from django.db.models import Count, Sum, Q
     import pytz
-    from datetime import datetime
+    from datetime import datetime,timedelta
     # from django.utils import timezone as dt
     from django.db.models.functions import TruncDate
 
