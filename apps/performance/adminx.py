@@ -21,7 +21,7 @@ def update_performance(days=None):
 
     orders = Order.objects.all()
     if days:
-        orders = orders.filter(order_time__range=(today - datetime.timedelta(days=days), today))
+        orders = orders.filter(order_time__range=(today - timedelta(days=days), today))
 
     order_counts = orders.annotate(date=TruncDate("order_time", tzinfo=riyadh)) \
         .values("date", "status").annotate(orders=Count("order_no")).order_by("-date")
