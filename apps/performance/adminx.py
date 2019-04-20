@@ -13,7 +13,6 @@ def update_performance(days=None):
     from django.db.models.functions import TruncDate
 
 
-
     riyadh = pytz.timezone('Asia/Riyadh')
     now = datetime.now(riyadh)
     today = datetime(now.year, now.month, now.day, tzinfo=riyadh)
