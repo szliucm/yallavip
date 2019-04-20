@@ -1094,3 +1094,62 @@ def get_shopify_inventory():
 
     return  data
 
+'''
+Create a smart collection with a specified title
+POST /admin/api/2019-04/smart_collections.json
+{
+  "smart_collection": {
+    "title": "Macbooks",
+    "rules": [
+      {
+        "column": "vendor",
+        "relation": "equals",
+        "condition": "Apple"
+      }
+    ]
+  }
+}
+'''
+def create_smart_collection():
+
+    DEBUG = False
+
+    if not DEBUG:
+
+        dest_shop = "yallasale-com"
+        location_id = 11796512810
+
+    else:
+        dest_shop = "yallavip-saudi"
+        location_id = 6019153986
+
+
+    #获取店铺信息
+    shop_obj = Shop.objects.get(shop_name=dest_shop)
+    shop_url = "https://%s:%s@%s.myshopify.com" % (shop_obj.apikey, shop_obj.password, shop_obj.shop_name)
+
+    url = shop_url + "/admin/smart_collections.json"
+
+    params = {
+      "smart_collection": {
+        "title": "Macbooks",
+        "rules": [
+          {
+            "column": "vendor",
+            "relation": "equals",
+            "condition": "Apple"
+          }
+        ]
+      }
+    }
+    headers = {
+        "Content-Type": "application/json",
+        "charset": "utf-8",
+
+    }
+    # print("url %s params %s"%(url, params))
+    r = requests.post(url, headers=headers, data=json.dumps(params))
+    data = json.loads(r.text)
+    print(data)
+    return data
+

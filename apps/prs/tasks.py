@@ -2259,7 +2259,7 @@ def fulfill_order_lightin(order):
     else:
         Order.objects.filter(pk=order.pk).update(
             wms_status="F",
-            fulfill_error=result.get("message"),
+            fulfill_error=result.get("message")[:499],
 
         )
         return False
