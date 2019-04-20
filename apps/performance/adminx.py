@@ -4,7 +4,7 @@ from .models import *
 
 @xadmin.sites.register(Sales)
 class SalesAdmin(object):
-    list_display = ["order_date", "open_num", 'cancel_nmu', "transit_num", ]
+    list_display = ["order_date", "type", 'count',  ]
 
     # 'sku_name','img',
     search_fields = [ ]
