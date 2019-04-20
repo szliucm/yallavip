@@ -38,11 +38,11 @@ class SalesAdmin(object):
 
     # 'sku_name','img',
     search_fields = [ ]
-    list_filter = [ ]
+    list_filter = [ "order_date",'type',]
     list_editable = []
     readonly_fields = ()
     actions = ["batch_update_performance", ]
-    ordering = ['-order_date']
+    ordering = ['-order_date','type']
 
     #更新最近7天的销售记录
     def batch_update_performance(self, request, queryset):
