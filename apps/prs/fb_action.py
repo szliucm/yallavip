@@ -1705,13 +1705,13 @@ def post_yallavip_ad(page_no= None):
 
         ad.save()
 
-def yallavip_ad_update(ad_id, status=archive):
+def ad_update_status(ad_id, status=archive):
     adobjects = FacebookAdsApi.init(access_token=ad_tokens, debug=True)
     try:
         fields = [
         ]
         params = {
-            'status': 'ARCHIVED',
+            'status': status,
 
         }
 
