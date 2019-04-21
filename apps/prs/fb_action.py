@@ -1723,6 +1723,9 @@ def ad_update_status(ad_id, status):
     except Exception as e:
         print(e)
         error = e.api_error_message()
+        return  error ,False
+
+    return  None, True
 
 
 
