@@ -233,7 +233,8 @@ def batch_update_ad():
 
 
 def get_adaccount_ads(adaccount):
-    adobjects = FacebookAdsApi.init(access_token=my_access_token, debug=True)
+    ad_tokens = "EAAHZCz2P7ZAuQBAI49YxZBpnxPjMKZCCu9SiRrgLlGuqQxytEHRzMWriEE1BArZBZAJe9pCVQS4EZBbnclPh8dPfu7Gc7lxSjXCcay7TJXiOOdyi4ZCc3AhijxZCDZCdIZCazziX3xOCT7D53xjDJVj8udnrfMjGUwQG8pE3oVwlaQKRvlYXL5h8FzH"
+    adobjects = FacebookAdsApi.init(access_token=ad_tokens, debug=True)
 
     fields =['id','account_id','ad_review_feedback','adlabels','adset_id','campaign_id', 'name','status',
              'effective_status','creative','created_time','updated_time'
