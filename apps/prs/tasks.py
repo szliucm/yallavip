@@ -5048,6 +5048,14 @@ def outstock_ads_v2():
                 spu.aded=False
                 spu.save()
 
+#根据面包屑更新品类表
+#从spu表取出所有distinct面包屑
+#遍历所有面包屑
+def breadcrumb__cates():
+    breadcrumbs = Lightin_SPU.objects.values_list("breadcrumb",flat=True).distinct()
+    for breadcrumb in breadcrumbs:
+        print(breadcrumb)
+        continue
 
 
 

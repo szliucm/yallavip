@@ -14,7 +14,11 @@ class MyCategory(models.Model):
     """
     super_cate = models.ForeignKey('self', blank=True,null=True, on_delete=models.CASCADE,
                                  verbose_name="父品类")
-    code = models.CharField(u'code', default='', max_length=256, null=True, blank=True)
+    super_name = models.CharField(u'父品类名', default='', max_length=100, null=True, blank=True)
+    name = models.CharField(u'品类名', default='', max_length=100, null=True, blank=True)
+    level = models.BigIntegerField(u'层级', default=0, null=True, blank=True)
+    tags = models.CharField(u'tags', default='', max_length=500, null=True, blank=True)
+
     '''
     cate_1 = models.CharField(u'cate_1', default='', max_length=256, null=True, blank=True)
     cate_2 = models.CharField(u'cate_2', default='', max_length=256, null=True, blank=True)
