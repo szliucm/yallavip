@@ -5003,7 +5003,7 @@ def outstock_ads():
         if spus_outstock.count()>0:
             print("有spu无库存了", spus_outstock, ad)
             #修改广告状态
-            ad_update_status(ad_id, status="ARCHIVED")
+            ad_update_status(ad.ad_id, status="ARCHIVED")
 
             ad.ad_status = "ARCHIVED"
             ad.save()
