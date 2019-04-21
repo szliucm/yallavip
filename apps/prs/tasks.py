@@ -4989,3 +4989,21 @@ def change_product_publish_status(product_no, published):
     else:
         print(r.text)
         return "更新发布状态失败", False
+
+def outsotck_ads():
+
+    #遍历所有已发布的广告，如果有spu已经无库存，就将广告暂停/归档，并改广告名
+    ads = YallavipAd.objects.filter(published=True)
+    for ad in ads:
+
+        handles = ad.spus_name.split(",")
+        spus = Lightin_SPU.objects.filter(sellable__lte=0, handle__in=handles)
+        if spus.count()>0:
+            print("有spu无库存了", spus, ad)
+
+
+
+
+
+
+
