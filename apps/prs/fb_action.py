@@ -1706,7 +1706,7 @@ def post_yallavip_ad(page_no= None):
         ad.save()
 
 def get_adaccount_ads(adaccount_no):
-
+    from fb.models import  MyAd
     adobjects = FacebookAdsApi.init(access_token=ad_tokens, debug=True)
 
     fields =['id','account_id','ad_review_feedback','adlabels','adset_id','campaign_id', 'name','status',
