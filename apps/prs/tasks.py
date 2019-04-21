@@ -4991,15 +4991,29 @@ def change_product_publish_status(product_no, published):
         return "更新发布状态失败", False
 
 def outsotck_ads():
+    from prs.fb_action import yallavip_ad_update
 
     #遍历所有已发布的广告，如果有spu已经无库存，就将广告暂停/归档，并改广告名
     ads = YallavipAd.objects.filter(published=True)
     for ad in ads:
 
         handles = ad.spus_name.split(",")
-        spus = Lightin_SPU.objects.filter(sellable__lte=0, handle__in=handles)
-        if spus.count()>0:
+        spus_all = Lightin_SPU.objects.filter( handle__in=handles)
+        spus_outstock = spus_all.filter(sellable__lte=0)
+        if spus_outstock.count()>0:
             print("有spu无库存了", spus, ad)
+            #修改广告状态
+            yallavip_ad_update(ad_id, status=archive)
+
+            ad.ad_status = "ARCHIVED"
+            ad.save()
+
+            #修改spu状态
+            for spu in spus_all:
+                spu.aded=False
+                spu.save()
+
+
 
 
 

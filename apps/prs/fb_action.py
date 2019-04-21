@@ -1705,6 +1705,27 @@ def post_yallavip_ad(page_no= None):
 
         ad.save()
 
+def yallavip_ad_update(ad_id, status=archive):
+    adobjects = FacebookAdsApi.init(access_token=ad_tokens, debug=True)
+    try:
+        fields = [
+        ]
+        params = {
+            'status': 'ARCHIVED',
+
+        }
+
+        fb_ad = Ad(ad_id).api_update(
+            fields=fields,
+            params=params,
+        )
+
+    except Exception as e:
+        print(e)
+        error = e.api_error_message()
+
+
+
 #创建系统用户的密钥
 def get_appsecret_proof(msg):
     import hashlib

@@ -822,6 +822,7 @@ class YallavipAd(models.Model):
     publish_error = models.CharField(default='无', max_length=256, null=True, blank=True, verbose_name="发布错误(或图片数量)")
     published_time = models.DateTimeField(null=True, blank=True, verbose_name="发布时间")
 
+    ad_status = models.BooleanField(default=False, verbose_name="广告状态")
 
     class Meta:
         verbose_name = "Yallavip 广告"
