@@ -1705,7 +1705,7 @@ def post_yallavip_ad(page_no= None):
 
         ad.save()
 
-def ad_update_status(ad_id, status=archive):
+def ad_update_status(ad_id, status):
     adobjects = FacebookAdsApi.init(access_token=ad_tokens, debug=True)
     try:
         fields = [
