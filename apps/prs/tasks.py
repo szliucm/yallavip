@@ -5018,6 +5018,35 @@ def outstock_ads():
                 spu.aded=False
                 spu.save()
 
+def outstock_ads_v2():
+    from prs.fb_action import ad_update_status
+    from fb.models import MyAd
+
+    #遍历所有已发布的广告，如果有spu已经无库存，就将广告暂停/归档，并改广告名
+    ads = MyAd.objects.filter(active=True)
+    for ad in ads:
+
+        handles = ad.name.split(",")
+        spus_all = Lightin_SPU.objects.filter( handle__in=handles)
+        spus_outstock = spus_all.filter(sellable__lte=0)
+        if spus_outstock.count()>0:
+            print("有spu无库存了", spus_outstock, ad, ad.ad_no)
+            #修改广告状态
+            ad_status = "DELETED"
+
+            info, updated = ad_update_status(ad.ad_no, status=ad_status)
+            if updated :
+                ad.ad_status = ad_status
+                ad.active = False
+            else:
+                print("更新失败")
+
+            ad.save()
+
+            #修改spu状态
+            for spu in spus_all:
+                spu.aded=False
+                spu.save()
 
 
 
