@@ -5001,7 +5001,7 @@ def outstock_ads():
         spus_all = Lightin_SPU.objects.filter( handle__in=handles)
         spus_outstock = spus_all.filter(sellable__lte=0)
         if spus_outstock.count()>0:
-            print("有spu无库存了", spus, ad)
+            print("有spu无库存了", spus_outstock, ad)
             #修改广告状态
             ad_update_status(ad_id, status="ARCHIVED")
 
