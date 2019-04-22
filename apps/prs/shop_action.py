@@ -1142,7 +1142,7 @@ def create_smart_collection(name, tags):
 
     rule = {
         "column": "variant_inventory",
-        "relation": "greater_than ",
+        "relation": "greater_than",
         "condition": 0
     }
     rules.append(rule)
