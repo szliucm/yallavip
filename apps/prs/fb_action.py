@@ -1724,7 +1724,7 @@ def get_adaccount_ads(adaccount_no):
     ads = AdAccount(adaccount_no).get_ads(fields=fields, params=params, )
 
     # 重置原有ad信息为不活跃
-    MyAd.objects.update(active=False)
+    MyAd.objects.filter(account_no = adaccount_no).update(active=False)
     for ad in ads:
         obj, created = MyAd.objects.update_or_create(ad_no=ad["id"],
                                                         defaults={
@@ -1743,6 +1743,7 @@ def get_adaccount_ads(adaccount_no):
                                                                   }
                                                         )
 
+        YallavipAd.objects.filter(ad_id = ad["id"]).update(ad_status = ad.get("status") )
 
 def ad_update_status(ad_id, status):
     adobjects = FacebookAdsApi.init(access_token=ad_tokens, debug=True)
@@ -1858,13 +1859,14 @@ def yallavip_prepare_ads(page_no, to_create_count):
 
     i=0
     for yallavip_album in yallavip_albums:
+        if i > to_create_count:
+            break
 
         prepare_yallavip_ad_album(yallavip_album, lightinalbums_all)
 
         i += 1
 
-        if i > to_create_count:
-            break
+
 
 def yallavip_post_ads(page_no= None):
 
