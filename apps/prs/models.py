@@ -35,7 +35,7 @@ class MyCategory(models.Model):
         app_label = 'prs'
 
     def __str__(self):
-        return self.code
+        return self.name
 
 class MyProduct(models.Model):
     #product_no = models.BigIntegerField(u'产品编号', default=0, null=True, blank=True)

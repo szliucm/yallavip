@@ -46,11 +46,11 @@ class MyCategoryAdmin(object):
     import_export_args = {"import_resource_class": MyCategoryResource,
                           "export_resource_class": MyCategoryResource}
 
-    list_display = ["super_cate", "super_name", "name", "level","tags",]
+    list_display = ["super_cate", "super_name", "name", "level","tags","active","published" ,]
 
 
     search_fields = ["name", ]
-    list_filter = ["level", ]
+    list_filter = ["level","active","published", ]
     list_editable = []
     readonly_fields = ()
     actions = []
