@@ -490,6 +490,8 @@ class Lightin_SPU(models.Model):
     handle = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="handle")
 
     updated = models.BooleanField(default=False, verbose_name="更新状态")
+    update_error = models.CharField(default='', max_length=500, null=True, blank=True, verbose_name="更新错误")
+
     quantity = models.IntegerField(u'数量', default=0, blank=True, null=True)
 
     sellable = models.IntegerField(u'oms_可售数量', default=0, blank=True, null=True)

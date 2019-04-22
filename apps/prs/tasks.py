@@ -5105,7 +5105,20 @@ def create_collcetions():
         cate.save()
 
 
+#使用之前要先把updated置为False,才能把有错误的挑出来重做
 
+def update_shopify_tags():
+    from prs.shop_action import  adjust_shopify_tags
+    spus = Lightin_SPU.objects.filter(published=True, sellable__gt=0 ,updated=False)
+
+    for spu in spus:
+        info, updated = adjust_shopify_tags(spu.product_no, spu.tags)
+        if updated:
+            spu.updated = True
+        else:
+            spu.update_error = info[:499]
+
+        spu.save()
 
 
 

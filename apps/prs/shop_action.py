@@ -1171,3 +1171,37 @@ def create_smart_collection(name, tags):
         return r.text, False
 
 
+
+
+def adjust_shopify_tags(prodcut_no, tags):
+    from shop.models import Shop, ShopifyProduct
+    from prs.shop_action import post_product_main, update_or_create_product
+    from .models import AliProduct
+
+    dest_shop = "yallasale-com"
+    shop_obj = Shop.objects.get(shop_name=dest_shop)
+
+    shop_url = "https://%s:%s@%s.myshopify.com" % (shop_obj.apikey, shop_obj.password, shop_obj.shop_name)
+
+
+    params = {
+        "product": {
+                "id": prodcut_no,
+                "tags": tags,
+
+              }
+    }
+    headers = {
+        "Content-Type": "application/json",
+        "charset": "utf-8",
+
+    }
+    # 初始化SDK
+    url = shop_url + "/admin/products/%s.json"%(prodcut_no)
+
+    r = requests.put(url, headers=headers, data=json.dumps(params))
+    if r.status_code == 200:
+        return "更新tags成功", True
+    else:
+        print("更新tags失败",r,  r.text)
+        return r.text, False
