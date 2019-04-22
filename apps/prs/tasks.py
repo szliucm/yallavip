@@ -5051,11 +5051,12 @@ def outstock_ads_v2():
 #根据面包屑更新品类表
 #从spu表取出所有distinct面包屑
 #遍历所有面包屑
+#分解成3级品类
+#把品类更新到数据库
 def breadcrumb__cates():
     breadcrumbs = Lightin_SPU.objects.values_list("breadcrumb",flat=True).distinct()
-    catelist_1 = []
-    catelist_2 = []
-    catelist_3 = []
+    catelist = []
+
     for breadcrumb in breadcrumbs:
         if not breadcrumb:
             continue
@@ -5064,22 +5065,30 @@ def breadcrumb__cates():
 
         tag =  breadcrumb.split(',')
         if len(tag)>0:
-            cate_1 = (tag[0].strip() , 1, tag[0].strip())
-            if cate_1 not in catelist_1:
-                catelist_1.append(cate_1)
+            cate_1 = ("", tag[0].strip() , 1, tag[0].strip())
+            if cate_1 not in catelist:
+                catelist.append(cate_1)
         if len(tag) > 1:
-            cate_2 = (tag[1].strip() , 1, tag[0].strip() + ','+ tag[1].strip())
-            if cate_2 not in catelist_2:
-                catelist_2.append(cate_2)
+            cate_2 = (tag[0].strip(), tag[1].strip() , 2, tag[0].strip() + ','+ tag[1].strip())
+            if cate_2 not in catelist:
+                catelist.append(cate_2)
 
         if len(tag) > 2:
-            cate_3 = (tag[2].strip() , 1, tag[0].strip() + ','+ tag[1].strip()+','+ tag[2].strip())
-            if cate_3 not in catelist_3:
-                catelist_3.append(cate_3)
+            cate_3 = (tag[1].strip(), tag[2].strip() , 3, tag[0].strip() + ','+ tag[1].strip()+','+ tag[2].strip())
+            if cate_3 not in catelist:
+                catelist.append(cate_3)
 
-    print("cate_1",cate_1)
-    print("cate_2", cate_2)
-    print("cate_3", cate_3)
+    for cate in catelist:
+        obj, created = MyCategory.objects.update_or_create(
+                                                           tags = cate[3],
+
+                                                       defaults={
+                                                           'super_name':cate[0],
+                                                           'name':cate[1],
+                                                           'levels': cate[2],
+                                                                 }
+                                                       )
+
 
 
 
