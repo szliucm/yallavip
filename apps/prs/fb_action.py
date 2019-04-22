@@ -1366,12 +1366,13 @@ def prepare_yallavip_ad_album(yallavip_album_pk, lightinalbums_all):
     yallavip_album_instance = YallavipAlbum.objects.get(pk=yallavip_album_pk)
     print ("正在处理相册 ", yallavip_album_instance.album.name)
     lightinalbums = lightinalbums_all.filter(yallavip_album__pk=yallavip_album_pk).order_by("lightin_spu__sellable")[:4]
+    if lightinalbums.count() < 4:
+        print (yallavip_album_pk, "数量不够", spus.count())
+        return
 
     spu_ims = lightinalbums.values_list("image_marked", flat=True)
     spus = lightinalbums.values_list("lightin_spu__handle", flat=True)
-    if spus.count() < 4:
-        print (yallavip_album_pk, "数量不够", spus.count())
-        return
+
 
     # 把spus的图拼成一张
 
@@ -1397,9 +1398,11 @@ def prepare_yallavip_ad_album(yallavip_album_pk, lightinalbums_all):
 
                                                                  }
                                                        )
+    #把spu标示为已经打过广告了
     for lightinalbum in lightinalbums:
-        lightinalbum.aded = True
-        lightinalbum.save()
+        spu = lightinalbum.lightin_spu
+        spu.aded = True
+        spu.save()
 
 
 
@@ -1816,3 +1819,118 @@ access_token
 EAAHZCz2P7ZAuQBABHO6LywLswkIwvScVqBP2eF5CrUt4wErhesp8fJUQVqRli9MxspKRYYA4JVihu7s5TL3LfyA0ZACBaKZAfZCMoFDx7Tc57DLWj38uwTopJH4aeDpLdYoEF4JVXHf5Ei06p7soWmpih8BBzadiPUAEM8Fw4DuW5q8ZAkSc07PrAX4pGZA4zbSU70ZCqLZAMTQZDZD
 
 '''
+
+def yallavip_page_ad(page_no):
+    max_ad_count = 10
+
+    ads = YallavipAd.objects.filter(page_no=page_no,ad_status="ACTIVE")
+
+    active_count = ads.filter(ad_status="ACTIVE").count()
+
+    if active_count >= max_ad_count:
+        print("活跃广告够多，不用投新的")
+        return 0, True
+
+    to_create_count = max_ad_count - active_count
+
+    prepare_ads(page_no, to_create_count)
+
+
+#为page_no创建to_create_count个新广告
+def yallavip_prepare_ads(page_no, to_create_count):
+    from shop.photo_mark import lightin_mark_image_page
+
+    import requests
+    import base64
+    import time
+
+    # 取库存大、单价高、已经发布到相册 且还未打广告的商品
+    lightinalbums_all = LightinAlbum.objects.filter(yallavip_album__isnull=False, yallavip_album__page__page_no=page_no,
+                                            yallavip_album__page__active=True, yallavip_album__page__is_published=True,
+                                            lightin_spu__sellable__gt=0, lightin_spu__SPU__istartswith = "s",
+                                            lightin_spu__shopify_price__gt=50,
+                                            lightin_spu__aded=False,
+                                            published=True).distinct().order_by("-lightin_spu__sellable")
+
+    yallavip_albums = lightinalbums_all.values_list("yallavip_album",flat=True).distinct().order_by("-lightin_spu__sellable")
+
+    i=0
+    for yallavip_album in yallavip_albums:
+
+        prepare_yallavip_ad_album(yallavip_album, lightinalbums_all)
+
+        i += 1
+
+        if i > to_create_count:
+            break
+
+def yallavip_post_ads(page_no= None):
+
+    adobjects = FacebookAdsApi.init(access_token=ad_tokens, debug=True)
+    adaccount_no = "act_1903121643086425"
+    adset_no = choose_ad_set(page_no)
+
+
+    ads = YallavipAd.objects.filter(active=True, published=False )
+    if page_no:
+        ads = ads.filter(yallavip_album__page__page_no=page_no)
+
+    page_nos = ads.values_list("yallavip_album__page__page_no",flat=True).distinct()
+    for ad_page_no in page_nos:
+        ads = ads.filter(yallavip_album__page__page_no = ad_page_no)
+        for ad in ads:
+            error = ""
+            # 上传到adimage
+            try:
+                fields = [
+                ]
+
+                # link ad
+                params = {
+                    'name': ad_page_no + '_' + ad.spus_name,
+                    'object_story_spec': {'page_id': ad_page_no,
+                                          'link_data': {"call_to_action": {"type": "MESSAGE_PAGE",
+                                                                           "value": {"app_destination": "MESSENGER"}},
+                                                        # "image_hash": adimagehash,
+                                                        "picture": ad.image_marked_url,
+                                                        "link": "https://facebook.com/%s" % (ad_page_no),
+
+                                                        "message": ad.message,
+                                                        "name": "Yallavip.com",
+                                                        "description": "Online Flash Sale Everyhour",
+                                                        "use_flexible_image_aspect_ratio": True, }},
+                }
+                adCreative = AdAccount(adaccount_no).create_ad_creative(
+                    fields=fields,
+                    params=params,
+                )
+
+                print("adCreative is ", adCreative)
+
+                fields = [
+                ]
+                params = {
+                    'name': ad_page_no + '_' + ad.spus_name,
+                    'adset_id': adset_no,
+                    'creative': {'creative_id': adCreative["id"]},
+                    'status': 'PAUSED',
+                    # "access_token": my_access_token,
+                }
+
+                fb_ad = AdAccount(adaccount_no).create_ad(
+                    fields=fields,
+                    params=params,
+                )
+            except Exception as e:
+                print(e)
+                error = e.api_error_message()
+
+
+            if error == "":
+                print("fb ad is ", fb_ad)
+                ad.published= True
+                ad.published_time = dt.now()
+            else:
+                ad.publish_error = error
+
+            ad.save()
