@@ -5070,7 +5070,7 @@ def breadcrumb__cates():
                 catelist_2.append(cate_2)
 
         if len(tag) > 2:
-            cate_3 = (tag[3] , 1, tag[0] + ','+ tag[1]+','+ tag[2])
+            cate_3 = (tag[2] , 1, tag[0] + ','+ tag[1]+','+ tag[2])
             if cate_3 not in catelist_3:
                 catelist_3.append(cate_3)
 
