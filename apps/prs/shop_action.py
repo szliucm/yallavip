@@ -1201,6 +1201,7 @@ def adjust_shopify_tags(prodcut_no, tags):
 
     r = requests.put(url, headers=headers, data=json.dumps(params))
     if r.status_code == 200:
+        print(prodcut_no, tags)
         return "更新tags成功", True
     else:
         print("更新tags失败",r,  r.text)
