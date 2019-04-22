@@ -5057,24 +5057,30 @@ def breadcrumb__cates():
     catelist_2 = []
     catelist_3 = []
     for breadcrumb in breadcrumbs:
+        if not breadcrumb:
+            continue
+
         print(breadcrumb)
 
         tag =  breadcrumb.split(',')
         if len(tag)>0:
-            cate_1 = (tag[0] , 1, tag[0])
+            cate_1 = (tag[0].strip() , 1, tag[0].strip())
             if cate_1 not in catelist_1:
                 catelist_1.append(cate_1)
         if len(tag) > 1:
-            cate_2 = (tag[1] , 1, tag[0] + ','+ tag[1])
+            cate_2 = (tag[1].strip() , 1, tag[0].strip() + ','+ tag[1].strip())
             if cate_2 not in catelist_2:
                 catelist_2.append(cate_2)
 
         if len(tag) > 2:
-            cate_3 = (tag[2] , 1, tag[0] + ','+ tag[1]+','+ tag[2])
+            cate_3 = (tag[2].strip() , 1, tag[0].strip() + ','+ tag[1].strip()+','+ tag[2].strip())
             if cate_3 not in catelist_3:
                 catelist_3.append(cate_3)
 
-    print(cate_1, cate_2, cate_3)
+    print("cate_1",cate_1)
+    print("cate_2", cate_2)
+    print("cate_3", cate_3)
+
 
 
 
