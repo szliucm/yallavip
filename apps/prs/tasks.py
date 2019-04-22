@@ -5090,6 +5090,8 @@ def breadcrumb__cates():
                                                        )
 
 def create_collcetions():
+    from prs.shop_action import  create_smart_collection
+
     cates = MyCategory.objects.filter(active=True, published=False)
 
     for cate in cates:
