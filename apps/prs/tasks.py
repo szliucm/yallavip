@@ -5085,7 +5085,7 @@ def breadcrumb__cates():
                                                        defaults={
                                                            'super_name':cate[0],
                                                            'name':cate[1],
-                                                           'levels': cate[2],
+                                                           'level': cate[2],
                                                                  }
                                                        )
 
