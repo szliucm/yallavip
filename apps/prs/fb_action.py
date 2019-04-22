@@ -1939,13 +1939,11 @@ def yallavip_post_ads(page_no, to_create_count):
         except Exception as e:
             print(e)
             error = e.api_error_message()
-
-
-        if error == "":
-            print("fb ad is ", fb_ad)
-            ad.published= True
-            ad.published_time = dt.now()
-        else:
             ad.publish_error = error
+            ad.save()
+            break
 
+        print("fb ad is ", fb_ad)
+        ad.published= True
+        ad.published_time = dt.now()
         ad.save()
