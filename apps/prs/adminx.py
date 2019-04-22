@@ -43,10 +43,14 @@ class MyCategoryResource(resources.ModelResource):
 
 @xadmin.sites.register(MyCategory)
 class MyCategoryAdmin(object):
-    import_export_args = {"import_resource_class": MyCategoryResource,
-                          "export_resource_class": MyCategoryResource}
+    def spu_count(self, obj):
 
-    list_display = ["super_cate", "super_name", "name", "level","tags","active","published" ,]
+        return  Lightin_SPU.objects.filter(sellable__gt=0, breadcrumb__contains=obj.tags).count()
+
+    spu_count.short_description = "SPU数量"
+
+
+    list_display = ["super_cate", "super_name", "name", "level","tags","spu_count","active","published" ,]
 
 
     search_fields = ["name", ]
