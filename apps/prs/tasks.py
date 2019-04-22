@@ -5112,7 +5112,7 @@ def update_shopify_tags():
     spus = Lightin_SPU.objects.filter(published=True, sellable__gt=0 ,updated=False)
 
     for spu in spus:
-        info, updated = adjust_shopify_tags(spu.product_no, spu.tags)
+        info, updated = adjust_shopify_tags(spu.product_no, spu.breadcrumb)
         if updated:
             spu.updated = True
         else:
