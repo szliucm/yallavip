@@ -1110,7 +1110,7 @@ POST /admin/api/2019-04/smart_collections.json
   }
 }
 '''
-def create_smart_collection():
+def create_smart_collection(name, tags):
 
     DEBUG = False
 
@@ -1130,16 +1130,22 @@ def create_smart_collection():
 
     url = shop_url + "/admin/smart_collections.json"
 
+    rules = []
+
+    for tag in tags.split(","):
+        rule = {
+            "column": "tag",
+            "relation": "equals",
+            "condition": tag
+        }
+        rules.append(rule)
+
     params = {
       "smart_collection": {
-        "title": "Macbooks",
-        "rules": [
-          {
-            "column": "vendor",
-            "relation": "equals",
-            "condition": "Apple"
-          }
-        ]
+        "title": name,
+        "rules": rules,
+        "disjunctive": False,
+        "sort_order" : "best-selling",
       }
     }
     headers = {

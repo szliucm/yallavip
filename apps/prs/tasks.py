@@ -5089,6 +5089,13 @@ def breadcrumb__cates():
                                                                  }
                                                        )
 
+def create_collcetions():
+    cates = MyCategory.objects.filter(active=True, published=False)
+
+    for cate in cates:
+        create_smart_collection(cate.name, cate.tags)
+
+
 
 
 

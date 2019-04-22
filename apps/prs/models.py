@@ -19,6 +19,9 @@ class MyCategory(models.Model):
     level = models.BigIntegerField(u'层级', default=0, null=True, blank=True)
     tags = models.CharField(u'tags', default='', max_length=500, null=True, blank=True)
 
+    active = models.BooleanField(default=True, verbose_name="可用")
+    published = models.BooleanField(default=False, verbose_name="已发布")
+
     '''
     cate_1 = models.CharField(u'cate_1', default='', max_length=256, null=True, blank=True)
     cate_2 = models.CharField(u'cate_2', default='', max_length=256, null=True, blank=True)
