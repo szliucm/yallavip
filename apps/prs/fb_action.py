@@ -1367,7 +1367,7 @@ def prepare_yallavip_ad_album(yallavip_album_pk, lightinalbums_all):
     print ("正在处理相册 ", yallavip_album_instance.album.name)
     lightinalbums = lightinalbums_all.filter(yallavip_album__pk=yallavip_album_pk).order_by("lightin_spu__sellable")[:4]
     if lightinalbums.count() < 4:
-        print (yallavip_album_pk, "数量不够", spus.count())
+        print (yallavip_album_pk, "数量不够", lightinalbums.count())
         return
 
     spu_ims = lightinalbums.values_list("image_marked", flat=True)

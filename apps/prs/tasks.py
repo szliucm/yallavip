@@ -5088,6 +5088,24 @@ def breadcrumb__cates():
                                                            'level': cate[2],
                                                                  }
                                                        )
+def clean_breadcrumb():
+    spus = Lightin_SPU.objects.all()
+
+
+    for spu in spus:
+
+        tags =  spu.breadcrumb.split(',')
+        n=0
+        for tag in tags:
+            if n==0:
+                new_breadscrumb = tag.strip()
+            else:
+                new_breadscrumb = new_breadscrumb +','+ tag.strip()
+            n += 1
+        print new_breadscrumb
+
+        break
+
 
 def create_collcetions():
     from prs.shop_action import  create_smart_collection
