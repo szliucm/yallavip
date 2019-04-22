@@ -5102,7 +5102,7 @@ def clean_breadcrumb():
             else:
                 new_breadscrumb = new_breadscrumb +','+ tag.strip()
             n += 1
-        print new_breadscrumb
+        print (new_breadscrumb)
 
         break
 
