@@ -5109,7 +5109,7 @@ def create_collcetions():
 
 def update_shopify_tags():
     from prs.shop_action import  adjust_shopify_tags
-    spus = Lightin_SPU.objects.filter(published=True, sellable__gt=0 ,updated=False)
+    spus = Lightin_SPU.objects.filter(published=True, sellable__gt=0 ,updated=False).order_by("sellable")
 
     for spu in spus:
         info, updated = adjust_shopify_tags(spu.product_no, spu.breadcrumb)
