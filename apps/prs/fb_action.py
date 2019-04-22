@@ -1833,7 +1833,9 @@ def yallavip_page_ad(page_no):
 
     to_create_count = max_ad_count - active_count
 
-    prepare_ads(page_no, to_create_count)
+    yallavip_prepare_ads(page_no, to_create_count)
+
+    yallavip_post_ads(page_no)
 
 
 #为page_no创建to_create_count个新广告
