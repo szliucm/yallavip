@@ -1822,8 +1822,11 @@ EAAHZCz2P7ZAuQBABHO6LywLswkIwvScVqBP2eF5CrUt4wErhesp8fJUQVqRli9MxspKRYYA4JVihu7s
 '''
 
 def yallavip_page_ad(page_no):
+    adaccount_no = "act_1903121643086425"
     max_ad_count = 10
 
+    #先更新广告的状态，看需要创建多少广告，以保持活跃广告不少于 max_ad_count
+    get_adaccount_ads(adaccount_no)
     ads = YallavipAd.objects.filter(page_no=page_no,ad_status="ACTIVE")
 
     active_count = ads.filter(ad_status="ACTIVE").count()
