@@ -1839,7 +1839,7 @@ def yallavip_page_ad(page_no):
 
     yallavip_prepare_ads(page_no, to_create_count)
 
-    yallavip_post_ads(page_no)
+    yallavip_post_ads(page_no, to_create_count)
 
 
 #为page_no创建to_create_count个新广告
@@ -1849,6 +1849,14 @@ def yallavip_prepare_ads(page_no, to_create_count):
     import requests
     import base64
     import time
+
+    #先看未发布的数量，只要补齐差距即可
+    ads = YallavipAd.objects.filter(active=True, published=False)
+    to_publish_count = ads.count()
+    if to_publish_count >= to_create_count:
+        return
+    else:
+        to_create_count -= to_publish_count
 
     # 取库存大、单价高、已经发布到相册 且还未打广告的商品
     lightinalbums_all = LightinAlbum.objects.filter(yallavip_album__isnull=False, yallavip_album__page__page_no=page_no,
@@ -1871,73 +1879,73 @@ def yallavip_prepare_ads(page_no, to_create_count):
 
 
 
-def yallavip_post_ads(page_no= None):
+def yallavip_post_ads(page_no, to_create_count):
 
     adobjects = FacebookAdsApi.init(access_token=ad_tokens, debug=True)
     adaccount_no = "act_1903121643086425"
     adset_no = choose_ad_set(page_no)
 
 
-    ads = YallavipAd.objects.filter(active=True, published=False )
-    if page_no:
-        ads = ads.filter(yallavip_album__page__page_no=page_no)
+    ads = YallavipAd.objects.filter(active=True, published=False,yallavip_album__page__page_no=page_no )
+    i=0
+    for ad in ads:
+        if i>to_create_count:
+            break
+        else:
+            i += 1
 
-    page_nos = ads.values_list("yallavip_album__page__page_no",flat=True).distinct()
-    for ad_page_no in page_nos:
-        ads = ads.filter(yallavip_album__page__page_no = ad_page_no)
-        for ad in ads:
-            error = ""
-            # 上传到adimage
-            try:
-                fields = [
-                ]
+        error = ""
+        # 上传到adimage
+        try:
+            fields = [
+            ]
 
-                # link ad
-                params = {
-                    'name': ad_page_no + '_' + ad.spus_name,
-                    'object_story_spec': {'page_id': ad_page_no,
-                                          'link_data': {"call_to_action": {"type": "MESSAGE_PAGE",
-                                                                           "value": {"app_destination": "MESSENGER"}},
-                                                        # "image_hash": adimagehash,
-                                                        "picture": ad.image_marked_url,
-                                                        "link": "https://facebook.com/%s" % (ad_page_no),
+            # link ad
+            params = {
+                'name': page_no + '_' + ad.spus_name,
+                'object_story_spec': {'page_id': page_no,
+                                      'link_data': {"call_to_action": {"type": "MESSAGE_PAGE",
+                                                                       "value": {"app_destination": "MESSENGER"}},
+                                                    # "image_hash": adimagehash,
+                                                    "picture": ad.image_marked_url,
+                                                    "link": "https://facebook.com/%s" % (page_no),
 
-                                                        "message": ad.message,
-                                                        "name": "Yallavip.com",
-                                                        "description": "Online Flash Sale Everyhour",
-                                                        "use_flexible_image_aspect_ratio": True, }},
-                }
-                adCreative = AdAccount(adaccount_no).create_ad_creative(
-                    fields=fields,
-                    params=params,
-                )
+                                                    "message": ad.message,
+                                                    "name": "Yallavip.com",
+                                                    "description": "Online Flash Sale Everyhour",
+                                                    "use_flexible_image_aspect_ratio": True, }},
+            }
+            adCreative = AdAccount(adaccount_no).create_ad_creative(
+                fields=fields,
+                params=params,
+            )
 
-                print("adCreative is ", adCreative)
+            print("adCreative is ", adCreative)
 
-                fields = [
-                ]
-                params = {
-                    'name': ad_page_no + '_' + ad.spus_name,
-                    'adset_id': adset_no,
-                    'creative': {'creative_id': adCreative["id"]},
-                    'status': 'PAUSED',
-                    # "access_token": my_access_token,
-                }
+            fields = [
+            ]
+            params = {
+                'name': page_no + '_' + ad.spus_name,
+                'adset_id': adset_no,
+                'creative': {'creative_id': adCreative["id"]},
+                'status': 'PAUSED',
+                # "access_token": my_access_token,
+            }
 
-                fb_ad = AdAccount(adaccount_no).create_ad(
-                    fields=fields,
-                    params=params,
-                )
-            except Exception as e:
-                print(e)
-                error = e.api_error_message()
+            fb_ad = AdAccount(adaccount_no).create_ad(
+                fields=fields,
+                params=params,
+            )
+        except Exception as e:
+            print(e)
+            error = e.api_error_message()
 
 
-            if error == "":
-                print("fb ad is ", fb_ad)
-                ad.published= True
-                ad.published_time = dt.now()
-            else:
-                ad.publish_error = error
+        if error == "":
+            print("fb ad is ", fb_ad)
+            ad.published= True
+            ad.published_time = dt.now()
+        else:
+            ad.publish_error = error
 
-            ad.save()
+        ad.save()
