@@ -5103,8 +5103,10 @@ def clean_breadcrumb():
                 new_breadscrumb = new_breadscrumb +','+ tag.strip()
             n += 1
         print (new_breadscrumb)
+        spu.breadcrumb = new_breadscrumb
+        spu.save()
 
-        break
+
 
 
 def create_collcetions():
