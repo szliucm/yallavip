@@ -5093,7 +5093,17 @@ def create_collcetions():
     cates = MyCategory.objects.filter(active=True, published=False)
 
     for cate in cates:
-        create_smart_collection(cate.name, cate.tags)
+        info,created = create_smart_collection(cate.name, cate.tags)
+        if created:
+            cate.collcetion_no = info
+            cate.published = True
+        else:
+            cate.publishe_error = info[:499]
+
+        cate.save()
+
+
+
 
 
 

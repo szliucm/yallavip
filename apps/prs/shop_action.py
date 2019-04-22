@@ -1140,6 +1140,13 @@ def create_smart_collection(name, tags):
         }
         rules.append(rule)
 
+    rule = {
+        "column": "variant_inventory",
+        "relation": "greater_than ",
+        "condition": 0
+    }
+    rules.append(rule)
+
     params = {
       "smart_collection": {
         "title": name,
@@ -1155,7 +1162,12 @@ def create_smart_collection(name, tags):
     }
     # print("url %s params %s"%(url, params))
     r = requests.post(url, headers=headers, data=json.dumps(params))
-    data = json.loads(r.text)
-    print(data)
-    return data
+    if r.status_code == 200:
+        data = json.loads(r.text)
+        collcetion_no = data["smart_collection"].get("id")
+        return collcetion_no, True
+    else:
+        print(r.text)
+        return r.text, False
+
 

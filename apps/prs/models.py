@@ -22,6 +22,9 @@ class MyCategory(models.Model):
     active = models.BooleanField(default=True, verbose_name="可用")
     published = models.BooleanField(default=False, verbose_name="已发布")
 
+    collcetion_no = models.CharField(u'collcetion_no', default='', max_length=500, null=True, blank=True)
+    publishe_error = models.CharField(u'publishe_error', default='', max_length=500, null=True, blank=True)
+
     '''
     cate_1 = models.CharField(u'cate_1', default='', max_length=256, null=True, blank=True)
     cate_2 = models.CharField(u'cate_2', default='', max_length=256, null=True, blank=True)
