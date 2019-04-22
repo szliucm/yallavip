@@ -5053,9 +5053,29 @@ def outstock_ads_v2():
 #遍历所有面包屑
 def breadcrumb__cates():
     breadcrumbs = Lightin_SPU.objects.values_list("breadcrumb",flat=True).distinct()
+    catelist_1 = []
+    catelist_2 = []
+    catelist_3 = []
     for breadcrumb in breadcrumbs:
         print(breadcrumb)
-        continue
+
+        tag =  breadcrumb.split(',')
+        if len(tag)>0:
+            cate_1 = (tag[0] , 1, tag[0])
+            if cate_1 not in catelist_1:
+                catelist_1.append(cate_1)
+        if len(tag) > 1:
+            cate_2 = (tag[1] , 1, tag[0] + ','+ tag[1])
+            if cate_2 not in catelist_2:
+                catelist_2.append(cate_2)
+
+        if len(tag) > 2:
+            cate_3 = (tag[3] , 1, tag[0] + ','+ tag[1]+','+ tag[2])
+            if cate_3 not in catelist_3:
+                catelist_3.append(cate_3)
+
+    print(cate_1, cate_2, cate_3)
+
 
 
 
