@@ -5153,12 +5153,12 @@ def create_size_collcetions():
 
         info,created = create_smart_collection(name, tags,size)
         if created:
-            cate.collcetion_no = info
-            cate.published = True
+            size_cate.collcetion_no = info
+            size_cate.published = True
         else:
-            cate.publishe_error = info[:499]
+            size_cate.publishe_error = info[:499]
 
-        cate.save()
+        size_cate.save()
 
 
 
