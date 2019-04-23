@@ -1141,10 +1141,11 @@ def create_smart_collection(name, tags, size=None):
         rules.append(rule)
 
     if size:
+        print(size)
         rule = {
             "column": "variant_title",
             "relation": "contains",
-            "condition": size
+            "condition": " / "+size
         }
         rules.append(rule)
 
@@ -1178,7 +1179,7 @@ def create_smart_collection(name, tags, size=None):
     else:
         print(r.text)
         return r.text, False
-
+'''
 def delete_smart_collection(smart_collection_id):
 
     DEBUG = False
@@ -1217,7 +1218,7 @@ def delete_smart_collection(smart_collection_id):
     else:
         print(r.text)
         return r.text, False
-
+'''
 
 def adjust_shopify_tags(prodcut_no, tags):
     from shop.models import Shop, ShopifyProduct

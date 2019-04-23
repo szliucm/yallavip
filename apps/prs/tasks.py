@@ -5125,7 +5125,7 @@ def create_collcetions():
             cate.publishe_error = info[:499]
 
         cate.save()
-
+'''
 def delete_collections():
     from prs.shop_action import  delete_smart_collection
     size_cates = MyCategorySize.objects.filter(active=True, published=True)
@@ -5139,6 +5139,7 @@ def delete_collections():
             cate.publishe_error = info[:499]
 
         cate.save()
+'''
 
 def create_size_collcetions():
     from prs.shop_action import  create_smart_collection
