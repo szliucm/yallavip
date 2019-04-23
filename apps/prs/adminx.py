@@ -1080,8 +1080,8 @@ class ComboItemAdmin(object):
 
 
 
-@xadmin.sites.register(YallavipAd)
-class YallavipAdAdmin(object):
+@xadmin.sites.register(MyCategorySize)
+class MyCategorySizeAdmin(object):
     def photo(self, obj):
         try:
             img = '<a><img src="%s" width="384px"></a>' % (obj.image_marked_url)
