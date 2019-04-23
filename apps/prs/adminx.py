@@ -79,7 +79,7 @@ class MyCategorySizeAdmin(object):
     list_display = ["cate", "size", "sku_quantity",]
 
 
-    search_fields = ["cate", ]
+    search_fields = ["cate__name", ]
     list_filter = ["cate","size","cate__level", ]
     list_editable = []
     readonly_fields = ()
