@@ -55,7 +55,7 @@ class MyCategoryAdmin(object):
                                                  .values_list("SKU",flat=True))
         if variants:
             size = variants.values_list("option2",flat=True)
-            if size:
+            if size and size[0]:
                 return ",".join(size)
 
         return  ""
