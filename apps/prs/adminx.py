@@ -55,7 +55,7 @@ class MyCategoryAdmin(object):
                                                  .values_list("SKU",flat=True))
         size = variants.values_list("option2",flat=True)
 
-        return ",".join(option_2)
+        return ",".join(size)
 
     size.short_description = "尺码"
 
