@@ -1,3 +1,5 @@
+
+
 # Create your tasks here
 from __future__ import absolute_import, unicode_literals
 
@@ -5212,8 +5214,8 @@ def cal_cate_size():
             sizes = variants.values("option2").annotate(sku_quantity = Count(id))
             for size in sizes:
                 obj, created = MyCategorySize.objects.update_or_create(cate=cate,
-                                                                       size = size[0],
-                                                               defaults={'sku_quantity':size[1],
+                                                                       size = size.get("option2"),
+                                                               defaults={'sku_quantity':size.get("sku_quantity"),
 
                                                                          }
                                                                )
