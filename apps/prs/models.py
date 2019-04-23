@@ -55,7 +55,10 @@ class MyCategorySize(models.Model):
 
 
     def __str__(self):
-        return self.size
+        if self.size:
+            return self.size
+        else:
+            return "None"
 
 class MyProduct(models.Model):
     #product_no = models.BigIntegerField(u'产品编号', default=0, null=True, blank=True)
