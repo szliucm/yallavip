@@ -1622,8 +1622,9 @@ class VerifyAdmin(object):
     def batch_cancel_order(self, request, queryset):
 
         for verify in queryset:
-            verify.order.status = "cancelled"
-            verify.order.save()
+            if verify.order.status == "open":
+                verify.order.status = "cancelled"
+                verify.order.save()
 
             # 记录操作日志
             #self.deal_log(queryset, "取消订单", customer.name )
