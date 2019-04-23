@@ -72,8 +72,8 @@ class MyCategoryAdmin(object):
     readonly_fields = ()
     actions = []
 
-@xadmin.sites.register(MyCategory)
-class MyCategorySize(object):
+@xadmin.sites.register(MyCategorySize)
+class MyCategorySizeAdmin(object):
 
 
     list_display = ["cate", "size", "sku_quantity",]
@@ -1080,8 +1080,8 @@ class ComboItemAdmin(object):
 
 
 
-@xadmin.sites.register(MyCategorySize)
-class MyCategorySizeAdmin(object):
+@xadmin.sites.register(YallavipAd)
+class YallavipAdAdmin(object):
     def photo(self, obj):
         try:
             img = '<a><img src="%s" width="384px"></a>' % (obj.image_marked_url)
