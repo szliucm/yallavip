@@ -5143,6 +5143,59 @@ def update_shopify_tags():
 
 
 
+def update_variant_title():
+    #遍历所有的handle用l开头的variant,
+
+    rows = my_custom_sql(mysql)
+
+    for row in rows:
+        print ("更新变体价格： ",row[0],row[2])
+
+        info, adjusted = adjust_shopify_price(row)
+        vs = ShopifyVariant.objects.filter(variant_no=row[1])
+        if adjusted:
+            vs.update(price=row[2],inventory_policy = "deny",update_error="")
+        else:
+            vs.update(update_error = info)
+
+
+def adjust_shopify_price(row):
+    from shop.models import Shop, ShopifyProduct
+    from prs.shop_action import post_product_main, update_or_create_product
+    from .models import AliProduct
+
+    dest_shop = "yallasale-com"
+    location_id = "11796512810"
+    shop_obj = Shop.objects.get(shop_name=dest_shop)
+
+    shop_url = "https://%s:%s@%s.myshopify.com" % (shop_obj.apikey, shop_obj.password, shop_obj.shop_name)
+
+
+    params = {
+        "variant": {
+                "id": row[1],
+                "inventory_policy": "deny",
+                "price": row[2]
+              }
+    }
+    headers = {
+        "Content-Type": "application/json",
+        "charset": "utf-8",
+
+    }
+    # 初始化SDK
+    url = shop_url + "/admin/variants/%s.json"%(row[1])
+
+    print("开始更新变体")
+    print(url, json.dumps(params))
+
+    r = requests.put(url, headers=headers, data=json.dumps(params))
+    if r.status_code == 200:
+        return "更新变体成功", True
+    else:
+        print("更新变体失败",r,  r.text)
+        return "更新变体失败", False
+
 
 
 

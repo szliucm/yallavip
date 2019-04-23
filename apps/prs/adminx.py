@@ -49,8 +49,18 @@ class MyCategoryAdmin(object):
 
     spu_count.short_description = "SPU数量"
 
+    def size(self, obj):
+        variants = ShopifyVariant.objects.filter(sku__in =
+                                      Lightin_SKU.objects.filter(o_sellable__gt=0, lightin_spu__breadcrumb__contains=obj.tags)
+                                                 .values_list("SKU",flat=True))
+        size = variants.values_list("option2",flat=True)
 
-    list_display = ["super_cate", "super_name", "name", "level","tags","spu_count","active","published" ,]
+        return ",".join(option_2)
+
+    size.short_description = "尺码"
+
+
+    list_display = ["super_cate", "super_name", "name", "level","tags","spu_count","size", "active","published" ,]
 
 
     search_fields = ["name", ]
