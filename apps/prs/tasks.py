@@ -5127,7 +5127,7 @@ def create_collcetions():
         cate.save()
 
 def delete_collections():
-    from prs.fb_action import  delete_smart_collection
+    from prs.shop_action import  delete_smart_collection
     size_cates = MyCategorySize.objects.filter(active=True, published=True)
     for cate in size_cates:
         info,deleted = delete_smart_collection(cate.collcetion_no)
