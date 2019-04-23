@@ -1823,13 +1823,13 @@ EAAHZCz2P7ZAuQBABHO6LywLswkIwvScVqBP2eF5CrUt4wErhesp8fJUQVqRli9MxspKRYYA4JVihu7s
 
 def yallavip_page_ad(page_no):
     adaccount_no = "act_1903121643086425"
-    max_ad_count = 10
+    max_ad_count = 50
 
     #先更新广告的状态，看需要创建多少广告，以保持活跃广告不少于 max_ad_count
     get_adaccount_ads(adaccount_no)
-    ads = YallavipAd.objects.filter(page_no=page_no,ad_status="ACTIVE")
+    ads = YallavipAd.objects.filter(yallavip_album__page__page_no=page_no,published=True)
 
-    active_count = ads.filter(ad_status="ACTIVE").count()
+    active_count = ads.count()
 
     if active_count >= max_ad_count:
         print("活跃广告够多，不用投新的")
@@ -1851,7 +1851,7 @@ def yallavip_prepare_ads(page_no, to_create_count):
     import time
 
     #先看未发布的数量，只要补齐差距即可
-    ads = YallavipAd.objects.filter(active=True, published=False)
+    ads = YallavipAd.objects.filter(yallavip_album__page__page_no = page_no, active=True, published=False)
     to_publish_count = ads.count()
     if to_publish_count >= to_create_count:
         return
