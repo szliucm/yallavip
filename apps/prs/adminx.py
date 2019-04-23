@@ -72,6 +72,19 @@ class MyCategoryAdmin(object):
     readonly_fields = ()
     actions = []
 
+@xadmin.sites.register(MyCategory)
+class MyCategorySize(object):
+
+
+    list_display = ["cate", "size", "sku_quantity",]
+
+
+    search_fields = ["cate", ]
+    list_filter = ["cate","size", ]
+    list_editable = []
+    readonly_fields = ()
+    actions = []
+
 @xadmin.sites.register(MyProduct)
 class MyProductAdmin(object):
     list_display = [ ]
