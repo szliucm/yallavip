@@ -55,9 +55,10 @@ class MyCategoryAdmin(object):
                                                  .values_list("SKU",flat=True))
         if variants:
             size = variants.values_list("option2",flat=True)
-            return ",".join(size)
-        else:
-            return  ""
+            if size:
+                return ",".join(size)
+
+        return  ""
 
     size.short_description = "尺码"
 
