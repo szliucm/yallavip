@@ -5126,6 +5126,20 @@ def create_collcetions():
 
         cate.save()
 
+def delete_collections():
+    from prs.fb_action import  delete_smart_collection
+    size_cates = MyCategorySize.objects.filter(active=True, published=True)
+    for cate in size_cates:
+        info,deleted = delete_smart_collection(cate.collcetion_no)
+        if deleted:
+            cate.collcetion_no = ""
+            cate.published = False
+
+        else:
+            cate.publishe_error = info[:499]
+
+        cate.save()
+
 def create_size_collcetions():
     from prs.shop_action import  create_smart_collection
 
@@ -5134,9 +5148,10 @@ def create_size_collcetions():
     for size_cate in size_cates:
         cate = size_cate.cate
         name = cate.name + ' / ' + size_cate.size
-        tags = cate.tags + ',' + size_cate.size
+        tags = cate.tags
+        size = size_cate.size
 
-        info,created = create_smart_collection(name, tags)
+        info,created = create_smart_collection(name, tags,size)
         if created:
             cate.collcetion_no = info
             cate.published = True
@@ -5144,6 +5159,7 @@ def create_size_collcetions():
             cate.publishe_error = info[:499]
 
         cate.save()
+
 
 
 #使用之前要先把updated置为False,才能把有错误的挑出来重做

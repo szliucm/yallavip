@@ -1110,7 +1110,7 @@ POST /admin/api/2019-04/smart_collections.json
   }
 }
 '''
-def create_smart_collection(name, tags):
+def create_smart_collection(name, tags, size=None):
 
     DEBUG = False
 
@@ -1140,12 +1140,21 @@ def create_smart_collection(name, tags):
         }
         rules.append(rule)
 
+    if size:
+        rule = {
+            "column": "variant_title",
+            "relation": "contains",
+            "condition": size
+        }
+        rules.append(rule)
+
     rule = {
         "column": "variant_inventory",
         "relation": "greater_than",
         "condition": 0
     }
     rules.append(rule)
+
 
     params = {
       "smart_collection": {
@@ -1170,7 +1179,44 @@ def create_smart_collection(name, tags):
         print(r.text)
         return r.text, False
 
+def delete_smart_collection(smart_collection_id):
 
+    DEBUG = False
+
+    if not DEBUG:
+
+        dest_shop = "yallasale-com"
+        location_id = 11796512810
+
+    else:
+        dest_shop = "yallavip-saudi"
+        location_id = 6019153986
+
+
+    #获取店铺信息
+    shop_obj = Shop.objects.get(shop_name=dest_shop)
+    shop_url = "https://%s:%s@%s.myshopify.com" % (shop_obj.apikey, shop_obj.password, shop_obj.shop_name)
+
+    url = shop_url + "/admin/smart_collections/%s.json"%(smart_collection_id)
+
+
+
+    params = {
+
+    }
+    headers = {
+        "Content-Type": "application/json",
+        "charset": "utf-8",
+
+    }
+    # print("url %s params %s"%(url, params))
+    r = requests.delete(url, headers=headers, data=json.dumps(params))
+    if r.status_code == 200:
+
+        return "OK", True
+    else:
+        print(r.text)
+        return r.text, False
 
 
 def adjust_shopify_tags(prodcut_no, tags):
