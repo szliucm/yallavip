@@ -51,7 +51,7 @@ class MyCategoryAdmin(object):
 
     def size(self, obj):
         variants = ShopifyVariant.objects.filter(sku__in =
-                                      Lightin_SKU.objects.filter(o_sellable__gt=0, lightin_spu__breadcrumb__contains=obj.tags)
+                                      Lightin_SKU.objects.filter(o_sellable__gt=0, lightin_spu__breadcrumb__contains=obj.tags, skuattr__icontains="size")
                                                  .values_list("SKU",flat=True))
         if variants:
             size = variants.values_list("option2",flat=True)
