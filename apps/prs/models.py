@@ -45,7 +45,7 @@ class MyCategorySize(models.Model):
     商品类别
     """
     cate = models.ForeignKey(MyCategory, blank=True,null=True, on_delete=models.CASCADE,
-                                 verbose_name="品类")
+                                 related_name="cate_size", verbose_name="品类")
     size = models.CharField(u'规格', default='', max_length=100, null=True, blank=True)
     sku_quantity = models.BigIntegerField(u'SKU数量', default=0, null=True, blank=True)
 
