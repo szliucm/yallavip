@@ -1880,6 +1880,7 @@ def yallavip_prepare_ads(page_no, to_create_count):
 
 
 def yallavip_post_ads(page_no, to_create_count):
+    import time
 
     adobjects = FacebookAdsApi.init(access_token=ad_tokens, debug=True)
     adaccount_no = "act_1903121643086425"
@@ -1947,3 +1948,5 @@ def yallavip_post_ads(page_no, to_create_count):
         ad.published= True
         ad.published_time = dt.now()
         ad.save()
+
+        time.sleep(60)
