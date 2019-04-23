@@ -49,6 +49,12 @@ class MyCategorySize(models.Model):
     size = models.CharField(u'规格', default='', max_length=100, null=True, blank=True)
     sku_quantity = models.BigIntegerField(u'SKU数量', default=0, null=True, blank=True)
 
+    active = models.BooleanField(default=True, verbose_name="可用")
+    published = models.BooleanField(default=False, verbose_name="已发布")
+
+    collcetion_no = models.CharField(u'collcetion_no', default='', max_length=500, null=True, blank=True)
+    publishe_error = models.CharField(u'publishe_error', default='', max_length=500, null=True, blank=True)
+
     class Meta:
         verbose_name = "商品尺码"
         verbose_name_plural = verbose_name

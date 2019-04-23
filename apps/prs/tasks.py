@@ -5126,6 +5126,25 @@ def create_collcetions():
 
         cate.save()
 
+def create_size_collcetions():
+    from prs.shop_action import  create_smart_collection
+
+    size_cates = MyCategorySize.objects.filter(active=True, published=False)
+
+    for size_cate in size_cates:
+        cate = size_cate.cate
+        name = cate.name + ' / ' + size_cate.size
+        tags = cate.tags + ',' + size_cate.size
+
+        info,created = create_smart_collection(name, tags)
+        if created:
+            cate.collcetion_no = info
+            cate.published = True
+        else:
+            cate.publishe_error = info[:499]
+
+        cate.save()
+
 
 #使用之前要先把updated置为False,才能把有错误的挑出来重做
 
