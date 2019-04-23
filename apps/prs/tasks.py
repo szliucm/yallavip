@@ -5209,7 +5209,7 @@ def cal_cate_size():
                                                                             skuattr__icontains="size")
                                                  .values_list("SKU", flat=True))
         if variants:
-            sizes = variants.values("option2").annotate(Count(id))
+            sizes = variants.values("option2").annotate(sku_quantity = Count(id))
             for size in sizes:
                 obj, created = MyCategorySize.objects.update_or_create(cate=cate,
                                                                        size = size[0],
