@@ -53,7 +53,7 @@ class MyCategorySize(models.Model):
     published = models.BooleanField(default=False, verbose_name="已发布")
 
     collcetion_no = models.CharField(u'collcetion_no', default='', max_length=500, null=True, blank=True)
-    publishe_error = models.CharField(u'publishe_error', default='', max_length=500, null=True, blank=True)
+    publish_error = models.CharField(u'publishe_error', default='', max_length=500, null=True, blank=True)
 
     class Meta:
         verbose_name = "商品尺码"
