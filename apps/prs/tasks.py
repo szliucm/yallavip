@@ -5197,6 +5197,27 @@ def adjust_shopify_price(row):
         return "更新变体失败", False
 
 
+def cal_cate_size():
+    from django.db.models import Count
+
+    cates = MyCategory.objects.filter(active=True)
+
+    for cate in cates:
+        variants = ShopifyVariant.objects.filter(sku__in=
+                                                 Lightin_SKU.objects.filter(o_sellable__gt=0,
+                                                                            lightin_spu__breadcrumb__contains=cate.tags,
+                                                                            skuattr__icontains="size")
+                                                 .values_list("SKU", flat=True))
+        if variants:
+            sizes = variants.values("option2").annotate(Count(id))
+            for size in sizes:
+                obj, created = MyCategorySize.objects.update_or_create(cate=cate,
+                                                                       size = size[0],
+                                                               defaults={'sku_quantity':size[1],
+
+                                                                         }
+                                                               )
+
 
 
 

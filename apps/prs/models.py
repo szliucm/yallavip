@@ -40,6 +40,23 @@ class MyCategory(models.Model):
     def __str__(self):
         return self.name
 
+class MyCategorySize(models.Model):
+    """
+    商品类别
+    """
+    cate = models.ForeignKey(MyCategory, blank=True,null=True, on_delete=models.CASCADE,
+                                 verbose_name="品类")
+    size = models.CharField(u'规格', default='', max_length=100, null=True, blank=True)
+    sku_quantity = models.BigIntegerField(u'SKU数量', default=0, null=True, blank=True)
+
+    class Meta:
+        verbose_name = "商品尺码"
+        verbose_name_plural = verbose_name
+
+
+    def __str__(self):
+        return self.size
+
 class MyProduct(models.Model):
     #product_no = models.BigIntegerField(u'产品编号', default=0, null=True, blank=True)
     #vendor_no = models.CharField(default='', max_length=100, null=True, blank=True, verbose_name="供应商编号")

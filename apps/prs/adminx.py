@@ -781,7 +781,7 @@ class Lightin_SKUAdmin(object):
 
     def sku_photo(self, obj):
         if obj.image is not None and len(obj.image)>0 :
-           img = '<a><img src="%s" width="384px"></a>' % (obj.image)
+           img = '<a><img src="%s" width="100px"></a>' % (obj.image)
         else:
             img = "no photo"
 
@@ -808,7 +808,7 @@ class Lightin_SKUAdmin(object):
 
     # 'sku_name','img',
     search_fields = ["SPU", "SKU","lightin_spu__handle",]
-    list_filter = ["skuattr", "SPU","lightin_spu__breadcrumb","skuattr"]
+    list_filter = ["skuattr", "SPU","lightin_spu__breadcrumb"]
     list_editable = []
     readonly_fields = ()
     actions = []
