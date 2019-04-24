@@ -232,7 +232,7 @@ def batch_update_ad():
         get_adaccount_ads(adaccount)
 
 
-def get_adaccount_ads(adaccount):
+def get_adaccount_ads(adaccount_no):
     ad_tokens = "EAAHZCz2P7ZAuQBAI49YxZBpnxPjMKZCCu9SiRrgLlGuqQxytEHRzMWriEE1BArZBZAJe9pCVQS4EZBbnclPh8dPfu7Gc7lxSjXCcay7TJXiOOdyi4ZCc3AhijxZCDZCdIZCazziX3xOCT7D53xjDJVj8udnrfMjGUwQG8pE3oVwlaQKRvlYXL5h8FzH"
     adobjects = FacebookAdsApi.init(access_token=ad_tokens, debug=True)
 
@@ -244,7 +244,7 @@ def get_adaccount_ads(adaccount):
         #'effective_status': ["ACTIVE"," PAUSED"," DELETED"," PENDING_REVIEW"," DISAPPROVED"," PREAPPROVED"," PENDING_BILLING_INFO"," CAMPAIGN_PAUSED"," ARCHIVED"," ADSET_PAUSED"," WITH_ISSUES",],
     }
 
-    adaccount_no = "act_"+adaccount.adaccount_no
+    adaccount_no = "act_"+ adaccount_no
     ads = AdAccount(adaccount_no).get_ads(fields=fields, params=params, )
 
     # 重置原有ad信息为不活跃
