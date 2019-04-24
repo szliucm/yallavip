@@ -1706,6 +1706,7 @@ def post_yallavip_ad(page_no= None):
 
         if error == "":
             print("fb ad is ", fb_ad)
+            ad.ad_id = fb_ad.get("id")
             ad.published= True
             ad.published_time = dt.now()
         else:
@@ -1882,6 +1883,37 @@ def yallavip_prepare_ads(page_no, to_create_count):
 
         i += 1
 
+#为page_no创建to_create_count个新广告
+def yallavip_prepare_ads_by_rule(page_no):
+    from shop.photo_mark import lightin_mark_image_page
+    import random
+    import requests
+    import base64
+    import time
+
+
+
+    # 取库存大、单价高、已经发布到相册 且还未打广告的商品
+    lightinalbums_all = LightinAlbum.objects.filter(yallavip_album__isnull=False, yallavip_album__page__page_no=page_no,
+                                            lightin_spu__sellable__gt=0, lightin_spu__SPU__istartswith = "s",
+                                            lightin_spu__shopify_price__gt=50,
+                                            lightin_spu__aded=False,
+                                            published=True).distinct().order_by("-lightin_spu__sellable")
+
+    # 把相册规则对应的cates找出来，每个cate找一个相册生成广告图片，如果有尺码，就把尺码加在图片下面
+    rule_cates = lightinalbums_all.values("yallavip_album__rule__cates").annotate(cate_count = Count(id)).order_by("-cate_count")
+
+
+
+    i=0
+    for rule_cate in rule_cates:
+        if i > to_create_count:
+            break
+        yallavip_albums = lightinalbums_all.filter(yallavip_album__rule__cates=rule_cate.get("yallavip_album__rule__cates")).values("yallavip_album").annotate(album_count = Count(id)).order_by("-album_count")
+        yallavip_album = random.choice(yallavip_albums)
+        prepare_yallavip_ad_album(yallavip_album.get("yallavip_album"), lightinalbums_all)
+
+        i += 1
 
 
 def yallavip_post_ads(page_no, to_create_count):
