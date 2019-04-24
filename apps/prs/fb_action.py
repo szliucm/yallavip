@@ -1920,7 +1920,7 @@ def yallavip_prepare_ads_by_rule(page_no):
         yallavip_album = random.choice(yallavip_albums)
         prepare_yallavip_ad_album(yallavip_album.get("yallavip_album"), lightinalbums_all)
 
-        i += 1
+
 
 
 def yallavip_post_ads(page_no, to_create_count):
