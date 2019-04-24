@@ -1992,6 +1992,7 @@ def yallavip_post_ads(page_no, to_create_count):
             break
 
         print("fb ad is ", fb_ad)
+        ad.ad_id = fb_ad.get("id")
         ad.published= True
         ad.published_time = dt.now()
         ad.save()
