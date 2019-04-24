@@ -1092,8 +1092,16 @@ class YallavipAdAdmin(object):
 
     page.short_description = "page"
 
+    def sellable(self, obj):
+        handle_list = obj.spus_name.split(",")
+        sellable = Lightin_SPU.objects.filter(handle__in=handle_list).values("hanlde","sellable")
+        return  list(sellable)
 
-    list_display = ["yallavip_album", "page", "spus_name", 'photo', "adset_no","creative_id", "ad_id",]
+
+    sellable.short_description = "sellable"
+
+
+    list_display = ["yallavip_album", "page", "spus_name",'sellable',  'photo', "adset_no","creative_id", "ad_id",]
 
     # 'sku_name','img',
     search_fields = ["spus_name", ]
