@@ -1094,7 +1094,7 @@ class YallavipAdAdmin(object):
 
     def sellable(self, obj):
         handle_list = obj.spus_name.split(",")
-        sellable = Lightin_SPU.objects.filter(handle__in=handle_list).values("hanlde","sellable")
+        sellable = Lightin_SPU.objects.filter(handle__in=handle_list).values("handle","sellable")
         return  list(sellable)
 
 
