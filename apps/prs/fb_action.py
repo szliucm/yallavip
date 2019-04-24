@@ -1917,6 +1917,7 @@ def yallavip_prepare_ads_by_rule(page_no):
             print("n = ", n, yallavip_albums)
             if yallavip_albums[n].get("album_count") < 4:
                 del yallavip_albums[n:]
+                break
 
         yallavip_album = random.choice(yallavip_albums)
         prepare_yallavip_ad_album(yallavip_album.get("yallavip_album"), lightinalbums_all)
