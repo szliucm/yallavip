@@ -1890,6 +1890,7 @@ def yallavip_prepare_ads_by_rule(page_no):
     import requests
     import base64
     import time
+    from django.db.models import Count
 
 
 
