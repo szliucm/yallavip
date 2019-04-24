@@ -4560,7 +4560,7 @@ def prepare_yallavip_album_material(page_no=None):
         print(lightinalbums)
 
         for lightinalbum in lightinalbums:
-            prepare_a_album.apply_async((lightinalbum.pk), queue='fb')
+            prepare_a_album.apply_async((lightinalbum.pk,), queue='fb')
 
             '''
             spu = lightinalbum.lightin_spu
@@ -4786,7 +4786,7 @@ def sync_yallavip_album_batch(lightinalbums):
 
     for lightinalbum in lightinalbums:
         #error, posted = post_yallavip_album(lightinalbum)
-        post_yallavip_album.apply_async((lightinalbum), queue='fb')
+        post_yallavip_album.apply_async((lightinalbum,), queue='fb')
         # 更新Facebook图片数据库记录
         '''
         if posted is not None:
