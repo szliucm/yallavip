@@ -1910,6 +1910,13 @@ def yallavip_prepare_ads_by_rule(page_no):
         if i > to_create_count:
             break
         yallavip_albums = lightinalbums_all.filter(yallavip_album__rule__cates=rule_cate.get("yallavip_album__rule__cates")).values("yallavip_album").annotate(album_count = Count(id)).order_by("-album_count")
+
+        #把相册下图片数量少于4的相册剔除，因为数量不够拼图
+        yallavip_albums =  list(yallavip_albums)
+        for n in range(len(yallavip_albums)):
+            if yallavip_albums[n].get("album_count") < 4:
+                del yallavip_albums[n:]
+
         yallavip_album = random.choice(yallavip_albums)
         prepare_yallavip_ad_album(yallavip_album.get("yallavip_album"), lightinalbums_all)
 
