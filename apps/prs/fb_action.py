@@ -1634,6 +1634,9 @@ def choose_ad_set(page_no):
             return "23843323830460510"
         elif page_no == "437797513321974":
             return  "23843303803340510"
+        elif page_no == "2084015718575745":
+            return  "23843324742430510"
+
 
     except:
         return  None
