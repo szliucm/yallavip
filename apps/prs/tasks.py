@@ -4640,7 +4640,7 @@ def prepare_yallavip_album_material(page_no=None):
                         material_error=error
                     )
             '''
-
+@shared_task
 def prepare_a_album(lightinalbum_pk):
     lightinalbum = LightinAlbum.objects.get(pk=lightinalbum_pk)
 
