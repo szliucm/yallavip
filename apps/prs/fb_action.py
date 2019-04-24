@@ -1914,13 +1914,14 @@ def yallavip_prepare_ads_by_rule(page_no):
         #把相册下图片数量少于4的相册剔除，因为数量不够拼图
         yallavip_albums =  list(yallavip_albums)
         for n in range(len(yallavip_albums)):
-            print("n = ", n, yallavip_albums)
+
             if yallavip_albums[n].get("album_count") < 4:
                 del yallavip_albums[n:]
                 break
 
-        yallavip_album = random.choice(yallavip_albums)
-        prepare_yallavip_ad_album(yallavip_album.get("yallavip_album"), lightinalbums_all)
+        if yallavip_albums:
+            yallavip_album = random.choice(yallavip_albums)
+            prepare_yallavip_ad_album(yallavip_album.get("yallavip_album"), lightinalbums_all)
 
 
 
