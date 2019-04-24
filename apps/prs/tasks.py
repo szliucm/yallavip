@@ -4542,7 +4542,7 @@ def prepare_yallavip_album_source(page_no=None):
 @shared_task
 def prepare_yallavip_album_material(page_no=None):
     from django.db.models import Max
-    from shop.photo_mark import yallavip_mark_image
+
    #每次每个相册处理最多100张图片
 
     lightinalbums_all = LightinAlbum.objects.filter(published=False, publish_error="无", material=False,
@@ -4561,6 +4561,7 @@ def prepare_yallavip_album_material(page_no=None):
 
         for lightinalbum in lightinalbums:
             prepare_a_album.apply_async((lightinalbum.pk,), queue='fb')
+            #prepare_a_album(lightinalbum.pk)
 
             '''
             spu = lightinalbum.lightin_spu
@@ -4642,6 +4643,7 @@ def prepare_yallavip_album_material(page_no=None):
             '''
 @shared_task
 def prepare_a_album(lightinalbum_pk):
+    from shop.photo_mark import yallavip_mark_image
     lightinalbum = LightinAlbum.objects.get(pk=lightinalbum_pk)
 
     spu = lightinalbum.lightin_spu
