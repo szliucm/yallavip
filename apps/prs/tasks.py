@@ -3838,7 +3838,7 @@ def auto_smscode():
     #取需要处理的订单
     #取出还没添加到审核的订单
     orders_tocheck = Order.objects.filter(verify__isnull=True, status="open",
-                                  financial_status="paid")
+                                  financial_status__in=("paid","pending"))
     # 添加到待审核订单
     for row in orders_tocheck:
 
