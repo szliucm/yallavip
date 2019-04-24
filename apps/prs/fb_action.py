@@ -1906,10 +1906,9 @@ def yallavip_prepare_ads_by_rule(page_no):
 
 
 
-    i=0
+
     for rule_cate in rule_cates:
-        if i > to_create_count:
-            break
+
         yallavip_albums = lightinalbums_all.filter(yallavip_album__rule__cates=rule_cate.get("yallavip_album__rule__cates")).values("yallavip_album").annotate(album_count = Count(id)).order_by("-album_count")
 
         #把相册下图片数量少于4的相册剔除，因为数量不够拼图
