@@ -1628,8 +1628,13 @@ def get_ad_sets(adaccount_no):
 def choose_ad_set(page_no):
     try:
 
-        adsets = MyAdset.objects.filter(name__icontains=page_no,active=True)
-        return adsets[0].adset_no
+        #adsets = MyAdset.objects.filter(name__icontains=page_no,active=True)
+        #return adsets[0].adset_no
+        if page_no == "297166711007461":
+            return "23843323830460510"
+        elif page_no == "437797513321974":
+            return  "23843303803340510"
+
     except:
         return  None
 
