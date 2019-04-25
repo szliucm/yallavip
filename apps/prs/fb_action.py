@@ -2025,7 +2025,7 @@ def yallavip_post_and_ads(page_no, to_create_count):
                 "use_flexible_image_aspect_ratio": True,
 
             }
-            feed_post = Page(page_id).create_feed(
+            feed_post = Page(page_no).create_feed(
                 fields=fields,
                 params=params,
             )
