@@ -5343,7 +5343,29 @@ def cal_cate_size():
                                                                          }
                                                                )
 
+def test_for_post():
+    page_id = "766174940387532"
+    message = "This is only a test"
+    image_url = "https://li2.rightinthebox.com/images/384x500/201703/ebcwqx1488880984387.jpg"
 
+    access_token, long_token = get_token(mypage.page_no)
+
+    adobjects = FacebookAdsApi.init(access_token=access_token, debug=True)
+
+    fields = [
+            'object_id',
+        ]
+    params = {
+        'message': message,
+        #'attached_media': [{'media_fbid': photo_to_be_post_id}],
+        'picture':image_url,
+        "call_to_action": {"type": "MESSAGE_PAGE",
+                            "value": {"app_destination": "MESSENGER"}},
+    }
+    feed_post = Page(page_id).create_feed(
+        fields=fields,
+        params=params,
+    )
 
 
 
