@@ -1431,45 +1431,38 @@ def combo_ad_image(spu_ims, spus_name,album_name):
     # 开始拼图exit
 
 
-    item_count = spu_ims.count()
+    item_count = len(spu_ims)
     print("图片数量", item_count)
     if item_count == 4:
         # 四张图
         # 先做个1080x1080的画布
+        position = album_name.find("Size=")
+        if position == -1:
+            layer = Image.new("RGB", (1080, 1080), "red")
+        else:
+            layer = Image.new("RGB", (1080, 1130), "red")
+            # 最下面写相册名字里的尺码信息
+            FONT = os.path.join(settings.BASE_DIR, "static/font/ARIAL.TTF")
 
-        layer = Image.new("RGB", (1080, 1080), "red")
+            font = ImageFont.truetype(FONT, 35)
+            draw1 = ImageDraw.Draw(layer)
 
+            lw, lh = layer.size
+            x = 0
+            y = lh - 50
+
+            size_name = album_name[position:]
+            draw1.rectangle((x + 10, y + 5, x + 20 + len(size_name)*20 , y + 45), fill='yellow')
+            draw1.text((x + 30, y + 10), size_name, font=font,
+                       fill="black")  # 设置文字位置/内容/颜色/字体
+
+        #把四张图放上去
         layer.paste(clipResizeImg_new(ims[0], 540, 540), (0, 0))
         layer.paste(clipResizeImg_new(ims[1], 540, 540), (0, 540))
         layer.paste(clipResizeImg_new(ims[2], 540, 540), (540, 0))
         layer.paste(clipResizeImg_new(ims[3], 540, 540), (540, 540))
-        '''
 
-        layer = Image.new("RGB", (1080, 1130), "red")
 
-        layer.paste(clipResizeImg_new(ims[0], 540, 540), (0, 0))
-        layer.paste(clipResizeImg_new(ims[1], 540, 540), (0, 540))
-        layer.paste(clipResizeImg_new(ims[2], 540, 540), (540, 0))
-        layer.paste(clipResizeImg_new(ims[3], 540, 540), (540, 540))
-
-        # 最下面写相册名字
-        font = ImageFont.truetype(FONT, 35)
-        draw1 = ImageDraw.Draw(layer)
-
-        lw, lh = layer.size
-        x = 0
-        y = lh - 50
-        # 写货号
-        draw1.rectangle((x + 10, y + 5, x + 10 + length(album_name)*5 , y + 45), fill='yellow')
-        draw1.text((x + 30, y + 10), album_name, font=font,
-                   fill="black")  # 设置文字位置/内容/颜色/字体
-
-        # 写包邮
-        promote = "Free Shipping"
-        draw1.rectangle((x + 50 + length(album_name)*5, y + 55, x + 150 + length(album_name)*5, y + 95), fill='yellow')
-        draw1.text((x + 60 + length(album_name)*5, y + 60), promote, font=font,
-                   fill=(0, 0, 0))  # 设置文字位置/内容/颜色/字体
-       '''
     elif item_count == 5:
         # 五张图
         # 先做个900x1000的画布

@@ -5344,30 +5344,121 @@ def cal_cate_size():
                                                                )
 
 def test_for_post():
-    page_id = "766174940387532"
+    from facebook_business.adobjects.adaccount import AdAccount
+    # 调试用的参数
+    adacount_no = "act_1903121643086425"
+    adset_no = "23843325926440510"
+    page_id = "546407779047102"
     message = "This is only a test"
     image_url = "https://li2.rightinthebox.com/images/384x500/201703/ebcwqx1488880984387.jpg"
+    ad_tokens = "EAAHZCz2P7ZAuQBAI49YxZBpnxPjMKZCCu9SiRrgLlGuqQxytEHRzMWriEE1BArZBZAJe9pCVQS4EZBbnclPh8dPfu7Gc7lxSjXCcay7TJXiOOdyi4ZCc3AhijxZCDZCdIZCazziX3xOCT7D53xjDJVj8udnrfMjGUwQG8pE3oVwlaQKRvlYXL5h8FzH"
 
-    access_token, long_token = get_token(mypage.page_no)
+    '''
+    access_token, long_token = get_token(page_id)
+    print (access_token, long_token, page_id)
+    if not long_token:
+        return
+    '''
 
+    access_token = "EAAcGAyHVbOEBABuevEbsJExHTcLbylWTiMuBemh5UO40w5njUTHY2SX60wphTTmVW2mZC0JXxE4H1IshjpFmfWh28uMsksErRqTWvg3JsZC1nqYocavhbXbBCyZCVihz87WJWV94QOKgiYZASP5cWZB7EE8R508dqlvOF2mLXT0ALY9mllZAZACwpzrndNNTZCWYASTyFC239vf5dFeeQlQn"
     adobjects = FacebookAdsApi.init(access_token=access_token, debug=True)
 
+    '''
+    #创建page photo
+    fields = [
+    ]
+    params = {
+        'url': image_url,
+        'published': 'false',
+    }
+    photo_to_be_post = Page(page_id).create_photo(
+        fields=fields,
+        params=params,
+    )
+    photo_to_be_post_id = photo_to_be_post.get_id()
+
+    #创建post
     fields = [
             'object_id',
         ]
+    
     params = {
         'message': message,
         #'attached_media': [{'media_fbid': photo_to_be_post_id}],
-        'picture':image_url,
+        'attached_media': [{'media_fbid': photo_to_be_post_id}],
         "call_to_action": {"type": "MESSAGE_PAGE",
                             "value": {"app_destination": "MESSENGER"}},
+    }
+    '''
+    #创建Link Page Post with Call to Action
+    fields = [
+        'object_id',
+    ]
+    params = {
+        "call_to_action": {"type": "MESSAGE_PAGE",
+                           "value": {"app_destination": "MESSENGER"}},
+        # "image_hash": adimagehash,
+        "picture": image_url,
+        "link": "https://facebook.com/%s" % (page_id),
+
+        "message": message,
+        "name": "Yallavip.com",
+        "description": "Online Flash Sale Everyhour",
+        "use_flexible_image_aspect_ratio": True,
+
     }
     feed_post = Page(page_id).create_feed(
         fields=fields,
         params=params,
     )
+    print (feed_post)
+
+    return
+    '''
+    object_story_id = feed_post.get_id()
+
+    #在post的基础上创建广告
+    adobjects = FacebookAdsApi.init(access_token=ad_tokens, debug=True)
+    #创建creative
+
+    fields = [
+    ]
+    params = {
+        'name': 'Sample Promoted Post',
+        'object_story_id': object_story_id,
+
+    }
+    adCreativeID = AdAccount(adacount_no).create_ad_creative(
+        fields=fields,
+        params=params,
+    )
+
+    print("adCreativeID is ", adCreativeID)
+
+
+    creative_id = adCreativeID["id"]
+    #creative_id = "23843325933030510"
+    adobjects = FacebookAdsApi.init(access_token=ad_tokens, debug=True)
+    #创建广告
+    fields = [
+    ]
+    params = {
+        'name': 'My Ad ' ,
+        'adset_id': adset_no,
+        'creative': {'creative_id': creative_id },
+        'status': 'PAUSED',
+    }
+
+    new_ad = AdAccount(adacount_no).create_ad(
+        fields=fields,
+        params=params,
+    )
+
+    print("new ad is ", new_ad)
 
 
 
 
 
+
+'''
