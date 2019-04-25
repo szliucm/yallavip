@@ -1894,7 +1894,6 @@ def yallavip_prepare_ads_by_rule(page_no):
     from django.db.models import Count
 
 
-
     # 取库存大、单价高、已经发布到相册 且还未打广告的商品
     lightinalbums_all = LightinAlbum.objects.filter(yallavip_album__isnull=False, yallavip_album__page__page_no=page_no,
                                             lightin_spu__sellable__gt=0, lightin_spu__SPU__istartswith = "s",

@@ -4546,7 +4546,7 @@ def prepare_yallavip_album_material(page_no=None):
    #每次每个相册处理最多100张图片
 
     lightinalbums_all = LightinAlbum.objects.filter(published=False, publish_error="无", material=False,
-                                                    material_error="无",
+                                                    material_error="无",lightin_spu__sellable__gt=0,
                                                     yallavip_album__isnull = False,yallavip_album__active = True  )
     if page_no:
         lightinalbums_all = lightinalbums_all.filter(yallavip_album__page__page_no=page_no)
@@ -4556,7 +4556,7 @@ def prepare_yallavip_album_material(page_no=None):
     print("albums_list is ", albums_list)
 
     for album in albums_list:
-        lightinalbums = lightinalbums_all.filter(yallavip_album=album).order_by("lightin_spu__sellable")[:10]
+        lightinalbums = lightinalbums_all.filter(yallavip_album=album).order_by("lightin_spu__sellable")[:100]
         print(lightinalbums)
 
         for lightinalbum in lightinalbums:
