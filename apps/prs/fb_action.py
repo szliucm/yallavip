@@ -1437,30 +1437,35 @@ def combo_ad_image(spu_ims, spus_name,album_name):
         # 四张图
         # 先做个1080x1080的画布
         position = album_name.find("Size=")
+        layer = Image.new("RGB", (1080, 1080), "red")
         if position == -1:
-            layer = Image.new("RGB", (1080, 1080), "red")
+            # 把四张图放上去
+            layer.paste(clipResizeImg_new(ims[0], 540, 540), (0, 0))
+            layer.paste(clipResizeImg_new(ims[1], 540, 540), (0, 540))
+            layer.paste(clipResizeImg_new(ims[2], 540, 540), (540, 0))
+            layer.paste(clipResizeImg_new(ims[3], 540, 540), (540, 540))
         else:
-            layer = Image.new("RGB", (1080, 1130), "red")
+            layer.paste(clipResizeImg_new(ims[0], 520, 520), (20, 10))
+            layer.paste(clipResizeImg_new(ims[1], 520, 520), (20, 530))
+            layer.paste(clipResizeImg_new(ims[2], 520, 520), (540, 10))
+            layer.paste(clipResizeImg_new(ims[3], 520, 520), (540, 530))
             # 最下面写相册名字里的尺码信息
             FONT = os.path.join(settings.BASE_DIR, "static/font/ARIAL.TTF")
 
-            font = ImageFont.truetype(FONT, 35)
+            font = ImageFont.truetype(FONT, 25)
             draw1 = ImageDraw.Draw(layer)
 
             lw, lh = layer.size
             x = 0
-            y = lh - 50
+            y = lh - 30
 
             size_name = album_name[position:]
-            draw1.rectangle((x + 10, y + 5, x + 30 + len(size_name)*20 , y + 45), fill='yellow')
-            draw1.text((x + 30, y + 10), size_name, font=font,
+            draw1.rectangle((x + 300, y , x + 320 + len(size_name)*15 , y + 40), fill='yellow')
+            draw1.text((x + 320, y + 3), size_name, font=font,
                        fill="black")  # 设置文字位置/内容/颜色/字体
 
-        #把四张图放上去
-        layer.paste(clipResizeImg_new(ims[0], 540, 540), (0, 0))
-        layer.paste(clipResizeImg_new(ims[1], 540, 540), (0, 540))
-        layer.paste(clipResizeImg_new(ims[2], 540, 540), (540, 0))
-        layer.paste(clipResizeImg_new(ims[3], 540, 540), (540, 540))
+
+
 
 
     elif item_count == 5:
@@ -2014,7 +2019,8 @@ def yallavip_post_and_ads(page_no, to_create_count):
                 'object_id',
             ]
             params = {
-                "call_to_action": {"type": "MESSAGE_PAGE"},
+                "call_to_action": {"type": "MESSAGE_PAGE",
+                                   "value": {"app_destination": "MESSENGER"}},
 
                 "picture": ad.image_marked_url,
                 "link": "http://www.yallavip.com",
