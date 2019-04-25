@@ -1898,7 +1898,7 @@ def yallavip_prepare_ads_by_rule(page_no):
     # 取库存大、单价高、已经发布到相册 且还未打广告的商品
     lightinalbums_all = LightinAlbum.objects.filter(yallavip_album__isnull=False, yallavip_album__page__page_no=page_no,
                                             lightin_spu__sellable__gt=0, lightin_spu__SPU__istartswith = "s",
-                                            lightin_spu__shopify_price__gt=50,
+                                            lightin_spu__shopify_price__gt=50,lightin_spu__shopify_price__lte=100,
                                             lightin_spu__aded=False,
                                             published=True).distinct().order_by("-lightin_spu__sellable")
 
@@ -2016,19 +2016,33 @@ def yallavip_post_and_ads(page_no, to_create_count):
 
             adobjects = FacebookAdsApi.init(access_token=access_token, debug=True)
             fields = [
+            ]
+            params = {
+                'url': ad.image_marked_url,
+                'published': 'false',
+            }
+            photo_to_be_post = Page(page_id).create_photo(
+                fields=fields,
+                params=params,
+            )
+            photo_to_be_post_id = photo_to_be_post.get_id()
+
+
+            fields = [
                 'object_id',
             ]
             params = {
                 "call_to_action": {"type": "MESSAGE_PAGE",
                                    "value": {"app_destination": "MESSENGER"}},
 
-                "picture": ad.image_marked_url,
+                #"picture": ad.image_marked_url,
+                'attached_media': [{'media_fbid': photo_to_be_post_id}],
                 "link": "http://www.yallavip.com",
 
                 "message": ad.message,
                 "name": "Yallavip.com",
                 "description": "Online Flash Sale Everyhour",
-                "use_flexible_image_aspect_ratio": True,
+                "use_flexible_image_aspect_ratio": False,
 
             }
             feed_post = Page(page_no).create_feed(
