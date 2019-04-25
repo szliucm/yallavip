@@ -2080,5 +2080,7 @@ def yallavip_post_and_ads(page_no, to_create_count):
         ad.published_time = dt.now()
         ad.save()
 
+        time.sleep(60)
+
 
 
