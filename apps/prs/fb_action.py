@@ -1452,7 +1452,7 @@ def combo_ad_image(spu_ims, spus_name,album_name):
             y = lh - 50
 
             size_name = album_name[position:]
-            draw1.rectangle((x + 10, y + 5, x + 20 + len(size_name)*20 , y + 45), fill='yellow')
+            draw1.rectangle((x + 10, y + 5, x + 30 + len(size_name)*20 , y + 45), fill='yellow')
             draw1.text((x + 30, y + 10), size_name, font=font,
                        fill="black")  # 设置文字位置/内容/颜色/字体
 
