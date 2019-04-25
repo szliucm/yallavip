@@ -5360,7 +5360,7 @@ def test_for_post():
         return
     '''
 
-    access_token = "EAAcGAyHVbOEBABuevEbsJExHTcLbylWTiMuBemh5UO40w5njUTHY2SX60wphTTmVW2mZC0JXxE4H1IshjpFmfWh28uMsksErRqTWvg3JsZC1nqYocavhbXbBCyZCVihz87WJWV94QOKgiYZASP5cWZB7EE8R508dqlvOF2mLXT0ALY9mllZAZACwpzrndNNTZCWYASTyFC239vf5dFeeQlQn"
+    access_token = "EAAcGAyHVbOEBALmARPFl4ZBLmx81rZChlqDd4gUqOeoZAZArkG1s5l2PKA6JeiVTWNb9mqU9jLZCwNUaLYXGFWyZBqKYCvi3LkypF5rTbprAmysbolshdgZCGMMN5ZB0YrUaB44ojcOhzNnC8Ofp3gDfQUdZCZB7FZBqEdLeZAXlu93m8jA6uhcdX2f4czJyYMmubRmXulYOtJCktpwHyOpIZClzM"
     adobjects = FacebookAdsApi.init(access_token=access_token, debug=True)
 
     '''
@@ -5395,14 +5395,14 @@ def test_for_post():
         'object_id',
     ]
     params = {
-        "call_to_action": {"type": "MESSAGE_PAGE",
-                           "value": {"app_destination": "MESSENGER"}},
+        "call_to_action": {"type": "MESSAGE_PAGE"},
+                           #"value": {"app_destination": "MESSENGER"}},
         # "image_hash": adimagehash,
         "picture": image_url,
-        "link": "https://facebook.com/%s" % (page_id),
+        "link": "http://www.yallavip.com",
 
         "message": message,
-        "name": "Yallavip.com",
+        "name": "Yallavip",
         "description": "Online Flash Sale Everyhour",
         "use_flexible_image_aspect_ratio": True,
 
@@ -5413,8 +5413,7 @@ def test_for_post():
     )
     print (feed_post)
 
-    return
-    '''
+
     object_story_id = feed_post.get_id()
 
     #在post的基础上创建广告
@@ -5455,10 +5454,3 @@ def test_for_post():
     )
 
     print("new ad is ", new_ad)
-
-
-
-
-
-
-'''
