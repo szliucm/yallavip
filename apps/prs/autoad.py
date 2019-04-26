@@ -9,7 +9,7 @@ def auto_post():
     #遍历每个page
     for page in pages:
         #从符合条件的相册里选一个相册
-
+        prepare_promote_image(page.page_no)
 
     #发post
 
