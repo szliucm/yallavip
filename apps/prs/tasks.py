@@ -5550,7 +5550,9 @@ def auto_post():
     #遍历每个page
     for page in pages:
         #从符合条件的相册里选一个相册,    #发post
-        page_post.apply_async((page.page_no, 1), queue='fb')
+        print("正在处理page", page)
+        #page_post.apply_async((page.page_no, 1), queue='fb')
+        page_post(page.page_no, 1)
 
 
 
@@ -5566,13 +5568,10 @@ def engagement_ads():
     #遍历每个page
     for page in pages:
         #从符合条件的相册里选一个相册,    #发post
-        post_engagement_ads.apply_async((page.page_no, 1), queue='fb')
+        #post_engagement_ads.apply_async((page.page_no, 1), queue='fb')
+        post_engagement_ads(page.page_no, 1)
 
-    #更新post的insight
 
-    #从符合条件的post里选一个post
-
-    #发互动ad
 
     return
 
@@ -5586,7 +5585,7 @@ def message_ads():
     # 遍历每个page
     for page in pages:
         # 从符合条件的互动广告里，选一个发消息广告
-        post_engagement_ads(page_no, 1)
+        post_message_ads(page_no, 1)
 
 
     return
@@ -5659,7 +5658,7 @@ def page_post(page_no, to_create_count):
 
 
 
-
+@shared_task
 def post_engagement_ads(page_no, to_create_count):
     import time
     from prs.fb_action import  choose_ad_set

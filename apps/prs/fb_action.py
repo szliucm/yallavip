@@ -1624,6 +1624,7 @@ def get_ad_sets(adaccount_no):
 
 
 def choose_ad_set(page_no,type):
+    import datetime
     today = datetime.date.today()
     firstday = datetime.date(today.year,1,1)
     days = (today - firstdate).days
