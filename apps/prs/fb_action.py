@@ -1905,8 +1905,6 @@ def yallavip_prepare_ads_by_rule(page_no):
     rule_cates = lightinalbums_all.values("yallavip_album__rule__cates").annotate(cate_count = Count(id)).order_by("-cate_count")
 
 
-
-
     for rule_cate in rule_cates:
 
         yallavip_albums = lightinalbums_all.filter(yallavip_album__rule__cates=rule_cate.get("yallavip_album__rule__cates")).values("yallavip_album").annotate(album_count = Count(id)).filter(album_count__gte=4)
