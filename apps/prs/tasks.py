@@ -5657,7 +5657,7 @@ def post_ads(page_no, to_create_count):
     import time
     from prs.fb_action import  choose_ad_set
 
-
+    ad_tokens = "EAAHZCz2P7ZAuQBAI49YxZBpnxPjMKZCCu9SiRrgLlGuqQxytEHRzMWriEE1BArZBZAJe9pCVQS4EZBbnclPh8dPfu7Gc7lxSjXCcay7TJXiOOdyi4ZCc3AhijxZCDZCdIZCazziX3xOCT7D53xjDJVj8udnrfMjGUwQG8pE3oVwlaQKRvlYXL5h8FzH"
     adaccount_no = "act_1903121643086425"
     adset_no = choose_ad_set(page_no)
 
