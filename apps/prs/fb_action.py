@@ -1634,7 +1634,7 @@ def choose_ad_set(page_no,type):
     except:
         adset = None
 
-        return adsets[0].adset_no
+    return adset
 
 
 
