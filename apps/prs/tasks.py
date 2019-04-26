@@ -5665,7 +5665,8 @@ def post_message_ads(page_no, to_create_count):
     ad_tokens = "EAAHZCz2P7ZAuQBAI49YxZBpnxPjMKZCCu9SiRrgLlGuqQxytEHRzMWriEE1BArZBZAJe9pCVQS4EZBbnclPh8dPfu7Gc7lxSjXCcay7TJXiOOdyi4ZCc3AhijxZCDZCdIZCazziX3xOCT7D53xjDJVj8udnrfMjGUwQG8pE3oVwlaQKRvlYXL5h8FzH"
     adaccount_no = "act_1903121643086425"
     #adset_no = choose_ad_set(page_no)
-    adset_no = "23843328041180510"
+    adset_no = "23843303803340510"
+
 
     ads = YallavipAd.objects.filter(active=True, message_aded=False, yallavip_album__page__page_no=page_no,fb_feed__isnull=False).order_by("-fb_feed__like_count")
         #values("spus_name","fb_feed__like_count").\
