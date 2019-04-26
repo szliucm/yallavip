@@ -703,6 +703,8 @@ class Lightin_barcode(models.Model):
     y_shipped = models.IntegerField(u'wms_历史出库数量', default=0, blank=True, null=True)
 
     updated_time = models.DateTimeField(null=True, blank=True, verbose_name="更新时间")
+    synced = models.BooleanField(default=False, verbose_name="库存同步状态")
+
     def cal_occupied(self):
         from orders.models import  OrderDetail_lightin
         from django.db.models import Sum
@@ -732,6 +734,12 @@ class Lightin_barcode(models.Model):
 
     cal_sellable.short_description = "可售库存"
     sellable = property(cal_sellable)
+
+    def save(self, *args, **kwargs):
+        #do_something()
+        self.synced = False
+        super().save(*args, **kwargs)  # Call the "real" save() method.
+        #do_something_else()
 
     class Meta:
         verbose_name = "Lightin barcode映射"

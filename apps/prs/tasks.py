@@ -2527,7 +2527,8 @@ def get_wms_quantity(barcode=""):
                         "y_unsellable": data.get("y_unsellable"),
                         "y_reserved": data.get("reserved"),
                         "y_shipped": data.get("shipped"),
-                        "updated_time": dt.now()
+                        "updated_time": dt.now(),
+                        'synced': True,
                         # "quantity":  int(data.get("sellable")) + int(data.get("reserved"))
 
                     },
@@ -5585,7 +5586,7 @@ def message_ads():
     # 遍历每个page
     for page in pages:
         # 从符合条件的互动广告里，选一个发消息广告
-        post_message_ads(page_no, 1)
+        post_message_ads(page.page_no, 1)
 
 
     return
