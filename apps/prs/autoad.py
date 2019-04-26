@@ -2,62 +2,6 @@ from celery import shared_task
 from fb.models import  MyPage
 from prs.models import LightinAlbum, YallavipAlbum
 
-@shared_task
-#自动准备广告图
-def auto_prepare_image():
-    #选择需要推广的page
-    pages = MyPage.objects.filter(is_published=True, active=True, promotable=True)
-
-    #遍历每个page
-    for page in pages:
-        #准备图片
-        prepare_promote_image.apply_async((page.page_no,), queue='post')
-
-
-    return
-
-
-
-#自动生成post
-def auto_post():
-    #选择需要推广的page
-    pages = MyPage.objects.filter(is_published=True, active=True, promotable=True)
-
-    #遍历每个page
-    for page in pages:
-        #从符合条件的相册里选一个相册
-        prepare_promote_image.apply_async((page.page_no,), queue='post')
-
-    #发post
-
-    return
-
-
-#自动生成互动ad
-def engagement_ads():
-    #选择需要推广的page
-
-    #遍历每个page
-
-    #更新post的insight
-
-    #从符合条件的post里选一个post
-
-    #发互动ad
-
-    return
-
-
-# 自动生成消息ad
-def message_ads():
-    # 选择需要推广的page
-
-    # 遍历每个page
-
-    # 发消息ad
-
-    return
-
 #为page_no创建一个广告图
 @shared_task
 def prepare_promote_image(page_no):
@@ -124,3 +68,61 @@ def prepare_promote_image_album(yallavip_album_pk, lightinalbums):
         spu = lightinalbum.lightin_spu
         spu.aded = True
         spu.save()
+
+
+@shared_task
+#自动准备广告图
+def auto_prepare_image():
+    #选择需要推广的page
+    pages = MyPage.objects.filter(is_published=True, active=True, promotable=True)
+
+    #遍历每个page
+    for page in pages:
+        #准备图片
+        prepare_promote_image.apply_async((page.page_no,), queue='post')
+
+
+    return
+
+
+
+#自动生成post
+def auto_post():
+    #选择需要推广的page
+    pages = MyPage.objects.filter(is_published=True, active=True, promotable=True)
+
+    #遍历每个page
+    for page in pages:
+        #从符合条件的相册里选一个相册
+        prepare_promote_image.apply_async((page.page_no,), queue='post')
+
+    #发post
+
+    return
+
+
+#自动生成互动ad
+def engagement_ads():
+    #选择需要推广的page
+
+    #遍历每个page
+
+    #更新post的insight
+
+    #从符合条件的post里选一个post
+
+    #发互动ad
+
+    return
+
+
+# 自动生成消息ad
+def message_ads():
+    # 选择需要推广的page
+
+    # 遍历每个page
+
+    # 发消息ad
+
+    return
+
