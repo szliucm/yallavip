@@ -5549,10 +5549,11 @@ def auto_post():
 
     #遍历每个page
     for page in pages:
-        #从符合条件的相册里选一个相册
-        prepare_promote_image.apply_async((page.page_no,), queue='post')
+        #从符合条件的相册里选一个相册,    #发post
+        yallavip_post_and_ads.apply_async((page_no, 1), queue='fb')
 
-    #发post
+
+
 
     return
 
@@ -5584,3 +5585,63 @@ def message_ads():
 
 
 
+
+#先post，然后基于post发广告
+#这只适合互动型广告
+def page_post(page_no, to_create_count):
+    import time
+
+    access_token, long_token = get_token(page_no)
+    print (access_token, long_token, page_no)
+    if not long_token:
+        return
+
+    ads = YallavipAd.objects.filter(active=True, published=False,yallavip_album__page__page_no=page_no )
+    i=0
+    for ad in ads:
+        if i>to_create_count:
+            break
+        else:
+            i += 1
+        try:
+            # 创建page photo
+            fields = [
+            ]
+            params = {
+                'url': ad.image_marked_url,
+                'published': 'false',
+            }
+            photo_to_be_post = Page(page_id).create_photo(
+                fields=fields,
+                params=params,
+            )
+            photo_to_be_post_id = photo_to_be_post.get_id()
+
+            # 创建post
+            fields = [
+                'object_id',
+            ]
+
+            params = {
+                'message': ad.message,
+                # 'attached_media': [{'media_fbid': photo_to_be_post_id}],
+                'attached_media': [{'media_fbid': photo_to_be_post_id}],
+                "call_to_action": {"type": "MESSAGE_PAGE",
+                                   "value": {"app_destination": "MESSENGER"}},
+            }
+
+            feed_post = Page(page_id).create_feed(
+                fields=fields,
+                params=params,
+            )
+            print (feed_post)
+
+            object_story_id = feed_post.get_id()
+            ad.object_story_id = object_story_id
+
+        except Exception as e:
+            print(e)
+            error = e.api_error_message()
+            ad.publish_error = error
+
+        ad.save()

@@ -608,7 +608,7 @@ class YallavipAlbum(models.Model):
     deleted_time = models.DateTimeField(null=True, blank=True, verbose_name="删除时间")
 
     active = models.BooleanField(default=False, verbose_name="有效性")
-
+    object_story_id = models.CharField(default='', max_length=256, null=True, blank=True, verbose_name="object_story_id")
     class Meta:
         verbose_name = "Yallavip 相册"
         verbose_name_plural = verbose_name
