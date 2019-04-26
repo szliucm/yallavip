@@ -1627,7 +1627,7 @@ def choose_ad_set(page_no,type):
     import datetime
     today = datetime.date.today()
     firstday = datetime.date(today.year,1,1)
-    days = (today - firstdate).days
+    days = (today - firstday).days
     tag = page_no + '_' + type + '_' + str(days % 3)
     try:
         adset = MyAdset.objects.get(name__icontains=tag,active=True)
