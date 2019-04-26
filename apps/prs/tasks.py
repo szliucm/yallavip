@@ -5586,12 +5586,8 @@ def message_ads():
     # 遍历每个page
     for page in pages:
         # 从符合条件的互动广告里，选一个发消息广告
+        post_engagement_ads(page_no, 1)
 
-
-
-
-
-    # 发消息ad
 
     return
 
