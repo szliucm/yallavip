@@ -5669,7 +5669,7 @@ def post_message_ads(page_no, to_create_count):
 
     ads = YallavipAd.objects.filter(active=True, message_aded=False, yallavip_album__page__page_no=page_no,fb_feed__isnull=False).order_by("-fb_feed__like_count")
         #values("spus_name","fb_feed__like_count").\
-
+    adobjects = FacebookAdsApi.init(access_token=ad_tokens, debug=True)
     i=1
     for ad in ads:
         if i>to_create_count:
@@ -5741,6 +5741,8 @@ def post_engagement_ads(page_no, to_create_count):
     adset_no = "23843303803340510"
 
     ads = YallavipAd.objects.filter(active=True, published=False,yallavip_album__page__page_no=page_no ,object_story_id__isnull=False)
+
+    adobjects = FacebookAdsApi.init(access_token=ad_tokens, debug=True)
     i=1
     for ad in ads:
         if i>to_create_count:
@@ -5750,7 +5752,6 @@ def post_engagement_ads(page_no, to_create_count):
         try:
 
             # 在post的基础上创建广告
-            adobjects = FacebookAdsApi.init(access_token=ad_tokens, debug=True)
             # 创建creative
 
             fields = [
