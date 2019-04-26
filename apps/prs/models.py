@@ -854,6 +854,9 @@ class YallavipAd(models.Model):
     adset_no = models.CharField(u'adset_no', default='', max_length=500, blank=True)
 
     object_story_id = models.CharField(default='', max_length=256, null=True, blank=True,verbose_name="object_story_id")
+    fb_feed = models.ForeignKey(MyFeed, null=True, blank=True, verbose_name="fb_feed",
+                                    related_name="feed_ad", on_delete=models.CASCADE)
+
     creative_id = models.CharField(u'creative_id', default='', max_length=500, blank=True)
 
     ad_id = models.CharField(u'ad_id', default='', max_length=500, blank=True)
