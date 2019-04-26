@@ -608,7 +608,7 @@ class YallavipAlbum(models.Model):
     deleted_time = models.DateTimeField(null=True, blank=True, verbose_name="删除时间")
 
     active = models.BooleanField(default=False, verbose_name="有效性")
-    object_story_id = models.CharField(default='', max_length=256, null=True, blank=True, verbose_name="object_story_id")
+
     class Meta:
         verbose_name = "Yallavip 相册"
         verbose_name_plural = verbose_name
@@ -852,7 +852,10 @@ class YallavipAd(models.Model):
     image_marked_url = models.CharField(u'image_marked_url', default='', max_length=300, blank=True)
     message = models.CharField(u'message', default='', max_length=500, blank=True)
     adset_no = models.CharField(u'adset_no', default='', max_length=500, blank=True)
+
+    object_story_id = models.CharField(default='', max_length=256, null=True, blank=True,verbose_name="object_story_id")
     creative_id = models.CharField(u'creative_id', default='', max_length=500, blank=True)
+
     ad_id = models.CharField(u'ad_id', default='', max_length=500, blank=True)
 
     active = models.BooleanField(default=False, verbose_name="有效性")
