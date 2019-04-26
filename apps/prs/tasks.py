@@ -5588,6 +5588,7 @@ def message_ads():
 
 #先post，然后基于post发广告
 #这只适合互动型广告
+@shared_task
 def page_post(page_no, to_create_count):
     import time
 
