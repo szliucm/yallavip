@@ -1,9 +1,9 @@
-from celery import shared_task
+from celery import shared_task, task
 from fb.models import  MyPage
 from prs.models import LightinAlbum, YallavipAlbum
 
 #为page_no创建一个广告图
-@shared_task
+@task
 def prepare_promote_image(page_no):
 
     import random
