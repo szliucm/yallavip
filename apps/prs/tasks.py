@@ -5655,6 +5655,7 @@ def page_post(page_no, to_create_count):
 
 def post_ads(page_no, to_create_count):
     import time
+    from prs.fb_action import  choose_ad_set
 
 
     adaccount_no = "act_1903121643086425"
