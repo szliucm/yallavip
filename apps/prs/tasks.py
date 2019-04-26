@@ -5550,7 +5550,7 @@ def auto_post():
     #遍历每个page
     for page in pages:
         #从符合条件的相册里选一个相册,    #发post
-        page_post.apply_async((page_no, 1), queue='fb')
+        page_post.apply_async((page.page_no, 1), queue='fb')
 
 
 
@@ -5561,8 +5561,12 @@ def auto_post():
 #自动生成互动ad
 def engagement_ads():
     #选择需要推广的page
+    pages = MyPage.objects.filter(is_published=True, active=True, promotable=True)
 
     #遍历每个page
+    for page in pages:
+        #从符合条件的相册里选一个相册,    #发post
+        post_ads.apply_async((page.page_no, 1), queue='fb')
 
     #更新post的insight
 
@@ -5599,7 +5603,7 @@ def page_post(page_no, to_create_count):
     adobjects = FacebookAdsApi.init(access_token=access_token, debug=True)
 
     ads = YallavipAd.objects.filter(active=True, published=False,yallavip_album__page__page_no=page_no )
-    i=0
+    i=1
     for ad in ads:
         if i>to_create_count:
             break
@@ -5647,3 +5651,71 @@ def page_post(page_no, to_create_count):
             ad.publish_error = error
 
         ad.save()
+
+
+def post_ads(page_no, to_create_count):
+    import time
+
+
+    adaccount_no = "act_1903121643086425"
+    adset_no = choose_ad_set(page_no)
+
+    ads = YallavipAd.objects.filter(active=True, published=False,yallavip_album__page__page_no=page_no )
+    i=1
+    for ad in ads:
+        if i>to_create_count:
+            break
+        else:
+            i += 1
+        try:
+
+            object_story_id = ad.object_story_id
+
+            # 在post的基础上创建广告
+            adobjects = FacebookAdsApi.init(access_token=ad_tokens, debug=True)
+            # 创建creative
+
+            fields = [
+            ]
+            params = {
+                'name': post_name,
+                'object_story_id': object_story_id,
+
+            }
+            adCreativeID = AdAccount(adaccount_no).create_ad_creative(
+                fields=fields,
+                params=params,
+            )
+
+            print("adCreativeID is ", adCreativeID)
+
+            creative_id = adCreativeID["id"]
+
+            # 创建广告
+            fields = [
+            ]
+            params = {
+                'name': post_name,
+                'adset_id': adset_no,
+                'creative': {'creative_id': creative_id},
+                'status': 'PAUSED',
+            }
+
+            fb_ad = AdAccount(adaccount_no).create_ad(
+                fields=fields,
+                params=params,
+            )
+        except Exception as e:
+            print(e)
+            error = e.api_error_message()
+            ad.publish_error = error
+            ad.save()
+            break
+
+        print("new ad is ", fb_ad)
+        ad.ad_id = fb_ad.get("id")
+        ad.published = True
+        ad.published_time = dt.now()
+        ad.save()
+
+        time.sleep(60)
