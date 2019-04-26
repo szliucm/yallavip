@@ -869,6 +869,11 @@ class YallavipAd(models.Model):
     ad_status = models.CharField(default='无', max_length=50, null=True, blank=True, verbose_name="广告状态")
     update_error = models.CharField(default='无', max_length=256, null=True, blank=True, verbose_name="更新错误")
 
+    message_aded = models.BooleanField(default=False, verbose_name="消息广告状态")
+    message_ad_id = models.CharField(u'message_ad_id', default='', max_length=500, blank=True)
+    message_ad_published_time = models.DateTimeField(null=True, blank=True, verbose_name="message_ad发布时间")
+    message_ad_publish_error = models.CharField(default='无', max_length=256, null=True, blank=True, verbose_name="message_ad_publish_error")
+
     class Meta:
         verbose_name = "Yallavip 广告"
         verbose_name_plural = verbose_name

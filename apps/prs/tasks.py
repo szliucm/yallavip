@@ -5566,7 +5566,7 @@ def engagement_ads():
     #遍历每个page
     for page in pages:
         #从符合条件的相册里选一个相册,    #发post
-        post_ads.apply_async((page.page_no, 1), queue='fb')
+        post_engagement_ads.apply_async((page.page_no, 1), queue='fb')
 
     #更新post的insight
 
@@ -5581,7 +5581,15 @@ def engagement_ads():
 def message_ads():
     # 选择需要推广的page
 
+    pages = MyPage.objects.filter(is_published=True, active=True, promotable=True)
+
     # 遍历每个page
+    for page in pages:
+        # 从符合条件的互动广告里，选一个发消息广告
+
+
+
+
 
     # 发消息ad
 
@@ -5653,7 +5661,7 @@ def page_post(page_no, to_create_count):
         ad.save()
 
 
-def post_ads(page_no, to_create_count):
+def post_engagement_ads(page_no, to_create_count):
     import time
     from prs.fb_action import  choose_ad_set
     from facebook_business.adobjects.adaccount import AdAccount
@@ -5662,6 +5670,80 @@ def post_ads(page_no, to_create_count):
     adaccount_no = "act_1903121643086425"
     #adset_no = choose_ad_set(page_no)
     adset_no = "23843328041180510"
+
+    ads = YallavipAd.objects.filter(active=True, published=False, yallavip_album__page__page_no=page_no,
+                                               fb_feed__isnull=False).\
+        values("spus_name","fb_feed__like_count").\
+        order_by("-fb_feed__like_count")
+    i=1
+    for ad in ads:
+        if i>to_create_count:
+            break
+        else:
+            i += 1
+        try:
+
+            fields = [
+            ]
+
+            # link ad
+            params = {
+                'name': page_no + '_' + ad.spus_name,
+                'object_story_spec': {'page_id': page_no,
+                                      'link_data': {"call_to_action": {"type": "MESSAGE_PAGE",
+                                                                       "value": {"app_destination": "MESSENGER"}},
+
+                                                    "picture": ad.image_marked_url,
+                                                    "link": "https://facebook.com/%s" % (page_no),
+
+                                                    "message": ad.message,
+                                                    "name": "Yallavip.com",
+                                                    "description": "Online Flash Sale Everyhour",
+                                                    "use_flexible_image_aspect_ratio": True, }},
+            }
+            adCreative = AdAccount(adaccount_no).create_ad_creative(
+                fields=fields,
+                params=params,
+            )
+
+            print("adCreative is ", adCreative)
+
+            fields = [
+            ]
+            params = {
+                'name': page_no + '_' + ad.spus_name,
+                'adset_id': adset_no,
+                'creative': {'creative_id': adCreative["id"]},
+                'status': 'PAUSED',
+                # "access_token": my_access_token,
+            }
+
+            fb_ad = AdAccount(adaccount_no).create_ad(
+                fields=fields,
+                params=params,
+            )
+        except Exception as e:
+            print(e)
+            error = e.api_error_message()
+            ad.publish_error = error
+            ad.save()
+            break
+        print("new ad is ", fb_ad)
+        ad.message_ad_id = fb_ad.get("id")
+        ad.message_aded = True
+        ad.message_ad_published_time = dt.now()
+        ad.save()
+
+
+def post_message_ads(page_no, to_create_count):
+    import time
+    from prs.fb_action import  choose_ad_set
+    from facebook_business.adobjects.adaccount import AdAccount
+
+    ad_tokens = "EAAHZCz2P7ZAuQBAI49YxZBpnxPjMKZCCu9SiRrgLlGuqQxytEHRzMWriEE1BArZBZAJe9pCVQS4EZBbnclPh8dPfu7Gc7lxSjXCcay7TJXiOOdyi4ZCc3AhijxZCDZCdIZCazziX3xOCT7D53xjDJVj8udnrfMjGUwQG8pE3oVwlaQKRvlYXL5h8FzH"
+    adaccount_no = "act_1903121643086425"
+    #adset_no = choose_ad_set(page_no)
+    adset_no = "23843303803340510"
 
     ads = YallavipAd.objects.filter(active=True, published=False,yallavip_album__page__page_no=page_no ,object_story_id__isnull=False)
     i=1
