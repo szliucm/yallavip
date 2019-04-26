@@ -5670,7 +5670,7 @@ def post_ads(page_no, to_create_count):
             i += 1
         try:
 
-            object_story_id = ad.object_story_id
+
 
             # 在post的基础上创建广告
             adobjects = FacebookAdsApi.init(access_token=ad_tokens, debug=True)
@@ -5679,8 +5679,8 @@ def post_ads(page_no, to_create_count):
             fields = [
             ]
             params = {
-                'name': post_name,
-                'object_story_id': object_story_id,
+                'name': ad.page_no+"_"+ad.spus_name,
+                'object_story_id': ad.object_story_id,
 
             }
             adCreativeID = AdAccount(adaccount_no).create_ad_creative(
@@ -5696,7 +5696,7 @@ def post_ads(page_no, to_create_count):
             fields = [
             ]
             params = {
-                'name': post_name,
+                'name': ad.page_no+"_"+ad.spus_name,
                 'adset_id': adset_no,
                 'creative': {'creative_id': creative_id},
                 'status': 'PAUSED',
