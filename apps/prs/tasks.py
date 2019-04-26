@@ -5657,7 +5657,7 @@ def page_post(page_no, to_create_count):
         ad.save()
 
 
-def post_engagement_ads(page_no, to_create_count):
+def post_message_ads(page_no, to_create_count):
     import time
     from prs.fb_action import  choose_ad_set
     from facebook_business.adobjects.adaccount import AdAccount
@@ -5667,8 +5667,7 @@ def post_engagement_ads(page_no, to_create_count):
     #adset_no = choose_ad_set(page_no)
     adset_no = "23843328041180510"
 
-    ads = YallavipAd.objects.filter(active=True, published=False, yallavip_album__page__page_no=page_no,
-                                               fb_feed__isnull=False).\
+    ads = YallavipAd.objects.filter(active=True, message_aded=False, yallavip_album__page__page_no=page_no,fb_feed__isnull=False).\
         values("spus_name","fb_feed__like_count").\
         order_by("-fb_feed__like_count")
     i=1
@@ -5731,7 +5730,7 @@ def post_engagement_ads(page_no, to_create_count):
         ad.save()
 
 
-def post_message_ads(page_no, to_create_count):
+def post_engagement_ads(page_no, to_create_count):
     import time
     from prs.fb_action import  choose_ad_set
     from facebook_business.adobjects.adaccount import AdAccount
