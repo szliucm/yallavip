@@ -97,10 +97,10 @@ class MyPageAdmin(object):
     show_promote.allow_tags = True
 
     #actions = ["batch_updatepage", ]
-    list_display = ('page', 'page_no','is_published','active','link','message',  'show_logo','show_price','show_promote','conversation_update_time',
+    list_display = ('page', 'page_no','is_published','active','link','message',  'show_logo','show_price','show_promote','promotable',
                    )
 
-    list_editable = ['active',]
+    list_editable = ['active','promotable',]
     #search_fields = ['logistic_no', ]
     list_filter = ('is_published','active',)
     actions = ["batch_update_accounts","batch_update_feed", ConnectPageCategory,"batch_update_albums","batch_update_ads",]

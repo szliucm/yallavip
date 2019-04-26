@@ -1989,6 +1989,7 @@ def yallavip_post_ads(page_no, to_create_count):
         time.sleep(60)
 
 #先post，然后基于post发广告
+#这只适合互动型广告
 def yallavip_post_and_ads(page_no, to_create_count):
     import time
 
@@ -2000,7 +2001,6 @@ def yallavip_post_and_ads(page_no, to_create_count):
     adaccount_no = "act_1903121643086425"
     adset_no = choose_ad_set(page_no)
 
-
     ads = YallavipAd.objects.filter(active=True, published=False,yallavip_album__page__page_no=page_no )
     i=0
     for ad in ads:
@@ -2008,16 +2008,12 @@ def yallavip_post_and_ads(page_no, to_create_count):
             break
         else:
             i += 1
-
-        # 创建Link Page Post with Call to Action
-        post_name = page_no + '_' + ad.spus_name
         try:
-
-            adobjects = FacebookAdsApi.init(access_token=access_token, debug=True)
+            # 创建page photo
             fields = [
             ]
             params = {
-                'url': ad.image_marked_url,
+                'url': image_url,
                 'published': 'false',
             }
             photo_to_be_post = Page(page_id).create_photo(
@@ -2026,25 +2022,20 @@ def yallavip_post_and_ads(page_no, to_create_count):
             )
             photo_to_be_post_id = photo_to_be_post.get_id()
 
-
+            # 创建post
             fields = [
                 'object_id',
             ]
+
             params = {
+                'message': message,
+                # 'attached_media': [{'media_fbid': photo_to_be_post_id}],
+                'attached_media': [{'media_fbid': photo_to_be_post_id}],
                 "call_to_action": {"type": "MESSAGE_PAGE",
                                    "value": {"app_destination": "MESSENGER"}},
-
-                #"picture": ad.image_marked_url,
-                'attached_media': [{'media_fbid': photo_to_be_post_id}],
-                "link": "http://www.yallavip.com",
-
-                "message": ad.message,
-                "name": "Yallavip.com",
-                "description": "Online Flash Sale Everyhour",
-                "use_flexible_image_aspect_ratio": False,
-
             }
-            feed_post = Page(page_no).create_feed(
+
+            feed_post = Page(page_id).create_feed(
                 fields=fields,
                 params=params,
             )

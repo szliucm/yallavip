@@ -23,6 +23,7 @@ class MyPage(models.Model):
     promote = models.ImageField(u'促销标签', upload_to='material/',default="",null=True, blank=True)
 
     active = models.BooleanField(u"page状态",default=False)
+    promotable = models.BooleanField(u"推广状态", default=False)
 
     class Meta:
         verbose_name = "主页"

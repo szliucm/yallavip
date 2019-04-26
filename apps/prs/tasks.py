@@ -5347,7 +5347,7 @@ def test_for_post():
     from facebook_business.adobjects.adaccount import AdAccount
     # 调试用的参数
     adacount_no = "act_1903121643086425"
-    adset_no = "23843325926440510"
+    adset_no = "23843327820590510"
     page_id = "546407779047102"
     message = "This is only a test"
     image_url = "https://li2.rightinthebox.com/images/384x500/201703/ebcwqx1488880984387.jpg"
@@ -5360,10 +5360,10 @@ def test_for_post():
         return
     '''
 
-    access_token = "EAAcGAyHVbOEBAOErLVPtdj7FByotxIRtoJkrLmZCbgZAVR44Qk66ma6PG7jf57UQ6aZCBeiZAKgAHTtSYgAugyzeMRaBBucMHQNbZCY7G67PoqwdrFwQ2TuuNhMP1sduTakvgeVkVAWps1fMQgW4Yv91fudyUZCl8HDig71BCNtuY9JX229k3ttd0AZCHS9ZBZA8upWxUtY46iNMQKZB88kZBMU"
+    access_token = "EAAcGAyHVbOEBAFBBe5hTsB9vXLrar6suadomIiRFlF6Bbg701tj6ZBQAcvNShNQWnAPjr04vOtgyfZAWMUVoYVoKQykdjw5VGragjAppHB0vxsa5J9Ky5vaLgWMijXWYYZAEAx5Ki4zuZAiz23rZBPhHKBAe7we4tB5dpRUiIlcsFICCLX2ZBHyg6zj2ObpZBjQNAIu5N9MPjRFuhdZCZCpSL"
     adobjects = FacebookAdsApi.init(access_token=access_token, debug=True)
 
-    '''
+
     #创建page photo
     fields = [
     ]
@@ -5407,6 +5407,7 @@ def test_for_post():
         "use_flexible_image_aspect_ratio": True,
 
     }
+    '''
     feed_post = Page(page_id).create_feed(
         fields=fields,
         params=params,
