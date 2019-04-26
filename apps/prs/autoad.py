@@ -1,4 +1,5 @@
 from celery import shared_task
+from prs.models import LightinAlbum
 
 @shared_task
 #自动生成post
@@ -42,11 +43,9 @@ def message_ads():
 
 #为page_no创建一个广告图
 def prepare_promote_image(page_no):
-    from shop.photo_mark import lightin_mark_image_page
+
     import random
-    import requests
-    import base64
-    import time
+
     from django.db.models import Count
 
 
