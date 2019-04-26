@@ -1,4 +1,5 @@
 from celery import shared_task
+from fb.models import  MyPage
 from prs.models import LightinAlbum, YallavipAlbum
 
 @shared_task
@@ -10,7 +11,7 @@ def auto_post():
     #遍历每个page
     for page in pages:
         #从符合条件的相册里选一个相册
-        prepare_promote_image(page.page_no)
+        prepare_promote_image.apply_async((page.page_no,), queue='post')
 
     #发post
 
@@ -42,6 +43,7 @@ def message_ads():
     return
 
 #为page_no创建一个广告图
+@shared_task
 def prepare_promote_image(page_no):
 
     import random
