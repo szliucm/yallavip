@@ -5663,7 +5663,7 @@ def post_ads(page_no, to_create_count):
     #adset_no = choose_ad_set(page_no)
     adset_no = "23843328041180510"
 
-    ads = YallavipAd.objects.filter(active=True, published=False,yallavip_album__page__page_no=page_no )
+    ads = YallavipAd.objects.filter(active=True, published=False,yallavip_album__page__page_no=page_no ,object_story_id__isnull=False)
     i=1
     for ad in ads:
         if i>to_create_count:
@@ -5671,8 +5671,6 @@ def post_ads(page_no, to_create_count):
         else:
             i += 1
         try:
-
-
 
             # 在post的基础上创建广告
             adobjects = FacebookAdsApi.init(access_token=ad_tokens, debug=True)
@@ -5720,5 +5718,3 @@ def post_ads(page_no, to_create_count):
         ad.published = True
         ad.published_time = dt.now()
         ad.save()
-
-        time.sleep(60)

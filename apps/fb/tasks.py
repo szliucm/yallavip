@@ -155,45 +155,48 @@ def batch_update_feed():
     queryset = MyPage.objects.filter(active=True, is_published=True)
     for row in queryset:
         page_no = row.page_no
+        update_feed(page_no)
 
-        adobjects = FacebookAdsApi.init(access_token=get_token(page_no), debug=True)
-        # 重置原有feed信息为不活跃
-        MyFeed.objects.filter(page_no=page_no).update(active=False)
+def update_feed(page_no):
 
-        fields = ["created_time", "description", "id",
-                  "type", "message", "name",
-                  "actions_link","actions_name",
-                  "likes.summary(true)", "comments.summary(true)"
-                  ]
-        params = {
-            'limit': 100,
+    adobjects = FacebookAdsApi.init(access_token=get_token(page_no), debug=True)
+    # 重置原有feed信息为不活跃
+    MyFeed.objects.filter(page_no=page_no).update(active=False)
 
-        }
-        feeds = Page(page_no).get_feed(
-            fields=fields,
-            params=params,
-        )
+    fields = ["created_time", "description", "id",
+              "type", "message", "name",
+              "actions_link","actions_name",
+              "likes.summary(true)", "comments.summary(true)"
+              ]
+    params = {
+        'limit': 100,
 
-        for feed in feeds:
-            obj, created = MyFeed.objects.update_or_create(feed_no=feed["id"],
-                                                            defaults={'page_no': page_no,
-                                                                      'created_time':
-                                                                          feed["created_time"],
-                                                                      'active': True,
-                                                                      'message': feed.get("message"),
-                                                                      'description': feed.get("description"),
-                                                                      'name': feed.get("name"),
-                                                                      'type': feed.get("type"),
-                                                                      'actions_link': feed.get("actions_link"),
-                                                                      'actions_name': feed.get("actions_name"),
-                                                                      'like_count': feed["likes"]["summary"][
-                                                                          "total_count"],
-                                                                      'comment_count': feed["comments"]["summary"][
-                                                                          "total_count"],
+    }
+    feeds = Page(page_no).get_feed(
+        fields=fields,
+        params=params,
+    )
+
+    for feed in feeds:
+        obj, created = MyFeed.objects.update_or_create(feed_no=feed["id"],
+                                                        defaults={'page_no': page_no,
+                                                                  'created_time':
+                                                                      feed["created_time"],
+                                                                  'active': True,
+                                                                  'message': feed.get("message"),
+                                                                  'description': feed.get("description"),
+                                                                  'name': feed.get("name"),
+                                                                  'type': feed.get("type"),
+                                                                  'actions_link': feed.get("actions_link"),
+                                                                  'actions_name': feed.get("actions_name"),
+                                                                  'like_count': feed["likes"]["summary"][
+                                                                      "total_count"],
+                                                                  'comment_count': feed["comments"]["summary"][
+                                                                      "total_count"],
 
 
-                                                                      }
-                                                            )
+                                                                  }
+                                                        )
 def batch_update_adaccount():
 
     adobjects = FacebookAdsApi.init(access_token = my_access_token, debug=True)
