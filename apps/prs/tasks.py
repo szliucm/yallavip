@@ -5596,6 +5596,7 @@ def page_post(page_no, to_create_count):
     print (access_token, long_token, page_no)
     if not long_token:
         return
+    adobjects = FacebookAdsApi.init(access_token=access_token, debug=True)
 
     ads = YallavipAd.objects.filter(active=True, published=False,yallavip_album__page__page_no=page_no )
     i=0
