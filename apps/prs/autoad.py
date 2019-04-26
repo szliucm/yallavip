@@ -3,6 +3,21 @@ from fb.models import  MyPage
 from prs.models import LightinAlbum, YallavipAlbum
 
 @shared_task
+#自动准备广告图
+def auto_prepare_image():
+    #选择需要推广的page
+    pages = MyPage.objects.filter(is_published=True, active=True, promotable=True)
+
+    #遍历每个page
+    for page in pages:
+        #准备图片
+        prepare_promote_image.apply_async((page.page_no,), queue='post')
+
+
+    return
+
+
+
 #自动生成post
 def auto_post():
     #选择需要推广的page
@@ -16,6 +31,7 @@ def auto_post():
     #发post
 
     return
+
 
 #自动生成互动ad
 def engagement_ads():
