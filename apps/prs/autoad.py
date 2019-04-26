@@ -1,5 +1,5 @@
 from celery import shared_task
-from prs.models import LightinAlbum
+from prs.models import LightinAlbum, YallavipAlbum
 
 @shared_task
 #自动生成post
@@ -61,9 +61,10 @@ def prepare_promote_image(page_no):
     yallavip_album = random.choice(yallavip_albums)
 
     if yallavip_album:
+        yallavip_album_pk = yallavip_album.get("yallavip_album")
         lightinalbums = lightinalbums_all.filter(yallavip_album__pk=yallavip_album_pk).order_by(
             "lightin_spu__sellable")[:4]
-        prepare_promote_image_album(yallavip_album.get("yallavip_album"), lightinalbums)
+        prepare_promote_image_album(yallavip_album_pk , lightinalbums)
     else:
         print("没有符合条件的相册了", page_no)
 
