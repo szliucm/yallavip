@@ -5611,7 +5611,7 @@ def page_post(page_no, to_create_count):
                 'url': ad.image_marked_url,
                 'published': 'false',
             }
-            photo_to_be_post = Page(page_id).create_photo(
+            photo_to_be_post = Page(page_no).create_photo(
                 fields=fields,
                 params=params,
             )
@@ -5630,7 +5630,7 @@ def page_post(page_no, to_create_count):
                                    "value": {"app_destination": "MESSENGER"}},
             }
 
-            feed_post = Page(page_id).create_feed(
+            feed_post = Page(page_no).create_feed(
                 fields=fields,
                 params=params,
             )
