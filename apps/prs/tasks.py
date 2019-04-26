@@ -5667,9 +5667,9 @@ def post_message_ads(page_no, to_create_count):
     #adset_no = choose_ad_set(page_no)
     adset_no = "23843328041180510"
 
-    ads = YallavipAd.objects.filter(active=True, message_aded=False, yallavip_album__page__page_no=page_no,fb_feed__isnull=False).\
-        values("spus_name","fb_feed__like_count").\
-        order_by("-fb_feed__like_count")
+    ads = YallavipAd.objects.filter(active=True, message_aded=False, yallavip_album__page__page_no=page_no,fb_feed__isnull=False).order_by("-fb_feed__like_count")
+        #values("spus_name","fb_feed__like_count").\
+
     i=1
     for ad in ads:
         if i>to_create_count:
