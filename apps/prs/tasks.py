@@ -5346,7 +5346,7 @@ def cal_cate_size():
 def test_for_post():
     from facebook_business.adobjects.adaccount import AdAccount
     # 调试用的参数
-    adacount_no = "act_1903121643086425"
+    adaccount_no = "act_1903121643086425"
     adset_no = "23843327820590510"
     page_id = "546407779047102"
     message = "This is only a test"
@@ -5428,7 +5428,7 @@ def test_for_post():
         'object_story_id': object_story_id,
 
     }
-    adCreativeID = AdAccount(adacount_no).create_ad_creative(
+    adCreativeID = AdAccount(adaccount_no).create_ad_creative(
         fields=fields,
         params=params,
     )
@@ -5449,7 +5449,7 @@ def test_for_post():
         'status': 'PAUSED',
     }
 
-    new_ad = AdAccount(adacount_no).create_ad(
+    new_ad = AdAccount(adaccount_no).create_ad(
         fields=fields,
         params=params,
     )
@@ -5657,6 +5657,77 @@ def page_post(page_no, to_create_count):
         ad.save()
 
 
+
+
+
+def post_engagement_ads(page_no, to_create_count):
+    import time
+    from prs.fb_action import  choose_ad_set
+    from facebook_business.adobjects.adaccount import AdAccount
+
+    ad_tokens = "EAAHZCz2P7ZAuQBAI49YxZBpnxPjMKZCCu9SiRrgLlGuqQxytEHRzMWriEE1BArZBZAJe9pCVQS4EZBbnclPh8dPfu7Gc7lxSjXCcay7TJXiOOdyi4ZCc3AhijxZCDZCdIZCazziX3xOCT7D53xjDJVj8udnrfMjGUwQG8pE3oVwlaQKRvlYXL5h8FzH"
+    adaccount_no = "act_1903121643086425"
+    adset_no = choose_ad_set(page_no,'engagement')
+    #adset_no = "23843303803340510"
+
+    ads = YallavipAd.objects.filter(active=True, published=False,yallavip_album__page__page_no=page_no ,object_story_id__isnull=False)
+
+    adobjects = FacebookAdsApi.init(access_token=ad_tokens, debug=True)
+    i=1
+    for ad in ads:
+        if i>to_create_count:
+            break
+        else:
+            i += 1
+        try:
+
+            # 在post的基础上创建广告
+            # 创建creative
+
+            fields = [
+            ]
+            params = {
+                'name': ad.page_no+"_"+ad.spus_name,
+                'object_story_id': ad.object_story_id,
+
+            }
+            adCreativeID = AdAccount(adaccount_no).create_ad_creative(
+                fields=fields,
+                params=params,
+            )
+
+            print("adCreativeID is ", adCreativeID)
+
+            creative_id = adCreativeID["id"]
+
+            # 创建广告
+            fields = [
+            ]
+            params = {
+                'name': ad.page_no+"_"+ad.spus_name,
+                'adset_id': adset_no,
+                'creative': {'creative_id': creative_id},
+                'status': 'PAUSED',
+            }
+
+            fb_ad = AdAccount(adaccount_no).create_ad(
+                fields=fields,
+                params=params,
+            )
+        except Exception as e:
+            print(e)
+            error = e.api_error_message()
+            ad.publish_error = error
+            ad.save()
+            break
+
+        print("new ad is ", fb_ad)
+        ad.ad_id = fb_ad.get("id")
+        ad.published = True
+        ad.published_time = dt.now()
+        ad.save()
+
+
 def post_message_ads(page_no, to_create_count):
     import time
     from prs.fb_action import  choose_ad_set
@@ -5664,8 +5735,8 @@ def post_message_ads(page_no, to_create_count):
 
     ad_tokens = "EAAHZCz2P7ZAuQBAI49YxZBpnxPjMKZCCu9SiRrgLlGuqQxytEHRzMWriEE1BArZBZAJe9pCVQS4EZBbnclPh8dPfu7Gc7lxSjXCcay7TJXiOOdyi4ZCc3AhijxZCDZCdIZCazziX3xOCT7D53xjDJVj8udnrfMjGUwQG8pE3oVwlaQKRvlYXL5h8FzH"
     adaccount_no = "act_1903121643086425"
-    #adset_no = choose_ad_set(page_no)
-    adset_no = "23843303803340510"
+    adset_no = choose_ad_set(page_no,'message')
+    #adset_no = "23843303803340510"
 
 
     ads = YallavipAd.objects.filter(active=True, message_aded=False, yallavip_album__page__page_no=page_no,fb_feed__isnull=False).order_by("-fb_feed__like_count")
@@ -5728,72 +5799,4 @@ def post_message_ads(page_no, to_create_count):
         ad.message_ad_id = fb_ad.get("id")
         ad.message_aded = True
         ad.message_ad_published_time = dt.now()
-        ad.save()
-
-
-def post_engagement_ads(page_no, to_create_count):
-    import time
-    from prs.fb_action import  choose_ad_set
-    from facebook_business.adobjects.adaccount import AdAccount
-
-    ad_tokens = "EAAHZCz2P7ZAuQBAI49YxZBpnxPjMKZCCu9SiRrgLlGuqQxytEHRzMWriEE1BArZBZAJe9pCVQS4EZBbnclPh8dPfu7Gc7lxSjXCcay7TJXiOOdyi4ZCc3AhijxZCDZCdIZCazziX3xOCT7D53xjDJVj8udnrfMjGUwQG8pE3oVwlaQKRvlYXL5h8FzH"
-    adaccount_no = "act_1903121643086425"
-    #adset_no = choose_ad_set(page_no)
-    adset_no = "23843303803340510"
-
-    ads = YallavipAd.objects.filter(active=True, published=False,yallavip_album__page__page_no=page_no ,object_story_id__isnull=False)
-
-    adobjects = FacebookAdsApi.init(access_token=ad_tokens, debug=True)
-    i=1
-    for ad in ads:
-        if i>to_create_count:
-            break
-        else:
-            i += 1
-        try:
-
-            # 在post的基础上创建广告
-            # 创建creative
-
-            fields = [
-            ]
-            params = {
-                'name': ad.page_no+"_"+ad.spus_name,
-                'object_story_id': ad.object_story_id,
-
-            }
-            adCreativeID = AdAccount(adaccount_no).create_ad_creative(
-                fields=fields,
-                params=params,
-            )
-
-            print("adCreativeID is ", adCreativeID)
-
-            creative_id = adCreativeID["id"]
-
-            # 创建广告
-            fields = [
-            ]
-            params = {
-                'name': ad.page_no+"_"+ad.spus_name,
-                'adset_id': adset_no,
-                'creative': {'creative_id': creative_id},
-                'status': 'PAUSED',
-            }
-
-            fb_ad = AdAccount(adaccount_no).create_ad(
-                fields=fields,
-                params=params,
-            )
-        except Exception as e:
-            print(e)
-            error = e.api_error_message()
-            ad.publish_error = error
-            ad.save()
-            break
-
-        print("new ad is ", fb_ad)
-        ad.ad_id = fb_ad.get("id")
-        ad.published = True
-        ad.published_time = dt.now()
         ad.save()

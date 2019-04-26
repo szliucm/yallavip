@@ -1623,21 +1623,19 @@ def get_ad_sets(adaccount_no):
                                                         )
 
 
-def choose_ad_set(page_no):
+def choose_ad_set(page_no,type):
+    today = datetime.date.today()
+    firstday = datetime.date(today.year,1,1)
+    days = (today - firstdate).days
+    tag = page_no + '_' + type + '_' + str(days % 3)
     try:
-
-        #adsets = MyAdset.objects.filter(name__icontains=page_no,active=True)
-        #return adsets[0].adset_no
-        if page_no == "297166711007461":
-            return "23843323830460510"
-        elif page_no == "437797513321974":
-            return  "23843303803340510"
-        elif page_no == "2084015718575745":
-            return  "23843324742430510"
-
-
+        adset = MyAdset.objects.get(name__icontains=tag,active=True)
     except:
-        return  None
+        adset = None
+
+        return adsets[0].adset_no
+
+
 
 
 def post_yallavip_ad(page_no= None):
