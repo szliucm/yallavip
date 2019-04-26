@@ -5550,7 +5550,7 @@ def auto_post():
     #遍历每个page
     for page in pages:
         #从符合条件的相册里选一个相册,    #发post
-        yallavip_post_and_ads.apply_async((page_no, 1), queue='fb')
+        page_post.apply_async((page_no, 1), queue='fb')
 
 
 
