@@ -1745,14 +1745,14 @@ class ClientServiceAdmin(object):
     ordering = ['-order__order_time']
     list_display = ('order', 'order_time','order_status','stock','order_logistic_update_status', 'colored_verify_status', \
                     'receiver_city', 'city','receiver_addr',
-                    'colored_sms_status',
+                    'colored_sms_status',"sms_code",
                     "deal_outofstock","real_amount",
                     #'cancel', 'error_money', 'error_contact', \
                     #'error_address', 'error_cod', 'error_note','error_timeout',
                      'receiver_phone', 'phone_1', 'phone_2','verify_comments', 'cs_reply', \
                     'facebook_user_name', 'sales', 'show_conversation')
 
-    list_editable = ['phone_1', 'phone_2', 'cs_reply',  'city',"deal_outofstock","real_amount",]
+    list_editable = ['phone_1', 'phone_2', 'cs_reply',  'city',"deal_outofstock","real_amount","sms_code",]
     search_fields = ['order__order_no','verify_comments', 'phone_1','phone_2','facebook_user_name','order__receiver_city']
     list_filter = ('verify_status','supply_status', 'sms_status', 'error_money', 'order__order_status','sales','city',"deal_outofstock",)
     actions = ['batch_stop', 'batch_pause', 'batch_normal', ]
