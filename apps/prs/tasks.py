@@ -5691,7 +5691,7 @@ def post_engagement_ads(page_no, to_create_count):
 
         i += 1
         name =    serial + "_"+ page_no+"_"+ad.spus_name
-        adset_no = choose_ad_set(page_no, 'engagement', )
+        adset_no = choose_ad_set(page_no, 'engagement' )
         if not adset_no:
             print("没有adset")
             return False
@@ -5773,7 +5773,7 @@ def post_message_ads(page_no, to_create_count):
 
         i += 1
         name = serial + "_" + page_no + "_" + ad.spus_name
-        adset_no = choose_ad_set(page_no, 'engagement', )
+        adset_no = choose_ad_set(page_no, 'engagement' )
         if not adset_no:
             print("没有adset")
             return False
