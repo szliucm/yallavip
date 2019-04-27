@@ -1624,7 +1624,7 @@ def get_ad_sets(adaccount_no):
 
 #三个组随机返回一个
 def choose_ad_set(page_no,type):
-
+    import  random
 
     tag = page_no + '_' + type + '_' + str(random.randint(1, 3))
     try:
