@@ -777,7 +777,7 @@ def update_drafts():
 
     oriorders.update(updated=False)
 
-def download_product():
+def download_product(page=0):
     # 定义actions函数
 
     shop_name = "yallasale-com"
@@ -803,7 +803,7 @@ def download_product():
 
     total_count = data["count"]
 
-    i = 0
+    i = page
     limit = 200
 
     while True:
