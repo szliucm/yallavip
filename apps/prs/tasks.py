@@ -5675,7 +5675,7 @@ def post_engagement_ads(page_no, to_create_count):
         return  False
     #adset_no = "23843303803340510"
 
-    ads = YallavipAd.objects.filter(~Q(object_story_id__isnull=""),active=True, published=False,yallavip_album__page__page_no=page_no ,object_story_id__isnull=False)
+    ads = YallavipAd.objects.filter(~Q(object_story_id="" ),  object_story_id__isnull = False,active=True, published=False,yallavip_album__page__page_no=page_no )
 
     adobjects = FacebookAdsApi.init(access_token=ad_tokens, debug=True)
     i=1
