@@ -5808,15 +5808,16 @@ def post_message_ads(page_no, to_create_count):
 def split_conversation_link():
     verifies = Verify.objects.filter(business_id__isnull=True)
     for verify in verifies:
-        contents = re.split("\?|&", verify.conversation_link)
-        id_dict = {}
-        for content in contents:
-            if content.find("=") >-1:
-                items = content.split("=")
-                id_dict[items[0]] =items[1]
-        verify.business_id = id_dict.get("business_id")
-        verify.mailbox_id = id_dict.get("mailbox_id")
-        verify.selected_item_id = id_dict.get("selected_item_id")
-        verify.save()
+        if verify.conversation_link:
+            contents = re.split("\?|&", verify.conversation_link)
+            id_dict = {}
+            for content in contents:
+                if content.find("=") >-1:
+                    items = content.split("=")
+                    id_dict[items[0]] =items[1]
+            verify.business_id = id_dict.get("business_id")
+            verify.mailbox_id = id_dict.get("mailbox_id")
+            verify.selected_item_id = id_dict.get("selected_item_id")
+            verify.save()
 
 
