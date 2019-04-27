@@ -15,7 +15,7 @@ from .models import *
 from .shop_action import  *
 
 from .fb_action import  *
-from .shop_action import  insert_product
+from prs.shop_action import  insert_product
 from django.db.models import Q
 
 @shared_task
