@@ -526,6 +526,11 @@ class Verify(models.Model):
 
     conversation_link = models.CharField(u'会话链接', max_length=500, null=True, blank=True)
 
+    business_id = models.CharField(u'business_id', max_length=500, null=True, blank=True)
+    mailbox_id = models.CharField(u'mailbox_id', max_length=500, null=True, blank=True)
+    selected_item_id = models.CharField(u'selected_item_id', max_length=500, null=True, blank=True)
+
+
     CITY = (
         ("None", "暂不支持"),
         ("Riyadh", "Riyadh"),

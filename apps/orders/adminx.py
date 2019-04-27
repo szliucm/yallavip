@@ -1322,10 +1322,10 @@ class VerifyAdmin(object):
                     'colored_sms_status',"sms_code",
                     'receiver_city','city','receiver_addr',
 
-                    'receiver_phone','phone_1', 'phone_2','warhouse_comment', 'verify_comments','verify_time','wait_status','cs_reply',\
+                    'receiver_phone','phone_1', 'phone_2', 'verify_comments','verify_time','cs_reply',\
                    'facebook_user_name', 'sales','show_conversation',)
 
-    #'cancel', 'error_money', 'error_contact', \    'error_address', 'error_cod', 'error_note',
+    #'cancel', 'error_money', 'error_contact', \    'error_address', 'error_cod', 'error_note','warhouse_comment','wait_status',
 
     ordering = ['-order__order_time']
     list_editable = ['phone_1', 'phone_2','verify_comments','city',"sms_code",]
