@@ -15,7 +15,7 @@ from .models import *
 from .shop_action import  *
 
 from .fb_action import  *
-from .adminx import  insert_product
+from .shop_action import  insert_product
 from django.db.models import Q
 
 @shared_task
@@ -783,8 +783,6 @@ def download_product():
     shop_name = "yallasale-com"
 
     shop_obj = Shop.objects.get(shop_name=shop_name)
-
-
 
     #获取新产品信息
     shop_url = "https://%s:%s@%s.myshopify.com" % (shop_obj.apikey, shop_obj.password, shop_obj.shop_name)

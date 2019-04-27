@@ -332,8 +332,6 @@ def post_new_product(shop_obj, product, handle_new ):
 #####批量插入shopify产品记录到系统数据库
 ################################
 def insert_product(shop_name, products):
-
-
     for j in range(len(products)):
         product_list = []
         variant_list = []
@@ -342,7 +340,8 @@ def insert_product(shop_name, products):
 
         row = products[j]
 
-
+        if j == 1:
+            print("row is ", row)
 
         product = ShopifyProduct(
             shop_name=shop_name,
@@ -356,6 +355,8 @@ def insert_product(shop_name, products):
             tags=row["tags"],
             vendor=row["vendor"],
             product_type=row["product_type"],
+            published_scope=row["published_scope"],
+            published_at=row.get("published_at"),
 
         )
         product_list.append(product)
@@ -373,6 +374,13 @@ def insert_product(shop_name, products):
                     sku=variant_row["sku"],
                     image_no=variant_row["image_id"],
                     title=variant_row["title"],
+                    inventory_item_no = variant_row["inventory_item_id"],
+                    inventory_policy=variant_row["inventory_policy"],
+                    fulfillment_service=variant_row["fulfillment_service"],
+                    inventory_management=variant_row["inventory_management"],
+                    inventory_quantity=variant_row["inventory_quantity"],
+
+
                     price=variant_row["price"],
                     option1=variant_row["option1"],
                     option2=variant_row["option2"],
