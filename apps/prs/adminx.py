@@ -874,7 +874,7 @@ class YallavipAlbumAdmin(object):
     list_display = ["page","rule",  "album","published","published_count","readypublish_count", "topublish_count", "deleted", "active",]
     # 'sku_name','img',
 
-    search_fields = ["album",]
+    search_fields = ["album__name",]
     list_filter = [ "page","rule", "published", "deleted", "active",]
     list_editable = []
     readonly_fields = ()
