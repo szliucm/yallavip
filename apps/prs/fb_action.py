@@ -1622,8 +1622,19 @@ def get_ad_sets(adaccount_no):
                                                                   }
                                                         )
 
-
+#三个组随机返回一个
 def choose_ad_set(page_no,type):
+
+
+    tag = page_no + '_' + type + '_' + str(random.randint(1, 3))
+    try:
+        adset = MyAdset.objects.get(name__icontains=tag, active=True)
+    except:
+        adset = None
+
+    return adset
+
+    '''
     import datetime
     today = datetime.date.today()
     firstday = datetime.date(today.year,1,1)
@@ -1635,6 +1646,7 @@ def choose_ad_set(page_no,type):
         adset = None
 
     return adset
+    '''
 
 
 

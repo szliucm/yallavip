@@ -5667,12 +5667,18 @@ def post_engagement_ads(page_no, to_create_count):
     from facebook_business.adobjects.adaccount import AdAccount
     from django.db.models import Q
 
+    #根据日期生成序列号，目的是为了便于跟踪每天的表现
+    import datetime
+    today = datetime.date.today()
+    firstday = datetime.date(today.year, 1, 1)
+    days = (today - firstday).days
+    serial = str(days % 3)
+
+
     ad_tokens = "EAAHZCz2P7ZAuQBAI49YxZBpnxPjMKZCCu9SiRrgLlGuqQxytEHRzMWriEE1BArZBZAJe9pCVQS4EZBbnclPh8dPfu7Gc7lxSjXCcay7TJXiOOdyi4ZCc3AhijxZCDZCdIZCazziX3xOCT7D53xjDJVj8udnrfMjGUwQG8pE3oVwlaQKRvlYXL5h8FzH"
     adaccount_no = "act_1903121643086425"
-    adset_no = choose_ad_set(page_no,'engagement')
-    if not adset_no:
-        print("没有adset")
-        return  False
+
+
     #adset_no = "23843303803340510"
 
     ads = YallavipAd.objects.filter(~Q(object_story_id="" ),  object_story_id__isnull = False,active=True, published=False,yallavip_album__page__page_no=page_no )
@@ -5682,8 +5688,14 @@ def post_engagement_ads(page_no, to_create_count):
     for ad in ads:
         if i>to_create_count:
             break
-        else:
-            i += 1
+
+        i += 1
+        name =    serial + "_"+ page_no+"_"+ad.spus_name
+        adset_no = choose_ad_set(page_no, 'engagement', )
+        if not adset_no:
+            print("没有adset")
+            return False
+
         try:
 
             # 在post的基础上创建广告
@@ -5692,7 +5704,7 @@ def post_engagement_ads(page_no, to_create_count):
             fields = [
             ]
             params = {
-                'name': ad.page_no+"_"+ad.spus_name,
+                'name':name,
                 'object_story_id': ad.object_story_id,
 
             }
@@ -5709,7 +5721,7 @@ def post_engagement_ads(page_no, to_create_count):
             fields = [
             ]
             params = {
-                'name': ad.page_no+"_"+ad.spus_name,
+                'name': name,
                 'adset_id': adset_no,
                 'creative': {'creative_id': creative_id},
                 'status': 'PAUSED',
@@ -5738,9 +5750,16 @@ def post_message_ads(page_no, to_create_count):
     from prs.fb_action import  choose_ad_set
     from facebook_business.adobjects.adaccount import AdAccount
 
+    # 根据日期生成序列号，目的是为了便于跟踪每天的表现
+    import datetime
+    today = datetime.date.today()
+    firstday = datetime.date(today.year, 1, 1)
+    days = (today - firstday).days
+    serial = str(days % 3)
+
     ad_tokens = "EAAHZCz2P7ZAuQBAI49YxZBpnxPjMKZCCu9SiRrgLlGuqQxytEHRzMWriEE1BArZBZAJe9pCVQS4EZBbnclPh8dPfu7Gc7lxSjXCcay7TJXiOOdyi4ZCc3AhijxZCDZCdIZCazziX3xOCT7D53xjDJVj8udnrfMjGUwQG8pE3oVwlaQKRvlYXL5h8FzH"
     adaccount_no = "act_1903121643086425"
-    adset_no = choose_ad_set(page_no,'message')
+    #adset_no = choose_ad_set(page_no,'message')
     #adset_no = "23843303803340510"
 
 
@@ -5751,8 +5770,14 @@ def post_message_ads(page_no, to_create_count):
     for ad in ads:
         if i>to_create_count:
             break
-        else:
-            i += 1
+
+        i += 1
+        name = serial + "_" + page_no + "_" + ad.spus_name
+        adset_no = choose_ad_set(page_no, 'engagement', )
+        if not adset_no:
+            print("没有adset")
+            return False
+
         try:
 
             fields = [
@@ -5760,7 +5785,7 @@ def post_message_ads(page_no, to_create_count):
 
             # link ad
             params = {
-                'name': page_no + '_' + ad.spus_name,
+                'name': name,
                 'object_story_spec': {'page_id': page_no,
                                       'link_data': {"call_to_action": {"type": "MESSAGE_PAGE",
                                                                        "value": {"app_destination": "MESSENGER"}},
@@ -5783,7 +5808,7 @@ def post_message_ads(page_no, to_create_count):
             fields = [
             ]
             params = {
-                'name': page_no + '_' + ad.spus_name,
+                'name': name,
                 'adset_id': adset_no,
                 'creative': {'creative_id': adCreative["id"]},
                 'status': 'PAUSED',
