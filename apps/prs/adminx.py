@@ -17,6 +17,7 @@ from .models import *
 from fb.models import MyPage,MyAlbum
 from shop.models import Shop,ShopifyProduct, ShopifyImage,ShopifyVariant,ShopifyOptions
 from .choose_target import ChoosePage
+from prs.task import create_abs_label
 
 import os,requests
 
@@ -100,7 +101,7 @@ class SizeAbsAdmin(object):
     ordering = ["-catesize_count"]
 
     def create_abs_label(self, request, queryset):
-        from prs.task import create_abs_label
+
         create_abs_label()
         return
 
