@@ -40,12 +40,29 @@ class MyCategory(models.Model):
     def __str__(self):
         return self.name
 
+
+class SizeLabel(models.Model):
+
+    size_abs = models.CharField(u'规格缩写', default='', max_length=100, null=True, blank=True)
+    size_label = models.ImageField(u'规格标签', upload_to='material/', default="", null=True, blank=True)
+
+    class Meta:
+        verbose_name = "商品尺码标签"
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.size_abs
+
+
 class MyCategorySize(models.Model):
     """
     商品类别
     """
     cate = models.ForeignKey(MyCategory, blank=True,null=True, on_delete=models.CASCADE,
                                  related_name="cate_size", verbose_name="品类")
+    size_label = models.ForeignKey(SizeLabel, blank=True,null=True, on_delete=models.CASCADE,
+                                 related_name="label_size", verbose_name="规格标签")
+
     size = models.CharField(u'规格', default='', max_length=100, null=True, blank=True)
     sku_quantity = models.BigIntegerField(u'SKU数量', default=0, null=True, blank=True)
 
@@ -54,6 +71,9 @@ class MyCategorySize(models.Model):
 
     collcetion_no = models.CharField(u'collcetion_no', default='', max_length=500, null=True, blank=True)
     publish_error = models.CharField(u'publishe_error', default='', max_length=500, null=True, blank=True)
+
+    size_label = models.CharField(u'规格缩写', default='', max_length=100, null=True, blank=True)
+
 
     class Meta:
         verbose_name = "商品尺码"

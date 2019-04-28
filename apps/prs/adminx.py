@@ -41,6 +41,8 @@ class MyCategoryResource(resources.ModelResource):
         fields = ('code',)
         # exclude = ()
 
+
+
 @xadmin.sites.register(MyCategory)
 class MyCategoryAdmin(object):
     def spu_count(self, obj):
@@ -65,15 +67,26 @@ class MyCategoryAdmin(object):
     readonly_fields = ()
     actions = []
 
+
+@xadmin.sites.register(SizeLabel)
+class SizeLabelAdmin(object):
+    list_display = ["size_abs", "size_label", ]
+
+    search_fields = ["size_abs", ]
+    list_filter = []
+    list_editable = []
+    readonly_fields = ()
+    actions = []
+
 @xadmin.sites.register(MyCategorySize)
 class MyCategorySizeAdmin(object):
 
 
-    list_display = ["cate", "size", "sku_quantity",]
+    list_display = ["cate", "size", "sku_quantity",'size_label',]
 
 
     search_fields = ["cate__name", ]
-    list_filter = ["cate","size","cate__level", ]
+    list_filter = ["cate","size","cate__level", 'size_label__name',]
     list_editable = []
     readonly_fields = ()
     actions = []
