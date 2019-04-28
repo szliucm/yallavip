@@ -17,7 +17,7 @@ from .models import *
 from fb.models import MyPage,MyAlbum
 from shop.models import Shop,ShopifyProduct, ShopifyImage,ShopifyVariant,ShopifyOptions
 from .choose_target import ChoosePage
-from prs.task import create_abs_label
+from prs.tasks import create_abs_label
 
 import os,requests
 
