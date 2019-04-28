@@ -5257,9 +5257,9 @@ def create_size_abs():
     size_counts =  MyCategorySize.objects.values("size").annotate(count=Count(id)).order_by("-count")
 
     for size_count in size_counts:
-        obj, created = SizeAbs.objects.update_or_create(size=size_counts["size"],
+        obj, created = SizeAbs.objects.update_or_create(size=size_count["size"],
                                                        defaults={
-                                                           "catesize_count" :  size_counts["count"],
+                                                           "catesize_count" :  size_count["count"],
                                                                  }
                                                        )
 
