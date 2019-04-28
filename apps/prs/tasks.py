@@ -5263,6 +5263,17 @@ def create_size_abs():
                                                                  }
                                                        )
 
+def create_abs_label():
+
+
+    abs_counts =  SizeAbs.objects.values("size_abs").annotate(count=Count(id)).order_by("-count")
+
+    for abs_count in abs_counts:
+        obj, created = SizeAbsLabel.objects.update_or_create(size_abs=abs_count["size_abs"],
+                                                       defaults={
+                                                           "size_count" :  abs_count["count"],
+                                                                 }
+                                                       )
 
 
 #使用之前要先把updated置为False,才能把有错误的挑出来重做

@@ -69,7 +69,18 @@ class MyCategoryAdmin(object):
 
 @xadmin.sites.register(SizeAbsLabel)
 class SizeAbsLabelAdmin(object):
-    list_display = ["size_abs", "size_label", ]
+    def show_label(self, obj):
+
+        try:
+            img = mark_safe('<img src="%s" width="100px" />' % (obj.size_label.url,))
+        except Exception as e:
+            img = ''
+        return img
+
+    show_label.short_description = 'size_label'
+    show_label.allow_tags = True
+
+    list_display = ["size_abs", "show_label", ]
 
     search_fields = ["size_abs", ]
     list_filter = []
@@ -83,7 +94,7 @@ class SizeAbsAdmin(object):
 
     search_fields = ["size", "size_abs", ]
     list_filter = []
-    list_editable = []
+    list_editable = ["size_abs",]
     readonly_fields = ()
     actions = []
     ordering = ["-catesize_count"]
