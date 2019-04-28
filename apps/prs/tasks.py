@@ -32,7 +32,7 @@ my_app_id = "562741177444068"
 my_app_secret = "e6df363351fb5ce4b7f0080adad08a4d"
 #my_access_token = "EAAHZCz2P7ZAuQBABHO6LywLswkIwvScVqBP2eF5CrUt4wErhesp8fJUQVqRli9MxspKRYYA4JVihu7s5TL3LfyA0ZACBaKZAfZCMoFDx7Tc57DLWj38uwTopJH4aeDpLdYoEF4JVXHf5Ei06p7soWmpih8BBzadiPUAEM8Fw4DuW5q8ZAkSc07PrAX4pGZA4zbSU70ZCqLZAMTQZDZD"
 #my_access_token = "	EAAcGAyHVbOEBAEtwMPUeTci0x3G6XqlAwIhuQiZBZCVhZBRx88Rki0Lo7WNSxvAw7jAhhRlxsLjARbAZCnDvIoQ68Baj9TJrQC8KvEzyDhRWlnILGxRyc49b02aPInvpI9bcfgRowJfDrIt0kFE01LGD86vLKuLixtB0aTvTHww9SkedBzFZA"
-
+ad_tokens = "EAAHZCz2P7ZAuQBACZAZAQBZAJapY8bEy9AdtxewxBhIdgFi0iQa8imNrOaDGT9rcebKIFnaEXlEMKyC0IQ6CjZB9pL3bZBuuMK5hLbOtjLeXQ4CLPUNe7qXamuwyoG8v0IZBBVZAvURKzSNA3AWPwvwggKpkAgivX0zJvKJeZBZAaOSY5XoPTaOZBLrf"
 DEBUG = False
 
 if DEBUG:
@@ -5377,7 +5377,7 @@ def test_for_post():
     page_id = "546407779047102"
     message = "This is only a test"
     image_url = "https://li2.rightinthebox.com/images/384x500/201703/ebcwqx1488880984387.jpg"
-    ad_tokens = "EAAHZCz2P7ZAuQBAI49YxZBpnxPjMKZCCu9SiRrgLlGuqQxytEHRzMWriEE1BArZBZAJe9pCVQS4EZBbnclPh8dPfu7Gc7lxSjXCcay7TJXiOOdyi4ZCc3AhijxZCDZCdIZCazziX3xOCT7D53xjDJVj8udnrfMjGUwQG8pE3oVwlaQKRvlYXL5h8FzH"
+
 
     '''
     access_token, long_token = get_token(page_id)
@@ -5699,7 +5699,7 @@ def post_engagement_ads(page_no, to_create_count):
     serial = str(days % 5)
 
 
-    ad_tokens = "EAAHZCz2P7ZAuQBAI49YxZBpnxPjMKZCCu9SiRrgLlGuqQxytEHRzMWriEE1BArZBZAJe9pCVQS4EZBbnclPh8dPfu7Gc7lxSjXCcay7TJXiOOdyi4ZCc3AhijxZCDZCdIZCazziX3xOCT7D53xjDJVj8udnrfMjGUwQG8pE3oVwlaQKRvlYXL5h8FzH"
+
     adaccount_no = "act_1903121643086425"
 
 
@@ -5781,7 +5781,7 @@ def post_message_ads(page_no, to_create_count):
     days = (today - firstday).days
     serial = str(days % 3)
 
-    ad_tokens = "EAAHZCz2P7ZAuQBAI49YxZBpnxPjMKZCCu9SiRrgLlGuqQxytEHRzMWriEE1BArZBZAJe9pCVQS4EZBbnclPh8dPfu7Gc7lxSjXCcay7TJXiOOdyi4ZCc3AhijxZCDZCdIZCazziX3xOCT7D53xjDJVj8udnrfMjGUwQG8pE3oVwlaQKRvlYXL5h8FzH"
+
     adaccount_no = "act_1903121643086425"
     #adset_no = choose_ad_set(page_no,'message')
     #adset_no = "23843303803340510"
