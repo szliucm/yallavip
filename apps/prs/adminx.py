@@ -67,12 +67,21 @@ class MyCategoryAdmin(object):
     readonly_fields = ()
     actions = []
 
-
-@xadmin.sites.register(SizeLabel)
-class SizeLabelAdmin(object):
+@xadmin.sites.register(SizeAbsLabel)
+class SizeAbsLabelAdmin(object):
     list_display = ["size_abs", "size_label", ]
 
     search_fields = ["size_abs", ]
+    list_filter = []
+    list_editable = []
+    readonly_fields = ()
+    actions = []
+
+@xadmin.sites.register(SizeAbs)
+class SizeAbsAdmin(object):
+    list_display = ["size", "size_abs", "size_abs_label", ]
+
+    search_fields = ["size", "size_abs", ]
     list_filter = []
     list_editable = []
     readonly_fields = ()
@@ -82,11 +91,11 @@ class SizeLabelAdmin(object):
 class MyCategorySizeAdmin(object):
 
 
-    list_display = ["cate", "size", "sku_quantity",'size_label',]
+    list_display = ["cate", "size", "sku_quantity",'size_abs',]
 
 
     search_fields = ["cate__name", ]
-    list_filter = ["cate","size","cate__level", 'size_label__name',]
+    list_filter = ["cate","size","cate__level", 'size_abs__size_abs',]
     list_editable = []
     readonly_fields = ()
     actions = []
