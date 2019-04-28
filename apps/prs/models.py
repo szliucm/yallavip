@@ -42,7 +42,7 @@ class MyCategory(models.Model):
 
 
 class SizeLabel(models.Model):
-
+    size = models.CharField(u'规格', default='', max_length=100, null=True, blank=True)
     size_abs = models.CharField(u'规格缩写', default='', max_length=100, null=True, blank=True)
     size_label = models.ImageField(u'规格标签', upload_to='material/', default="", null=True, blank=True)
 
