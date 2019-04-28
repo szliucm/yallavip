@@ -96,8 +96,13 @@ class SizeAbsAdmin(object):
     list_filter = []
     list_editable = ["size_abs",]
     readonly_fields = ()
-    actions = []
+    actions = ["create_abs_label",]
     ordering = ["-catesize_count"]
+
+    def create_abs_label(self, request, queryset):
+        from prs.task import create_abs_label
+        create_abs_label()
+        return
 
 
 @xadmin.sites.register(MyCategorySize)
