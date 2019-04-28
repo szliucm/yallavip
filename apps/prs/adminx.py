@@ -86,6 +86,8 @@ class SizeAbsAdmin(object):
     list_editable = []
     readonly_fields = ()
     actions = []
+    ordering = ["-catesize_count"]
+
 
 @xadmin.sites.register(MyCategorySize)
 class MyCategorySizeAdmin(object):

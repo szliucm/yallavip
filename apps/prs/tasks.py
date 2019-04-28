@@ -5251,6 +5251,19 @@ def create_size_collcetions():
         size_cate.save()
 
 
+def create_size_abs():
+
+
+    size_counts =  MyCategorySize.objects.values("size").annotate(count=Count(id)).order_by("-count")
+
+    for size_count in size_counts:
+        obj, created = SizeAbs.objects.update_or_create(size=size_counts["size"],
+                                                       defaults={
+                                                           "catesize_count" :  size_counts["count"],
+                                                                 }
+                                                       )
+
+
 
 #使用之前要先把updated置为False,才能把有错误的挑出来重做
 
