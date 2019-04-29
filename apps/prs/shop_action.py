@@ -1149,7 +1149,7 @@ def create_smart_collection(name, tags, size=None):
         rules.append(rule)
 
     if size:
-        print(size)
+
         rule = {
             "column": "variant_title",
             "relation": "contains",

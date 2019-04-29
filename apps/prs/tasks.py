@@ -5246,7 +5246,7 @@ def create_size_collcetions():
         size = size_cate.size
 
         info,created = create_smart_collection(name, tags,size)
-        print(name, info, created)
+
         if created:
 
             size_cate.collcetion_no = info
