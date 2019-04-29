@@ -1521,3 +1521,15 @@ class ProductResourcesAdmin(object):
     search_fields = ["product",  ]
     list_filter = ("resource_cate","resource_type","staff",)
 '''
+
+@xadmin.sites.register(ShopSmartCollection)
+class ShopSmartCollectionAdmin(object):
+
+
+    list_display = [ 'collection_id','title',]
+
+
+    search_fields = ['title',]
+    list_filter = []
+    list_editable = []
+    actions = []
