@@ -5237,6 +5237,10 @@ def create_size_collcetions():
 
     for size_cate in size_cates:
         cate = size_cate.cate
+        if not cate.name or cate.name=="":
+            print (cate, "没有name")
+            continue
+
         name = cate.name + ' / ' + size_cate.size
         tags = cate.tags
         size = size_cate.size
