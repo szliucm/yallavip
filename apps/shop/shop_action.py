@@ -375,7 +375,7 @@ def download_smart_collections():
 
     # 删除所有可能重复的产品信息
 
-    ShopSmartCollection.objects.delete()
+    ShopSmartCollection.objects.all().delete()
 
     # 获取新产品信息
     url = shop_url + "/admin/smart_collections/count.json"
