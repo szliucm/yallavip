@@ -411,6 +411,7 @@ def download_smart_collections():
             r = requests.get(url, params)
             collections = json.loads(r.text)["smart_collections"]
             for collection in collections:
+                print (collection["id"], collection["title"])
                 obj, created = ShopSmartCollection.objects.update_or_create(collection_id=collection["id"],
                                                            defaults={'title': collection["title"],
 
