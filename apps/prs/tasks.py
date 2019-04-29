@@ -5760,7 +5760,8 @@ def post_engagement_ads(page_no, to_create_count):
                 'name': name,
                 'adset_id': adset_no,
                 'creative': {'creative_id': creative_id},
-                'status': 'PAUSED',
+                #'status': 'PAUSED',ACTIVE
+                'status': 'ACTIVE',
             }
 
             fb_ad = AdAccount(adaccount_no).create_ad(
