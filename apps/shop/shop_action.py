@@ -367,6 +367,65 @@ class Post_to_Album(BaseActionView):
                                 'select_form.html', context)
 
 
+def download_smart_collections():
+    # 获取店铺信息
+    shop_obj = Shop.objects.get(shop_name=shop)
+    shop_url = "https://%s:%s@%s.myshopify.com" % (shop_obj.apikey, shop_obj.password, shop_obj.shop_name)
+
+    # 删除所有可能重复的产品信息
+
+    ShopSmartCollection.objects.delete()
+
+    # 获取新产品信息
+    url = shop_url + "/admin/smart_collections/count.json"
+    params = {
+    }
+    # print("url %s params %s"%(url, params))
+    r = requests.get(url, params)
+    data = json.loads(r.text)
+
+    print("smart collection count is ", data["count"])
+
+    total_count = data["count"]
+
+    # 更新信息到系统数据库
+    i = 0
+    limit = 200
+
+    while True:
+        try:
+
+            if (i * limit > total_count):
+                break
+
+            i = i + 1
+
+            # products = shopify.Product.find(page=i,limit=limit,updated_at_min=shop.updated_time)
+            url = shop_url + "/admin/smart_collections.json"
+            params = {
+
+            }
+            print(("params is ", params))
+
+            r = requests.get(url, params)
+            collections = json.loads(r.text)["smart_collections"]
+            for collection in collections:
+                obj, created = ShopSmartCollection.objects.update_or_create(collection_id=collection["id"],
+                                                           defaults={'title': collection["title"],
+
+                                                                     }
+                                                           )
+
+
+
+        except KeyError:
+            print("smart_collections for the shop {} completed".format(shop))
+            break
+
+
+
+
+
 
 
 

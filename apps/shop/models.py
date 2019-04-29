@@ -480,6 +480,21 @@ class ShopOriDraft(models.Model):
     def __str__(self):
         return self.order_id
 
+class ShopSmartCollection(models.Model):
+
+    collection_id = models.CharField(u'订单id', default='', max_length=100, blank=True)
+    title = models.CharField(u'订单号', default='', max_length=500, blank=True)
+
+
+    class Meta:
+        verbose_name = "smart collections"
+        verbose_name_plural = verbose_name
+
+
+    def __str__(self):
+        return self.title
+
+
 class ShopifyDraft(models.Model):
     order_id = models.CharField(u'订单id', default='', max_length=100, blank=True)
     order_no = models.CharField(u'订单号', default='', max_length=50, blank=True)
