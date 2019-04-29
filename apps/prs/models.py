@@ -677,6 +677,7 @@ class LightinAlbum(models.Model):
 
     batch_no = models.IntegerField(u'批次号', default=0, blank=True, null=True)
     name  = models.TextField(default='', null=True, blank=True, verbose_name="文案")
+    image_pure = models.CharField(default='', max_length=100, null=True, blank=True, verbose_name="无logo水印图")
     image_marked = models.CharField(default='',max_length=100, null=True, blank=True, verbose_name="水印图")
 
     sourced = models.BooleanField(default=False, verbose_name="资源准备")

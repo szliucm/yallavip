@@ -350,13 +350,14 @@ def yallavip_mark_image(ori_image, handle, price1, price2, lightinalbum):
     if image is None:
         return  None,None
 
-    image = deal_image(image, logo=logo, handle=handle, price=price, promote=promote,  price1=price1, price2=price2, album_promote=album_promote,type="album")
+    #制作纯净版的水印图： 只有货号和价格，用于之后的拼广告图
+    image = deal_image(image, logo=None, handle=handle, price=price, promote=None,  price1=price1, price2=price2, album_promote=None,type="album")
 
     #################
 
     # 处理完的图片保存到本地
 
-    image_filename = handle + '_' +  targer_page.page + '.jpg'
+    image_filename = handle + '_' +  targer_page.page + '_pure.jpg'
     image_filename = image_filename.replace(' ', '')
     destination = os.path.join(settings.MEDIA_ROOT, "product/", image_filename)
 
@@ -364,9 +365,30 @@ def yallavip_mark_image(ori_image, handle, price1, price2, lightinalbum):
 
     image.save(destination,'JPEG',quality = 95)
 
-    destination_url = domain + os.path.join(settings.MEDIA_URL, "product/", image_filename)
+    pure_url = domain + os.path.join(settings.MEDIA_URL, "product/", image_filename)
 
-    return  destination, destination_url
+    #制作带logo和促销标签的水印图,如果已经做过了，就不做了
+    if lightinalbum.image_marked:
+        destination_url =  lightinalbum.image_marked
+    else:
+        image = deal_image(image, logo=logo, handle=handle, price=price, promote=promote, price1=price1, price2=price2,
+                           album_promote=album_promote, type="album")
+
+        #################
+
+        # 处理完的图片保存到本地
+
+        image_filename = handle + '_' + targer_page.page + '.jpg'
+        image_filename = image_filename.replace(' ', '')
+        destination = os.path.join(settings.MEDIA_ROOT, "product/", image_filename)
+
+        print("destination", destination)
+
+        image.save(destination, 'JPEG', quality=95)
+
+        destination_url = domain + os.path.join(settings.MEDIA_URL, "product/", image_filename)
+
+    return  True, pure_url, destination_url
 
 def lightin_mark_image_page(ori_image, handle, price1, price2, target_page):
     from django.utils import timezone as datetime

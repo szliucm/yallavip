@@ -124,6 +124,102 @@ def logo_watermark(sku_no,im,price1,price2,pic_type,version):
     else:
         out.save('./album/'+ sku_no + '_'+version +'.jpg', 'JPEG')
 
+def logo_watermark_v2(sku_no,im,price1,price2,pic_type,version):
+    #im = Image.open(source)
+    im = im.convert('RGB')
+
+    #if (pic_type == 'album'):
+    im = fill_image(im)
+
+    bw, bh = im.size
+
+    layer = Image.new('RGBA', im.size, (0, 0, 0, 0))
+
+    # logo
+    mark = Image.open('logo.png')
+    lw, lh = mark.size
+
+    layer.paste(mark, (0, 0))
+    out = Image.composite(layer, im, layer)
+
+
+    #货号
+    font = ImageFont.truetype("C:\Windows\Fonts\Arial.ttf", int(45*scale))
+    draw1 = ImageDraw.Draw(im)
+    if(version == 'combo'):
+        draw1.rectangle((int(bw / 2 - 65*scale - 150 ), int(bh - 60*scale-2), int(bw / 2 +65*scale - 145), int(bh-10*scale)), fill='yellow')
+        draw1.text((int(bw / 2 - 60*scale - 150), int(bh - 60*scale)), sku_no,  font=font, fill=(0 ,0 ,0))  # 设置文字位置/内容/颜色/字体
+    else:
+        draw1.rectangle((int(bw / 2 - 65 * scale ), int(bh - 60 * scale - 2), int(bw / 2 + 65 * scale ),
+                         int(bh - 10 * scale)), fill='yellow')
+        draw1.text((int(bw / 2 - 60 * scale ), int(bh - 60 * scale)), sku_no, font=font,
+                   fill=(0, 0, 0))  # 设置文字位置/内容/颜色/字体
+
+    draw1 = ImageDraw.Draw(im)
+    #im.show()
+
+
+    if(pic_type == 'post'):
+        # 买赠
+        if(version== 'surprise'):
+            mark = Image.open('surprise.png')
+            lw, lh = mark.size
+            mark = mark.resize((int(lw * scale ), int(lh * scale)), Image.ANTIALIAS)
+        else:
+            mark = Image.open('buy.png')
+            lw, lh = mark.size
+            mark =  mark.resize( (int(lw *scale/2), int(lh *scale/2)), Image.ANTIALIAS)
+
+
+
+        #layer.paste(mark, (bw - int(lw/2), bh - int(lh/2)))
+
+        if (version == 'combo'):
+            layer.paste(mark, (bw -300- int(lw *scale/ 2), 0))
+        elif (version== 'surprise'):
+            layer.paste(mark, (bw - int(lw * scale), 0))
+        else:
+            layer.paste(mark, (bw - int(lw * scale / 2), 0))
+        out = Image.composite(layer, im, layer)
+
+    # 价格
+    if (version == 'surprise'):
+        mark = Image.open('what.png')
+        lw, lh = mark.size
+        #测试
+        #mark = mark.resize((int(lw * scale / 2), int(lh * scale / 2)), Image.ANTIALIAS)
+        mark = mark.resize((int(lw * scale), int(lh * scale )), Image.ANTIALIAS)
+        layer.paste(mark, (0, bh - int(lh * scale )))
+    else:
+        mark = Image.open('price.png')
+        # 画图
+        # 设置所使用的字体
+        font = ImageFont.truetype("C:\Windows\Fonts\Arial.ttf", int(90))
+        draw = ImageDraw.Draw(mark)
+        draw.text((40+int(30*(3-len(price1))), 40), price1, (255, 255, 255), font=font)  # 设置文字位置/内容/颜色/字体
+        draw = ImageDraw.Draw(mark)  # Just draw it!
+
+        font = ImageFont.truetype("C:\Windows\Fonts\Arial.ttf", int(30))
+        draw.text((120+int(10*(3-len(price2))), 140), price2, (255, 182, 193), font=font)  # 设置文字位置/内容/颜色/字体
+        draw = ImageDraw.Draw(mark)
+        lw, lh = mark.size
+        #测试
+        #mark = mark.resize((int(lw *scale/2), int(lh *scale/2)), Image.ANTIALIAS)
+        mark = mark.resize((int(lw ), int(lh )), Image.ANTIALIAS)
+        # layer.paste(mark, (bw - int(lw/2), bh - int(lh/2)))
+        layer.paste(mark, (0, bh - int(lh )))
+
+
+    out = Image.composite(layer, im, layer)
+
+    out = out.convert('RGB')
+    #out.show()
+    if (pic_type == 'post'):
+        out.save('./post/'+ sku_no + '_'+version+'.jpg', 'JPEG')
+    else:
+        out.save('./album/'+ sku_no + '_'+version +'.jpg', 'JPEG')
+
+
 
 # 裁剪压缩图片
 def clipResizeImg_new(im, dst_w, dst_h, qua=95):

@@ -4565,84 +4565,7 @@ def prepare_yallavip_album_material(page_no=None):
             prepare_a_album.apply_async((lightinalbum.pk,), queue='fb')
             #prepare_a_album(lightinalbum.pk)
 
-            '''
-            spu = lightinalbum.lightin_spu
-            sku = lightinalbum.lightin_sku
 
-            if sku:
-                LightinAlbum.objects.filter(pk=lightinalbum.pk).update(
-                    image_marked=sku.image_marked,
-
-                    #batch_no=batch_no,
-                    material=True
-                )
-
-            elif spu:
-                error = ""
-                # 准备文字
-                # 标题
-                title = spu.title
-                # 货号
-                if title.find(spu.handle) == -1:
-                    name = title + "  [" + spu.handle + "]"
-                else:
-                    name = title
-                # 规格
-                lightin_skus = Lightin_SKU.objects.filter(SPU=spu.SPU)
-                options = []
-                for sku in lightin_skus:
-                    option = sku.skuattr
-                    if option not in options:
-                        options.append(option)
-
-                if len(options) > 0:
-                    name = name + "\n\nSkus:  "
-
-                for option in options:
-                    name = name + "\n\n   " + option
-
-                # 价格
-                price1 = int(spu.yallavip_price)
-                price2 = int(price1 * random.uniform(5, 6))
-                # 为了减少促销的麻烦，文案里不写价格了
-                # name = name + "\n\nPrice:  " + str(price1) + "SAR"
-
-                # 准备图片
-                # 先取第一张，以后考虑根据实际有库存的sku的图片（待优化）
-                if spu.images_dict:
-                    image = json.loads(spu.images_dict).values()
-                    if image and len(image) > 0:
-                        a = "/"
-                        image_split = list(image)[0].split(a)
-
-                        image_split[4] = '800x800'
-                        image = a.join(image_split)
-
-                    # 打水印
-                    # logo， page促销标
-                    # 如果有相册促销标，就打相册促销标，否则打价格标签
-
-                    image_marked, image_marked_url = yallavip_mark_image(image, spu.handle, str(price1), str(price2),
-                                                                        lightinalbum)
-                    if not image_marked:
-                        error = "打水印失败"
-
-                else:
-                    print(album, spu.SPU, "没有图片")
-                    error = "没有图片"
-
-                if error == "":
-                    LightinAlbum.objects.filter(pk=lightinalbum.pk).update(
-                        name=name,
-                        image_marked=image_marked_url,
-                        #batch_no=batch_no,
-                        material=True
-                    )
-                else:
-                    LightinAlbum.objects.filter(pk=lightinalbum.pk).update(
-                        material_error=error
-                    )
-            '''
 @shared_task
 def prepare_a_album(lightinalbum_pk):
     from shop.photo_mark import yallavip_mark_image
@@ -4704,7 +4627,7 @@ def prepare_a_album(lightinalbum_pk):
             # logo， page促销标
             # 如果有相册促销标，就打相册促销标，否则打价格标签
 
-            image_marked, image_marked_url = yallavip_mark_image(image, spu.handle, str(price1), str(price2),
+            image_marked, image_pure_url, image_marked_url = yallavip_mark_image(image, spu.handle, str(price1), str(price2),
                                                                  lightinalbum)
             if not image_marked:
                 error = "打水印失败"
@@ -4716,7 +4639,9 @@ def prepare_a_album(lightinalbum_pk):
         if error == "":
             LightinAlbum.objects.filter(pk=lightinalbum.pk).update(
                 name=name,
+                image_pure=image_pure_url,
                 image_marked=image_marked_url,
+
                 # batch_no=batch_no,
                 material=True
             )
@@ -5535,6 +5460,7 @@ def prepare_promote_image_album(yallavip_album_pk, lightinalbums):
     spus_name = ','.join(spus)
 
     image_marked_url = combo_ad_image(spu_ims, spus_name, yallavip_album_instance)
+
     if not image_marked_url:
         print("没有生成广告图片")
         return
@@ -5559,6 +5485,46 @@ def prepare_promote_image_album(yallavip_album_pk, lightinalbums):
         spu.aded = True
         spu.save()
 
+
+def prepare_promote_image_album_v2(yallavip_album_pk, lightinalbums):
+    from prs.fb_action import combo_ad_image
+
+    # 从库存多的开始推
+    yallavip_album_instance = YallavipAlbum.objects.get(pk=yallavip_album_pk)
+    print ("正在处理相册 ", yallavip_album_instance.album.name)
+
+    #spu_ims = lightinalbums.values_list("image_marked", flat=True)
+    #spus = lightinalbums.values_list("lightin_spu__handle", flat=True)
+
+    # 把spus的图拼成一张
+
+    #spus_name = ','.join(spus)
+
+    image_marked_url = combo_ad_image_v2(yallavip_album_instance, lightinalbums)
+
+    if not image_marked_url:
+        print("没有生成广告图片")
+        return
+    message = "💋💋Flash Sale ！！！💋💋" \
+              "90% off！Lowest Price Online ！！！" \
+              "🥳🥳🥳 10:00-22:00 Everyday ,Update 100 New items Every Hour !! The quantity is limited !!😇😇" \
+              "All goods are in Riyadh stock,It will be delivered to you in 3-5 days! ❣️❣️" \
+              "How to order?Pls choice the product that you like it , then send us the picture, we will order it for you!🤩🤩"
+    message = message + "\n" + spus_name
+
+    obj, created = YallavipAd.objects.update_or_create(yallavip_album=yallavip_album_instance,
+                                                       spus_name=spus_name,
+                                                       defaults={'image_marked_url': image_marked_url,
+                                                                 'message': message,
+                                                                 'active': True,
+
+                                                                 }
+                                                       )
+    # 把spu标示为已经打过广告了
+    for lightinalbum in lightinalbums:
+        spu = lightinalbum.lightin_spu
+        spu.aded = True
+        spu.save()
 
 @shared_task
 #自动准备广告图

@@ -1459,42 +1459,16 @@ def combo_ad_image(spu_ims, spus_name,yallavip_album_instance):
         # 四张图
         # 先做个1080x1080的画布
         layer = Image.new("RGB", (1080, 1080), "red")
+        #每张图分别打上几个和货号水印
         layer.paste(clipResizeImg_new(ims[0], 540, 540), (0, 0))
-        layer.paste(clipResizeImg_new(ims[1], 540, 540), (0, 540))
-        layer.paste(clipResizeImg_new(ims[2], 540, 540), (540, 0))
+        layer.paste(clipResizeImg_new(ims[1], 540, 540), (540, 0))
+        layer.paste(clipResizeImg_new(ims[2], 540, 540), (0, 540))
         layer.paste(clipResizeImg_new(ims[3], 540, 540), (540, 540))
 
-        #含size的，就找到相册对应的size标签，贴上去
+        #整张图左上角打logo水印
+
+        #含size的，就找到相册对应的size标签，放在右上角
         position = album_name.find("Size=")
-
-        '''
-        if position == -1:
-            # 把四张图放上去
-            layer.paste(clipResizeImg_new(ims[0], 540, 540), (0, 0))
-            layer.paste(clipResizeImg_new(ims[1], 540, 540), (0, 540))
-            layer.paste(clipResizeImg_new(ims[2], 540, 540), (540, 0))
-            layer.paste(clipResizeImg_new(ims[3], 540, 540), (540, 540))
-        else:
-           
-            layer.paste(clipResizeImg_new(ims[0], 520, 520), (20, 10))
-            layer.paste(clipResizeImg_new(ims[1], 520, 520), (20, 530))
-            layer.paste(clipResizeImg_new(ims[2], 520, 520), (540, 10))
-            layer.paste(clipResizeImg_new(ims[3], 520, 520), (540, 530))
-            # 最下面写相册名字里的尺码信息
-            FONT = os.path.join(settings.BASE_DIR, "static/font/ARIAL.TTF")
-
-            font = ImageFont.truetype(FONT, 25)
-            draw1 = ImageDraw.Draw(layer)
-
-            lw, lh = layer.size
-            x = 0
-            y = lh - 30
-
-            size_name = album_name[position:]
-            draw1.rectangle((x + 300, y , x + 320 + len(size_name)*15 , y + 40), fill='yellow')
-            draw1.text((x + 320, y + 3), size_name, font=font,
-                       fill="black")  # 设置文字位置/内容/颜色/字体
-            '''
 
         if position >=0 :
 
@@ -1523,6 +1497,191 @@ def combo_ad_image(spu_ims, spus_name,yallavip_album_instance):
                     return None
                 else:
                     ims.append(im)
+
+                #把尺码水印文件加到新的图层上，然后把新旧图层融合
+                layer_lable = Image.new('RGBA', layer.size, (0, 0, 0, 0))
+                layer_lable.paste(ims[4], (458, 0))
+                layer = Image.composite(layer_lable, layer, layer_lable)
+
+
+
+
+
+
+
+
+
+    elif item_count == 5:
+        # 五张图
+        # 先做个900x1000的画布
+        layer = Image.new("RGB", (900, 1180), "red")
+        layer.paste(clipResizeImg_new(ims[0], 540, 540), (0, 0))
+        layer.paste(clipResizeImg_new(ims[1], 540, 540), (0, 540))
+        layer.paste(clipResizeImg_new(ims[2], 360, 360), (540, 0))
+        layer.paste(clipResizeImg_new(ims[3], 360, 360), (540, 360))
+        layer.paste(clipResizeImg_new(ims[4], 360, 360), (540, 720))
+
+    elif item_count == 6:
+        # 六张图
+        # 先做个900x900的画布
+        layer = Image.new("RGB", (900, 1000), "red")
+
+        layer.paste(clipResizeImg_new(ims[0], 600, 600), (0, 0))
+        layer.paste(clipResizeImg_new(ims[1], 300, 300), (0, 600))
+        layer.paste(clipResizeImg_new(ims[2], 300, 300), (300, 600))
+        layer.paste(clipResizeImg_new(ims[3], 300, 300), (600, 0))
+        layer.paste(clipResizeImg_new(ims[4], 300, 300), (600, 300))
+        layer.paste(clipResizeImg_new(ims[5], 300, 300), (600, 600))
+    elif item_count == 7:
+        # 先做个900x130的画布
+        layer = Image.new("RGB", (900, 1300), "red")
+        layer.paste(clipResizeImg_new(ims[0], 450, 450), (0, 0))
+        layer.paste(clipResizeImg_new(ims[1], 450, 450), (450, 0))
+        layer.paste(clipResizeImg_new(ims[2], 450, 450), (0, 450))
+        layer.paste(clipResizeImg_new(ims[3], 450, 450), (450, 450))
+        layer.paste(clipResizeImg_new(ims[4], 300, 300), (0, 900))
+        layer.paste(clipResizeImg_new(ims[5], 300, 300), (300, 900))
+        layer.paste(clipResizeImg_new(ims[6], 300, 300), (600, 900))
+    elif item_count == 8:
+        # 先做个900x1150的画布
+        layer = Image.new("RGB", (900, 1150), "red")
+        layer.paste(clipResizeImg_new(ims[0], 450, 450), (0, 0))
+        layer.paste(clipResizeImg_new(ims[1], 450, 450), (450, 0))
+        layer.paste(clipResizeImg_new(ims[2], 300, 300), (0, 450))
+        layer.paste(clipResizeImg_new(ims[3], 300, 300), (0, 750))
+        layer.paste(clipResizeImg_new(ims[4], 300, 300), (300, 450))
+        layer.paste(clipResizeImg_new(ims[5], 300, 300), (300, 750))
+        layer.paste(clipResizeImg_new(ims[6], 300, 300), (600, 450))
+        layer.paste(clipResizeImg_new(ims[7], 300, 300), (600, 750))
+    elif item_count == 9:
+        # 先做个900x1000的画布
+        layer = Image.new("RGB", (900, 1000), "red")
+        layer.paste(clipResizeImg_new(ims[0], 300, 300), (0, 0))
+        layer.paste(clipResizeImg_new(ims[1], 300, 300), (0, 300))
+        layer.paste(clipResizeImg_new(ims[2], 300, 300), (0, 600))
+        layer.paste(clipResizeImg_new(ims[3], 300, 300), (300, 0))
+        layer.paste(clipResizeImg_new(ims[4], 300, 300), (300, 300))
+        layer.paste(clipResizeImg_new(ims[5], 300, 300), (300, 600))
+        layer.paste(clipResizeImg_new(ims[6], 300, 300), (600, 0))
+        layer.paste(clipResizeImg_new(ims[7], 300, 300), (600, 300))
+        layer.paste(clipResizeImg_new(ims[8], 300, 300), (600, 600))
+    elif item_count == 10:
+        # 先做个900x130的画布
+        layer = Image.new("RGB", (900, 925), "red")
+        layer.paste(clipResizeImg_new(ims[0], 300, 300), (0, 0))
+        layer.paste(clipResizeImg_new(ims[1], 300, 300), (0, 300))
+        layer.paste(clipResizeImg_new(ims[2], 300, 300), (300, 0))
+        layer.paste(clipResizeImg_new(ims[3], 300, 300), (300, 300))
+        layer.paste(clipResizeImg_new(ims[4], 300, 300), (600, 0))
+        layer.paste(clipResizeImg_new(ims[5], 300, 300), (600, 300))
+        layer.paste(clipResizeImg_new(ims[6], 225, 225), (0, 600))
+        layer.paste(clipResizeImg_new(ims[7], 225, 225), (225, 600))
+        layer.paste(clipResizeImg_new(ims[8], 225, 225), (450, 600))
+        layer.paste(clipResizeImg_new(ims[9], 225, 225), (675, 600))
+    else:
+        layer = None
+
+    if layer:
+        out = layer.convert('RGB')
+
+
+        image_filename = spus_name+'.jpg'
+
+        destination = os.path.join(settings.MEDIA_ROOT, "ad/", image_filename)
+
+        out.save(destination, 'JPEG', quality=95)
+        # out.save('target%s.jpg'%(combo.SKU), 'JPEG')
+
+        destination_url = domain + os.path.join(settings.MEDIA_URL, "ad/", image_filename)
+        print("destination_url", destination_url)
+        return  destination_url
+
+
+
+    else:
+        print( "items数量问题")
+        destination_url =  None
+
+    for im in ims:
+        im.close()
+
+    return  destination_url
+
+def combo_ad_image_v2(yallavip_album_instance, lightinalbums):
+    from shop.photo_mark import clipResizeImg_new, get_remote_image
+    import os
+    from django.conf import settings
+    domain = "http://admin.yallavip.com"
+
+    try:
+        from PIL import Image, ImageDraw, ImageFont, ImageEnhance
+
+    except ImportError:
+        import Image, ImageDraw, ImageFont, ImageEnhance
+
+
+    ims=[]
+    album_name= yallavip_album_instance.album.name
+
+    # 每张图分别打上价格和货号水印
+    for lightinalbum in lightinalbums:
+        im = get_remote_image(lightinalbum.source_image)
+        if not im:
+            print ("image打不开")
+            return None
+        #打水印
+
+        ims.append(im)
+
+    # 开始拼图exit
+
+
+    item_count = len(spu_ims)
+    print("图片数量", item_count)
+    if item_count == 4:
+        # 四张图
+        # 先做个1080x1080的画布
+        layer = Image.new("RGB", (1080, 1080), "red")
+
+        layer.paste(clipResizeImg_new(ims[0], 540, 540), (0, 0))
+        layer.paste(clipResizeImg_new(ims[1], 540, 540), (540, 0))
+        layer.paste(clipResizeImg_new(ims[2], 540, 540), (0, 540))
+        layer.paste(clipResizeImg_new(ims[3], 540, 540), (540, 540))
+
+        #整张图左上角打logo水印
+
+        #含size的，就找到相册对应的size标签，放在右上角
+        position = album_name.find("Size=")
+
+        if position >=0 :
+
+
+            attrs = yallavip_album_instance.rule.attrs
+            print(attrs)
+            try:
+                sizeabs = SizeAbs.objects.get(size=attrs)
+                print(sizeabs)
+                size_label = SizeAbsLabel.objects.get(size_abs = sizeabs.size_abs).size_label
+                print(size_label)
+            except Exception as e:
+                print("出错了！", e)
+
+                size_label = None
+
+
+
+            if size_label:
+                domain = "http://admin.yallavip.com"
+                destination_url = domain + os.path.join( size_label.url)
+                im = get_remote_image(destination_url)
+
+                if not im:
+                    print ("image打不开")
+                    return None
+                else:
+                    ims.append(im)
+
+                #把尺码水印文件加到新的图层上，然后把新旧图层融合
                 layer_lable = Image.new('RGBA', layer.size, (0, 0, 0, 0))
                 layer_lable.paste(ims[4], (458, 0))
                 layer = Image.composite(layer_lable, layer, layer_lable)
