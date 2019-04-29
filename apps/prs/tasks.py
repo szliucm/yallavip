@@ -5532,7 +5532,7 @@ def prepare_promote_image_album(yallavip_album_pk, lightinalbums):
 
     spus_name = ','.join(spus)
 
-    image_marked_url = combo_ad_image(spu_ims, spus_name, yallavip_album_instance.album.name)
+    image_marked_url = combo_ad_image(spu_ims, spus_name, yallavip_album_instance)
     if not image_marked_url:
         print("没有生成广告图片")
         return

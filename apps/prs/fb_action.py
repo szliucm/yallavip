@@ -1420,6 +1420,7 @@ def combo_ad_image(spu_ims, spus_name,album_name):
 
 
     ims=[]
+    album.name= yallavip_album_instance.album.name
 
     for spu_im in spu_ims:
         im = get_remote_image(spu_im)
@@ -1436,8 +1437,16 @@ def combo_ad_image(spu_ims, spus_name,album_name):
     if item_count == 4:
         # 四张图
         # 先做个1080x1080的画布
-        position = album_name.find("Size=")
         layer = Image.new("RGB", (1080, 1080), "red")
+        layer.paste(clipResizeImg_new(ims[0], 540, 540), (0, 0))
+        layer.paste(clipResizeImg_new(ims[1], 540, 540), (0, 540))
+        layer.paste(clipResizeImg_new(ims[2], 540, 540), (540, 0))
+        layer.paste(clipResizeImg_new(ims[3], 540, 540), (540, 540))
+
+        #含size的，就找到相册对应的size标签，贴上去
+        position = album_name.find("Size=")
+
+        '''
         if position == -1:
             # 把四张图放上去
             layer.paste(clipResizeImg_new(ims[0], 540, 540), (0, 0))
@@ -1445,6 +1454,7 @@ def combo_ad_image(spu_ims, spus_name,album_name):
             layer.paste(clipResizeImg_new(ims[2], 540, 540), (540, 0))
             layer.paste(clipResizeImg_new(ims[3], 540, 540), (540, 540))
         else:
+           
             layer.paste(clipResizeImg_new(ims[0], 520, 520), (20, 10))
             layer.paste(clipResizeImg_new(ims[1], 520, 520), (20, 530))
             layer.paste(clipResizeImg_new(ims[2], 520, 520), (540, 10))
@@ -1463,6 +1473,26 @@ def combo_ad_image(spu_ims, spus_name,album_name):
             draw1.rectangle((x + 300, y , x + 320 + len(size_name)*15 , y + 40), fill='yellow')
             draw1.text((x + 320, y + 3), size_name, font=font,
                        fill="black")  # 设置文字位置/内容/颜色/字体
+            '''
+
+        if position >=0 :
+            attrs = yallavip_album_instance.rule.attrs
+            try:
+                sizeabs = SizeAbs.objects.get(size=attrs)
+                size_label = SizeAbsLabel.objects.get(size_abs = sizeabs.size_abs).size_label
+            except:
+                size_label = None
+
+            if size_label:
+                im = get_remote_image(size_label.url)
+                if not im:
+                    print ("image打不开")
+                    return None
+                else:
+                    ims.append(im)
+                layer.paste(ims[4], (458, 0))
+
+
 
 
 
