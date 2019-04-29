@@ -1420,7 +1420,7 @@ def combo_ad_image(spu_ims, spus_name,yallavip_album_instance):
 
 
     ims=[]
-    album.name= yallavip_album_instance.album.name
+    album_name= yallavip_album_instance.album.name
 
     for spu_im in spu_ims:
         im = get_remote_image(spu_im)
