@@ -1406,7 +1406,7 @@ def prepare_yallavip_ad_album(yallavip_album_pk, lightinalbums_all):
 
 
 
-def combo_ad_image(spu_ims, spus_name,album_name):
+def combo_ad_image(spu_ims, spus_name,yallavip_album_instance):
     from shop.photo_mark import clipResizeImg_new, get_remote_image
     import os
     from django.conf import settings
