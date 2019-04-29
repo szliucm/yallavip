@@ -1180,7 +1180,7 @@ def create_smart_collection(name, tags, size=None):
     }
     # print("url %s params %s"%(url, params))
     r = requests.post(url, headers=headers, data=json.dumps(params))
-    if r.status_code == 200:
+    if r.status_code == 201:
         data = json.loads(r.text)
         collcetion_no = data["smart_collection"].get("id")
         return collcetion_no, True
