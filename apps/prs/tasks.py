@@ -5233,7 +5233,7 @@ def delete_collections():
 def create_size_collcetions():
     from prs.shop_action import  create_smart_collection
 
-    size_cates = MyCategorySize.objects.filter(active=True, published=False,sku_quantity__gt=30)
+    size_cates = MyCategorySize.objects.filter(active=True, published=False,collcetion_no="")
 
     for size_cate in size_cates:
         cate = size_cate.cate
@@ -5242,7 +5242,9 @@ def create_size_collcetions():
         size = size_cate.size
 
         info,created = create_smart_collection(name, tags,size)
+        print(name, info, created)
         if created:
+
             size_cate.collcetion_no = info
             size_cate.published = True
         else:
