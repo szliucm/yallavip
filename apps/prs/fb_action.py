@@ -41,12 +41,32 @@ APP_SCOPED_SYSTEM_USER_ID=100029952330435
 #my_access_token = "EAAcGAyHVbOEBAKgfka7uxoKnH3DnKcfuWZCnczE0bXCLaeiN2kY19woN24svib5TIlp3whXoV9ZCJF27UvZCmyoUZBwkVP6HlpWnfKX1eGyOd8FEzmJVjVZBhYRbgpEv1kNVbCRMJllYzVhOKs60N0yZBX9NXsEtpBvZCdXwTfObCzZAZAkCbqi6e8S0OvZASqrjhAlG627U2EggZDZD"
 ad_tokens = "EAAHZCz2P7ZAuQBACZAZAQBZAJapY8bEy9AdtxewxBhIdgFi0iQa8imNrOaDGT9rcebKIFnaEXlEMKyC0IQ6CjZB9pL3bZBuuMK5hLbOtjLeXQ4CLPUNe7qXamuwyoG8v0IZBBVZAvURKzSNA3AWPwvwggKpkAgivX0zJvKJeZBZAaOSY5XoPTaOZBLrf"
 def get_token(target_page,token=None):
-
+    systemuser_token = "EAAcGAyHVbOEBAP8G7Q3YZBfY5N0PHGzVlmSqgQgMm7jU3h95r5JnJlqSwCi9bqAORlcdHW3qwd16xE3YtTuPZAs1eitjs5G8ss8sQTFlYlRT98vpYY51HWXA3nK2ZCkDqXPuF9yTHaTZA17fFZAOLZAtX9J2fZCq9AL5V245MMWBZBwNy8eW4ZBlU39m9RpbggmZA2b07i1tUOzQZDZD"
     pages = MyPage.objects.filter(page_no = target_page, active=True)
     if not pages:
         print ("page 不存在或者失活")
         return  None,None
 
+    #使用systemu_uer 的token
+    url = "https://graph.facebook.com/v3.2/{}?fields=access_token".format(target_page)
+    param = dict()
+    if token is None:
+        param["access_token"] = systemuser_token
+    else:
+        param["access_token"] = token
+
+    r = requests.get(url, param)
+    data = json.loads(r.text)
+    # token可用，就要标识占用
+    if r.status_code == 200:
+
+        return data["access_token"], systemuser_token
+    else:
+        print(r, r.text)
+
+
+
+    '''
     active_tokens = Token.objects.filter(active=True)
     # 先找page对应的token，如果没有可用的，就从还没有page占用的token里取一个
     my_access_tokens = active_tokens.filter(page_no=target_page)
@@ -73,6 +93,7 @@ def get_token(target_page,token=None):
             my_access_token.active = False
             my_access_token.save()
             continue
+    '''
 
     return  None,None
 
