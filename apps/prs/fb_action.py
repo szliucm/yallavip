@@ -1484,7 +1484,10 @@ def combo_ad_image(spu_ims, spus_name,yallavip_album_instance):
                 size_label = None
 
             if size_label:
-                im = get_remote_image(size_label.url)
+                domain = "http://admin.yallavip.com"
+                destination_url = domain + os.path.join( size_label.url)
+                im = get_remote_image(destination_url)
+
                 if not im:
                     print ("image打不开")
                     return None
