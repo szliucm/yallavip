@@ -404,6 +404,9 @@ def download_smart_collections():
             # products = shopify.Product.find(page=i,limit=limit,updated_at_min=shop.updated_time)
             url = shop_url + "/admin/smart_collections.json"
             params = {
+                "page": i,
+                "limit": limit,
+                "fields": "id,title",
 
             }
             print(("params is ", params))
