@@ -1479,10 +1479,15 @@ def combo_ad_image(spu_ims, spus_name,yallavip_album_instance):
             print("需要打size标签")
 
             attrs = yallavip_album_instance.rule.attrs
+            print(attrs)
             try:
                 sizeabs = SizeAbs.objects.get(size=attrs)
+                print(sizeabs)
                 size_label = SizeAbsLabel.objects.get(size_abs = sizeabs.size_abs).size_label
-            except:
+                print(size_label)
+            except Exception as e:
+                print("出错了！", e)
+
                 size_label = None
 
             print ("size标签是", size_label)
