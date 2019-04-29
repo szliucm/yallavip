@@ -369,7 +369,8 @@ class Post_to_Album(BaseActionView):
 
 def download_smart_collections():
     # 获取店铺信息
-    shop_obj = Shop.objects.get(shop_name=shop)
+    shop_name = "yallasale-com"
+    shop_obj = Shop.objects.get(shop_name=shop_name)
     shop_url = "https://%s:%s@%s.myshopify.com" % (shop_obj.apikey, shop_obj.password, shop_obj.shop_name)
 
     # 删除所有可能重复的产品信息
