@@ -1476,7 +1476,7 @@ def combo_ad_image(spu_ims, spus_name,yallavip_album_instance):
             '''
 
         if position >=0 :
-            print("需要打size标签")
+
 
             attrs = yallavip_album_instance.rule.attrs
             print(attrs)
@@ -1490,7 +1490,7 @@ def combo_ad_image(spu_ims, spus_name,yallavip_album_instance):
 
                 size_label = None
 
-            print ("size标签是", size_label)
+
 
             if size_label:
                 domain = "http://admin.yallavip.com"
@@ -1502,10 +1502,11 @@ def combo_ad_image(spu_ims, spus_name,yallavip_album_instance):
                     return None
                 else:
                     ims.append(im)
+                layer_lable = Image.new('RGBA', layer.size, (0, 0, 0, 0))
+                layer_lable.paste(ims[4], (458, 0))
+                layer = Image.composite(layer_lable, layer, layer_lable)
 
-                layer.paste(ims[4], (458, 0))
 
-                print ("打标签成功", destination_url,im)
 
 
 
