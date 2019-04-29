@@ -5508,9 +5508,11 @@ def prepare_promote_image(page_no):
 
     # 从符合条件的相册里随机抽取一个相册生成广告图片，如果有尺码，就把尺码加在图片下面
     yallavip_albums = lightinalbums_all.values("yallavip_album").annotate(spu_count = Count(id)).filter(spu_count__gte=4)
-    yallavip_album = random.choice(yallavip_albums)
 
-    if yallavip_album:
+
+
+    if yallavip_albums:
+        yallavip_album = random.choice(yallavip_albums)
         yallavip_album_pk = yallavip_album.get("yallavip_album")
         lightinalbums = lightinalbums_all.filter(yallavip_album__pk=yallavip_album_pk).order_by(
             "lightin_spu__sellable")[:4]
