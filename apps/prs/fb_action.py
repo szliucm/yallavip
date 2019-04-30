@@ -1607,7 +1607,7 @@ def combo_ad_image(spu_ims, spus_name,yallavip_album_instance):
 
     return  destination_url
 
-def combo_ad_image_v2(spu_ims, yallavip_album_instance, lightinalbums):
+def combo_ad_image_v2(spu_ims, spus_name,yallavip_album_instance):
     from shop.photo_mark import clipResizeImg_new, get_remote_image
     import os
     from django.conf import settings
