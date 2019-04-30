@@ -43,7 +43,7 @@ if DEBUG:
 else:
     warehouse_code = "W07"
     #shipping_method = "FETCHR_SAUDI_DOM"
-    shipping_method = "ARAMEX_KAS"
+    shipping_method = "ARAMEX_KSA"
     appToken = "909fa3df3b98c26a9221774fe5545afd"
     appKey = "b716b7eb938e9a46ad836e20de0f8b07"
 
