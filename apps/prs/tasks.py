@@ -5897,13 +5897,15 @@ def prepare_promote_image_album_v2(yallavip_album_pk, ori_lightinalbums):
     print ("正在处理相册 ", yallavip_album_instance.album.name)
 
     spu_pks = ori_lightinalbums.values_list("lightin_spu__pk", flat=True)
-    album_pks = ori_lightinalbums.values_list("pk", flat=True)
+    album_pks = []
 
     print("待处理的相册图片pk",album_pks )
 
 
     #计算spu的促销价格，如果是价格有变动，删除原有fb图片，并重新生成新的图片
     for lightinalbum in ori_lightinalbums:
+        album_pks.append(lightinalbum.pk)
+
         spu_pk = lightinalbum.lightin_spu.pk
         print("正在处理spu", spu_pk )
         updated = update_promote_price(spu_pk)
@@ -5911,7 +5913,7 @@ def prepare_promote_image_album_v2(yallavip_album_pk, ori_lightinalbums):
         updated=True
         if updated:
             clear_album(spu_pk)
-            print("正在处理spu", lightinalbum.pk)
+            print("正在处理lightinalbum", lightinalbum.pk)
             prepare_a_album(lightinalbum.pk)
 
     #重新读取
