@@ -5870,7 +5870,7 @@ def clear_album(spu_pk):
 
 #为促销做准备商品
 @task
-def prepare_promote(page_no):
+def prepare_promote(page_no,keyword=None):
 
     import random
 
@@ -5883,6 +5883,9 @@ def prepare_promote(page_no):
                                             lightin_spu__vendor_supply_price__gt=6,lightin_spu__vendor_supply_price__lte=15,
                                             lightin_spu__aded=False,
                                             published=True)
+    if keyword:
+        lightinalbums_all = lightinalbums_all.filter(yallavip_album__rule__name__icontains=keyword)
+
 
     # 从符合条件的相册里随机抽取一个相册生成广告图片，如果有尺码，就把尺码加在图片下面
     yallavip_albums = lightinalbums_all.values("yallavip_album").annotate(spu_count = Count(id)).filter(spu_count__gte=4)
