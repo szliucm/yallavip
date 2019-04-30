@@ -5903,7 +5903,7 @@ def prepare_promote_image_album_v2(yallavip_album_pk, lightinalbums):
         updated=True
         if updated:
             clear_album(spu_pk)
-            prepare_a_album.apply_async((lightinalbum.pk,), queue='fb')
+            prepare_a_album(lightinalbum.pk)
 
     spu_ims = lightinalbums.values_list("image_pure", flat=True)
     if not spu_ims:
