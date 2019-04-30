@@ -5911,8 +5911,8 @@ def prepare_promote_image_album_v2(yallavip_album_pk, ori_lightinalbums):
         updated=True
         if updated:
             clear_album(spu_pk)
-            print("正在处理spu", ori_lightinalbums.pk)
-            prepare_a_album(ori_lightinalbums.pk)
+            print("正在处理spu", lightinalbum.pk)
+            prepare_a_album(lightinalbum.pk)
 
     #重新读取
     print(album_pks)
