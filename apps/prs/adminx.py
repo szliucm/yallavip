@@ -63,7 +63,7 @@ class MyCategoryAdmin(object):
 
 
     search_fields = ["name", ]
-    list_filter = ["level","active","published", ]
+    list_filter = ["super_name","level","active","published", ]
     list_editable = []
     readonly_fields = ()
     actions = []
