@@ -5828,7 +5828,7 @@ def update_promote_price(spu_pk):
     else:
         promote_price = round(multiple_price)
 
-    if promote_price <> spu.yallavip_price:
+    if promote_price != spu.yallavip_price:
         #修改spu价格
         spu.yallavip_price = promote_price
         spu.promoted = True
