@@ -5910,6 +5910,9 @@ def prepare_promote_image_album_v2(yallavip_album_pk, lightinalbums):
         print("没有无logo图片")
         return False
 
+    print(spu_ims)
+
+
     handles = lightinalbums.values_list("lightin_spu__handle", flat=True)
 
     # 把spus的图拼成一张
