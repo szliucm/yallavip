@@ -5891,7 +5891,7 @@ def prepare_promote(page_no):
 
 
 def prepare_promote_image_album_v2(yallavip_album_pk, ori_lightinalbums):
-    from prs.fb_action import combo_ad_image
+    from prs.fb_action import combo_ad_image_v2
 
     yallavip_album_instance = YallavipAlbum.objects.get(pk=yallavip_album_pk)
     print ("正在处理相册 ", yallavip_album_instance.album.name)
