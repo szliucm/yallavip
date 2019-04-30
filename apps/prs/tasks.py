@@ -4574,6 +4574,8 @@ def prepare_a_album(lightinalbum_pk):
     spu = lightinalbum.lightin_spu
     sku = lightinalbum.lightin_sku
 
+    print("prepare_a_album ",lightinalbum_pk,  spu)
+
     if sku:
         LightinAlbum.objects.filter(pk=lightinalbum.pk).update(
             image_marked=sku.image_marked,
@@ -4636,7 +4638,7 @@ def prepare_a_album(lightinalbum_pk):
             print(album, spu.SPU, "没有图片")
             error = "没有图片"
 
-        print("打水印", error)
+        print("打水印",lightinalbum.pk, error)
         if error == "":
             LightinAlbum.objects.filter(pk=lightinalbum.pk).update(
                 name=name,
@@ -5916,10 +5918,11 @@ def prepare_promote_image_album_v2(yallavip_album_pk, lightinalbums):
 
     spu_ims = lightinalbums.filter(~Q(image_pure=""),image_pure__isnull=False).values_list("image_pure", flat=True)
     if spu_ims.count()<4:
+        print(spu_ims)
         print("没有无logo图片")
         return False
 
-    print(spu_ims)
+
 
 
 
