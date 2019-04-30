@@ -5486,45 +5486,7 @@ def prepare_promote_image_album(yallavip_album_pk, lightinalbums):
         spu.save()
 
 
-def prepare_promote_image_album_v2(yallavip_album_pk, lightinalbums):
-    from prs.fb_action import combo_ad_image
 
-    # 从库存多的开始推
-    yallavip_album_instance = YallavipAlbum.objects.get(pk=yallavip_album_pk)
-    print ("正在处理相册 ", yallavip_album_instance.album.name)
-
-    #spu_ims = lightinalbums.values_list("image_marked", flat=True)
-    #spus = lightinalbums.values_list("lightin_spu__handle", flat=True)
-
-    # 把spus的图拼成一张
-
-    #spus_name = ','.join(spus)
-
-    image_marked_url = combo_ad_image_v2(yallavip_album_instance, lightinalbums)
-
-    if not image_marked_url:
-        print("没有生成广告图片")
-        return
-    message = "💋💋Flash Sale ！！！💋💋" \
-              "90% off！Lowest Price Online ！！！" \
-              "🥳🥳🥳 10:00-22:00 Everyday ,Update 100 New items Every Hour !! The quantity is limited !!😇😇" \
-              "All goods are in Riyadh stock,It will be delivered to you in 3-5 days! ❣️❣️" \
-              "How to order?Pls choice the product that you like it , then send us the picture, we will order it for you!🤩🤩"
-    message = message + "\n" + spus_name
-
-    obj, created = YallavipAd.objects.update_or_create(yallavip_album=yallavip_album_instance,
-                                                       spus_name=spus_name,
-                                                       defaults={'image_marked_url': image_marked_url,
-                                                                 'message': message,
-                                                                 'active': True,
-
-                                                                 }
-                                                       )
-    # 把spu标示为已经打过广告了
-    for lightinalbum in lightinalbums:
-        spu = lightinalbum.lightin_spu
-        spu.aded = True
-        spu.save()
 
 @shared_task
 #自动准备广告图
@@ -5849,10 +5811,10 @@ def split_conversation_link():
             verify.selected_item_id = id_dict.get("selected_item_id")
             verify.save()
 
-#计算促销价，修改sku，spu的促销价
+#计算某个spu的促销价，修改sku，spu的促销价
 def update_promote_price(spu_pk):
     try:
-        spu = Lightin_SPU.objects.filter(pk = spu_pk )
+        spu = Lightin_SPU.objects.get(pk = spu_pk )
     except:
         return False
 
@@ -5860,19 +5822,64 @@ def update_promote_price(spu_pk):
     #供货价的5倍 0.25*3.75*5
     multiple_price = spu.vendor_supply_price * 5
     #供应商售价的6折 3.75*0.6
-    discount_price = spu.vvendor_sale_price * 2.25
+    discount_price = spu.vendor_sale_price * 2.25
     if multiple_price < discount_price:
-        promote_price = discount_price
+        promote_price = round(discount_price)
     else:
-        promote_price = multiple_price
+        promote_price = round(multiple_price)
 
-    #修改spu价格
-    spu.yallavip_price = round(promote_price)
-    spu.promoted = True
-    spu.save()
+    if promote_price <> spu.yallavip_price:
+        #修改spu价格
+        spu.yallavip_price = promote_price
+        spu.promoted = True
+        spu.save()
 
-    #修改spu对应的skus的价格
-    lightin_spu.spu_sku.update(sku_price = promote_price )
+        #修改spu对应的skus的价格
+        spu.spu_sku.update(sku_price = promote_price )
+
+        return  True
+    else:
+        return False
+
+#删除spu在所有相册中的图片
+def clear_album(spu_pk):
+
+
+    albums = LightinAlbum.objects.filter(lightin_spu__pk=spu_pk, published=True, deleted=False)
+    if albums:
+        albums.update(todelete=True)
+
+
+
+#为促销做准备商品
+@task
+def prepare_promote(page_no):
+
+    import random
+
+    from django.db.models import Count
+
+
+    # 取库存大、单价高、已经发布到相册 且还未打广告的商品
+    lightinalbums_all = LightinAlbum.objects.filter(yallavip_album__isnull=False, yallavip_album__page__page_no=page_no,
+                                            lightin_spu__sellable__gt=0, lightin_spu__SPU__istartswith = "s",
+                                            lightin_spu__vendor_supply_price__gt=6,lightin_spu__vendor_supply_price__lte=15,
+                                            lightin_spu__aded=False,
+                                            published=True)
+
+    # 从符合条件的相册里随机抽取一个相册生成广告图片，如果有尺码，就把尺码加在图片下面
+    yallavip_albums = lightinalbums_all.values("yallavip_album").annotate(spu_count = Count(id)).filter(spu_count__gte=4)
+
+
+
+    if yallavip_albums:
+        yallavip_album = random.choice(yallavip_albums)
+        yallavip_album_pk = yallavip_album.get("yallavip_album")
+        lightinalbums = lightinalbums_all.filter(yallavip_album__pk=yallavip_album_pk).order_by(
+            "lightin_spu__sellable")[:4]
+        prepare_promote_image_album_v2(yallavip_album_pk , lightinalbums)
+    else:
+        print("没有符合条件的相册了", page_no)
 
 
 
@@ -5880,4 +5887,55 @@ def update_promote_price(spu_pk):
 
 
 
+def prepare_promote_image_album_v2(yallavip_album_pk, lightinalbums):
+    from prs.fb_action import combo_ad_image
+
+    yallavip_album_instance = YallavipAlbum.objects.get(pk=yallavip_album_pk)
+    print ("正在处理相册 ", yallavip_album_instance.album.name)
+
+
+    #计算spu的促销价格，如果是价格有变动，删除原有fb图片，并重新生成新的图片
+    for lightinalbum in lightinalbums:
+        spu_pk = lightinalbum.lightin_spu.pk
+        print("正在处理spu", spu_pk )
+        updated = update_promote_price(spu_pk)
+        if updated:
+            clear_album(spu_pk)
+            prepare_a_album.apply_async((lightinalbum.pk,), queue='fb')
+
+    spu_ims = lightinalbums.values_list("image_pure", flat=True)
+    if not spu_ims:
+        print("没有无logo图片")
+        return False
+
+    handles = lightinalbums.values_list("lightin_spu__handle", flat=True)
+
+    # 把spus的图拼成一张
+    handles_name = ','.join(handles)
+
+    image_marked_url = combo_ad_image(spu_ims, handles_name, yallavip_album_instance)
+
+    if not image_marked_url:
+        print("没有生成广告图片")
+        return
+    message = "💋💋Flash Sale ！！！💋💋" \
+              "90% off！Lowest Price Online ！！！" \
+              "🥳🥳🥳 10:00-22:00 Everyday ,Update 100 New items Every Hour !! The quantity is limited !!😇😇" \
+              "All goods are in Riyadh stock,It will be delivered to you in 3-5 days! ❣️❣️" \
+              "How to order?Pls choice the product that you like it , then send us the picture, we will order it for you!🤩🤩"
+    message = message + "\n" + spus_name
+
+    obj, created = YallavipAd.objects.update_or_create(yallavip_album=yallavip_album_instance,
+                                                       spus_name=spus_name,
+                                                       defaults={'image_marked_url': image_marked_url,
+                                                                 'message': message,
+                                                                 'active': True,
+
+                                                                 }
+                                                       )
+    #把spu标示为已经打过广告了
+    for lightinalbum in lightinalbums:
+        spu = lightinalbum.lightin_spu
+        spu.aded = True
+        spu.save()
 

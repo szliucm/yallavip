@@ -695,6 +695,7 @@ class LightinAlbum(models.Model):
     publish_error = models.CharField(default='无',max_length=256, null=True, blank=True, verbose_name="发布错误(或图片数量)")
     published_time = models.DateTimeField(null=True, blank=True, verbose_name="发布时间")
 
+    todelete = models.BooleanField(default=False, verbose_name="待删除")
     deleted = models.BooleanField(default=False, verbose_name="删除状态")
     delete_error = models.CharField(default='无', max_length=256, null=True, blank=True, verbose_name="删除结果")
     deleted_time = models.DateTimeField(null=True, blank=True, verbose_name="删除时间")
