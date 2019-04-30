@@ -147,21 +147,23 @@ def deal_image(im,logo = None ,handle = None, price = None,price1 = None, price2
             layer.paste(mark, (0, bh - int(lh * scale)))
         else:  # 原价 ，促销价
             mark = Image.open(price)
+            mark = mark.resize((116,116), Image.ANTIALIAS)
+
             # 画图
             # 设置所使用的字体
-            font = ImageFont.truetype(FONT, int(60))
+            font = ImageFont.truetype(FONT, int(50))
             draw = ImageDraw.Draw(mark)
-            draw.text((20 + int(30 * (3 - len(price1))), 40), price1, (255, 255, 255), font=font)  # 设置文字位置/内容/颜色/字体
+            draw.text((10 + int(10 * (3 - len(price1))), 10), price1, (255, 255, 255), font=font)  # 设置文字位置/内容/颜色/字体
             draw = ImageDraw.Draw(mark)  # Just draw it!
 
             font = ImageFont.truetype(FONT, int(20))
-            draw.text((50 + int(10 * (3 - len(price2))), 110), price2, (255, 182, 193), font=font)  # 设置文字位置/内容/颜色/字体
+            draw.text((20 + int(10 * (3 - len(price2))), 70), price2, (255, 182, 193), font=font)  # 设置文字位置/内容/颜色/字体
             draw = ImageDraw.Draw(mark)
             lw, lh = mark.size
 
-            mark = mark.resize((int(lw), int(lh)), Image.ANTIALIAS)
 
-            layer.paste(mark, (0, bh - int(lh)))
+
+            layer.paste(mark, (0, bh - 116))
 
 
     # 打货号
@@ -230,7 +232,7 @@ def deal_image(im,logo = None ,handle = None, price = None,price1 = None, price2
     return pure, out
 
 
-def photo_mark(ori_image,  handle, price1, price2, targer_page,  type="album" ):
+def photo_mark(ori_image,  handle, price1, price2, target_page,  type="album" ):
     # 获取远程图片
 
     image = get_remote_image(ori_image.src)
@@ -240,9 +242,9 @@ def photo_mark(ori_image,  handle, price1, price2, targer_page,  type="album" ):
 
     # 对图片进行处理
     ################
-    logo = targer_page.logo
-    promote = targer_page.promote
-    price = targer_page.price
+    logo = target_page.logo
+    promote = target_page.promote
+    price = target_page.price
     print("logo %s promote %s price %s "%(logo,promote,price   ))
 
 
@@ -253,7 +255,7 @@ def photo_mark(ori_image,  handle, price1, price2, targer_page,  type="album" ):
 
     # 处理完的图片保存到本地
 
-    image_filename = handle + '_' +  targer_page.page + '_'+str(ori_image.position)+'.jpg'
+    image_filename = handle + '_' +  target_page.page + '_'+str(ori_image.position)+'.jpg'
     image_filename = image_filename.replace(' ', '')
     destination = os.path.join(settings.MEDIA_ROOT, "product/", image_filename)
 
@@ -265,7 +267,7 @@ def photo_mark(ori_image,  handle, price1, price2, targer_page,  type="album" ):
 
     return  destination, destination_url
 
-def photo_mark_url(ori_image_url,  handle, price1, price2, targer_page,  type="album" ):
+def photo_mark_url(ori_image_url,  handle, price1, price2, target_page,  type="album" ):
     # 获取远程图片
 
 
@@ -273,15 +275,15 @@ def photo_mark_url(ori_image_url,  handle, price1, price2, targer_page,  type="a
 
     if not image:
         return  None,None
-    return  photo_mark_image(image, handle, price1, price2, targer_page, type)
+    return  photo_mark_image(image, handle, price1, price2, target_page, type)
 
-def photo_mark_image(image, handle, price1, price2, targer_page, type="album"):
+def photo_mark_image(image, handle, price1, price2, target_page, type="album"):
     from django.utils import timezone as datetime
     # 对图片进行处理
     ################
-    logo = targer_page.logo
-    promote = targer_page.promote
-    price = targer_page.price
+    logo = target_page.logo
+    promote = target_page.promote
+    price = target_page.price
     print("logo %s promote %s price %s "%(logo,promote,price   ))
 
 
@@ -293,7 +295,7 @@ def photo_mark_image(image, handle, price1, price2, targer_page, type="album"):
 
     # 处理完的图片保存到本地
 
-    image_filename = handle + '_' + str(datetime.now()) + '_'+ targer_page.page + '.jpg'
+    image_filename = handle + '_' + str(datetime.now()) + '_'+ target_page.page + '.jpg'
     image_filename = image_filename.replace(' ', '')
     destination = os.path.join(settings.MEDIA_ROOT, "product/", image_filename)
 
@@ -328,11 +330,11 @@ def lightin_mark_image(ori_image, handle, price1, price2, lightinalbum):
     from django.utils import timezone as datetime
     # 对图片进行处理
     ################
-    targer_page = lightinalbum.myalbum.mypage
+    target_page = lightinalbum.myalbum.mypage
 
-    logo = targer_page.logo
-    promote = targer_page.promote
-    price = targer_page.price
+    logo = target_page.logo
+    promote = target_page.promote
+    price = target_page.price
     album_promote = lightinalbum.myalbum.album_promte
 
 
@@ -351,7 +353,7 @@ def lightin_mark_image(ori_image, handle, price1, price2, lightinalbum):
 
     # 处理完的图片保存到本地
 
-    image_filename = handle + '_' + str(datetime.now()) + '_'+ targer_page.page + '.jpg'
+    image_filename = handle + '_' + str(datetime.now()) + '_'+ target_page.page + '.jpg'
     image_filename = image_filename.replace(' ', '')
     destination = os.path.join(settings.MEDIA_ROOT, "product/", image_filename)
 
@@ -367,11 +369,11 @@ def yallavip_mark_image(ori_image, handle, price1, price2, lightinalbum):
     from django.utils import timezone as datetime
     # 对图片进行处理
     ################
-    targer_page = lightinalbum.yallavip_album.page
+    target_page = lightinalbum.yallavip_album.page
 
-    logo = targer_page.logo
-    promote = targer_page.promote
-    price = targer_page.price
+    logo = target_page.logo
+    promote = target_page.promote
+    price = target_page.price
     album_promote = lightinalbum.yallavip_album.album.album_promte
 
     image = get_remote_image(ori_image)
@@ -385,7 +387,7 @@ def yallavip_mark_image(ori_image, handle, price1, price2, lightinalbum):
     # 处理完的图片保存到本地
 
     #先保存只有价格和货号的
-    image_filename = handle + '_' +  targer_page.page + '_pure.jpg'
+    image_filename = handle + '_' +  target_page.page + '_pure.jpg'
     image_filename = image_filename.replace(' ', '')
     destination = os.path.join(settings.MEDIA_ROOT, "product/", image_filename)
 
@@ -397,7 +399,7 @@ def yallavip_mark_image(ori_image, handle, price1, price2, lightinalbum):
 
     #再保存带logo和促销标的
 
-    image_filename = handle + '_' + targer_page.page + '.jpg'
+    image_filename = handle + '_' + target_page.page + '.jpg'
     image_filename = image_filename.replace(' ', '')
     destination = os.path.join(settings.MEDIA_ROOT, "product/", image_filename)
 
@@ -421,7 +423,7 @@ def lightin_mark_image_page(ori_image, handle, price1, price2, target_page):
 
 
 
-    print("logo %s promote %s price %s targer_page %s"%(logo,promote,price ,target_page  ))
+    print("logo %s promote %s price %s target_page %s"%(logo,promote,price ,target_page  ))
 
 
     image = get_remote_image(ori_image)
