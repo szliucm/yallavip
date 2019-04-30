@@ -1627,10 +1627,9 @@ def combo_ad_image_v2(spu_ims, spus_name,yallavip_album_instance):
             print ("image打不开")
             return None
         ims.append(im)
-    # 每张图分别打上价格和货号水印
 
-    # 开始拼图exit
 
+    # 开始拼图
 
     item_count = len(spu_ims)
     print("图片数量", item_count)
