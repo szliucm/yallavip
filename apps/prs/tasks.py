@@ -5898,7 +5898,8 @@ def prepare_promote_image_album_v2(yallavip_album_pk, lightinalbums):
 
 
     #计算spu的促销价格，如果是价格有变动，删除原有fb图片，并重新生成新的图片
-    for spu_pk in spu_pks:
+    for lightinalbum in lightinalbums:
+        spu_pk = lightinalbum.lightin_spu.pk
         print("正在处理spu", spu_pk )
         updated = update_promote_price(spu_pk)
         #only for debug 0430
