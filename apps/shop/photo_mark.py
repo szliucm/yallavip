@@ -104,58 +104,7 @@ def deal_image(im,logo = None ,handle = None, price = None,price1 = None, price2
     layer = Image.new('RGBA', im.size, (0, 0, 0, 0))
 
     bw, bh = im.size
-    scale = bw / 900
-
-    # 打logo
-    if logo :
-        mark = Image.open(logo)
-        lw, lh = mark.size
-
-        # 缩放
-        # mark =  mark.resize( (int(lw*scale),int(lh*scale)), Image.ANTIALIAS)
-        layer.paste(mark, (0, 0))
-
-        out = Image.composite(layer, im, layer)
-
-    # 打货号
-    if handle:
-        font = ImageFont.truetype(FONT, int(45 * scale))
-        draw1 = ImageDraw.Draw(im)
-        # 简单打货号
-        draw1.rectangle((int(bw / 2 - 85 * scale), int(bh - 70 * scale - 2), int(bw / 2 + 85 * scale),
-                         int(bh - 8 * scale)), fill='yellow')
-        draw1.text((int(bw / 2 - 80 * scale), int(bh - 70 * scale)), handle, font=font,
-                   fill=(0, 0, 0))  # 设置文字位置/内容/颜色/字体
-        '''
-        #两种打货号的方式：组合商品和单品
-        if(version == 'combo'):
-            draw1.rectangle((int(bw / 2 - 65*scale - 150 ), int(bh - 60*scale-2), int(bw / 2 +65*scale - 145), int(bh-10*scale)), fill='yellow')
-            draw1.text((int(bw / 2 - 60*scale - 150), int(bh - 60*scale)), sku_no,  font=font, fill=(0 ,0 ,0))  # 设置文字位置/内容/颜色/字体
-        else:
-            draw1.rectangle((int(bw / 2 - 65 * scale ), int(bh - 60 * scale - 2), int(bw / 2 + 65 * scale ),
-                             int(bh - 10 * scale)), fill='yellow')
-            draw1.text((int(bw / 2 - 60 * scale ), int(bh - 60 * scale)), sku_no, font=font,
-                       fill=(0, 0, 0))  # 设置文字位置/内容/颜色/字体
-        '''
-        draw1 = ImageDraw.Draw(im)
-
-    # 打促销标
-    if promote:
-
-        mark = Image.open(promote)
-        lw, lh = mark.size
-        mark = mark.resize((int(lw * scale), int(lh * scale)), Image.ANTIALIAS)
-
-
-        # 根据不同促销形式，打标到不同位置'
-        if (version == 'combo'):
-            layer.paste(mark, (bw - 300 - int(lw * scale / 2), 0))
-        elif (version == 'surprise'):
-            layer.paste(mark, (bw - int(lw * scale), 0))
-        else:
-            layer.paste(mark, (bw - int(lw * scale ), 0))
-
-        out = Image.composite(layer, im, layer)
+    scale = bw / 800
 
     # 价格
     if album_promote:
@@ -189,11 +138,71 @@ def deal_image(im,logo = None ,handle = None, price = None,price1 = None, price2
 
             layer.paste(mark, (0, bh - int(lh)))
 
+
+    # 打货号
+    if handle:
+        font = ImageFont.truetype(FONT, int(45 * scale))
+        draw1 = ImageDraw.Draw(im)
+        # 简单打货号
+        draw1.rectangle((int(bw / 2 - 85 * scale), int(bh - 70 * scale - 2), int(bw / 2 + 85 * scale),
+                         int(bh - 8 * scale)), fill='yellow')
+        draw1.text((int(bw / 2 - 80 * scale), int(bh - 70 * scale)), handle, font=font,
+                   fill=(0, 0, 0))  # 设置文字位置/内容/颜色/字体
+        '''
+        #两种打货号的方式：组合商品和单品
+        if(version == 'combo'):
+            draw1.rectangle((int(bw / 2 - 65*scale - 150 ), int(bh - 60*scale-2), int(bw / 2 +65*scale - 145), int(bh-10*scale)), fill='yellow')
+            draw1.text((int(bw / 2 - 60*scale - 150), int(bh - 60*scale)), sku_no,  font=font, fill=(0 ,0 ,0))  # 设置文字位置/内容/颜色/字体
+        else:
+            draw1.rectangle((int(bw / 2 - 65 * scale ), int(bh - 60 * scale - 2), int(bw / 2 + 65 * scale ),
+                             int(bh - 10 * scale)), fill='yellow')
+            draw1.text((int(bw / 2 - 60 * scale ), int(bh - 60 * scale)), sku_no, font=font,
+                       fill=(0, 0, 0))  # 设置文字位置/内容/颜色/字体
+        '''
+        draw1 = ImageDraw.Draw(im)
+
+    #先生成不带logo和促销标的
+    pure = Image.composite(layer, im, layer)
+
+    pure = pure.convert('RGB')
+
+    # 打logo
+    if logo:
+        mark = Image.open(logo)
+        lw, lh = mark.size
+
+        # 缩放
+        # mark =  mark.resize( (int(lw*scale),int(lh*scale)), Image.ANTIALIAS)
+        layer.paste(mark, (0, 0))
+
+        out = Image.composite(layer, im, layer)
+
+
+    # 打促销标
+    if promote:
+
+        mark = Image.open(promote)
+        lw, lh = mark.size
+        mark = mark.resize((int(lw * scale), int(lh * scale)), Image.ANTIALIAS)
+
+
+        # 根据不同促销形式，打标到不同位置'
+        if (version == 'combo'):
+            layer.paste(mark, (bw - 300 - int(lw * scale / 2), 0))
+        elif (version == 'surprise'):
+            layer.paste(mark, (bw - int(lw * scale), 0))
+        else:
+            layer.paste(mark, (bw - int(lw * scale ), 0))
+
+        out = Image.composite(layer, im, layer)
+
+
+
     out = Image.composite(layer, im, layer)
 
     out = out.convert('RGB')
 
-    return out
+    return pure, out
 
 
 def photo_mark(ori_image,  handle, price1, price2, targer_page,  type="album" ):
@@ -212,7 +221,7 @@ def photo_mark(ori_image,  handle, price1, price2, targer_page,  type="album" ):
     print("logo %s promote %s price %s "%(logo,promote,price   ))
 
 
-    image = deal_image(image, logo=logo, handle=handle, price=price, promote=promote,  price1=price1,
+    pure, image = deal_image(image, logo=logo, handle=handle, price=price, promote=promote,  price1=price1,
                        price2=price2, type="album")
 
     #################
@@ -252,7 +261,7 @@ def photo_mark_image(image, handle, price1, price2, targer_page, type="album"):
 
 
 
-    image = deal_image(image, logo=logo, handle=handle, price=price, promote=promote,  price1=price1,
+    pure, image = deal_image(image, logo=logo, handle=handle, price=price, promote=promote,  price1=price1,
                        price2=price2, type="album")
 
     #################
@@ -311,7 +320,7 @@ def lightin_mark_image(ori_image, handle, price1, price2, lightinalbum):
     if image is None:
         return  None,None
 
-    image = deal_image(image, logo=logo, handle=handle, price=price, promote=promote,  price1=price1, price2=price2, album_promote=album_promote,type="album")
+    pure, image = deal_image(image, logo=logo, handle=handle, price=price, promote=promote,  price1=price1, price2=price2, album_promote=album_promote,type="album")
 
     #################
 
@@ -340,53 +349,38 @@ def yallavip_mark_image(ori_image, handle, price1, price2, lightinalbum):
     price = targer_page.price
     album_promote = lightinalbum.yallavip_album.album.album_promte
 
-
-
-    #print("logo %s promote %s price %s lightinalbum %s"%(logo,promote,price ,lightinalbum  ))
-
-
     image = get_remote_image(ori_image)
 
     if image is None:
-        return  None,None
+        return  False, None,None
 
-    #制作纯净版的水印图： 只有货号和价格，用于之后的拼广告图
-    image = deal_image(image, logo=None, handle=handle, price=price, promote=None,  price1=price1, price2=price2, album_promote=None,type="album")
-
-    #################
+    #制作水印图
+    pure, image = deal_image(image, logo, handle=handle, price=price, promote=promote,  price1=price1, price2=price2, album_promote=None,type="album")
 
     # 处理完的图片保存到本地
 
+    #先保存只有价格和货号的
     image_filename = handle + '_' +  targer_page.page + '_pure.jpg'
+    image_filename = image_filename.replace(' ', '')
+    destination = os.path.join(settings.MEDIA_ROOT, "product/", image_filename)
+
+    print("pure destination", destination)
+
+    pure.save(destination,'JPEG',quality = 95)
+
+    pure_url = domain + os.path.join(settings.MEDIA_URL, "product/", image_filename)
+
+    #再保存带logo和促销标的
+
+    image_filename = handle + '_' + targer_page.page + '.jpg'
     image_filename = image_filename.replace(' ', '')
     destination = os.path.join(settings.MEDIA_ROOT, "product/", image_filename)
 
     print("destination", destination)
 
-    image.save(destination,'JPEG',quality = 95)
+    image.save(destination, 'JPEG', quality=95)
 
-    pure_url = domain + os.path.join(settings.MEDIA_URL, "product/", image_filename)
-
-    #制作带logo和促销标签的水印图,如果已经做过了，就不做了
-    if lightinalbum.image_marked:
-        destination_url =  lightinalbum.image_marked
-    else:
-        image = deal_image(image, logo=logo, handle=handle, price=price, promote=promote, price1=price1, price2=price2,
-                           album_promote=album_promote, type="album")
-
-        #################
-
-        # 处理完的图片保存到本地
-
-        image_filename = handle + '_' + targer_page.page + '.jpg'
-        image_filename = image_filename.replace(' ', '')
-        destination = os.path.join(settings.MEDIA_ROOT, "product/", image_filename)
-
-        print("destination", destination)
-
-        image.save(destination, 'JPEG', quality=95)
-
-        destination_url = domain + os.path.join(settings.MEDIA_URL, "product/", image_filename)
+    destination_url = domain + os.path.join(settings.MEDIA_URL, "product/", image_filename)
 
     return  True, pure_url, destination_url
 
@@ -410,7 +404,7 @@ def lightin_mark_image_page(ori_image, handle, price1, price2, target_page):
     if image is None:
         return  None,None
 
-    image = deal_image(image, logo=logo, handle=handle, price=price, promote=promote,  price1=price1, price2=price2)
+    pure, image = deal_image(image, logo=logo, handle=handle, price=price, promote=promote,  price1=price1, price2=price2)
 
     #################
 
