@@ -5893,10 +5893,12 @@ def prepare_promote_image_album_v2(yallavip_album_pk, lightinalbums):
     yallavip_album_instance = YallavipAlbum.objects.get(pk=yallavip_album_pk)
     print ("正在处理相册 ", yallavip_album_instance.album.name)
 
+    spu_pks = lightinalbums.values_list("lightin_spu__pk", flat=True)
+    album_pks = lightinalbums.values_list("pk", flat=True)
+
 
     #计算spu的促销价格，如果是价格有变动，删除原有fb图片，并重新生成新的图片
-    for lightinalbum in lightinalbums:
-        spu_pk = lightinalbum.lightin_spu.pk
+    for spu_pk in spu_pks:
         print("正在处理spu", spu_pk )
         updated = update_promote_price(spu_pk)
         #only for debug 0430
@@ -5905,12 +5907,17 @@ def prepare_promote_image_album_v2(yallavip_album_pk, lightinalbums):
             clear_album(spu_pk)
             prepare_a_album(lightinalbum.pk)
 
+    #重新读取
+    lightinalbums = LightinAlbum.objects.filter(pk__in=album_pks)
+
+
     spu_ims = lightinalbums.values_list("image_pure", flat=True)
     if not spu_ims:
         print("没有无logo图片")
         return False
 
     print(spu_ims)
+
 
 
     handles = lightinalbums.values_list("lightin_spu__handle", flat=True)
