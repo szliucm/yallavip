@@ -1607,7 +1607,7 @@ def combo_ad_image(spu_ims, spus_name,yallavip_album_instance):
 
     return  destination_url
 
-def combo_ad_image_v2(yallavip_album_instance, lightinalbums):
+def combo_ad_image_v2(spu_ims, yallavip_album_instance, lightinalbums):
     from shop.photo_mark import clipResizeImg_new, get_remote_image
     import os
     from django.conf import settings
@@ -1619,19 +1619,15 @@ def combo_ad_image_v2(yallavip_album_instance, lightinalbums):
     except ImportError:
         import Image, ImageDraw, ImageFont, ImageEnhance
 
-
-    ims=[]
+    ims = []
     album_name= yallavip_album_instance.album.name
-
-    # 每张图分别打上价格和货号水印
-    for lightinalbum in lightinalbums:
-        im = get_remote_image(lightinalbum.source_image)
+    for spu_im in spu_ims:
+        im = get_remote_image(spu_im)
         if not im:
             print ("image打不开")
             return None
-        #打水印
-
         ims.append(im)
+    # 每张图分别打上价格和货号水印
 
     # 开始拼图exit
 
