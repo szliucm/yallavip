@@ -76,7 +76,7 @@ def clipResizeImg_new(im, dst_w, dst_h, qua=95):
     return newIm.resize((newWidth, newHeight), Image.ANTIALIAS)
 
 # 裁剪压缩图片
-def clipResizeImg_box(im, dst_w, dst_h, qua=95):
+def clipResizeImg_box(im, x,y,width, height, dst_w, dst_h, qua=95):
     '''''
         # 这里的参数可以这么认为：从某图的(x,y)坐标开始截，截到(width+x,height+y)坐标
     # 所包围的图像，crop方法与php中的imagecopy方法大为不一样
@@ -92,6 +92,7 @@ def clipResizeImg_box(im, dst_w, dst_h, qua=95):
     # 所包围的图像，crop方法与php中的imagecopy方法大为不一样
     newIm = im.crop(box)
     im = None
+
 
     # 压缩
     ratio = float(dst_w) / width

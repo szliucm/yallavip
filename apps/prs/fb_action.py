@@ -1675,12 +1675,12 @@ def combo_ad_image_v2(spu_ims, spus_name,yallavip_album_instance):
                     print ("image打不开")
                     return None
                 else:
-                    newim = clipResizeImg_box(im,0,90,164,234)
+                    newim = clipResizeImg_box(im,0,90,164,234,100,143)
                     ims.append(newim)
 
                 #把尺码水印文件加到新的图层上，然后把新旧图层融合
                 layer_lable = Image.new('RGBA', layer.size, (0, 0, 0, 0))
-                layer_lable.paste(ims[4], (916, 0))
+                layer_lable.paste(ims[4], (980, 0))
                 layer = Image.composite(layer_lable, layer, layer_lable)
 
 
