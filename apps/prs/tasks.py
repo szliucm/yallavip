@@ -5899,6 +5899,8 @@ def prepare_promote_image_album_v2(yallavip_album_pk, lightinalbums):
     spu_pks = lightinalbums.values_list("lightin_spu__pk", flat=True)
     album_pks = lightinalbums.values_list("pk", flat=True)
 
+    print("待处理的相册图片pk",album_pks )
+
 
     #计算spu的促销价格，如果是价格有变动，删除原有fb图片，并重新生成新的图片
     for lightinalbum in lightinalbums:
@@ -5909,6 +5911,7 @@ def prepare_promote_image_album_v2(yallavip_album_pk, lightinalbums):
         updated=True
         if updated:
             clear_album(spu_pk)
+            print("正在处理spu", lightinalbum.pk)
             prepare_a_album(lightinalbum.pk)
 
     #重新读取
