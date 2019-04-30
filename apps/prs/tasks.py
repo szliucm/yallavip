@@ -42,7 +42,8 @@ if DEBUG:
     appKey = "9dca0be4c02bed9e37c1c4189bc1f41b"
 else:
     warehouse_code = "W07"
-    shipping_method = "FETCHR_SAUDI_DOM"
+    #shipping_method = "FETCHR_SAUDI_DOM"
+    shipping_method = "ARAMEX_KAS"
     appToken = "909fa3df3b98c26a9221774fe5545afd"
     appKey = "b716b7eb938e9a46ad836e20de0f8b07"
 
