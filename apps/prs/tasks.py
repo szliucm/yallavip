@@ -5909,6 +5909,7 @@ def prepare_promote_image_album_v2(yallavip_album_pk, lightinalbums):
             prepare_a_album(lightinalbum.pk)
 
     #重新读取
+    print(album_pks)
     lightinalbums = LightinAlbum.objects.filter(pk__in=album_pks)
 
 
