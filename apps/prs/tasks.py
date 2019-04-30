@@ -5899,6 +5899,8 @@ def prepare_promote_image_album_v2(yallavip_album_pk, lightinalbums):
         spu_pk = lightinalbum.lightin_spu.pk
         print("正在处理spu", spu_pk )
         updated = update_promote_price(spu_pk)
+        #only for debug 0430
+        updated=True
         if updated:
             clear_album(spu_pk)
             prepare_a_album.apply_async((lightinalbum.pk,), queue='fb')
@@ -5914,6 +5916,7 @@ def prepare_promote_image_album_v2(yallavip_album_pk, lightinalbums):
     handles_name = ','.join(handles)
 
     image_marked_url = combo_ad_image(spu_ims, handles_name, yallavip_album_instance)
+    print(pure_image_url, image_marked_url )
 
     if not image_marked_url:
         print("没有生成广告图片")

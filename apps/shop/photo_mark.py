@@ -75,6 +75,30 @@ def clipResizeImg_new(im, dst_w, dst_h, qua=95):
     #newIm.resize((newWidth, newHeight), Image.ANTIALIAS).save("test6.jpg", "JPEG", quality=95)
     return newIm.resize((newWidth, newHeight), Image.ANTIALIAS)
 
+# 裁剪压缩图片
+def clipResizeImg_box(im, dst_w, dst_h, qua=95):
+    '''''
+        # 这里的参数可以这么认为：从某图的(x,y)坐标开始截，截到(width+x,height+y)坐标
+    # 所包围的图像，crop方法与php中的imagecopy方法大为不一样
+        先按box(x,y,width, heigh)对图片剪裁，然后在压缩到指定尺寸
+        然后在等比压缩
+    '''
+    ori_w, ori_h = im.size
+
+
+    # 裁剪
+    box = (x, y, width + x, height + y)
+    # 这里的参数可以这么认为：从某图的(x,y)坐标开始截，截到(width+x,height+y)坐标
+    # 所包围的图像，crop方法与php中的imagecopy方法大为不一样
+    newIm = im.crop(box)
+    im = None
+
+    # 压缩
+    ratio = float(dst_w) / width
+    newWidth = int(width * ratio)
+    newHeight = int(height * ratio)
+    #newIm.resize((newWidth, newHeight), Image.ANTIALIAS).save("test6.jpg", "JPEG", quality=95)
+    return newIm.resize((newWidth, newHeight), Image.ANTIALIAS)
 
 
 
