@@ -5934,7 +5934,7 @@ def prepare_promote_image_album_v2(yallavip_album_pk, ori_lightinalbums):
     # 把spus的图拼成一张
     handles_name = ','.join(handles)
 
-    image_marked_url = combo_ad_image(spu_ims, handles_name, yallavip_album_instance)
+    image_marked_url = combo_ad_image_v2(spu_ims, handles_name, yallavip_album_instance)
     print( image_marked_url )
 
     if not image_marked_url:
