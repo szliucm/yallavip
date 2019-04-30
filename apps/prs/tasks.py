@@ -5572,7 +5572,7 @@ def message_ads():
 #先post，然后基于post发广告
 #这只适合互动型广告
 @shared_task
-def page_post(page_no, to_create_count):
+def page_post(page_no, to_create_count,keyword=None):
     import time
 
     access_token, long_token = get_token(page_no)
@@ -5582,6 +5582,8 @@ def page_post(page_no, to_create_count):
     adobjects = FacebookAdsApi.init(access_token=access_token, debug=True)
 
     ads = YallavipAd.objects.filter(active=True, published=False,yallavip_album__page__page_no=page_no )
+    if keyword:
+        ads = ads.filter(yallavip_album__rule__name__icontains=keyword)
     i=1
     for ad in ads:
         if i>to_create_count:
@@ -5635,7 +5637,7 @@ def page_post(page_no, to_create_count):
 
 
 @shared_task
-def post_engagement_ads(page_no, to_create_count):
+def post_engagement_ads(page_no, to_create_count,keyword=None):
     import time
     from prs.fb_action import  choose_ad_set
     from facebook_business.adobjects.adaccount import AdAccount
@@ -5656,6 +5658,9 @@ def post_engagement_ads(page_no, to_create_count):
     #adset_no = "23843303803340510"
 
     ads = YallavipAd.objects.filter(~Q(object_story_id="" ),  object_story_id__isnull = False,active=True, published=False,yallavip_album__page__page_no=page_no )
+
+    if keyword:
+        ads = ads.filter(yallavip_album__rule__name__icontains=keyword)
 
     adobjects = FacebookAdsApi.init(access_token=ad_tokens, debug=True)
     i=1
@@ -5720,7 +5725,7 @@ def post_engagement_ads(page_no, to_create_count):
         ad.save()
 
 
-def post_message_ads(page_no, to_create_count):
+def post_message_ads(page_no, to_create_count,keyword=None):
     import time
     from prs.fb_action import  choose_ad_set
     from facebook_business.adobjects.adaccount import AdAccount
@@ -5745,7 +5750,10 @@ def post_message_ads(page_no, to_create_count):
     my_custom_sql(mysql)
 
     ads = YallavipAd.objects.filter(active=True, message_aded=False, yallavip_album__page__page_no=page_no,fb_feed__isnull=False).order_by("-fb_feed__like_count")
-        #values("spus_name","fb_feed__like_count").\
+        #values("spus_name","fb_feed__like_count")
+    if keyword:
+        ads = ads.filter(yallavip_album__rule__name__icontains=keyword)
+
     adobjects = FacebookAdsApi.init(access_token=ad_tokens, debug=True)
     i=1
     for ad in ads:
