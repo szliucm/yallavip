@@ -565,6 +565,8 @@ class Lightin_SPU(models.Model):
     aded = models.BooleanField(default=False, verbose_name="广告状态")
     ad_error = models.CharField(default='', max_length=100, null=True, blank=True, verbose_name="发布错误")
 
+    promoted = models.BooleanField(default=False, verbose_name="促销状态")
+
     class Meta:
         verbose_name = "兰亭SPU"
         verbose_name_plural = verbose_name

@@ -5427,7 +5427,7 @@ def prepare_promote_image(page_no):
     # 取库存大、单价高、已经发布到相册 且还未打广告的商品
     lightinalbums_all = LightinAlbum.objects.filter(yallavip_album__isnull=False, yallavip_album__page__page_no=page_no,
                                             lightin_spu__sellable__gt=0, lightin_spu__SPU__istartswith = "s",
-                                            lightin_spu__shopify_price__gt=50,lightin_spu__shopify_price__lte=100,
+                                            lightin_spu__shopify_price__gt=20,lightin_spu__shopify_price__lte=80,
                                             lightin_spu__aded=False,
                                             published=True)
 
@@ -5848,5 +5848,36 @@ def split_conversation_link():
             verify.mailbox_id = id_dict.get("mailbox_id")
             verify.selected_item_id = id_dict.get("selected_item_id")
             verify.save()
+
+#计算促销价，修改sku，spu的促销价
+def update_promote_price(spu_pk):
+    try:
+        spu = Lightin_SPU.objects.filter(pk = spu_pk )
+    except:
+        return False
+
+
+    #供货价的5倍 0.25*3.75*5
+    multiple_price = spu.vendor_supply_price * 5
+    #供应商售价的6折 3.75*0.6
+    discount_price = spu.vvendor_sale_price * 2.25
+    if multiple_price < discount_price:
+        promote_price = discount_price
+    else:
+        promote_price = multiple_price
+
+    #修改spu价格
+    spu.yallavip_price = round(promote_price)
+    spu.promoted = True
+    spu.save()
+
+    #修改spu对应的skus的价格
+    lightin_spu.spu_sku.update(sku_price = promote_price )
+
+
+
+
+
+
 
 
