@@ -5779,7 +5779,8 @@ def post_message_ads(page_no, to_create_count):
                 'name': name,
                 'adset_id': adset_no,
                 'creative': {'creative_id': adCreative["id"]},
-                'status': 'PAUSED',
+                #'status': 'PAUSED',
+                'status': 'ACTIVE',
                 # "access_token": my_access_token,
             }
 
