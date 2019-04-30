@@ -5738,7 +5738,7 @@ def post_message_ads(page_no, to_create_count):
 
     #下载最新的feed
     from fb.tasks import update_feed
-    from logistic.tasks import my_custom_sql
+
     update_feed(page_no)
     mysql = "update prs_yallavipad a , fb_myfeed f set a.fb_feed_id = f.id where f.feed_no=a.object_story_id"
     my_custom_sql(mysql)
