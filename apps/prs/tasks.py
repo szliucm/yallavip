@@ -5736,6 +5736,12 @@ def post_message_ads(page_no, to_create_count):
     #adset_no = choose_ad_set(page_no,'message')
     #adset_no = "23843303803340510"
 
+    #下载最新的feed
+    from fb.tasks import update_feed
+    from logistic.tasks import my_custom_sql
+    update_feed(page_no)
+    mysql = "update prs_yallavipad a , fb_myfeed f set a.fb_feed_id = f.id where f.feed_no=a.object_story_id"
+    my_custom_sql(mysql)
 
     ads = YallavipAd.objects.filter(active=True, message_aded=False, yallavip_album__page__page_no=page_no,fb_feed__isnull=False).order_by("-fb_feed__like_count")
         #values("spus_name","fb_feed__like_count").\
