@@ -4569,7 +4569,13 @@ def prepare_yallavip_album_material(page_no=None):
 @shared_task
 def prepare_a_album(lightinalbum_pk):
     from shop.photo_mark import yallavip_mark_image
+    ori_lightinalbum = LightinAlbum.objects.get(pk=lightinalbum_pk)
+
+    spu_pk = ori_lightinalbum.lightin_spu.pk
+    update_promote_price(spu_pk)
+
     lightinalbum = LightinAlbum.objects.get(pk=lightinalbum_pk)
+
 
     spu = lightinalbum.lightin_spu
     sku = lightinalbum.lightin_sku
