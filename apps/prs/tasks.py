@@ -5595,6 +5595,11 @@ def page_post(page_no, to_create_count,keyword=None):
     ads = YallavipAd.objects.filter(active=True, published=False,yallavip_album__page__page_no=page_no )
     if keyword:
         ads = ads.filter(yallavip_album__rule__name__icontains=keyword)
+
+    #如果数量不够，就创建
+    if ads.count() < to_create_count:
+        prepare_promote(page_no, to_create_count - ads.count(), keyword)
+
     i=1
     for ad in ads:
         if i>to_create_count:
@@ -5672,6 +5677,10 @@ def post_engagement_ads(page_no, to_create_count,keyword=None):
 
     if keyword:
         ads = ads.filter(yallavip_album__rule__name__icontains=keyword)
+
+    #如果数量不够，就创建
+    if ads.count() < to_create_count:
+        page_post(page_no, to_create_count - ads.count(), keyword)
 
     adobjects = FacebookAdsApi.init(access_token=ad_tokens, debug=True)
     i=1
