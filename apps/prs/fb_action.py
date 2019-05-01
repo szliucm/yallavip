@@ -1244,7 +1244,7 @@ def post_album_ad(page_no):
             break
 
 @shared_task
-def post_yallavip_album(lightinalbum_pk):
+def post_yallavip_album(lightinalbum_pk, access_token):
     lightinalbum = LightinAlbum.objects.get(pk=lightinalbum_pk)
     page_no = lightinalbum.yallavip_album.page.page_no
     album_no = lightinalbum.yallavip_album.album.album_no
@@ -1256,8 +1256,9 @@ def post_yallavip_album(lightinalbum_pk):
     else:
         product_no = lightinalbum.lightin_sku.SKU
 
+    '''
     access_token, long_token = get_token(page_no)
-
+    '''
     if not access_token:
         error = "获取token失败"
         #return error, None

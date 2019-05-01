@@ -4710,22 +4710,31 @@ def sync_yallavip_album(page_no=None):
 
     albums = lightinalbums_all.values_list('yallavip_album').distinct()
     print("有%s个相册待更新" % (albums.count()))
+
+
+    access_token, long_token = get_token(page_no)
+
+    if not access_token:
+        error = "获取token失败"
+        print (error,page_no)
+        return error
+
     for album in albums:
         lightinalbums = lightinalbums_all.filter(yallavip_album=album).order_by("lightin_spu__sellable").values_list("pk",flat=True)[:100]
         #sync_yallavip_album_batch.apply_async((lightinalbums,), queue='fb')
 
-        sync_yallavip_album_batch(lightinalbums)
+        sync_yallavip_album_batch(lightinalbums,access_token)
 
 
 # 把图片发到Facebook相册
 @shared_task
-def sync_yallavip_album_batch(lightinalbums):
+def sync_yallavip_album_batch(lightinalbums,access_token):
     from .fb_action import post_yallavip_album
 
 
     for lightinalbum in lightinalbums:
         #error, posted = post_yallavip_album(lightinalbum)
-        post_yallavip_album.apply_async((lightinalbum,), queue='fb')
+        post_yallavip_album.apply_async((lightinalbum,access_token), queue='fb')
         # 更新Facebook图片数据库记录
         '''
         if posted is not None:
