@@ -5887,7 +5887,7 @@ def clear_album(spu_pk):
 
 #为促销做准备商品
 @task
-def prepare_promote(page_no,keyword=None):
+def prepare_promote(page_no,to_create_count, keyword=None):
 
     import random
 
@@ -5910,11 +5910,16 @@ def prepare_promote(page_no,keyword=None):
 
 
     if yallavip_albums:
-        yallavip_album = random.choice(yallavip_albums)
-        yallavip_album_pk = yallavip_album.get("yallavip_album")
-        lightinalbums = lightinalbums_all.filter(yallavip_album__pk=yallavip_album_pk).order_by(
-            "lightin_spu__sellable")[:4]
-        prepare_promote_image_album_v2(yallavip_album_pk , lightinalbums)
+        i = 0
+        while i < to_create_count:
+
+            yallavip_album = random.choice(yallavip_albums)
+            yallavip_album_pk = yallavip_album.get("yallavip_album")
+            lightinalbums = lightinalbums_all.filter(yallavip_album__pk=yallavip_album_pk).order_by(
+                "lightin_spu__sellable")[:4]
+            prepare_promote_image_album_v2(yallavip_album_pk , lightinalbums)
+
+            i += 1
     else:
         print("没有符合条件的相册了", page_no)
 
