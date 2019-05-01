@@ -5549,9 +5549,6 @@ def engagement_ads():
 
     #遍历每个page
     for page in pages:
-        #从符合条件的相册里选一个相册,    #发post
-        prepare_promote(page.page_no, 1)
-        page_post(page.page_no, 1)
         post_engagement_ads(page.page_no, 1)
 
 
