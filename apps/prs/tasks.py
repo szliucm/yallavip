@@ -5516,7 +5516,7 @@ def auto_prepare_image():
     #遍历每个page
     for page in pages:
         #准备图片
-        prepare_promote_image.apply_async((page.page_no,), queue='post')
+        prepare_promote.apply_async((page.page_no,1), queue='post')
 
 
     return
@@ -5534,6 +5534,7 @@ def auto_post():
         print("正在处理page", page)
         #page_post.apply_async((page.page_no, 1), queue='fb')
         page_post(page.page_no, 1)
+        #post_engagement_ads(page.page_no, 1)
 
 
 
@@ -5549,7 +5550,8 @@ def engagement_ads():
     #遍历每个page
     for page in pages:
         #从符合条件的相册里选一个相册,    #发post
-        #post_engagement_ads.apply_async((page.page_no, 1), queue='fb')
+        prepare_promote(page.page_no, 1)
+        page_post(page.page_no, 1)
         post_engagement_ads(page.page_no, 1)
 
 
