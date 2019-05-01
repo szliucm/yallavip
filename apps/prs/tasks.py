@@ -5653,7 +5653,7 @@ def page_post(page_no, to_create_count,keyword=None):
 
 
 @shared_task
-def post_engagement_ads(page_no, to_create_count,keyword=None):
+def post_engagement_ads(page_no, to_create_count=1,keyword=None):
     import time
     from prs.fb_action import  choose_ad_set
     from facebook_business.adobjects.adaccount import AdAccount
@@ -5745,7 +5745,7 @@ def post_engagement_ads(page_no, to_create_count,keyword=None):
         ad.save()
 
 
-def post_message_ads(page_no, to_create_count,keyword=None):
+def post_message_ads(page_no, to_create_count=1,keyword=None):
     import time
     from prs.fb_action import  choose_ad_set
     from facebook_business.adobjects.adaccount import AdAccount
