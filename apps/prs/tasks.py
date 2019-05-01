@@ -5524,6 +5524,7 @@ def auto_prepare_image():
 
 
 #自动生成post
+@shared_task
 def auto_post():
     #选择需要推广的page
     pages = MyPage.objects.filter(is_published=True, active=True, promotable=True)
@@ -5543,6 +5544,7 @@ def auto_post():
 
 
 #自动生成互动ad
+@shared_task
 def engagement_ads():
     #选择需要推广的page
     pages = MyPage.objects.filter(is_published=True, active=True, promotable=True)
@@ -5557,6 +5559,7 @@ def engagement_ads():
 
 
 # 自动生成消息ad
+@shared_task
 def message_ads():
     from fb.tasks import  update_feed
 
