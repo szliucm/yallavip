@@ -533,6 +533,7 @@ class Verify(models.Model):
 
     CITY = (
         ("None", "暂不支持"),
+        ("Other", "人工处理"),
         ("Riyadh", "Riyadh"),
         ("Jeddah", "Jeddah"),
         ("Dammam", "Dammam"),
@@ -631,6 +632,7 @@ class Verify(models.Model):
         ("Hadeethah", "Hadeethah"),
         ("Karboos", "Karboos"),
         ("Wadi Fatmah", "Wadi Fatmah"),
+
 
     )
 

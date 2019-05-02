@@ -2493,6 +2493,43 @@ def get_wms_product():
         else:
             page += 1;
 
+ '''
+    //初始化barcode库存
+    //初始化sku库存
+
+    //初始化spu库存
+    update prs_lightin_barcode set o_quantity = y_sellable + y_reserved ,o_sellable = y_sellable , o_reserved = y_reserved,synced=True;
+
+
+UPDATE prs_lightin_sku
+INNER JOIN (
+SELECT
+SKU,
+sum(o_sellable) as quantity
+FROM
+prs_lightin_barcode
+GROUP BY
+SKU
+) b ON prs_lightin_sku.SKU = b.SKU
+SET prs_lightin_sku.o_quantity = b.quantity ;
+
+update prs_lightin_sku set o_sellable = o_quantity - o_reserved;
+
+UPDATE prs_lightin_spu
+INNER JOIN (
+SELECT
+SPU,
+sum(o_sellable) as quantity
+FROM
+prs_lightin_sku
+GROUP BY
+SPU
+) b ON prs_lightin_spu.SPU = b.SPU
+SET prs_lightin_spu.sellable = b.quantity;
+'''
+def sync_wms_all():
+
+
 
 def get_wms_quantity(barcode=""):
     page = 1
@@ -3870,6 +3907,7 @@ def auto_smscode():
 
 
         v.save()
+        split_conversation_link(v)
 
     #还没发送验证码的订单
     verify_orders = Verify.objects.filter( sms_status = "NOSTART",order__status="open", order__financial_status="paid",)
@@ -5841,20 +5879,24 @@ def post_message_ads(page_no, to_create_count=1,keyword=None):
         ad.message_ad_published_time = dt.now()
         ad.save()
 
-def split_conversation_link():
+def split_conversation_links():
     verifies = Verify.objects.filter(business_id__isnull=True)
     for verify in verifies:
-        if verify.conversation_link:
-            contents = re.split("\?|&", verify.conversation_link)
-            id_dict = {}
-            for content in contents:
-                if content.find("=") >-1:
-                    items = content.split("=")
-                    id_dict[items[0]] =items[1]
-            verify.business_id = id_dict.get("business_id")
-            verify.mailbox_id = id_dict.get("mailbox_id")
-            verify.selected_item_id = id_dict.get("selected_item_id")
-            verify.save()
+        split_conversation_link(verify)
+
+def split_conversation_link(verify):
+    if verify.conversation_link:
+
+        contents = re.split("\?|&", verify.conversation_link)
+        id_dict = {}
+        for content in contents:
+            if content.find("=") >-1:
+                items = content.split("=")
+                id_dict[items[0]] =items[1]
+        verify.business_id = id_dict.get("business_id")
+        verify.mailbox_id = id_dict.get("mailbox_id")
+        verify.selected_item_id = id_dict.get("selected_item_id")
+        verify.save()
 
 #计算某个spu的促销价，修改sku，spu的促销价
 def update_promote_price(spu_pk):
