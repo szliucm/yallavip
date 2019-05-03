@@ -2491,43 +2491,9 @@ def get_wms_product():
         if result.get("nextPage") == "false":
             break
         else:
-            page += 1;
-
- '''
-    //初始化barcode库存
-    //初始化sku库存
-
-    //初始化spu库存
-    update prs_lightin_barcode set o_quantity = y_sellable + y_reserved ,o_sellable = y_sellable , o_reserved = y_reserved,synced=True;
+            page += 1
 
 
-UPDATE prs_lightin_sku
-INNER JOIN (
-SELECT
-SKU,
-sum(o_sellable) as quantity
-FROM
-prs_lightin_barcode
-GROUP BY
-SKU
-) b ON prs_lightin_sku.SKU = b.SKU
-SET prs_lightin_sku.o_quantity = b.quantity ;
-
-update prs_lightin_sku set o_sellable = o_quantity - o_reserved;
-
-UPDATE prs_lightin_spu
-INNER JOIN (
-SELECT
-SPU,
-sum(o_sellable) as quantity
-FROM
-prs_lightin_sku
-GROUP BY
-SPU
-) b ON prs_lightin_spu.SPU = b.SPU
-SET prs_lightin_spu.sellable = b.quantity;
-'''
-def sync_wms_all():
 
 
 
