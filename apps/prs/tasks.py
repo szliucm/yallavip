@@ -5968,7 +5968,7 @@ def prepare_promote_image_album_v2(yallavip_album_pk, ori_lightinalbums):
         print("正在处理spu", spu_pk )
         updated = update_promote_price(spu_pk)
         #only for debug 0430
-        updated=True
+        #updated=True
         if updated:
             clear_album(spu_pk)
             print("正在处理lightinalbum", lightinalbum.pk)
