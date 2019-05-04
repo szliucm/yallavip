@@ -166,16 +166,7 @@ def sync_balance(type):
 
     my_custom_sql(mysql)
 
-def my_custom_sql(mysql):
-    from django.db import connection, transaction
-    with connection.cursor() as c:
-        c.execute(mysql)
 
-    # Data retrieval operation - no commit required
-    #cursor.execute("SELECT foo FROM bar WHERE baz = %s", [self.baz])
-    #row = cursor.fetchone()
-    transaction.commit_unless_managed()
-    return
 
 ################# 用订单表的发货时间更新包裹表的发货时间
 #  update logistic_package l, orders_order o set l.send_time = o.send_time where l.logistic_no = o.logistic_no and l.send_time is null
