@@ -4161,7 +4161,7 @@ def my_custom_sql(mysql):
     #cursor.execute("SELECT foo FROM bar WHERE baz = %s", [self.baz])
     #row = cursor.fetchone()
     #transaction.commit_unless_managed()
-    return
+    #return
 
 def adjust_shopify_inventories():
     mysql = "select v.sku , v.inventory_item_no , s.o_sellable " \
