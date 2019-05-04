@@ -562,6 +562,7 @@ class Lightin_SPU(models.Model):
     quantity = models.IntegerField(u'数量', default=0, blank=True, null=True)
 
     sellable = models.IntegerField(u'oms_可售数量', default=0, blank=True, null=True)
+
     aded = models.BooleanField(default=False, verbose_name="广告状态")
     ad_error = models.CharField(default='', max_length=100, null=True, blank=True, verbose_name="发布错误")
 
@@ -915,12 +916,18 @@ class YallavipAd(models.Model):
     ad_id = models.CharField(u'ad_id', default='', max_length=500, blank=True)
 
     active = models.BooleanField(default=False, verbose_name="有效性")
-    published = models.BooleanField(default=False, verbose_name="发布状态")
+    published = models.BooleanField(default=False, verbose_name="post发布状态")
     publish_error = models.CharField(default='无', max_length=256, null=True, blank=True, verbose_name="发布错误(或图片数量)")
     published_time = models.DateTimeField(null=True, blank=True, verbose_name="发布时间")
 
     ad_status = models.CharField(default='无', max_length=50, null=True, blank=True, verbose_name="广告状态")
     update_error = models.CharField(default='无', max_length=256, null=True, blank=True, verbose_name="更新错误")
+
+    engagement_aded = models.BooleanField(default=False, verbose_name="互动广告状态")
+    engagement_ad_id = models.CharField(u'互动广告_id', default='', max_length=500, blank=True)
+    engagement_ad_published_time = models.DateTimeField(null=True, blank=True, verbose_name="互动广告发布时间")
+    engagement_ad_publish_error = models.CharField(default='无', max_length=256, null=True, blank=True,
+                                                verbose_name="互动广告publish_error")
 
     message_aded = models.BooleanField(default=False, verbose_name="消息广告状态")
     message_ad_id = models.CharField(u'message_ad_id', default='', max_length=500, blank=True)

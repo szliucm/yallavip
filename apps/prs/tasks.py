@@ -5645,6 +5645,7 @@ def page_post(page_no, to_create_count,keyword=None):
 
             object_story_id = feed_post.get_id()
             ad.object_story_id = object_story_id
+            ad.published = True
 
         except Exception as e:
             print(e)
@@ -5677,7 +5678,7 @@ def post_engagement_ads(page_no, to_create_count=1,keyword=None):
 
     #adset_no = "23843303803340510"
 
-    ads = YallavipAd.objects.filter(~Q(object_story_id="" ),  object_story_id__isnull = False,active=True, published=False,yallavip_album__page__page_no=page_no )
+    ads = YallavipAd.objects.filter(~Q(object_story_id="" ),  object_story_id__isnull = False,active=True, published=True,engagement_aded=False, yallavip_album__page__page_no=page_no )
 
     if keyword:
         ads = ads.filter(yallavip_album__rule__name__icontains=keyword)
@@ -5743,9 +5744,10 @@ def post_engagement_ads(page_no, to_create_count=1,keyword=None):
             break
 
         print("new ad is ", fb_ad)
-        ad.ad_id = fb_ad.get("id")
-        ad.published = True
-        ad.published_time = dt.now()
+        ad.engagement_ad_id = fb_ad.get("id")
+
+        ad.engagement_aded = True
+        ad.engagement_ad_published_time = dt.now()
         ad.save()
 
 
@@ -5773,7 +5775,7 @@ def post_message_ads(page_no, to_create_count=1,keyword=None):
     mysql = "update prs_yallavipad a , fb_myfeed f set a.fb_feed_id = f.id where f.feed_no=a.object_story_id"
     my_custom_sql(mysql)
 
-    ads = YallavipAd.objects.filter(active=True, message_aded=False, yallavip_album__page__page_no=page_no,fb_feed__isnull=False).order_by("-fb_feed__like_count")
+    ads = YallavipAd.objects.filter(active=True, engagement_aded= True, message_aded=False, yallavip_album__page__page_no=page_no,fb_feed__isnull=False).order_by("-fb_feed__like_count")
         #values("spus_name","fb_feed__like_count")
     if keyword:
         ads = ads.filter(yallavip_album__rule__name__icontains=keyword)
