@@ -5053,7 +5053,8 @@ def outstock_ads():
                     ad.ad_status = ad_status
                 else:
                     ad.update_error = info
-                    time.sleep(30)
+
+                time.sleep(30)
 
 
             ad.active=False
