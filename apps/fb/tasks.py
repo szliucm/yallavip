@@ -158,6 +158,7 @@ def batch_update_feed():
         update_feed(page_no)
 
 def update_feed(page_no):
+    from logistic.tasks import my_custom_sql
 
     adobjects = FacebookAdsApi.init(access_token=get_token(page_no), debug=True)
     # 重置原有feed信息为不活跃
