@@ -5582,7 +5582,7 @@ def message_ads():
     # 遍历每个page
     for page in pages:
         #先更新feed信息，然后从活跃度较高的post开始打消息广告
-        update_feed(page.page_no)
+        #update_feed(page.page_no)
         # 从符合条件的互动广告里，选一个发消息广告
         post_message_ads(page.page_no, 1)
 

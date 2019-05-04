@@ -160,7 +160,10 @@ def batch_update_feed():
 def update_feed(page_no):
     from prs.tasks import my_custom_sql
 
-    adobjects = FacebookAdsApi.init(access_token=get_token(page_no), debug=True)
+    today = datetime.date.today()
+    start_time = str(today - datetime.timedelta(days=2))
+    access_token , systoken= get_token(page_no)
+    adobjects = FacebookAdsApi.init(access_token=access_token, debug=True)
     # 重置原有feed信息为不活跃
     MyFeed.objects.filter(page_no=page_no).update(active=False)
 
@@ -179,7 +182,12 @@ def update_feed(page_no):
     )
 
     for feed in feeds:
-        print(feed)
+        created_time = feed.get("created_time")
+        print(created_time)
+        if created_time < start_time:
+            print ("两天前的就不看了")
+            break
+
         obj, created = MyFeed.objects.update_or_create(feed_no=feed["id"],
                                                         defaults={'page_no': page_no,
                                                                   'created_time':
