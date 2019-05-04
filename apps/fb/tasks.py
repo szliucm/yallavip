@@ -159,6 +159,7 @@ def batch_update_feed():
 
 def update_feed(page_no):
     from prs.tasks import my_custom_sql
+    import  datetime
 
     today = datetime.date.today()
     start_time = str(today - datetime.timedelta(days=2))

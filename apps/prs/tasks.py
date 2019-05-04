@@ -5768,7 +5768,7 @@ def auto_sync_feed():
     #遍历每个page
     for page in pages:
         print("正在处理page", page)
-        update_feed(page_no)
+        update_feed(page.page_no)
 
     return
 
