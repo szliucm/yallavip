@@ -205,6 +205,7 @@ class MyPageAdmin(object):
     batch_update_albums.short_description = "批量下载相册信息"
 
     def batch_update_feed(self, request, queryset):
+        from fb.tasks import update_feed
 
         for row in queryset:
             update_feed(row.page_no)
@@ -284,8 +285,18 @@ class MyPageAdmin(object):
 
 @xadmin.sites.register(MyFeed)
 class MyFeedAdmin(object):
+    def show_pic(self, obj):
 
-    list_display = ["page_no", "feed_no", "type","sku","created_time", "actions_link", "actions_name", "share_count",
+        try:
+            img = mark_safe('<img src="%s" width="100px" />' % (obj.full_picture,))
+        except Exception as e:
+            img = ''
+        return img
+
+    show_pic.short_description = 'full_picture'
+    show_pic.allow_tags = True
+
+    list_display = ["page_no", "feed_no", "type","show_pic", "sku","created_time", "actions_link", "actions_name", "share_count",
                     "comment_count", "like_count", "message",]
     list_filter = ('page_no','active')
     search_fields = ['feed_no', "page_no","message",]
