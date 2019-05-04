@@ -15,7 +15,7 @@ from django.db.models import Q, Count
 from django.utils import timezone as datetime
 from django.utils import timezone as dt
 from fb.models import MyPage, MyAlbum
-from logistic.tasks import my_custom_sql
+
 from orders.models import Order, OrderDetail, OrderDetail_lightin,Verify,Sms
 
 from shop.models import ProductCategoryMypage
