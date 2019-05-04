@@ -5554,6 +5554,9 @@ def auto_post():
 
     return
 
+@shared_task
+def auto_test():
+    return
 
 #自动生成互动ad
 @shared_task
