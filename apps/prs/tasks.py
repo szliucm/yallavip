@@ -5031,9 +5031,11 @@ def change_product_publish_status(product_no, published):
 
 def outstock_ads():
     from prs.fb_action import ad_update_status
+    import time
 
-    #遍历所有已发布的广告，如果有spu已经无库存，就将广告暂停/归档，并改广告名
-    ads = YallavipAd.objects.filter(published=True)
+    #遍历所有活跃的广告，如果有spu已经无库存，就设置active为false，
+    # 如果published为True,则将广告删除
+    ads = YallavipAd.objects.filter(active=True)
     for ad in ads:
 
         handles = ad.spus_name.split(",")
@@ -5041,15 +5043,20 @@ def outstock_ads():
         spus_outstock = spus_all.filter(sellable__lte=0)
         if spus_outstock.count()>0:
             print("有spu无库存了", spus_outstock, ad, ad.ad_id)
-            #修改广告状态
-            ad_status = "DELETED"
 
-            info, updated = ad_update_status(ad.ad_id, status=ad_status)
-            if updated :
-                ad.ad_status = ad_status
-            else:
-                ad.update_error = info
+            if ad.published == True:
+                # 修改广告状态
+                ad_status = "DELETED"
 
+                info, updated = ad_update_status(ad.ad_id, status=ad_status)
+                if updated:
+                    ad.ad_status = ad_status
+                else:
+                    ad.update_error = info
+                    time.sleep(30)
+
+
+            ad.active=False
             ad.save()
 
             #修改spu状态
