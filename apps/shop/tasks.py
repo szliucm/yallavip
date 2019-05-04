@@ -739,7 +739,7 @@ def update_drafts():
         '''
 
 
-        obj, created = Draft.objects.update_or_create(order_no= str(row.order_no),
+        obj, created = ShopifyDraft.objects.update_or_create(order_no= str(row.order_no),
                         defaults={
                                 'order_id':row.order_id,
 
