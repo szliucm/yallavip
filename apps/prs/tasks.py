@@ -5759,20 +5759,7 @@ def post_engagement_ads(page_no, to_create_count=1,keyword=None):
         ad.save()
 
 
-#下载最新的feed
-@shared_task
-def auto_sync_feed():
-    from fb.tasks import update_feed
 
-    #选择需要推广的page
-    pages = MyPage.objects.filter(is_published=True, active=True, promotable=True)
-
-    #遍历每个page
-    for page in pages:
-        print("正在处理page", page)
-        update_feed(page.page_no)
-
-    return
 
 
 def post_message_ads(page_no, to_create_count=1,keyword=None):
@@ -6040,3 +6027,18 @@ def prepare_promote_image_album_v2(yallavip_album_pk, ori_lightinalbums):
         spu.aded = True
         spu.save()
 
+
+#下载最新的feed
+@shared_task
+def auto_sync_feed():
+    from fb.tasks import update_feed
+
+    #选择需要推广的page
+    pages = MyPage.objects.filter(is_published=True, active=True, promotable=True)
+
+    #遍历每个page
+    for page in pages:
+        print("正在处理page", page)
+        update_feed(page.page_no)
+
+    return
