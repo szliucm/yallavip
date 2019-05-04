@@ -199,6 +199,11 @@ def update_feed(page_no):
 
                                                                   }
                                                         )
+
+    mysql = "update prs_yallavipad a , fb_myfeed f set a.fb_feed_id = f.id where f.feed_no=a.object_story_id"
+    my_custom_sql(mysql)
+
+
 def batch_update_adaccount():
 
     adobjects = FacebookAdsApi.init(access_token = my_access_token, debug=True)

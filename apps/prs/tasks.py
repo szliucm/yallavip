@@ -5750,6 +5750,20 @@ def post_engagement_ads(page_no, to_create_count=1,keyword=None):
         ad.engagement_ad_published_time = dt.now()
         ad.save()
 
+#下载最新的feed
+def auto_sync_feed():
+    from fb.tasks import update_feed
+
+    #选择需要推广的page
+    pages = MyPage.objects.filter(is_published=True, active=True, promotable=True)
+
+    #遍历每个page
+    for page in pages:
+        print("正在处理page", page)
+        update_feed(page_no)
+
+    return
+
 
 def post_message_ads(page_no, to_create_count=1,keyword=None):
     import time
@@ -5767,13 +5781,6 @@ def post_message_ads(page_no, to_create_count=1,keyword=None):
     adaccount_no = "act_1903121643086425"
     #adset_no = choose_ad_set(page_no,'message')
     #adset_no = "23843303803340510"
-
-    #下载最新的feed
-    from fb.tasks import update_feed
-
-    update_feed(page_no)
-    mysql = "update prs_yallavipad a , fb_myfeed f set a.fb_feed_id = f.id where f.feed_no=a.object_story_id"
-    my_custom_sql(mysql)
 
     ads = YallavipAd.objects.filter(active=True, engagement_aded= True, message_aded=False, yallavip_album__page__page_no=page_no,fb_feed__isnull=False).order_by("-fb_feed__like_count")
         #values("spus_name","fb_feed__like_count")
