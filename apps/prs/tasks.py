@@ -5783,7 +5783,7 @@ def post_message_ads(page_no, to_create_count=1,keyword=None):
     today = datetime.date.today()
     firstday = datetime.date(today.year, 1, 1)
     days = (today - firstday).days
-    serial = str(days % 3)
+    serial = str(days % 5)
 
 
     adaccount_no = "act_1903121643086425"
