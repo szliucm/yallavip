@@ -5759,6 +5759,7 @@ def post_engagement_ads(page_no, to_create_count=1,keyword=None):
         ad.save()
 
 #下载最新的feed
+@shared_task
 def auto_sync_feed():
     from fb.tasks import update_feed
 
