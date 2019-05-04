@@ -267,7 +267,7 @@ class MyFeedAdmin(object):
 
         try:
             img = mark_safe(
-                '<a href="%s" target="view_window"><img src="%s" width="100px"></a>' % (obj.link, obj.picture))
+                '<img src="%s" width="100px">' % (obj.full_picture))
 
         except Exception as e:
             img = ''
