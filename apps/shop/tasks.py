@@ -13,6 +13,7 @@ from fb.models import  MyPage,MyAlbum,MyPhoto
 from orders.models import  Order,OrderDetail
 from .models import *
 from .shop_action import  *
+from customer.models import  Draft
 
 from .fb_action import  *
 from prs.shop_action import  insert_product
