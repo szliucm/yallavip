@@ -5758,6 +5758,7 @@ def post_engagement_ads(page_no, to_create_count=1,keyword=None):
         ad.engagement_ad_published_time = dt.now()
         ad.save()
 
+
 #下载最新的feed
 @shared_task
 def auto_sync_feed():
