@@ -288,7 +288,9 @@ class MyFeedAdmin(object):
     def show_pic(self, obj):
 
         try:
-            img = mark_safe('<img src="%s" width="100px" />' % (obj.full_picture,))
+            img = mark_safe(
+                '<a href="%s" target="view_window"><img src="%s" width="100px"></a>' % (obj.link, obj.picture))
+
         except Exception as e:
             img = ''
         return img
@@ -347,6 +349,37 @@ class MyFeedAdmin(object):
         print("feed_post_with_image_id", feed_post_with_image_id)
     create_page_feed.short_description = "创建新feed"
 
+    def batch_delete_post(self, request, queryset):
+        # 定义actions函数
+
+
+        page_no = queryset[0].page_no
+
+        adobjects = FacebookAdsApi.init(access_token=get_token(page_no), debug=True)
+        for row in queryset:
+            # 一次删除一个page的,不同page的直接跳过
+
+            if row.page_no != page_no:
+                continue
+
+            # 重置原有feed信息为不活跃
+            MyFeed.objects.filter(page_no=page_no).update(active=False)
+
+            fields = [
+                      ]
+            params = {
+
+
+            }
+            feeds = PagePost(row.feed_no).api_delete(
+                fields=fields,
+                params=params,
+            )
+
+            row.active = False
+            row.save()
+
+    batch_delete_post.short_description = "批量删除Post"
 
 
     def batch_update_sku(self, request, queryset):

@@ -6005,7 +6005,7 @@ def prepare_promote_image_album_v2(yallavip_album_pk, ori_lightinalbums):
               "🥳🥳🥳 10:00-22:00 Everyday ,Update 100 New items Every Hour !! The quantity is limited !!😇😇" \
               "All goods are in Riyadh stock,It will be delivered to you in 3-5 days! ❣️❣️" \
               "How to order?Pls choice the product that you like it , then send us the picture, we will order it for you!🤩🤩"
-    message = message + "\n" + handles_name
+    message = message + "\n[" + handles_name+ "]"
 
     obj, created = YallavipAd.objects.update_or_create(yallavip_album=yallavip_album_instance,
                                                        spus_name=handles_name,

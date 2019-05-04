@@ -178,6 +178,7 @@ def update_feed(page_no):
     )
 
     for feed in feeds:
+        print(feed)
         obj, created = MyFeed.objects.update_or_create(feed_no=feed["id"],
                                                         defaults={'page_no': page_no,
                                                                   'created_time':
