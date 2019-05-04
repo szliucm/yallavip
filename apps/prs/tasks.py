@@ -5519,7 +5519,7 @@ def prepare_promote_image_album(yallavip_album_pk, lightinalbums):
 
 
 
-@shared_task
+
 #自动准备广告图
 def auto_prepare_image():
     #选择需要推广的page
