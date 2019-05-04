@@ -16,6 +16,7 @@ from facebook_business.exceptions import FacebookRequestError
 
 from facebook_business.adobjects.systemuser import SystemUser
 from facebook_business.adobjects.page import Page
+from facebook_business.adobjects.pagepost import PagePost
 from facebook_business.adobjects.album import Album
 from facebook_business.adobjects.photo import Photo
 from facebook_business.adobjects.adaccount import AdAccount
@@ -36,30 +37,7 @@ from .models import  *
 from .page_action import ConnectPageCategory
 from  prs.models import  LightinAlbum
 
-
-APP_SCOPED_SYSTEM_USER_ID=100029952330435
-my_access_token = "EAAHZCz2P7ZAuQBABHO6LywLswkIwvScVqBP2eF5CrUt4wErhesp8fJUQVqRli9MxspKRYYA4JVihu7s5TL3LfyA0ZACBaKZAfZCMoFDx7Tc57DLWj38uwTopJH4aeDpLdYoEF4JVXHf5Ei06p7soWmpih8BBzadiPUAEM8Fw4DuW5q8ZAkSc07PrAX4pGZA4zbSU70ZCqLZAMTQZDZD"
-my_access_token_dev = "EAAcGAyHVbOEBAAL2mne8lmKC55lbDMndPYEVR2TRmOWf9ePUN97SiZCqwCd3KOZBrEkC57rVt3ZClhXi6oxxf1i0hRCK50QALuAQOCs60U30FjNYimeP97xLjfl7wZAAjThdkXPJujsWcAXOwkTNKvKlmP6tZBPUtSYb3i4i1vUs40MZAUOzNIG9v7HNjnyyIZD"
-
-def get_token(target_page,token=None):
-
-
-    url = "https://graph.facebook.com/v3.2/{}?fields=access_token".format(target_page)
-    param = dict()
-    if token is None:
-        param["access_token"] = my_access_token
-    else:
-        param["access_token"] = token
-
-    r = requests.get(url, param)
-
-
-    data = json.loads(r.text)
-    print(r, r.text)
-
-
-    # print("request response is ", data["access_token"])
-    return data["access_token"]
+from prs.fb_action import  get_token
 
 @xadmin.sites.register(MyPage)
 class MyPageAdmin(object):
@@ -355,15 +333,13 @@ class MyFeedAdmin(object):
 
         page_no = queryset[0].page_no
 
-        adobjects = FacebookAdsApi.init(access_token=get_token(page_no), debug=True)
+        access_token, long_access_token = get_token(page_no)
+        adobjects = FacebookAdsApi.init(access_token=access_token, debug=True)
         for row in queryset:
             # 一次删除一个page的,不同page的直接跳过
 
             if row.page_no != page_no:
                 continue
-
-            # 重置原有feed信息为不活跃
-            MyFeed.objects.filter(page_no=page_no).update(active=False)
 
             fields = [
                       ]
