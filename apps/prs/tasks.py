@@ -4054,7 +4054,7 @@ def sync_outstock_post():
 
         feeds = MyFeed.objects.filter(message__icontains=handle)
         if feeds:
-            print("有%s个feed待删除"%(feeds.count()))
+            print("handle %s 有%s个feed待删除"%(handle, feeds.count()))
             feed_nos = feeds.values_list("page_no", "feed_no").distinct()
 
             for feed_no in feed_nos:
@@ -4081,7 +4081,7 @@ def sync_outstock_post():
         if feed_ids is None or len(feed_ids) == 0:
             continue
 
-        #delete_photos(page_no, photo_nos)
+        #delete_photos(page_no, feed_ids)
         print(feed_ids)
 
 
