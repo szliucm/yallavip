@@ -60,7 +60,8 @@ def update_performance(days=3):
         staff=track_count.get("verify__sales")
         if not staff:
             staff = "unknown"
-        obj, created = StaffTrack.objects.update_or_create(order_date=track_count.get("date"),
+        if track_count.get("status") in ['open','transit','cancelled']:
+            obj, created = StaffTrack.objects.update_or_create(order_date=track_count.get("date"),
                                                         staff=staff,
                                                       defaults={track_count.get("status"): track_count.get("orders"),
 
