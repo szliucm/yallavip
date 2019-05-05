@@ -87,6 +87,6 @@ class StaffPerformaceAdmin(object):
     list_editable = []
     readonly_fields = ()
     actions = [ ]
-    ordering = ['-order_date','type']
+    ordering = ['-order_date','order_status']
 
 
