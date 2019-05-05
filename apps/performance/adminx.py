@@ -27,7 +27,8 @@ def update_performance(days=3):
         .values("date", "status").annotate(orders=Count("order_no")).order_by("-date")
 
     for sales_count in sales_counts:
-        obj, created = Sales.objects.update_or_create(order_date=sales_count.get("date"),
+        if track_count.get("status") in ['open', 'transit', 'cancelled']:
+            obj, created = Sales.objects.update_or_create(order_date=sales_count.get("date"),
                                                       #type=sales_count.get("status"),
                                                       defaults={sales_count.get("status"): sales_count.get("orders"),
 
