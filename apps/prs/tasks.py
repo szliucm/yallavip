@@ -4051,10 +4051,13 @@ def sync_outstock_post():
     for spu in spus:
 
         handle = spu.handle
+        if not handle:
+            prin("handle [%s] 为空"%(handle))
+            continue
 
         feeds = MyFeed.objects.filter(message__icontains=handle)
         if feeds:
-            print("handle %s 有%s个feed待删除"%(handle, feeds.count()))
+            print("handle [%s] 有%s个feed待删除"%(handle, feeds.count()))
             feed_nos = feeds.values_list("page_no", "feed_no").distinct()
 
             for feed_no in feed_nos:
@@ -4082,7 +4085,7 @@ def sync_outstock_post():
             continue
 
         #delete_photos(page_no, feed_ids)
-        print(feed_ids)
+        #print(feed_ids)
 
 
 #批量上传图片到shpify，并记录图片的id和原始对应的关系，以便以后更新变体图片
