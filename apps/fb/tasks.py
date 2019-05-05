@@ -157,12 +157,12 @@ def batch_update_feed():
         page_no = row.page_no
         update_feed(page_no)
 
-def update_feed(page_no):
+def update_feed(page_no,days=2):
     from prs.tasks import my_custom_sql
     import  datetime
 
     today = datetime.date.today()
-    start_time = str(today - datetime.timedelta(days=2))
+    start_time = str(today - datetime.timedelta(days=days))
     access_token , systoken= get_token(page_no)
     adobjects = FacebookAdsApi.init(access_token=access_token, debug=True)
     # 重置原有feed信息为不活跃
