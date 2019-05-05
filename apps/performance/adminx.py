@@ -54,12 +54,12 @@ def update_performance(days=3):
         .values("date", "status","verify__sales").annotate(orders=Count("order_no")).order_by("-date")
 
     for track_count in track_counts:
-        staff=staff_count.get("verify__sales")
+        staff=track_count.get("verify__sales")
         if not staff:
             staff = "unknown"
-        obj, created = StaffTrack.objects.update_or_create(order_date=staff_count.get("date"),
+        obj, created = StaffTrack.objects.update_or_create(order_date=track_count.get("date"),
                                                         staff=staff,
-                                                      defaults={staff_count.get("status"): staff_count.get("orders"),
+                                                      defaults={track_count.get("status"): track_count.get("orders"),
 
                                                                 }
                                                       )
