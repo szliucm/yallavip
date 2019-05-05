@@ -1918,6 +1918,42 @@ def delete_oversea_photo():
         delete_photos(page_no, photo_nos)
 
 
+def delete_posts(page_no, post_ids):
+    from facebook_business.adobjects.pagepost import PagePost
+    access_token, long_token = get_token(page_no)
+    if not access_token:
+        error = "获取token失败"
+        print(error, page_no)
+
+        return error, None
+
+    FacebookAdsApi.init(access_token=access_token)
+    for post_id in post_ids:
+
+        fields = [
+        ]
+        params = {
+
+        }
+        error = ""
+        try:
+
+            response = PagePost(post_id).delete(
+                fields=fields,
+                params=params,
+            )
+
+        except Exception as e:
+            print("删除post出错", post_id, e)
+            error = "删除post出错"
+
+        MyFeed.objects.filter(feed_no=post_id).update(
+
+            active=False
+
+        )
+
+
 def delete_photos(page_no, photo_nos):
     from facebook_business.adobjects.photo import Photo
     access_token, long_token = get_token(page_no)
@@ -1953,17 +1989,7 @@ def delete_photos(page_no, photo_nos):
             #print (my_access_token)
 
             #continue
-        '''
-               try:
-                   error = ""
-                   url = "https://graph.facebook.com/v3.2/%s"%(photo_no)
-                   param = dict()
-                   param["access_token"] = my_access_token
-                   param["status"] = "DELETED"
 
-                   r = requests.post(url, param)
-                   print ("删除图片的返回",r ,r.text)
-        '''
 
         # 更新lightinalbum的发布记录
         # print("facebook 返回结果",response)
@@ -4084,7 +4110,7 @@ def sync_outstock_post():
         if feed_ids is None or len(feed_ids) == 0:
             continue
 
-        #delete_photos(page_no, feed_ids)
+        delete_posts(page_no, feed_ids)
         #print(feed_ids)
 
 
