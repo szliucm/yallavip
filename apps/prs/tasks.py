@@ -1938,7 +1938,7 @@ def delete_posts(page_no, post_ids):
         error = ""
         try:
 
-            response = PagePost(post_id).delete(
+            response = PagePost(post_id).api_delete(
                 fields=fields,
                 params=params,
             )
