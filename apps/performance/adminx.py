@@ -49,7 +49,20 @@ def update_performance(days=3):
 
                                                                 }
                                                       )
+    #统计客服业绩跟踪
+    track_counts = orders.annotate(date=TruncDate("order_time", tzinfo=riyadh)) \
+        .values("date", "status","verify__sales").annotate(orders=Count("order_no")).order_by("-date")
 
+    for track_count in track_counts:
+        staff=staff_count.get("verify__sales")
+        if not staff:
+            staff = "unknown"
+        obj, created = StaffTrack.objects.update_or_create(order_date=staff_count.get("date"),
+                                                        staff=staff,
+                                                      defaults={staff_count.get("status"): staff_count.get("orders"),
+
+                                                                }
+                                                      )
 
 @xadmin.sites.register(Sales)
 class SalesAdmin(object):
@@ -89,4 +102,15 @@ class StaffPerformaceAdmin(object):
     actions = [ ]
     ordering = ['-order_date',"staff",'order_status']
 
+@xadmin.sites.register(StaffTrack)
+class StaffTrackAdmin(object):
+    list_display = ["order_date", "staff", "open", 'transit',"cancelled",  ]
+
+    # 'sku_name','img',
+    search_fields = ["staff", ]
+    list_filter = [ "order_date",'staff', ]
+    list_editable = []
+    readonly_fields = ()
+    actions = [ ]
+    ordering = ['-order_date',"staff",]
 

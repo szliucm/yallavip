@@ -27,3 +27,17 @@ class StaffPerformace(models.Model):
 
     def __str__(self):
         return self.order_date
+
+class StaffTrack(models.Model):
+    order_date = models.DateField(u'订单日期', auto_now=False, null=True, blank=True)
+    staff = models.CharField(u'客服', default='', max_length=200, blank=True)
+    open = models.IntegerField(u'审核中数量', default=0, blank=True, null=True)
+    transit = models.IntegerField(u'已交运数量', default=0, blank=True, null=True)
+    cancelled = models.IntegerField(u'取消数量', default=0, blank=True, null=True)
+
+    class Meta:
+        verbose_name = "业绩跟踪"
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.order_date
