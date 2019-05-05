@@ -6045,3 +6045,35 @@ def auto_sync_feed():
         update_feed(page.page_no)
 
     return
+
+def link_page_post(page_no):
+    import time
+
+    access_token, long_token = get_token(page_no)
+    print (access_token, long_token, page_no)
+    if not long_token:
+        return
+    adobjects = FacebookAdsApi.init(access_token=access_token, debug=True)
+
+
+    # 创建post
+    fields = [
+        'object_id',
+    ]
+
+    params = {
+        'message': "test for yallavip",
+        'link':"www.yallavip.com",
+        'picture': "https://scontent.xx.fbcdn.net/v/t1.0-9/q91/p720x720/58922508_669838703451186_4565102171774779392_o.jpg",
+        'published':False,
+        "call_to_action": {"type": "MESSAGE_PAGE",
+                           "value": {"app_destination": "MESSENGER",
+                                     'link':"www.yallavip.com"}},
+    }
+
+    feed_post = Page(page_no).create_feed(
+        fields=fields,
+        params=params,
+    )
+    print (feed_post)
+

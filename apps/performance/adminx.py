@@ -5,7 +5,7 @@ from orders.models import Order
 
 
 
-def update_performance(days=None):
+def update_performance(days=3):
     from django.db.models import Count, Sum, Q
     import pytz
     from datetime import datetime,timedelta
@@ -18,19 +18,31 @@ def update_performance(days=None):
     today = datetime(now.year, now.month, now.day, tzinfo=riyadh)
 
 
-    orders = Order.objects.all()
-    if days:
-        #orders = orders.filter(order_time__range=(today - timedelta(days=days), today))
-        orders = orders.filter(order_time__gt=(today - timedelta(days=days)))
+    #orders = Order.objects.all()
 
-    order_counts = orders.annotate(date=TruncDate("order_time", tzinfo=riyadh)) \
+    orders = Order.objects.filter(order_time__gt=(today - timedelta(days=days)))
+
+    #先统计整体销售情况
+    sales_counts = orders.annotate(date=TruncDate("order_time", tzinfo=riyadh)) \
         .values("date", "status").annotate(orders=Count("order_no")).order_by("-date")
 
-    sales = {}
-    for order_count in order_counts:
-        obj, created = Sales.objects.update_or_create(order_date=order_count.get("date"),
-                                                      type=order_count.get("status"),
-                                                      defaults={'count': order_count.get("orders"),
+    for sales_count in sales_counts:
+        obj, created = Sales.objects.update_or_create(order_date=sales_count.get("date"),
+                                                      type=sales_count.get("status"),
+                                                      defaults={'count': sales_count.get("orders"),
+
+                                                                }
+                                                      )
+
+    #统计客服业绩
+    staff_counts = orders.annotate(date=TruncDate("order_time", tzinfo=riyadh)) \
+        .values("date", "status","verify__sales").annotate(orders=Count("order_no")).order_by("-date")
+
+    for staff_count in staff_counts:
+        obj, created = StaffPerformace.objects.update_or_create(order_date=staff_count.get("date"),
+                                                        staff=staff_count.get("verify__sales"),
+                                                      order_status=staff_count.get("status"),
+                                                      defaults={'count': staff_count.get("orders"),
 
                                                                 }
                                                       )
@@ -60,5 +72,18 @@ class SalesAdmin(object):
 
         update_performance(7)
 
-    batch_update_performance.short_description = "更新销售业绩"
+    batch_update_performance.short_description = "更新业绩"
+
+@xadmin.sites.register(Sales)
+class SalesAdmin(object):
+    list_display = ["order_date", "staff", "order_status", 'count',  ]
+
+    # 'sku_name','img',
+    search_fields = ["staff", ]
+    list_filter = [ "order_date",'staff',"order_status", ]
+    list_editable = []
+    readonly_fields = ()
+    actions = [ ]
+    ordering = ['-order_date','type']
+
 
