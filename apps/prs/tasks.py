@@ -4052,7 +4052,7 @@ def sync_outstock_post():
 
         handle = spu.handle
         if not handle:
-            prin("handle [%s] 为空"%(handle))
+            print("handle [%s] 为空"%(handle))
             continue
 
         feeds = MyFeed.objects.filter(message__icontains=handle)
