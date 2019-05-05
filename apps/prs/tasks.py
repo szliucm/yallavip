@@ -4054,6 +4054,7 @@ def sync_outstock_post():
 
         feeds = MyFeed.objects.filter(message__icontains=handle)
         if feeds:
+            print("有%s个feed待删除"%(feeds.count()))
             feed_nos = feeds.values_list("page_no", "feed_no").distinct()
 
             for feed_no in feed_nos:
@@ -4068,7 +4069,8 @@ def sync_outstock_post():
 
                 feed_dict[page_no] = feed_list
 
-            spu.update(active=False)
+            spu.active=False
+            spu.save()
 
     # 选择所有可用的page
     for page_no in feed_dict:
