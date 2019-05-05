@@ -28,13 +28,14 @@ def update_performance(days=3):
 
     for sales_count in sales_counts:
         obj, created = Sales.objects.update_or_create(order_date=sales_count.get("date"),
-                                                      type=sales_count.get("status"),
-                                                      defaults={'count': sales_count.get("orders"),
+                                                      #type=sales_count.get("status"),
+                                                      defaults={sales_count.get("status"): sales_count.get("orders"),
 
                                                                 }
                                                       )
 
     #统计客服业绩
+    '''
     staff_counts = orders.annotate(date=TruncDate("order_time", tzinfo=riyadh)) \
         .values("date", "status","verify__sales").annotate(orders=Count("order_no")).order_by("-date")
 
@@ -49,6 +50,8 @@ def update_performance(days=3):
 
                                                                 }
                                                       )
+                                                      '''
+
     #统计客服业绩跟踪
     track_counts = orders.annotate(date=TruncDate("order_time", tzinfo=riyadh)) \
         .values("date", "status","verify__sales").annotate(orders=Count("order_no")).order_by("-date")
@@ -66,15 +69,15 @@ def update_performance(days=3):
 
 @xadmin.sites.register(Sales)
 class SalesAdmin(object):
-    list_display = ["order_date", "type", 'count',  ]
+    list_display = ["order_date", "open", 'transit',"cancelled", ]
 
     # 'sku_name','img',
     search_fields = [ ]
-    list_filter = [ "order_date",'type',]
+    list_filter = [ "order_date",]
     list_editable = []
     readonly_fields = ()
     actions = ["batch_update_performance", ]
-    ordering = ['-order_date','type']
+    ordering = ['-order_date',]
     '''
     data_charts = {
         "open_count": {'title': u"开放订单", "x-field": "order_date", "y-field": ("count", ),
@@ -90,6 +93,7 @@ class SalesAdmin(object):
 
     batch_update_performance.short_description = "更新业绩"
 
+'''
 @xadmin.sites.register(StaffPerformace)
 class StaffPerformaceAdmin(object):
     list_display = ["order_date", "staff", "order_status", 'count',  ]
@@ -101,6 +105,7 @@ class StaffPerformaceAdmin(object):
     readonly_fields = ()
     actions = [ ]
     ordering = ['-order_date',"staff",'order_status']
+'''
 
 @xadmin.sites.register(StaffTrack)
 class StaffTrackAdmin(object):
