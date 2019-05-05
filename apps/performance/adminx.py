@@ -39,6 +39,7 @@ def update_performance(days=3):
         .values("date", "status","verify__sales").annotate(orders=Count("order_no")).order_by("-date")
 
     for staff_count in staff_counts:
+        print("staff" , staff_count.get("verify__sales","无名氏"))
         obj, created = StaffPerformace.objects.update_or_create(order_date=staff_count.get("date"),
                                                         staff=staff_count.get("verify__sales","无名氏"),
                                                       order_status=staff_count.get("status"),
