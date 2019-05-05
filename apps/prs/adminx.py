@@ -1130,8 +1130,10 @@ class YallavipAdAdmin(object):
     def page(self, obj):
         return  obj.yallavip_album.page.page
 
+    def like_count(self, obj):
+        return  obj.fb_feed.like_count
 
-    page.short_description = "page"
+    like_count.short_description = "like_count"
 
     def sellable(self, obj):
         handle_list = obj.spus_name.split(",")
@@ -1142,7 +1144,7 @@ class YallavipAdAdmin(object):
     sellable.short_description = "sellable"
 
 
-    list_display = ["yallavip_album", "page", "spus_name",'sellable',  'photo', "adset_no","creative_id", "ad_id",]
+    list_display = ["yallavip_album", "page", "spus_name",'sellable', 'like_count', 'photo', "message_aded",]
 
     # 'sku_name','img',
     search_fields = ["spus_name", ]
