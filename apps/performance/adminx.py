@@ -74,8 +74,8 @@ class SalesAdmin(object):
 
     batch_update_performance.short_description = "更新业绩"
 
-@xadmin.sites.register(Sales)
-class SalesAdmin(object):
+@xadmin.sites.register(StaffPerformace)
+class StaffPerformaceAdmin(object):
     list_display = ["order_date", "staff", "order_status", 'count',  ]
 
     # 'sku_name','img',
