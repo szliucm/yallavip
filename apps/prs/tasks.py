@@ -6147,3 +6147,37 @@ def link_page_post(page_no):
     )
     print (feed_post)
 
+
+
+def delete_outdate_post(date):
+    feed_dict={}
+
+    feeds = MyFeed.objects.filter(created_time__lt=date,active=True)
+    if feeds:
+        print("有%s个feed待删除"%(feeds.count()))
+        feed_nos = feeds.values_list("page_no", "feed_no").distinct()
+
+        for feed_no in feed_nos:
+            page_no = feed_no[0]
+            feed_id = feed_no[1]
+            feed_list = feed_dict.get(page_no)
+            if not feed_list:
+                feed_list = []
+
+            if feed_id not in feed_list:
+                feed_list.append(feed_id)
+
+            feed_dict[page_no] = feed_list
+
+
+    # 选择所有可用的page
+    for page_no in feed_dict:
+
+
+        feed_ids = feed_dict[page_no]
+        print("page %s 待删除数量 %s  " % (page_no, len(feed_ids)))
+        if feed_ids is None or len(feed_ids) == 0:
+            continue
+
+        delete_posts(page_no, feed_ids)
+        #print(feed_ids)
