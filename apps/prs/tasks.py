@@ -4044,6 +4044,45 @@ def sync_outstock_photo():
 
         delete_photos(page_no, photo_nos)
 
+def sync_outstock_post():
+    spus = Lightin_SPU.objects.filter(sellable__lte=0, active=True)
+    feed_dict = {}
+
+    for spu in spus:
+
+        handle = spu.handle
+
+        feeds = MyFeed.objects.filter(message__icontains=handle)
+        if feeds:
+            feed_nos = feeds.values_list("page_no", "feed_no").distinct()
+
+            for feed_no in feed_nos:
+                page_no = feed_no[0]
+                feed_id = feed_no[1]
+                feed_list = feed_dict.get(page_no)
+                if not feed_list:
+                    feed_list = []
+
+                if feed_id not in feed_list:
+                    feed_list.append(feed_id)
+
+                feed_dict[page_no] = feed_list
+
+            spu.update(active=False)
+
+    # 选择所有可用的page
+    for page_no in feed_dict:
+
+
+        feed_ids = feed_dict[page_no]
+        print("page %s 待删除数量 %s  " % (page_no, len(feed_ids)))
+        if feed_ids is None or len(feed_ids) == 0:
+            continue
+
+        #delete_photos(page_no, photo_nos)
+        print(feed_ids)
+
+
 #批量上传图片到shpify，并记录图片的id和原始对应的关系，以便以后更新变体图片
 '''
 Update a product by adding a new product image
