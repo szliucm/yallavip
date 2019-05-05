@@ -40,7 +40,7 @@ def update_performance(days=3):
 
     for staff_count in staff_counts:
         obj, created = StaffPerformace.objects.update_or_create(order_date=staff_count.get("date"),
-                                                        staff=staff_count.get("verify__sales"),
+                                                        staff=staff_count.get("verify__sales","无名氏"),
                                                       order_status=staff_count.get("status"),
                                                       defaults={'count': staff_count.get("orders"),
 
