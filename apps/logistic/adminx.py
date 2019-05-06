@@ -1121,7 +1121,7 @@ class LogisticCustomerServiceAdmin(object):
         if (len(query) > 0):
             queryset |= self.model.objects.filter(logistic_no__in=query.split(","))
         return queryset
-
+    '''
     def queryset(self):
         qs = super().queryset()
 
@@ -1132,6 +1132,18 @@ class LogisticCustomerServiceAdmin(object):
         #return qs.filter(file_status="OPEN" , wait_status = False, warehouse_check= "NONE",yallavip_package_status="PROBLEM", deal__in = deal_list)
         return qs.filter(file_status="OPEN", wait_status=False, warehouse_check="NONE",
                          logistic_track_code__in=error_list , deal__in = deal_list)
+    '''
+
+    def queryset(self):
+        qs = super().queryset()
+
+        deal_list = ["NONE",
+                     "WAITING",
+                     ]
+        error_list = ["CE", "DE", "AC", "AT", "DA", "NE", "AO", "UE", "SP"]
+        # return qs.filter(file_status="OPEN" , wait_status = False, warehouse_check= "NONE",yallavip_package_status="PROBLEM", deal__in = deal_list)
+        return qs.filter(~Q(logistic_track_code="CC"),file_status="OPEN", wait_status=False, warehouse_check="NONE",
+                          deal__in=deal_list)
 
 @xadmin.sites.register(LogisticManagerConfirm)
 class LogisticManagerConfirmAdmin(object):
