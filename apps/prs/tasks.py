@@ -5692,7 +5692,7 @@ def page_post(page_no, to_create_count,keyword=None):
             break
         else:
             i += 1
-        spus_count = ad.spus_name.split(",").count()
+        spus_count = len(ad.spus_name.split(","))
         if spus_count == 4:
             try:
                 # 创建page photo
