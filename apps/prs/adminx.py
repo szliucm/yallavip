@@ -1149,6 +1149,6 @@ class YallavipAdAdmin(object):
     # 'sku_name','img',
     search_fields = ["spus_name", ]
     list_filter = ["yallavip_album__page", "adset_no","active","published","engagement_aded","message_aded", ]
-    list_editable = []
+    list_editable = ["message_aded",]
     readonly_fields = ()
     actions = []

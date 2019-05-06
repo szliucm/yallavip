@@ -1928,6 +1928,8 @@ def choose_ad_set(page_no,ad_type):
     except:
         adset = None
 
+    print(tag,adset)
+
     return adset
 
     '''
