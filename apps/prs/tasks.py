@@ -5754,7 +5754,7 @@ def page_post(page_no, to_create_count,keyword=None):
 def post_engagement_ads(page_no, to_create_count=1,keyword=None):
     import time
     from prs.fb_action import  choose_ad_set
-    from facebook_business.adobjects.adaccount import AdAccount
+
     from django.db.models import Q
 
     #根据日期生成序列号，目的是为了便于跟踪每天的表现
@@ -5764,6 +5764,7 @@ def post_engagement_ads(page_no, to_create_count=1,keyword=None):
     days = (today - firstday).days
     serial = str(days % 5)
 
+    adset_no = choose_ad_set(page_no, 'engagement')
 
 
     adaccount_no = "act_1903121643086425"
@@ -5787,61 +5788,65 @@ def post_engagement_ads(page_no, to_create_count=1,keyword=None):
             break
 
         i += 1
-        name =    serial + "_"+ page_no+"_"+ad.spus_name
-        adset_no = choose_ad_set(page_no, 'engagement' )
-        if not adset_no:
-            print("没有adset")
-            return False
+        post_engagement_ad(page_no, adset_no, serial, ad)
 
-        try:
+def post_engagement_ad(page_no, adset_no, serial, ad):
+    from facebook_business.adobjects.adaccount import AdAccount
+    name =    serial + "_"+ page_no+"_"+ad.spus_name
 
-            # 在post的基础上创建广告
-            # 创建creative
+    if not adset_no:
+        print("没有adset")
+        return False
 
-            fields = [
-            ]
-            params = {
-                'name':name,
-                'object_story_id': ad.object_story_id,
+    try:
 
-            }
-            adCreativeID = AdAccount(adaccount_no).create_ad_creative(
-                fields=fields,
-                params=params,
-            )
+        # 在post的基础上创建广告
+        # 创建creative
 
-            print("adCreativeID is ", adCreativeID)
+        fields = [
+        ]
+        params = {
+            'name':name,
+            'object_story_id': ad.object_story_id,
 
-            creative_id = adCreativeID["id"]
+        }
+        adCreativeID = AdAccount(adaccount_no).create_ad_creative(
+            fields=fields,
+            params=params,
+        )
 
-            # 创建广告
-            fields = [
-            ]
-            params = {
-                'name': name,
-                'adset_id': adset_no,
-                'creative': {'creative_id': creative_id},
-                #'status': 'PAUSED',ACTIVE
-                'status': 'ACTIVE',
-            }
+        print("adCreativeID is ", adCreativeID)
 
-            fb_ad = AdAccount(adaccount_no).create_ad(
-                fields=fields,
-                params=params,
-            )
-        except Exception as e:
-            print(e)
-            error = e.api_error_message()
-            ad.publish_error = error
-            ad.save()
-            break
+        creative_id = adCreativeID["id"]
 
-        print("new ad is ", fb_ad)
-        ad.engagement_ad_id = fb_ad.get("id")
+        # 创建广告
+        fields = [
+        ]
+        params = {
+            'name': name,
+            'adset_id': adset_no,
+            'creative': {'creative_id': creative_id},
+            #'status': 'PAUSED',ACTIVE
+            'status': 'ACTIVE',
+        }
 
-        ad.engagement_aded = True
-        ad.engagement_ad_published_time = dt.now()
+        fb_ad = AdAccount(adaccount_no).create_ad(
+            fields=fields,
+            params=params,
+        )
+    except Exception as e:
+        print(e)
+        error = e.api_error_message()
+        ad.publish_error = error
         ad.save()
+        return
+
+    print("new ad is ", fb_ad)
+    ad.engagement_ad_id = fb_ad.get("id")
+
+    ad.engagement_aded = True
+    ad.engagement_ad_published_time = dt.now()
+    ad.save()
 
 
 
