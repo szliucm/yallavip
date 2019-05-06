@@ -5682,24 +5682,24 @@ def get_serial():
 
 
 @shared_task
-def post_ads(page_no, type, to_create_count=1,keyword=None):
+def post_ads(page_no, ad_type, to_create_count=1,keyword=None):
     import time
     from prs.fb_action import  choose_ad_set
 
     from django.db.models import Q
 
     serial = get_serial()
-    adset_no = choose_ad_set(page_no, type)
+    adset_no = choose_ad_set(page_no, ad_type)
     if not adset_no:
         print("没有adset")
         return False
 
     adaccount_no = "act_1903121643086425"
 
-    if type == "engagement":
+    if ad_type == "engagement":
         #ads = YallavipAd.objects.filter(~Q(object_story_id="" ),  object_story_id__isnull = False,active=True, published=True,engagement_aded=False, yallavip_album__page__page_no=page_no )
         ads = YallavipAd.objects.filter(active=True, published=True, engagement_aded=False, yallavip_album__page__page_no=page_no).order_by("-fb_feed__like_count")
-    elif type == "message":
+    elif ad_type == "message":
         ads = YallavipAd.objects.filter(active=True, engagement_aded= True, message_aded=False, yallavip_album__page__page_no=page_no).order_by("-fb_feed__like_count")
 
     if keyword:
