@@ -5681,6 +5681,98 @@ def get_serial():
     return str(days % 5)
 
 
+@shared_task
+def post_ads(page_no, type, to_create_count=1,keyword=None):
+    import time
+    from prs.fb_action import  choose_ad_set
+
+    from django.db.models import Q
+
+    serial = get_serial()
+    adset_no = choose_ad_set(page_no, type)
+    if not adset_no:
+        print("没有adset")
+        return False
+
+    adaccount_no = "act_1903121643086425"
+
+    if type == "engagement":
+        #ads = YallavipAd.objects.filter(~Q(object_story_id="" ),  object_story_id__isnull = False,active=True, published=True,engagement_aded=False, yallavip_album__page__page_no=page_no )
+        ads = YallavipAd.objects.filter(active=True, published=True, engagement_aded=False, yallavip_album__page__page_no=page_no).order_by("-fb_feed__like_count")
+    elif type == "message":
+        ads = YallavipAd.objects.filter(active=True, engagement_aded= True, message_aded=False, yallavip_album__page__page_no=page_no).order_by("-fb_feed__like_count")
+
+    if keyword:
+        ads = ads.filter(yallavip_album__rule__name__icontains=keyword)
+
+    #如果数量不够，就创建
+    if ads.count() < to_create_count:
+        page_post(page_no, to_create_count - ads.count(), keyword)
+
+    adobjects = FacebookAdsApi.init(access_token=ad_tokens, debug=True)
+    i=1
+    for ad in ads:
+        if i>to_create_count:
+            break
+
+        i += 1
+        post_ad(page_no,adaccount_no, adset_no, serial, ad)
+
+def post_ad(page_no,adaccount_no, adset_no, serial, ad):
+    from facebook_business.adobjects.adaccount import AdAccount
+
+    name =    serial + "_"+ page_no+"_"+ad.spus_name
+
+    try:
+
+        # 在post的基础上创建广告
+        # 创建creative
+
+        fields = [
+        ]
+        params = {
+            'name':name,
+            'object_story_id': ad.object_story_id,
+
+        }
+        adCreativeID = AdAccount(adaccount_no).create_ad_creative(
+            fields=fields,
+            params=params,
+        )
+
+        print("adCreativeID is ", adCreativeID)
+
+        creative_id = adCreativeID["id"]
+
+        # 创建广告
+        fields = [
+        ]
+        params = {
+            'name': name,
+            'adset_id': adset_no,
+            'creative': {'creative_id': creative_id},
+            #'status': 'PAUSED',ACTIVE
+            'status': 'ACTIVE',
+        }
+
+        fb_ad = AdAccount(adaccount_no).create_ad(
+            fields=fields,
+            params=params,
+        )
+    except Exception as e:
+        print(e)
+        error = e.api_error_message()
+        ad.publish_error = error
+        ad.save()
+        return
+
+    print("new ad is ", fb_ad)
+    ad.engagement_ad_id = fb_ad.get("id")
+
+    ad.engagement_aded = True
+    ad.engagement_ad_published_time = dt.now()
+    ad.save()
+
 
 @shared_task
 def post_engagement_ads(page_no, to_create_count=1,keyword=None):
