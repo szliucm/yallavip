@@ -26,6 +26,10 @@ def update_performance(days=3):
     sales_counts = orders.annotate(date=TruncDate("order_time", tzinfo=riyadh)) \
         .values("date", "status").annotate(orders=Count("order_no"),amount=Sum("order_amount")).order_by("-date")
 
+    #把相应的记录先删掉
+    Sales.objects.filter(order_date__gt=(today - timedelta(days=days)).delete())
+
+
     for sales_count in sales_counts:
         if sales_count.get("status") in ['open', 'transit', 'cancelled']:
             obj, created = Sales.objects.update_or_create(order_date=sales_count.get("date"),
@@ -41,6 +45,9 @@ def update_performance(days=3):
     #统计客服业绩跟踪
     track_counts = orders.annotate(date=TruncDate("order_time", tzinfo=riyadh)) \
         .values("date", "status","verify__sales").annotate(orders=Count("order_no"),amount=Sum("order_amount")).order_by("-date")
+
+    # 把相应的记录先删掉
+    StaffTrack.objects.filter(order_date__gt=(today - timedelta(days=days)).delete())
 
     for track_count in track_counts:
         staff=track_count.get("verify__sales")
