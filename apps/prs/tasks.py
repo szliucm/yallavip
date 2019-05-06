@@ -5747,6 +5747,13 @@ def page_post(page_no, to_create_count,keyword=None):
 
         ad.save()
 
+def get_serial():
+    #根据日期生成序列号，目的是为了便于跟踪每天的表现
+    import datetime
+    today = datetime.date.today()
+    firstday = datetime.date(today.year, 1, 1)
+    days = (today - firstday).days
+    return str(days % 5)
 
 
 
@@ -5757,13 +5764,7 @@ def post_engagement_ads(page_no, to_create_count=1,keyword=None):
 
     from django.db.models import Q
 
-    #根据日期生成序列号，目的是为了便于跟踪每天的表现
-    import datetime
-    today = datetime.date.today()
-    firstday = datetime.date(today.year, 1, 1)
-    days = (today - firstday).days
-    serial = str(days % 5)
-
+    serial = get_serial()
     adset_no = choose_ad_set(page_no, 'engagement')
 
 
