@@ -5744,6 +5744,7 @@ def post_ad(page_no,adaccount_no, adset_no, serial, ad):
         # 在post的基础上创建广告
 
         if ad.creative_id:
+            print("已经有creative，不用创建了")
             creative_id = ad.creative_id
         else:
 
