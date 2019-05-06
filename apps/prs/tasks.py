@@ -5692,47 +5692,58 @@ def page_post(page_no, to_create_count,keyword=None):
             break
         else:
             i += 1
-        try:
-            # 创建page photo
-            fields = [
-            ]
-            params = {
-                'url': ad.image_marked_url,
-                'published': 'false',
-            }
-            photo_to_be_post = Page(page_no).create_photo(
-                fields=fields,
-                params=params,
-            )
-            photo_to_be_post_id = photo_to_be_post.get_id()
+        spus_count = ad.spus_name.split(",").count()
+        if spus_count == 4:
+            try:
+                # 创建page photo
+                fields = [
+                ]
+                params = {
+                    'url': ad.image_marked_url,
+                    'published': 'false',
+                }
+                photo_to_be_post = Page(page_no).create_photo(
+                    fields=fields,
+                    params=params,
+                )
+                photo_to_be_post_id = photo_to_be_post.get_id()
 
-            # 创建post
-            fields = [
-                'object_id',
-            ]
+                # 创建post
+                fields = [
+                    'object_id',
+                ]
 
-            params = {
-                'message': ad.message,
-                # 'attached_media': [{'media_fbid': photo_to_be_post_id}],
-                'attached_media': [{'media_fbid': photo_to_be_post_id}],
-                "call_to_action": {"type": "MESSAGE_PAGE",
-                                   "value": {"app_destination": "MESSENGER"}},
-            }
+                params = {
+                    'message': ad.message,
+                    # 'attached_media': [{'media_fbid': photo_to_be_post_id}],
+                    'attached_media': [{'media_fbid': photo_to_be_post_id}],
+                    "call_to_action": {"type": "MESSAGE_PAGE",
+                                       "value": {"app_destination": "MESSENGER"}},
+                }
 
-            feed_post = Page(page_no).create_feed(
-                fields=fields,
-                params=params,
-            )
-            print (feed_post)
+                feed_post = Page(page_no).create_feed(
+                    fields=fields,
+                    params=params,
+                )
+                print (feed_post)
 
-            object_story_id = feed_post.get_id()
-            ad.object_story_id = object_story_id
-            ad.published = True
+                #object_story_id = feed_post.get_id()
+                ad.object_story_id = feed_post.get_id()
+                ad.published = True
 
-        except Exception as e:
-            print(e)
-            error = e.api_error_message()
-            ad.publish_error = error
+            except Exception as e:
+                print(e)
+                error = e.api_error_message()
+                ad.publish_error = error
+        if spus_count == 2:
+            info, posted = link_page_post(page_no, access_token, ad)
+            if posted:
+                ad.object_story_id = info
+                ad.published = True
+            else:
+                ad.publish_error = info
+
+            pass
 
         ad.save()
 
@@ -6191,36 +6202,41 @@ def auto_sync_feed():
 
     return
 
-def link_page_post(page_no):
+def link_page_post(page_no,access_token, ad):
     import time
 
-    access_token, long_token = get_token(page_no)
-    print (access_token, long_token, page_no)
-    if not long_token:
-        return
+
     adobjects = FacebookAdsApi.init(access_token=access_token, debug=True)
 
+    try:
+        # 创建post
+        fields = [
+            'object_id',
+        ]
 
-    # 创建post
-    fields = [
-        'object_id',
-    ]
+        params = {
+            'message': ad.message,
+            'link':"www.yallavip.com",
+            'picture': ad.image_marked_url,
+            'published':True,
+            "call_to_action": {"type": "MESSAGE_PAGE",
+                               "value": {"app_destination": "MESSENGER",
+                                         'link':"www.yallavip.com"}},
+        }
 
-    params = {
-        'message': "test for yallavip",
-        'link':"www.yallavip.com",
-        'picture': "https://scontent.xx.fbcdn.net/v/t1.0-9/q91/p720x720/58922508_669838703451186_4565102171774779392_o.jpg",
-        'published':False,
-        "call_to_action": {"type": "MESSAGE_PAGE",
-                           "value": {"app_destination": "MESSENGER",
-                                     'link':"www.yallavip.com"}},
-    }
+        feed_post = Page(page_no).create_feed(
+            fields=fields,
+            params=params,
+        )
+        return  feed_post.get_id(),True
+    except Exception as e:
+        print(e)
+        error = e.api_error_message()
+        return error, False
 
-    feed_post = Page(page_no).create_feed(
-        fields=fields,
-        params=params,
-    )
-    print (feed_post)
+
+
+
 
 
 
