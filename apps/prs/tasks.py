@@ -5789,7 +5789,7 @@ def post_engagement_ads(page_no, to_create_count=1,keyword=None):
             break
 
         i += 1
-        post_engagement_ad(page_no, adset_no, serial, ad)
+        post_engagement_ad(page_no,adaccount_no, adset_no, serial, ad)
 
 def post_engagement_ad(page_no,adaccount_no, adset_no, serial, ad):
     from facebook_business.adobjects.adaccount import AdAccount
@@ -5856,19 +5856,13 @@ def post_engagement_ad(page_no,adaccount_no, adset_no, serial, ad):
 def post_message_ads(page_no, to_create_count=1,keyword=None):
     import time
     from prs.fb_action import  choose_ad_set
-    from facebook_business.adobjects.adaccount import AdAccount
 
-    # 根据日期生成序列号，目的是为了便于跟踪每天的表现
-    import datetime
-    today = datetime.date.today()
-    firstday = datetime.date(today.year, 1, 1)
-    days = (today - firstday).days
-    serial = str(days % 5)
+
+    serial = get_serial()
 
 
     adaccount_no = "act_1903121643086425"
-    #adset_no = choose_ad_set(page_no,'message')
-    #adset_no = "23843303803340510"
+    adset_no = choose_ad_set(page_no, 'message' )
 
     ads = YallavipAd.objects.filter(active=True, engagement_aded= True, message_aded=False, yallavip_album__page__page_no=page_no,fb_feed__isnull=False).order_by("-fb_feed__like_count")
         #values("spus_name","fb_feed__like_count")
@@ -5882,65 +5876,71 @@ def post_message_ads(page_no, to_create_count=1,keyword=None):
             break
 
         i += 1
-        name = serial + "_" + page_no + "_" + ad.spus_name
-        adset_no = choose_ad_set(page_no, 'message' )
-        if not adset_no:
-            print("没有adset")
-            return False
+        post_message_ad(page_no, adaccount_no, adset_no, serial, ad)
 
-        try:
+def post_message_ad(page_no, adaccount_no, adset_no, serial, ad):
+    from facebook_business.adobjects.adaccount import AdAccount
 
-            fields = [
-            ]
+    name = serial + "_" + page_no + "_" + ad.spus_name
 
-            # link ad
-            params = {
-                'name': name,
-                'object_story_spec': {'page_id': page_no,
-                                      'link_data': {"call_to_action": {"type": "MESSAGE_PAGE",
-                                                                       "value": {"app_destination": "MESSENGER"}},
+    if not adset_no:
+        print("没有adset")
+        return False
 
-                                                    "picture": ad.image_marked_url,
-                                                    "link": "https://facebook.com/%s" % (page_no),
+    try:
 
-                                                    "message": ad.message,
-                                                    "name": "Yallavip.com",
-                                                    "description": "Online Flash Sale Everyhour",
-                                                    "use_flexible_image_aspect_ratio": True, }},
-            }
-            adCreative = AdAccount(adaccount_no).create_ad_creative(
-                fields=fields,
-                params=params,
-            )
+        fields = [
+        ]
 
-            print("adCreative is ", adCreative)
+        # link ad
+        params = {
+            'name': name,
+            'object_story_spec': {'page_id': page_no,
+                                  'link_data': {"call_to_action": {"type": "MESSAGE_PAGE",
+                                                                   "value": {"app_destination": "MESSENGER"}},
 
-            fields = [
-            ]
-            params = {
-                'name': name,
-                'adset_id': adset_no,
-                'creative': {'creative_id': adCreative["id"]},
-                #'status': 'PAUSED',
-                'status': 'ACTIVE',
-                # "access_token": my_access_token,
-            }
+                                                "picture": ad.image_marked_url,
+                                                "link": "https://facebook.com/%s" % (page_no),
 
-            fb_ad = AdAccount(adaccount_no).create_ad(
-                fields=fields,
-                params=params,
-            )
-        except Exception as e:
-            print(e)
-            error = e.api_error_message()
-            ad.publish_error = error
-            ad.save()
-            break
-        print("new ad is ", fb_ad)
-        ad.message_ad_id = fb_ad.get("id")
-        ad.message_aded = True
-        ad.message_ad_published_time = dt.now()
+                                                "message": ad.message,
+                                                "name": "Yallavip.com",
+                                                "description": "Online Flash Sale Everyhour",
+                                                "use_flexible_image_aspect_ratio": True, }},
+        }
+        adCreative = AdAccount(adaccount_no).create_ad_creative(
+            fields=fields,
+            params=params,
+        )
+
+        print("adCreative is ", adCreative)
+
+        fields = [
+        ]
+        params = {
+            'name': name,
+            'adset_id': adset_no,
+            'creative': {'creative_id': adCreative["id"]},
+            #'status': 'PAUSED',
+            'status': 'ACTIVE',
+            # "access_token": my_access_token,
+        }
+
+        fb_ad = AdAccount(adaccount_no).create_ad(
+            fields=fields,
+            params=params,
+        )
+    except Exception as e:
+        print(e)
+        error = e.api_error_message()
+        ad.publish_error = error
         ad.save()
+        return
+
+    print("new ad is ", fb_ad)
+    ad.message_ad_id = fb_ad.get("id")
+    ad.message_aded = True
+    ad.message_ad_published_time = dt.now()
+    ad.save()
 
 def split_conversation_links():
     verifies = Verify.objects.filter(business_id__isnull=True)
