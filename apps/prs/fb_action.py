@@ -1637,7 +1637,7 @@ def combo_ad_image_v2(spu_ims, spus_name,yallavip_album_instance):
     if item_count == 4:
         # 四张图
         # 先做个1080x1080的画布
-        layer = Image.new("RGB", (1080, 1080), "red")
+        layer = Image.new("RGB", (1080, 1080), "white")
 
         layer.paste(clipResizeImg_new(ims[0], 540, 540), (0, 0))
         layer.paste(clipResizeImg_new(ims[1], 540, 540), (540, 0))
@@ -1686,7 +1686,7 @@ def combo_ad_image_v2(spu_ims, spus_name,yallavip_album_instance):
     elif item_count == 2:
         # 两张图
         # 先做个1200*628的画布
-        layer = Image.new("RGB", (1200, 628), "grey")
+        layer = Image.new("RGB", (1200, 628), "white")
 
         layer.paste(clipResizeImg_new(ims[0], 600, 600), (0, 14))
         layer.paste(clipResizeImg_new(ims[1], 600, 600), (600, 14))
