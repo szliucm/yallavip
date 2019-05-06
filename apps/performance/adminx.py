@@ -27,7 +27,7 @@ def update_performance(days=3):
         .values("date", "status").annotate(orders=Count("order_no"),amount=Sum("order_amount")).order_by("-date")
 
     #把相应的记录先删掉
-    Sales.objects.filter(order_date__gt=(today - timedelta(days=days)).delete())
+    Sales.objects.filter(order_date__gt=(today - timedelta(days=days)).delete()
 
 
     for sales_count in sales_counts:
@@ -47,7 +47,7 @@ def update_performance(days=3):
         .values("date", "status","verify__sales").annotate(orders=Count("order_no"),amount=Sum("order_amount")).order_by("-date")
 
     # 把相应的记录先删掉
-    StaffTrack.objects.filter(order_date__gt=(today - timedelta(days=days)).delete())
+    StaffTrack.objects.filter(order_date__gt=(today - timedelta(days=days))).delete()
 
     for track_count in track_counts:
         staff=track_count.get("verify__sales")
