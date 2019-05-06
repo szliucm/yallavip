@@ -5562,7 +5562,8 @@ def engagement_ads():
 
     #遍历每个page
     for page in pages:
-        post_engagement_ads(page.page_no, 1)
+        #post_engagement_ads(page.page_no, 1)
+        post_ads(page.page_no, "engagement")
 
 
 
@@ -5583,7 +5584,8 @@ def message_ads():
         #先更新feed信息，然后从活跃度较高的post开始打消息广告
         #update_feed(page.page_no)
         # 从符合条件的互动广告里，选一个发消息广告
-        post_message_ads(page.page_no, 1)
+        #post_message_ads(page.page_no, 1)
+        post_ads(page.page_no, "message")
 
 
     return
@@ -5718,18 +5720,19 @@ def post_ads(page_no, ad_type, to_create_count=1,keyword=None):
         i += 1
         fb_ad = post_ad(page_no,adaccount_no, adset_no, serial, ad)
         print("new ad is ", fb_ad)
-        if ad_type == "engagement":
-            ad.engagement_ad_id = fb_ad.get("id")
+        if fb_ad:
+            if ad_type == "engagement":
+                ad.engagement_ad_id = fb_ad.get("id")
 
-            ad.engagement_aded = True
-            ad.engagement_ad_published_time = dt.now()
-        elif ad_type == "message":
-            ad.message_ad_id = fb_ad.get("id")
-            ad.message_aded = True
-            ad.message_ad_published_time = dt.now()
+                ad.engagement_aded = True
+                ad.engagement_ad_published_time = dt.now()
+            elif ad_type == "message":
+                ad.message_ad_id = fb_ad.get("id")
+                ad.message_aded = True
+                ad.message_ad_published_time = dt.now()
 
 
-        ad.save()
+            ad.save()
 
 def post_ad(page_no,adaccount_no, adset_no, serial, ad):
     from facebook_business.adobjects.adaccount import AdAccount
@@ -5739,23 +5742,31 @@ def post_ad(page_no,adaccount_no, adset_no, serial, ad):
     try:
 
         # 在post的基础上创建广告
-        # 创建creative
 
-        fields = [
-        ]
-        params = {
-            'name':name,
-            'object_story_id': ad.object_story_id,
+        if ad.creative_id:
+            creative_id = ad.creative_id
+        else:
 
-        }
-        adCreativeID = AdAccount(adaccount_no).create_ad_creative(
-            fields=fields,
-            params=params,
-        )
+            # 创建creative
 
-        print("adCreativeID is ", adCreativeID)
+            fields = [
+            ]
+            params = {
+                'name':name,
+                'object_story_id': ad.object_story_id,
 
-        creative_id = adCreativeID["id"]
+            }
+            adCreativeID = AdAccount(adaccount_no).create_ad_creative(
+                fields=fields,
+                params=params,
+            )
+
+            print("adCreativeID is ", adCreativeID)
+
+            creative_id = adCreativeID["id"]
+
+            ad.creative_id = creative_id
+            ad.save()
 
         # 创建广告
         fields = [
@@ -5778,7 +5789,7 @@ def post_ad(page_no,adaccount_no, adset_no, serial, ad):
         error = e.api_error_message()
         ad.publish_error = error
         ad.save()
-        return
+        return None
 
 
 
