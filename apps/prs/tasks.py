@@ -6014,9 +6014,8 @@ def prepare_promote(page_no,to_create_count, keyword=None):
 
             yallavip_album = random.choice(yallavip_albums)
             yallavip_album_pk = yallavip_album.get("yallavip_album")
-            lightinalbums = lightinalbums_all.filter(yallavip_album__pk=yallavip_album_pk).order_by(
-                "lightin_spu__sellable")[:4]
-            prepare_promote_image_album_v2(yallavip_album_pk , lightinalbums)
+
+            prepare_promote_image_album_v3(yallavip_album_pk , lightinalbums_all)
 
             i += 1
     else:
@@ -6028,8 +6027,10 @@ def prepare_promote(page_no,to_create_count, keyword=None):
 
 
 
-def prepare_promote_image_album_v2(yallavip_album_pk, ori_lightinalbums):
+def prepare_promote_image_album_v2(yallavip_album_pk, lightinalbums_all):
     from prs.fb_action import combo_ad_image_v2
+    ori_lightinalbums = lightinalbums_all.filter(yallavip_album__pk=yallavip_album_pk).order_by(
+        "lightin_spu__sellable")[:4]
 
     yallavip_album_instance = YallavipAlbum.objects.get(pk=yallavip_album_pk)
     print ("正在处理相册 ", yallavip_album_instance.album.name)
@@ -6101,9 +6102,10 @@ def prepare_promote_image_album_v2(yallavip_album_pk, ori_lightinalbums):
         spu.aded = True
         spu.save()
 
-def prepare_promote_image_album_v3(yallavip_album_pk, ori_lightinalbums):
+def prepare_promote_image_album_v3(yallavip_album_pk, lightinalbums_all):
     from prs.fb_action import combo_ad_image_v2
-
+    ori_lightinalbums = lightinalbums_all.filter(yallavip_album__pk=yallavip_album_pk).order_by(
+        "lightin_spu__sellable")[:2]
     yallavip_album_instance = YallavipAlbum.objects.get(pk=yallavip_album_pk)
     print ("正在处理相册 ", yallavip_album_instance.album.name)
 
