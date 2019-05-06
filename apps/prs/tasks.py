@@ -5716,7 +5716,20 @@ def post_ads(page_no, ad_type, to_create_count=1,keyword=None):
             break
 
         i += 1
-        post_ad(page_no,adaccount_no, adset_no, serial, ad)
+        fb_ad = post_ad(page_no,adaccount_no, adset_no, serial, ad)
+        print("new ad is ", fb_ad)
+        if ad_type == "engagement":
+            ad.engagement_ad_id = fb_ad.get("id")
+
+            ad.engagement_aded = True
+            ad.engagement_ad_published_time = dt.now()
+        elif ad_type == "message":
+            ad.message_ad_id = fb_ad.get("id")
+            ad.message_aded = True
+            ad.message_ad_published_time = dt.now()
+
+
+        ad.save()
 
 def post_ad(page_no,adaccount_no, adset_no, serial, ad):
     from facebook_business.adobjects.adaccount import AdAccount
@@ -5759,6 +5772,7 @@ def post_ad(page_no,adaccount_no, adset_no, serial, ad):
             fields=fields,
             params=params,
         )
+        return  fb_ad
     except Exception as e:
         print(e)
         error = e.api_error_message()
@@ -5766,12 +5780,7 @@ def post_ad(page_no,adaccount_no, adset_no, serial, ad):
         ad.save()
         return
 
-    print("new ad is ", fb_ad)
-    ad.engagement_ad_id = fb_ad.get("id")
 
-    ad.engagement_aded = True
-    ad.engagement_ad_published_time = dt.now()
-    ad.save()
 
 
 @shared_task
