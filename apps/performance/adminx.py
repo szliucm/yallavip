@@ -27,7 +27,7 @@ def update_performance(days=3):
         .values("date", "status").annotate(orders=Count("order_no"),amount=Sum("order_amount")).order_by("-date")
 
     #把相应的记录先删掉
-    Sales.objects.filter(order_date__gt=(today - timedelta(days=days)).delete()
+    Sales.objects.filter(order_date__gt=(today - timedelta(days=days))).delete()
 
     for sales_count in sales_counts:
         if sales_count.get("status") in ['open', 'transit', 'cancelled']:
