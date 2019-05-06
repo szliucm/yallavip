@@ -29,7 +29,6 @@ def update_performance(days=3):
     #把相应的记录先删掉
     Sales.objects.filter(order_date__gt=(today - timedelta(days=days)).delete()
 
-
     for sales_count in sales_counts:
         if sales_count.get("status") in ['open', 'transit', 'cancelled']:
             obj, created = Sales.objects.update_or_create(order_date=sales_count.get("date"),
