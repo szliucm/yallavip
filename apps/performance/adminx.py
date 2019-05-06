@@ -73,13 +73,13 @@ class SalesAdmin(object):
     readonly_fields = ()
     actions = ["batch_update_performance", ]
     ordering = ['-order_date',]
-    '''
+
     data_charts = {
-        "open_count": {'title': u"开放订单", "x-field": "order_date", "y-field": ("count", ),
+        "open_count": {'title': u"交运订单数", "x-field": "order_date", "y-field": ("transit", ),
                        "order": ('order_date',)},
         #"avg_count": {'title': u"Avg Report", "x-field": "date", "y-field": ('avg_count',), "order": ('date',)}
     }
-    '''
+
 
     #更新最近7天的销售记录
     def batch_update_performance(self, request, queryset):
