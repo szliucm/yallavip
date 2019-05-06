@@ -1927,7 +1927,7 @@ def delete_posts(page_no, post_ids):
 
         return error, None
 
-    access_token = "EAAHZCz2P7ZAuQBAFIhsXKOt3OJC8t6eq74vla089M2hB27E1jXD7ynKSmsjmBMJOMIgrybIZCmpk6VfZA7TEeisZAQzec2qFVh6suakv1gG835ap7dHQ7RB6QixNfkyYdtPZBCo5DhIw0QLvmIBad1X3BnitPvZCRhyrv4c3So0wIfYZASdAysCOPMwyewZCcfUgr65uVWhNTTYkwyN3OmCd38OEXwEOfavkZD"
+    access_token = "EAAHZCz2P7ZAuQBAO0uUd6mlKcl7OOlLP4e1uFG7HI2OBxN5LtgZAU1fH3fvpOLsgh7yFgkqVcdAsD211bDmyXP7u7HGYQuPPzFV2h7CqhCY6em6YjlMEyPVLoyhVzNd87HZAt0d64s6Xny86hzsn3ZAZBsWXCn6pkcB2E6j1GZAuJO4RCuakoSudVrEQWZARj4ovMxBZAhe9udmTPLoQuPiXD1zdx5ouKVUQZD"
     FacebookAdsApi.init(access_token=access_token)
     for post_id in post_ids:
 
