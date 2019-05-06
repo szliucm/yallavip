@@ -5791,7 +5791,7 @@ def post_engagement_ads(page_no, to_create_count=1,keyword=None):
         i += 1
         post_engagement_ad(page_no, adset_no, serial, ad)
 
-def post_engagement_ad(page_no, adset_no, serial, ad):
+def post_engagement_ad(page_no,adaccount_no, adset_no, serial, ad):
     from facebook_business.adobjects.adaccount import AdAccount
     name =    serial + "_"+ page_no+"_"+ad.spus_name
 
