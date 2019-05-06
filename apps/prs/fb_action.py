@@ -1644,6 +1644,54 @@ def combo_ad_image_v2(spu_ims, spus_name,yallavip_album_instance):
         layer.paste(clipResizeImg_new(ims[2], 540, 540), (0, 540))
         layer.paste(clipResizeImg_new(ims[3], 540, 540), (540, 540))
 
+
+
+
+        #含size的，就找到相册对应的size标签，放在右上角
+        position = album_name.find("Size=")
+
+        if position >=0 :
+
+
+            attrs = yallavip_album_instance.rule.attrs
+            print(attrs)
+            try:
+                sizeabs = SizeAbs.objects.get(size=attrs)
+                print(sizeabs)
+                size_label = SizeAbsLabel.objects.get(size_abs = sizeabs.size_abs).size_label
+                print(size_label)
+            except Exception as e:
+                print("出错了！", e)
+
+                size_label = None
+
+
+
+            if size_label:
+                domain = "http://admin.yallavip.com"
+                destination_url = domain + os.path.join( size_label.url)
+                im = get_remote_image(destination_url)
+
+                if not im:
+                    print ("image打不开")
+                    return None
+                else:
+                    newim = clipResizeImg_box(im,0,90,164,234,100,143)
+                    ims.append(newim)
+
+                #把尺码水印文件加到新的图层上，然后把新旧图层融合
+                layer_lable = Image.new('RGBA', layer.size, (0, 0, 0, 0))
+                layer_lable.paste(newim, (980, 0))
+                layer = Image.composite(layer_lable, layer, layer_lable)
+    elif item_count == 2:
+        # 两张图
+        # 先做个1200*628的画布
+        layer = Image.new("RGB", (1200, 628), "grey")
+
+        layer.paste(clipResizeImg_new(ims[0], 600, 600), (0, 14))
+        layer.paste(clipResizeImg_new(ims[1], 600, 600), (600, 14))
+
+
         #整张图左上角打logo水印
 
         #含size的，就找到相册对应的size标签，放在右上角
@@ -1680,7 +1728,7 @@ def combo_ad_image_v2(spu_ims, spus_name,yallavip_album_instance):
 
                 #把尺码水印文件加到新的图层上，然后把新旧图层融合
                 layer_lable = Image.new('RGBA', layer.size, (0, 0, 0, 0))
-                layer_lable.paste(ims[4], (980, 0))
+                layer_lable.paste(ims[2], (1100, 0))
                 layer = Image.composite(layer_lable, layer, layer_lable)
 
 
@@ -1760,6 +1808,31 @@ def combo_ad_image_v2(spu_ims, spus_name,yallavip_album_instance):
         layer.paste(clipResizeImg_new(ims[9], 225, 225), (675, 600))
     else:
         layer = None
+
+    # 整张图左上角打logo水印
+    try:
+        logo = yallavip_album_instance.page.logo
+        print(logo)
+
+    except Exception as e:
+        print("出错了！", e)
+        logo = None
+
+    if logo:
+        domain = "http://admin.yallavip.com"
+        destination_url = domain + os.path.join(logo.url)
+        im_logo = get_remote_image(destination_url)
+
+        if not im_logo:
+            print ("logo image打不开")
+            return None
+
+        ims.append(im_logo)
+
+        # 把尺码水印文件加到新的图层上，然后把新旧图层融合
+        layer_logo = Image.new('RGBA', layer.size, (0, 0, 0, 0))
+        layer_logo.paste(im_logo, (0, 0))
+        layer = Image.composite(layer_logo, layer, layer_logo)
 
     if layer:
         out = layer.convert('RGB')

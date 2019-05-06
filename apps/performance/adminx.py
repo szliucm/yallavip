@@ -24,38 +24,23 @@ def update_performance(days=3):
 
     #先统计整体销售情况
     sales_counts = orders.annotate(date=TruncDate("order_time", tzinfo=riyadh)) \
-        .values("date", "status").annotate(orders=Count("order_no")).order_by("-date")
+        .values("date", "status").annotate(orders=Count("order_no"),amount=Sum("order_amount")).order_by("-date")
 
     for sales_count in sales_counts:
         if sales_count.get("status") in ['open', 'transit', 'cancelled']:
             obj, created = Sales.objects.update_or_create(order_date=sales_count.get("date"),
                                                       #type=sales_count.get("status"),
                                                       defaults={sales_count.get("status"): sales_count.get("orders"),
+                                                                sales_count.get("status")+"_amount": sales_count.get("amount"),
 
                                                                 }
                                                       )
 
-    #统计客服业绩
-    '''
-    staff_counts = orders.annotate(date=TruncDate("order_time", tzinfo=riyadh)) \
-        .values("date", "status","verify__sales").annotate(orders=Count("order_no")).order_by("-date")
 
-    for staff_count in staff_counts:
-        staff=staff_count.get("verify__sales")
-        if not staff:
-            staff = "unknown"
-        obj, created = StaffPerformace.objects.update_or_create(order_date=staff_count.get("date"),
-                                                        staff=staff,
-                                                      order_status=staff_count.get("status"),
-                                                      defaults={'count': staff_count.get("orders"),
-
-                                                                }
-                                                      )
-                                                      '''
 
     #统计客服业绩跟踪
     track_counts = orders.annotate(date=TruncDate("order_time", tzinfo=riyadh)) \
-        .values("date", "status","verify__sales").annotate(orders=Count("order_no")).order_by("-date")
+        .values("date", "status","verify__sales").annotate(orders=Count("order_no"),amount=Sum("order_amount")).order_by("-date")
 
     for track_count in track_counts:
         staff=track_count.get("verify__sales")
@@ -66,13 +51,14 @@ def update_performance(days=3):
             obj, created = StaffTrack.objects.update_or_create(order_date=track_count.get("date"),
                                                         staff=staff,
                                                       defaults={track_count.get("status"): track_count.get("orders"),
-
+                                                                track_count.get("status") + "_amount": track_count.get(
+                                                                    "amount"),
                                                                 }
                                                       )
 
 @xadmin.sites.register(Sales)
 class SalesAdmin(object):
-    list_display = ["order_date", "open", 'transit',"cancelled", ]
+    list_display = ["order_date", "open","open_amount", 'transit',"transit_amount", "cancelled","cancelled_amount", ]
 
     # 'sku_name','img',
     search_fields = [ ]
@@ -112,7 +98,7 @@ class StaffPerformaceAdmin(object):
 
 @xadmin.sites.register(StaffTrack)
 class StaffTrackAdmin(object):
-    list_display = ["order_date", "staff", "open", 'transit',"cancelled",  ]
+    list_display = ["order_date", "staff", "open","open_amount", 'transit',"transit_amount", "cancelled","cancelled_amount",   ]
 
     # 'sku_name','img',
     search_fields = ["staff", ]
