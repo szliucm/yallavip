@@ -1927,6 +1927,7 @@ def delete_posts(page_no, post_ids):
 
         return error, None
 
+    access_token = "EAAHZCz2P7ZAuQBAFIhsXKOt3OJC8t6eq74vla089M2hB27E1jXD7ynKSmsjmBMJOMIgrybIZCmpk6VfZA7TEeisZAQzec2qFVh6suakv1gG835ap7dHQ7RB6QixNfkyYdtPZBCo5DhIw0QLvmIBad1X3BnitPvZCRhyrv4c3So0wIfYZASdAysCOPMwyewZCcfUgr65uVWhNTTYkwyN3OmCd38OEXwEOfavkZD"
     FacebookAdsApi.init(access_token=access_token)
     for post_id in post_ids:
 
@@ -6166,7 +6167,7 @@ def delete_outdate_post(date):
 
             if feed_id not in feed_list:
                 feed_list.append(feed_id)
-
+`
             feed_dict[page_no] = feed_list
 
 
