@@ -451,7 +451,7 @@ def get_orders(minutes=10):
 
         print("order count is ", data.get("count"))
 
-        total_count = data["count"]
+        total_count = data.get("count")
         print(stat, "共有 %s 个订单待获取" % (total_count))
 
         i = 0
