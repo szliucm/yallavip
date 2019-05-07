@@ -1322,7 +1322,7 @@ class VerifyAdmin(object):
                     'colored_sms_status',"sms_code",
                     'receiver_city','city','receiver_addr',
 
-                    'receiver_phone','phone_1', 'phone_2', 'verify_comments','verify_time','cs_reply',\
+                    'receiver_phone','phone_1', 'phone_2', 'verify_comments','verify_time',"final_staff",'cs_reply',\
                    'facebook_user_name', 'sales','show_conversation',)
 
     #'cancel', 'error_money', 'error_contact', \    'error_address', 'error_cod', 'error_note','warhouse_comment','wait_status',
@@ -1492,7 +1492,8 @@ class VerifyAdmin(object):
     def batch_verify(self, request, queryset):
         # 定义actions函数
         rows_updated = queryset.update(verify_status='SUCCESS', error_money=True, error_contact=True,
-                                       error_address=True, error_cod=True, error_note=True)
+                                       error_address=True, error_cod=True, error_note=True,
+                                       final_staff = str(self.request.user))
         if rows_updated == 1:
             message_bit = '1 story was'
         else:
