@@ -249,13 +249,18 @@ class OrderAdmin(object):
     #}
 
 
-    actions = [ 'batch_copy','batch_refused',]
+    actions = [ 'batch_copy','batch_refused',"batch_delivered",]
     #'start_verify','fullfill','start_package_track',"batch_overseas_stop", "mapping_lightin",
 
     def batch_refused(self, request, queryset):
         queryset.update(status="refused")
 
-    batch_refused.short_description = "批量发货"
+    batch_refused.short_description = "批量拒签"
+
+    def batch_delivered(self, request, queryset):
+        queryset.update(status="delivered")
+
+    batch_delivered.short_description = "批量签收"
 
     def mapping_lightin(self, request, queryset):
         from django.db.models import Sum
