@@ -5128,18 +5128,32 @@ def outstock_ads():
         if spus_outstock.count()>0:
             print("有spu无库存了", spus_outstock, ad, ad.ad_id)
 
-            if ad.published == True and ad.ad_id:
+            if ad.published == True:
                 # 修改广告状态
                 ad_status = "DELETED"
 
-                info, updated = ad_update_status(ad.ad_id, status=ad_status)
-                if updated:
-                    ad.ad_status = ad_status
-                else:
-                    ad.update_error = info
+                if ad.ad_id:
+                    info, updated = ad_update_status(ad.ad_id, status=ad_status)
+                    if updated:
+                        ad.ad_status = ad_status
+                    else:
+                        ad.update_error = info
+                    time.sleep(20)
 
-                time.sleep(20)
-
+                if ad.engagement_ad_id:
+                    info, updated = ad_update_status(ad.engagement_ad_id, status=ad_status)
+                    if updated:
+                        ad.engagement_ad_status = ad_status
+                    else:
+                        ad.engagement_ad_publish_error = info
+                    time.sleep(20)
+                if ad.message_ad_id:
+                    info, updated = ad_update_status(ad.message_ad_id, status=ad_status)
+                    if updated:
+                        ad.message_ad_status = ad_status
+                    else:
+                        ad.message_ad_publish_error = info
+                    time.sleep(20)
 
             ad.active=False
             ad.save()

@@ -927,12 +927,14 @@ class YallavipAd(models.Model):
 
     engagement_aded = models.BooleanField(default=False, verbose_name="互动广告状态")
     engagement_ad_id = models.CharField(u'互动广告_id', default='', max_length=500, blank=True)
+    engagement_ad_status = models.CharField(default='无', max_length=50, null=True, blank=True, verbose_name="广告状态")
     engagement_ad_published_time = models.DateTimeField(null=True, blank=True, verbose_name="互动广告发布时间")
     engagement_ad_publish_error = models.CharField(default='无', max_length=256, null=True, blank=True,
                                                 verbose_name="互动广告publish_error")
 
     message_aded = models.BooleanField(default=False, verbose_name="消息广告状态")
     message_ad_id = models.CharField(u'message_ad_id', default='', max_length=500, blank=True)
+    message_ad_status = models.CharField(default='无', max_length=50, null=True, blank=True, verbose_name="广告状态")
     message_ad_published_time = models.DateTimeField(null=True, blank=True, verbose_name="message_ad发布时间")
     message_ad_publish_error = models.CharField(default='无', max_length=256, null=True, blank=True, verbose_name="message_ad_publish_error")
 
