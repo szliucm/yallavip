@@ -2532,9 +2532,11 @@ def sync_wms_quantity():
 
     barcodes = Lightin_barcode.objects.filter(synced=False).values_list("barcode",flat=True)
     get_wms_quantity(list(barcodes))
+    '''
     for mysql in mysqls:
+        print(mysql)
         my_custom_sql(mysql)
-
+    '''
 def get_wms_quantity(barcodes=[]):
     page = 1
 
