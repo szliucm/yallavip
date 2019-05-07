@@ -64,7 +64,7 @@ def update_performance(days=3):
 
 @xadmin.sites.register(Sales)
 class SalesAdmin(object):
-    list_display = ["order_date", "open","open_amount", 'transit',"transit_amount", "cancelled","cancelled_amount", ]
+    list_display = ["order_date", "open","open_amount", 'transit',"transit_amount",  'delivered',"delivered_amount", 'cancelled',"cancelled_amount","cancelled","cancelled_amount", ]
 
     # 'sku_name','img',
     search_fields = [ ]
@@ -105,7 +105,7 @@ class StaffPerformaceAdmin(object):
 
 @xadmin.sites.register(StaffTrack)
 class StaffTrackAdmin(object):
-    list_display = ["order_date", "staff", "open","open_amount", 'transit',"transit_amount", "cancelled","cancelled_amount",   ]
+    list_display = ["order_date", "staff", "open","open_amount", 'transit',"transit_amount", 'delivered',"delivered_amount", 'cancelled',"cancelled_amount","cancelled","cancelled_amount",   ]
 
     # 'sku_name','img',
     search_fields = ["staff", ]
