@@ -5551,9 +5551,7 @@ def auto_post():
 
     return
 
-@shared_task
-def auto_test():
-    return
+
 
 #自动生成互动ad
 @shared_task
@@ -5708,9 +5706,9 @@ def post_ads(page_no, ad_type, to_create_count=1,keyword=None):
     if keyword:
         ads = ads.filter(yallavip_album__rule__name__icontains=keyword)
 
-    #如果数量不够，就创建
-    if ads.count() < to_create_count:
-        page_post(page_no, to_create_count - ads.count(), keyword)
+    #如果数量不够，就算了
+    #if ads.count() < to_create_count:
+        #page_post(page_no, to_create_count - ads.count(), keyword)
 
     adobjects = FacebookAdsApi.init(access_token=ad_tokens, debug=True)
     i=1
@@ -6317,3 +6315,11 @@ def delete_outdate_post(date):
 
         delete_posts(page_no, feed_ids)
         #print(feed_ids)
+
+def delete_old_ads():
+    ads = YallavipAd.objects.all()
+
+    for ad in ads:
+        if len(ad.spus_name)>15:
+            ad.active=False
+            ad.save()
