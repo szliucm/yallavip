@@ -1591,7 +1591,7 @@ class VerifyAdmin(object):
 
     def batch_confirmSMS(self, request, queryset):
         # 定义actions函数
-        rows_updated = queryset.update(sms_status='CHECKED')
+        rows_updated = queryset.update(sms_status='CHECKED',final_staff = str(self.request.user))
         if rows_updated == 1:
             message_bit = '1 story was'
         else:
