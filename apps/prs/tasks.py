@@ -2522,9 +2522,18 @@ def get_wms_product():
 
 
 def sync_wms_quantity():
-    barcodes = Lightin_barcode.objects.filter(synced=False).values_list("barcode",flat=True)
-    get_wms_quantity(barcodes)
+    mysqls = [
+        "update prs_lightin_barcode set o_quantity = y_sellable + y_reserved ,o_sellable = y_sellable , o_reserved = y_reserved,synced=True",
+        "UPDATE prs_lightin_sku INNER JOIN ( SELECT SKU,sum(o_sellable) as quantity FROM prs_lightin_barcode GROUP BY SKU ) b ON prs_lightin_sku.SKU = b.SKU SET prs_lightin_sku.o_quantity = b.quantity ",
+        "update prs_lightin_sku set o_sellable = o_quantity - o_reserved",
+        "UPDATE prs_lightin_spu INNER JOIN ( SELECT SPU, sum(o_sellable) as quantity FROM prs_lightin_sku GROUP BY SPU ) b ON prs_lightin_spu.SPU = b.SPU SET prs_lightin_spu.sellable = b.quantity",
+    ]
 
+
+    barcodes = Lightin_barcode.objects.filter(synced=False).values_list("barcode",flat=True)
+    get_wms_quantity(list(barcodes))
+    for mysql in mysqls:
+        my_custom_sql(mysql)
 
 def get_wms_quantity(barcodes=[]):
     page = 1
@@ -2532,7 +2541,7 @@ def get_wms_quantity(barcodes=[]):
     pages = 0
 
     while 1:
-        print("一共 %s页 正在处理第 %s 页" % (pages, page))
+
 
         param = {
             "pageSize": "100",
@@ -2568,6 +2577,8 @@ def get_wms_quantity(barcodes=[]):
                 )
             if pages == 0:
                 pages = int(int(result.get("count")) / 100)
+
+            print("一共 %s页 正在处理第 %s 页" % (pages, page))
         else:
             print("获取wms库存出错", result.get("message"))
             break
@@ -5117,7 +5128,7 @@ def outstock_ads():
         if spus_outstock.count()>0:
             print("有spu无库存了", spus_outstock, ad, ad.ad_id)
 
-            if ad.published == True:
+            if ad.published == True and ad.ad_id:
                 # 修改广告状态
                 ad_status = "DELETED"
 
@@ -5127,7 +5138,7 @@ def outstock_ads():
                 else:
                     ad.update_error = info
 
-                time.sleep(30)
+                time.sleep(20)
 
 
             ad.active=False
@@ -5138,35 +5149,7 @@ def outstock_ads():
                 spu.aded=False
                 spu.save()
 
-def outstock_ads_v2():
-    from prs.fb_action import ad_update_status
-    from fb.models import MyAd
 
-    #遍历所有已发布的广告，如果有spu已经无库存，就将广告暂停/归档，并改广告名
-    ads = MyAd.objects.filter(active=True)
-    for ad in ads:
-
-        handles = ad.name.split(",")
-        spus_all = Lightin_SPU.objects.filter( handle__in=handles)
-        spus_outstock = spus_all.filter(sellable__lte=0)
-        if spus_outstock.count()>0:
-            print("有spu无库存了", spus_outstock, ad, ad.ad_no)
-            #修改广告状态
-            ad_status = "DELETED"
-
-            info, updated = ad_update_status(ad.ad_no, status=ad_status)
-            if updated :
-                ad.ad_status = ad_status
-                ad.active = False
-            else:
-                print("更新失败")
-
-            ad.save()
-
-            #修改spu状态
-            for spu in spus_all:
-                spu.aded=False
-                spu.save()
 
 #根据面包屑更新品类表
 #从spu表取出所有distinct面包屑

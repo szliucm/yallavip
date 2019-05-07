@@ -784,7 +784,8 @@ class Lightin_barcode(models.Model):
 
     def save(self, *args, **kwargs):
         #do_something()
-        self.synced = False
+        if self.synced == True:
+            self.synced = False
         super().save(*args, **kwargs)  # Call the "real" save() method.
         #do_something_else()
 
