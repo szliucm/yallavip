@@ -241,7 +241,9 @@ def updatelogistic_trail_lightin(type=None):
 
             if row.get("Status") == "CC":
                 print(waybillnumber, "妥投了")
-                Order.objects.filter(logistic_no = waybillnumber).update(track_status = "CC")
+                #Order.objects.filter(logistic_no = waybillnumber).update(track_status = "CC")
+
+            Order.objects.filter(logistic_no=waybillnumber).update(track_status=row.get("Status"))
 
             if not row.get("Detail"):
                 continue
