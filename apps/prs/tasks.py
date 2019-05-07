@@ -2521,10 +2521,12 @@ def get_wms_product():
             page += 1
 
 
+def sync_wms_quantity():
+    barcodes = Lightin_barcode.objects.filter(synced=False).values_list("barcode",flat=True)
+    get_wms_quantity(barcodes)
 
 
-
-def get_wms_quantity(barcode=""):
+def get_wms_quantity(barcodes=[]):
     page = 1
 
     pages = 0
@@ -2535,8 +2537,8 @@ def get_wms_quantity(barcode=""):
         param = {
             "pageSize": "100",
             "page": page,
-            "product_sku": barcode,
-            "product_sku_arr": [],
+            "product_sku": "",
+            "product_sku_arr": barcodes,
             "warehouse_code": warehouse_code,
             "warehouse_code_arr": []
         }
