@@ -852,7 +852,7 @@ class OrderAdmin(object):
 
     def queryset(self):
         qs = super().queryset()
-        return qs.filter(~Q(track_status="" ))
+        return qs.filter(order_time__gt="2019-03-01")
 
 class OrderDetailResource(resources.ModelResource):
     order = fields.Field(
