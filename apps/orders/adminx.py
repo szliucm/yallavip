@@ -237,7 +237,7 @@ class OrderAdmin(object):
     import_export_args = {"import_resource_class": OrderResource, "export_resource_class": OrderResource}
 
     #"stock", "cal_barcode", "inventory_status",
-    list_display = ["order_no", "status", "stock",  "wms_status","fulfill_error","cal_amount", "order_amount", "order_time", "logistic_no","order_comment"]
+    list_display = ["order_no", "status", "track_status",  "wms_status","fulfill_error","cal_amount", "order_amount", "order_time", "logistic_no","order_comment"]
     list_editable = ["status"]
     # list_display_links = ["show_conversation"]
     search_fields = ["order_no",'logistic_no', ]
@@ -249,8 +249,13 @@ class OrderAdmin(object):
     #}
 
 
-    actions = [ 'batch_copy',]
+    actions = [ 'batch_copy','batch_refused',]
     #'start_verify','fullfill','start_package_track',"batch_overseas_stop", "mapping_lightin",
+
+    def batch_refused(self, request, queryset):
+        queryset.update(status="refused")
+
+    batch_refused.short_description = "批量发货"
 
     def mapping_lightin(self, request, queryset):
         from django.db.models import Sum
@@ -842,7 +847,7 @@ class OrderAdmin(object):
 
     def queryset(self):
         qs = super().queryset()
-        return qs.filter(status="OPEN" )
+        return qs.filter(~Q(track_status="" ))
 
 class OrderDetailResource(resources.ModelResource):
     order = fields.Field(
