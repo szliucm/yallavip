@@ -241,7 +241,7 @@ class OrderAdmin(object):
     list_editable = ["status"]
     # list_display_links = ["show_conversation"]
     search_fields = ["order_no",'logistic_no', ]
-    list_filter = ( "status","wms_status","financial_status","fulfillment_status", "package_status", "verify_time","order_time","send_time","verify__verify_status","verify__sms_status",)
+    list_filter = ( "status","wms_status","track_status",)
     ordering = ['-order_time']
 
     #data_charts = {
