@@ -27,7 +27,7 @@ from prs.fb_action import  get_token
 #更新相册信息
 def update_albums():
 
-    queryset = MyPage.objects.filter(active= True, is_published= True)
+    queryset = MyPage.objects.filter(active= True, is_published= True,promotable=True)
 
     for row in queryset:
         page_no = row.page_no
@@ -84,7 +84,8 @@ def update_albums():
 
 #批量更新图片
 def batch_update_photos(limit = None):
-    queryset = MyAlbum.objects.filter(active=True,updated= False)
+    page_no_list = MyPage.objects.filter(active=True, is_published=True, promotable=True).values_list("page_no",flat=True)
+    queryset = MyAlbum.objects.filter(active=True,updated= False, page_no__in=page_no_list)
     for album in queryset:
         update_album_photos(album)
 

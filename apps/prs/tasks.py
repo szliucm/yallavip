@@ -5562,7 +5562,7 @@ def engagement_ads():
     #遍历每个page
     for page in pages:
         #post_engagement_ads(page.page_no, 1)
-        post_ads(page.page_no, "engagement")
+        post_ads(page.page_no, "engagement",20)
 
 
 
@@ -5584,7 +5584,7 @@ def message_ads():
         #update_feed(page.page_no)
         # 从符合条件的互动广告里，选一个发消息广告
         #post_message_ads(page.page_no, 1)
-        post_ads(page.page_no, "message")
+        post_ads(page.page_no, "message",10)
 
 
     return
@@ -5732,6 +5732,7 @@ def post_ads(page_no, ad_type, to_create_count=1,keyword=None):
 
 
             ad.save()
+            time.sleep(30)
 
 def post_ad(page_no,adaccount_no, adset_no, serial, ad):
     from facebook_business.adobjects.adaccount import AdAccount
