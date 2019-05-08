@@ -5692,7 +5692,7 @@ def post_ads(page_no, ad_type, to_create_count=1,keyword=None):
     serial = get_serial()
     #每天的广告放进同一个组，保持广告的持续性，先设成三组，看看效果
     adset_no = choose_ad_set(page_no, ad_type,serial)
-    if not adset_nos:
+    if not adset_no:
         print("没有adset")
         return False
 
