@@ -32,7 +32,7 @@ my_app_id = "562741177444068"
 my_app_secret = "e6df363351fb5ce4b7f0080adad08a4d"
 #my_access_token = "EAAHZCz2P7ZAuQBABHO6LywLswkIwvScVqBP2eF5CrUt4wErhesp8fJUQVqRli9MxspKRYYA4JVihu7s5TL3LfyA0ZACBaKZAfZCMoFDx7Tc57DLWj38uwTopJH4aeDpLdYoEF4JVXHf5Ei06p7soWmpih8BBzadiPUAEM8Fw4DuW5q8ZAkSc07PrAX4pGZA4zbSU70ZCqLZAMTQZDZD"
 #my_access_token = "	EAAcGAyHVbOEBAEtwMPUeTci0x3G6XqlAwIhuQiZBZCVhZBRx88Rki0Lo7WNSxvAw7jAhhRlxsLjARbAZCnDvIoQ68Baj9TJrQC8KvEzyDhRWlnILGxRyc49b02aPInvpI9bcfgRowJfDrIt0kFE01LGD86vLKuLixtB0aTvTHww9SkedBzFZA"
-ad_tokens = "EAAHZCz2P7ZAuQBACZAZAQBZAJapY8bEy9AdtxewxBhIdgFi0iQa8imNrOaDGT9rcebKIFnaEXlEMKyC0IQ6CjZB9pL3bZBuuMK5hLbOtjLeXQ4CLPUNe7qXamuwyoG8v0IZBBVZAvURKzSNA3AWPwvwggKpkAgivX0zJvKJeZBZAaOSY5XoPTaOZBLrf"
+ad_tokens = "EAAHZCz2P7ZAuQBANXASqgDJV7vsZCKn4KoZCNAyEFUzWV4XFlvs3exbtdQJrLrVzkuIqpZCZBjKBwUJEL9lxFJE8zZA6pMtCQqgzWW6J1ldyjTUCztSs4kMybpsHi0lNfk45veF4SGjmXJwurTnskia71yZAQSqL0DxuXLCC3xFXooZC1tpB9AB9G"
 DEBUG = False
 
 if DEBUG:
@@ -6317,10 +6317,26 @@ def delete_outdate_post(date):
         delete_posts(page_no, feed_ids)
         #print(feed_ids)
 
-def delete_old_ads():
-    ads = YallavipAd.objects.all()
 
-    for ad in ads:
-        if len(ad.spus_name)>15:
-            ad.active=False
-            ad.save()
+#把在打广告的spu标识出来
+def tag_aded_spus():
+    ads = MyAd.objects.filter(active=True).values_list("ad_no", flat=True)
+
+    spus_name_list = YallavipAd.objects.filter(engagement_ad_id__in=ads).values_list("spus_name",flat=True)
+
+    spus_list = []
+
+    for spus_name in spus_name_list:
+        spus = spus_name.split(",")
+
+        for spu in spus:
+            print(spu)
+            if spu not in spus_list:
+                spus_list.append(spu)
+
+    print (spus_list,len(spus_list))
+
+    Lightin_SPU.objects.update(aded=False)
+    Lightin_SPU.objects.filter(handle__in=spus_list).update(aded=True)
+
+
