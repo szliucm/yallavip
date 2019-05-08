@@ -5685,7 +5685,7 @@ def get_serial():
 @shared_task
 def post_ads(page_no, ad_type, to_create_count=1,keyword=None):
     import time
-    from prs.fb_action import  all_ad_sets
+    from prs.fb_action import  choose_ad_set
 
     from django.db.models import Q
 
