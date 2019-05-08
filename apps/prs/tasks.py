@@ -5679,7 +5679,7 @@ def get_serial():
     today = datetime.date.today()
     firstday = datetime.date(today.year, 1, 1)
     days = (today - firstday).days
-    return str(days % 5)
+    return str(days % 3 + 1)
 
 
 @shared_task
@@ -5690,8 +5690,8 @@ def post_ads(page_no, ad_type, to_create_count=1,keyword=None):
     from django.db.models import Q
 
     serial = get_serial()
-    #取得所有的adsets
-    adset_nos = all_ad_sets(page_no, ad_type)
+    #每天的广告放进同一个组，保持广告的持续性，先设成三组，看看效果
+    adset_no = choose_ad_set(page_no, ad_type,serial)
     if not adset_nos:
         print("没有adset")
         return False
@@ -5704,13 +5704,12 @@ def post_ads(page_no, ad_type, to_create_count=1,keyword=None):
         ads = YallavipAd.objects.filter(active=True, published=True, engagement_aded=False, yallavip_album__page__page_no=page_no).order_by("-fb_feed__like_count")
     elif ad_type == "message":
         ads = YallavipAd.objects.filter(active=True, engagement_aded= True, message_aded=False, yallavip_album__page__page_no=page_no).order_by("-fb_feed__like_count")
+    else:
+        return  False
 
     if keyword:
         ads = ads.filter(yallavip_album__rule__name__icontains=keyword)
 
-    #如果数量不够，就算了
-    #if ads.count() < to_create_count:
-        #page_post(page_no, to_create_count - ads.count(), keyword)
 
     adobjects = FacebookAdsApi.init(access_token=ad_tokens, debug=True)
     i=1
@@ -5719,8 +5718,7 @@ def post_ads(page_no, ad_type, to_create_count=1,keyword=None):
             break
 
         i += 1
-        #随机选一个adset
-        adset_no= random.choice(adset_nos)
+
 
         fb_ad = post_ad(page_no,adaccount_no, adset_no, serial, ad)
         print("new ad is ", fb_ad)
