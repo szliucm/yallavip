@@ -938,6 +938,15 @@ class YallavipAd(models.Model):
     message_ad_published_time = models.DateTimeField(null=True, blank=True, verbose_name="message_ad发布时间")
     message_ad_publish_error = models.CharField(default='无', max_length=256, null=True, blank=True, verbose_name="message_ad_publish_error")
 
+    def cal_sellable(self):
+        handle_list = self.spus_name.split(",")
+        sellable = Lightin_SPU.objects.filter(handle__in=handle_list).values("handle", "sellable")
+        return list(sellable)
+
+    cal_sellable.short_description = "可售库存"
+    sellable = property(cal_sellable)
+
+
     class Meta:
         verbose_name = "Yallavip 广告"
         verbose_name_plural = verbose_name

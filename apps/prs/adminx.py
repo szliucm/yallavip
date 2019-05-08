@@ -1135,6 +1135,7 @@ class YallavipAdAdmin(object):
 
     like_count.short_description = "like_count"
 
+    '''
     def sellable(self, obj):
         handle_list = obj.spus_name.split(",")
         sellable = Lightin_SPU.objects.filter(handle__in=handle_list).values("handle","sellable")
@@ -1142,7 +1143,7 @@ class YallavipAdAdmin(object):
 
 
     sellable.short_description = "sellable"
-
+    '''
 
     list_display = ["spus_name", "yallavip_album", "page", 'sellable', 'like_count', 'photo',"active", "published","engagement_aded", "message_aded",]
 
