@@ -5690,9 +5690,9 @@ def post_ads(page_no, ad_type, to_create_count=1,keyword=None):
     from django.db.models import Q
 
     serial = get_serial()
-    #取得所有的adset
+    #取得所有的adsets
     adset_nos = all_ad_sets(page_no, ad_type)
-    if not adset_no:
+    if not adset_nos:
         print("没有adset")
         return False
 
