@@ -1932,6 +1932,18 @@ def choose_ad_set(page_no,ad_type):
 
     return adset
 
+def all_ad_sets(page_no, ad_type):
+    import random
+
+    tag = page_no + '_' + ad_type
+    try:
+        adsets = MyAdset.objects.filter(name__icontains=tag, active=True).values_list("adset_no",flat=True)
+    except:
+        return None
+
+    print(tag, adsets)
+
+    return list(adsets)
     '''
     import datetime
     today = datetime.date.today()

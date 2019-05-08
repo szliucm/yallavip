@@ -5685,17 +5685,19 @@ def get_serial():
 @shared_task
 def post_ads(page_no, ad_type, to_create_count=1,keyword=None):
     import time
-    from prs.fb_action import  choose_ad_set
+    from prs.fb_action import  all_ad_sets
 
     from django.db.models import Q
 
     serial = get_serial()
-    adset_no = choose_ad_set(page_no, ad_type)
+    #取得所有的adset
+    adset_nos = all_ad_sets(page_no, ad_type)
     if not adset_no:
         print("没有adset")
         return False
 
     adaccount_no = "act_1903121643086425"
+
 
     if ad_type == "engagement":
         #ads = YallavipAd.objects.filter(~Q(object_story_id="" ),  object_story_id__isnull = False,active=True, published=True,engagement_aded=False, yallavip_album__page__page_no=page_no )
@@ -5717,6 +5719,9 @@ def post_ads(page_no, ad_type, to_create_count=1,keyword=None):
             break
 
         i += 1
+        #随机选一个adset
+        adset_no= random.choice(adset_nos)
+
         fb_ad = post_ad(page_no,adaccount_no, adset_no, serial, ad)
         print("new ad is ", fb_ad)
         if fb_ad:
