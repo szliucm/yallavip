@@ -1152,3 +1152,4 @@ class YallavipAdAdmin(object):
     list_editable = []
     readonly_fields = ()
     actions = []
+    ordering = ["-sellable"]
