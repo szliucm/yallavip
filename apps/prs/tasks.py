@@ -5718,7 +5718,7 @@ def post_ads(page_no, ad_type, to_create_count=1,keyword=None, long_ad=False):
         ads = ads.filter(yallavip_album__rule__name__icontains=keyword)
 
     if long_ad:
-        ads = ads.filter(long_ad=True)
+        ads = ads.filter(long_aded=True)
 
     adobjects = FacebookAdsApi.init(access_token=ad_tokens, debug=True)
     i=1
