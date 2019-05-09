@@ -6217,6 +6217,7 @@ def make_spu_pure_image(target_page, spu):
 
     # 准备图片
     # 先取第一张，以后考虑根据实际有库存的sku的图片（待优化）
+    error =""
     if spu.images_dict:
         image = json.loads(spu.images_dict).values()
         if image and len(image) > 0:
@@ -6232,6 +6233,7 @@ def make_spu_pure_image(target_page, spu):
                                                                              target_page)
         if not image_marked:
             error = "打水印失败"
+
 
     else:
         print(album, spu.SPU, "没有图片")
