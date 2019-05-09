@@ -5564,9 +5564,9 @@ def auto_post_longads():
     for page in pages:
         #从符合条件的相册里选一个相册,    #发post
         print("正在处理page", page)
-        #page_post.apply_async((page.page_no, 1), queue='fb')
-        page_post(page.page_no, 1)
-        #post_engagement_ads(page.page_no, 1)
+
+        page_post(page.page_no, 10,keyword=None,long_ad=True)
+
 
 
 
@@ -5584,6 +5584,20 @@ def engagement_ads():
     for page in pages:
         #post_engagement_ads(page.page_no, 1)
         post_ads(page.page_no, "engagement",20)
+
+
+
+    return
+
+@shared_task
+def engagement_ads_long():
+    #选择需要推广的page
+    pages = MyPage.objects.filter(is_published=True, active=True, promotable=True)
+
+    #遍历每个page
+    for page in pages:
+        #post_engagement_ads(page.page_no, 1)
+        post_ads(page.page_no, "engagement",20,long_ad=True)
 
 
 

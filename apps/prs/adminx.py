@@ -64,6 +64,12 @@ class MyCategoryAdmin(object):
 
     spu_count_10.short_description = ">10的SPU数量"
 
+    def longaded_count(self, obj):
+
+        return  Lightin_SPU.objects.filter(longaded=True, breadcrumb__icontains=obj.tags).count()
+
+    longaded_count.short_description = "longaded_count"
+
     def size(self, obj):
         size_count = obj.cate_size.values("size","sku_quantity")
         return  str(size_count)
@@ -71,7 +77,7 @@ class MyCategoryAdmin(object):
     size.short_description = "尺码汇总"
 
 
-    list_display = ["super_cate", "super_name", "name", "level","tags","spu_count","spu_count_5","spu_count_10", "size", "active","published" ,]
+    list_display = ["super_cate", "super_name", "name", "level","tags","spu_count","spu_count_5","spu_count_10", "longaded_count","size", "active","published" ,]
 
 
     search_fields = ["name", ]
