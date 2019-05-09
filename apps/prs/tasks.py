@@ -6096,9 +6096,9 @@ def prepare_long_ad(page_no):
     from django.db.models import Count
 
     #取page对应的主推品类
-    breadcrumbs =  PagePromoteCate.objects.filter(mypage__page_no = page_no).values_list("breadcrumb", flat=True)
-    if breadcrumbs:
-        breadcrumbs = list(breadcrumbs)
+    cates =  PagePromoteCate.objects.filter(mypage__page_no = page_no).values_list("cate", flat=True)
+    if cates:
+        cates = list(cates)
     else:
         return
 
@@ -6114,15 +6114,15 @@ def prepare_long_ad(page_no):
 
     #把主推品类的所有适合的产品都拿出来打广告
 
-    for breadcrumb in breadcrumbs:
-        breadcrumb_lightinalbums = lightinalbums_all.filter(lightin_spu__breadcrumb = breadcrumb)
+    for cate in cates:
+        cate_lightinalbums = lightinalbums_all.filter(lightin_spu__breadcrumb__icontains = cate)
 
-        for i in range(0,breadcrumb_lightinalbums.count(),2):
+        for i in range(0,cate_lightinalbums.count(),2):
 
                 prepare_promote_image_album_v3(page_no ,
                                                [
-                                                   lightinalbums_breadcrumb[i],
-                                                   lightinalbums_breadcrumb[i + 1]
+                                                   cate_lightinalbums[i],
+                                                   cate_lightinalbums[i + 1]
                                                ]
                                                )
 
