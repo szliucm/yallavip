@@ -5683,14 +5683,19 @@ def get_serial():
 
 
 @shared_task
-def post_ads(page_no, ad_type, to_create_count=1,keyword=None):
+def post_ads(page_no, ad_type, to_create_count=1,keyword=None, long_ad=False):
     import time
     from prs.fb_action import  choose_ad_set
 
     from django.db.models import Q
 
-    serial = get_serial()
+    if long_ad:
+        serial = 0
+    else:
+        serial = get_serial()
+
     #每天的广告放进同一个组，保持广告的持续性，先设成三组，看看效果
+    #库存深的单独放一个组
     adset_no = choose_ad_set(page_no, ad_type,serial)
     if not adset_no:
         print("没有adset")
@@ -5710,6 +5715,8 @@ def post_ads(page_no, ad_type, to_create_count=1,keyword=None):
     if keyword:
         ads = ads.filter(yallavip_album__rule__name__icontains=keyword)
 
+    if long_ad:
+        ads = ads.filter(long_ad=True)
 
     adobjects = FacebookAdsApi.init(access_token=ad_tokens, debug=True)
     i=1
@@ -6080,7 +6087,53 @@ def prepare_promote(page_no,to_create_count, keyword=None):
         print("没有符合条件的相册了", page_no)
 
 
+#为长期广告准备商品
+@task
+def prepare_long_ad(page_no):
 
+    import random
+
+    from django.db.models import Count
+
+    #取page对应的主推品类
+    breadcrumbs =  PagePromoteCate.objects.filter(mypage__page_no = page_no).values_list("breadcrumb", flat=True)
+    if breadcrumbs:
+        breadcrumbs = list(breadcrumbs)
+    else:
+        return
+
+
+    # 取库存大、单价高、已经发布到相册 且还未打广告的商品
+    lightinalbums_all = LightinAlbum.objects.filter(yallavip_album__isnull=False, yallavip_album__page__page_no=page_no,
+                                            lightin_spu__sellable__gt=0, lightin_spu__SPU__vendor = "lightin",
+                                            lightin_spu__breadcrumb__in = breadcrumbs,
+                                            lightin_spu__aded=False,
+                                            published=True)
+    if keyword:
+        lightinalbums_all = lightinalbums_all.filter(yallavip_album__rule__name__icontains=keyword)
+
+
+    #把主推品类的所有适合的产品都拿出来打广告
+
+    for breadcrumb in breadcrumbs:
+
+
+    yallavip_breadcrumbs = lightinalbums_all.values("lightin_spu__breadcrumb").annotate(spu_count = Count(id)).filter(spu_count__gte=2)
+
+
+
+    if yallavip_breadcrumbs:
+        i = 0
+        while i < to_create_count:
+
+            yallavip_breadcrumb = random.choice(yallavip_breadcrumbs)
+            yallavip_album_pk = yallavip_breadcrumb.get("lightin_spu__breadcrumb")
+
+            prepare_promote_image_album_v3(yallavip_album_pk , lightinalbums_all)
+
+            i += 1
+    else:
+        print("没有符合条件的相册了", page_no)
 
 
 
