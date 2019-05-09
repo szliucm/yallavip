@@ -941,7 +941,7 @@ class YallavipAd(models.Model):
     message_ad_published_time = models.DateTimeField(null=True, blank=True, verbose_name="message_ad发布时间")
     message_ad_publish_error = models.CharField(default='无', max_length=256, null=True, blank=True, verbose_name="message_ad_publish_error")
 
-    long_aded = models.BooleanField(default=False, verbose_name="long_ad")
+    long_ad = models.BooleanField(default=False, verbose_name="long_ad")
 
     def cal_sellable(self):
         handle_list = self.spus_name.split(",")

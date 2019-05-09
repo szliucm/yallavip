@@ -5554,6 +5554,25 @@ def auto_post():
     return
 
 
+#自动生成post
+@shared_task
+def auto_post_longads():
+    #选择需要推广的page
+    pages = MyPage.objects.filter(is_published=True, active=True, promotable=True)
+
+    #遍历每个page
+    for page in pages:
+        #从符合条件的相册里选一个相册,    #发post
+        print("正在处理page", page)
+        #page_post.apply_async((page.page_no, 1), queue='fb')
+        page_post(page.page_no, 1)
+        #post_engagement_ads(page.page_no, 1)
+
+
+
+
+    return
+
 
 #自动生成互动ad
 @shared_task
@@ -5597,7 +5616,7 @@ def message_ads():
 #先post，然后基于post发广告
 #这只适合互动型广告
 @shared_task
-def page_post(page_no, to_create_count,keyword=None):
+def page_post(page_no, to_create_count,keyword=None,long_ad=False):
     import time
 
     access_token, long_token = get_token(page_no)
@@ -5606,12 +5625,13 @@ def page_post(page_no, to_create_count,keyword=None):
         return
     adobjects = FacebookAdsApi.init(access_token=access_token, debug=True)
 
-    ads = YallavipAd.objects.filter(active=True, published=False,yallavip_album__page__page_no=page_no )
+
+    ads = YallavipAd.objects.filter(active=True, published=False,yallavip_album__page__page_no=page_no, long_ad=long_ad )
     if keyword:
         ads = ads.filter(yallavip_album__rule__name__icontains=keyword)
 
-    #如果数量不够，就创建
-    if ads.count() < to_create_count:
+    #如果数量不够，且不是长期广告就创建
+    if ads.count() < to_create_count and not long_ad:
         prepare_promote(page_no, to_create_count - ads.count(), keyword)
 
     i=1
@@ -5684,6 +5704,8 @@ def get_serial():
     return str(days % 3 + 1)
 
 
+
+
 @shared_task
 def post_ads(page_no, ad_type, to_create_count=1,keyword=None, long_ad=False):
     import time
@@ -5718,7 +5740,7 @@ def post_ads(page_no, ad_type, to_create_count=1,keyword=None, long_ad=False):
         ads = ads.filter(yallavip_album__rule__name__icontains=keyword)
 
     if long_ad:
-        ads = ads.filter(long_aded=True)
+        ads = ads.filter(long_ad=True)
 
     adobjects = FacebookAdsApi.init(access_token=ad_tokens, debug=True)
     i=1
@@ -6287,7 +6309,7 @@ def prepare_promote_image_album_v3(page_no, lightin_spu_pks):
                                                        defaults={'image_marked_url': image_marked_url,
                                                                  'message': message,
                                                                  'active': True,
-                                                                 'long_aded':True,
+                                                                 'long_ad':True,
 
                                                                  }
                                                        )
