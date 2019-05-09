@@ -6080,7 +6080,7 @@ def prepare_promote(page_no,to_create_count, keyword=None):
             yallavip_album = random.choice(yallavip_albums)
             yallavip_album_pk = yallavip_album.get("yallavip_album")
 
-            prepare_promote_image_album_v3(yallavip_album_pk , lightinalbums_all)
+            prepare_promote_image_album_v2(yallavip_album_pk , lightinalbums_all)
 
             i += 1
     else:
