@@ -6139,10 +6139,7 @@ def prepare_long_ad(page_no):
 
 
     # 取库存大、单价高、已经发布到相册 且还未打广告的商品
-    lightinalbums_all = LightinAlbum.objects.filter(yallavip_album__isnull=False, yallavip_album__page__page_no=page_no,
-                                            lightin_spu__sellable__gt=10, lightin_spu__vendor = "lightin",
-                                            lightin_spu__longaded=False,
-                                            published=True)
+    spus_all = Lightin_SPU.objects.filter(sellable__gt=10, vendor="lightin",longaded=False)
 
 
 
@@ -6150,17 +6147,18 @@ def prepare_long_ad(page_no):
 
     for cate in cates:
 
-        cate_lightinalbums = lightinalbums_all.\
-                filter(lightin_spu__breadcrumb__icontains = cate).\
-                values("lightin_spu__pk").\
-                annotate(album_count=Count("yallavip_album")).order_by("-album_count")
-
-        for i in range(0,cate_lightinalbums.count(),2):
-            if cate_lightinalbums.count() > i+1:
+        cate_spus = spus_all.filter(breadcrumb__icontains = cate)
+        #每次最多20个
+        if cate_spus.count()>20:
+            count = 20
+        else:
+            count = cate_spus.count()
+        for i in range(0,count,2):
+            if count > i+1:
                     prepare_promote_image_album_v3(page_no ,
                                                [
-                                                   cate_lightinalbums[i].get("lightin_spu__pk"),
-                                                   cate_lightinalbums[i + 1].get("lightin_spu__pk"),
+                                                   cate_spus[i].pk,
+                                                   cate_spus[i + 1].pk,
                                                ]
                                                )
 
