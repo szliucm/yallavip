@@ -6108,7 +6108,7 @@ def prepare_long_ad(page_no):
     # 取库存大、单价高、已经发布到相册 且还未打广告的商品
     lightinalbums_all = LightinAlbum.objects.filter(yallavip_album__isnull=False, yallavip_album__page__page_no=page_no,
                                             lightin_spu__sellable__gt=10, lightin_spu__vendor = "lightin",
-                                            lightin_spu__aded=False,
+                                            lightin_spu__longaded=False,
                                             published=True)
 
 
@@ -6253,13 +6253,14 @@ def prepare_promote_image_album_v3(page_no, lightin_spu_pks):
 
     print ("正在处理page ", page_no)
     target_page= MyPage.objects.get(page_no=page_no)
-
+    spus=[]
     spu_ims = []
     handles = []
     for spu_pk in lightin_spu_pks:
         spu = Lightin_SPU.objects.get(pk=spu_pk)
         spu_im = make_spu_pure_image(target_page, spu)
         if spu_im:
+            spus.append(spu)
             spu_ims.append(spu_im)
             handles.append(spu.handle)
         else:
@@ -6286,13 +6287,14 @@ def prepare_promote_image_album_v3(page_no, lightin_spu_pks):
                                                        defaults={'image_marked_url': image_marked_url,
                                                                  'message': message,
                                                                  'active': True,
+                                                                 'long_ad':True,
 
                                                                  }
                                                        )
     #把spu标示为已经打过广告了
-    for lightinalbum in lightinalbums:
-        spu = lightinalbum.lightin_spu
-        spu.aded = True
+    for spu in spus:
+
+        spu.longaded = True
         spu.save()
 
 #下载最新的feed

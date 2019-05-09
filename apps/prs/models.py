@@ -570,6 +570,8 @@ class Lightin_SPU(models.Model):
     active = models.BooleanField(default=True, verbose_name="有效性")
     promoted = models.BooleanField(default=False, verbose_name="促销状态")
 
+    longaded = models.BooleanField(default=False, verbose_name="长期广告状态")
+
     class Meta:
         verbose_name = "兰亭SPU"
         verbose_name_plural = verbose_name
