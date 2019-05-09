@@ -6106,7 +6106,6 @@ def prepare_long_ad(page_no):
     # 取库存大、单价高、已经发布到相册 且还未打广告的商品
     lightinalbums_all = LightinAlbum.objects.filter(yallavip_album__isnull=False, yallavip_album__page__page_no=page_no,
                                             lightin_spu__sellable__gt=0, lightin_spu__SPU__vendor = "lightin",
-                                            lightin_spu__breadcrumb__in = breadcrumbs,
                                             lightin_spu__aded=False,
                                             published=True)
     if keyword:
@@ -6115,25 +6114,20 @@ def prepare_long_ad(page_no):
 
     #把主推品类的所有适合的产品都拿出来打广告
 
-    #for breadcrumb in breadcrumbs:
+    for breadcrumb in breadcrumbs:
+        breadcrumb_lightinalbums = lightinalbums_all.filter(lightin_spu__breadcrumb = breadcrumb)
 
+        for i in range(0,breadcrumb_lightinalbums.count(),2):
 
-    #yallavip_breadcrumbs = lightinalbums_all.values("lightin_spu__breadcrumb").annotate(spu_count = Count(id)).filter(spu_count__gte=2)
+                prepare_promote_image_album_v3(page_no ,
+                                               [
+                                                   lightinalbums_breadcrumb[i],
+                                                   lightinalbums_breadcrumb[i + 1]
+                                               ]
+                                               )
 
-
-
-    if yallavip_breadcrumbs:
-        i = 0
-        while i < to_create_count:
-
-            yallavip_breadcrumb = random.choice(yallavip_breadcrumbs)
-            yallavip_album_pk = yallavip_breadcrumb.get("lightin_spu__breadcrumb")
-
-            prepare_promote_image_album_v3(yallavip_album_pk , lightinalbums_all)
-
-            i += 1
-    else:
-        print("没有符合条件的相册了", page_no)
+        else:
+            print("没有符合条件的相册了", page_no)
 
 
 
@@ -6213,17 +6207,14 @@ def prepare_promote_image_album_v2(yallavip_album_pk, lightinalbums_all):
         spu.aded = True
         spu.save()
 
-def prepare_promote_image_album_v3(yallavip_album_pk, lightinalbums_all):
+def prepare_promote_image_album_v3(page_no, ori_lightinalbums):
     from prs.fb_action import combo_ad_image_v2
-    ori_lightinalbums = lightinalbums_all.filter(yallavip_album__pk=yallavip_album_pk).order_by(
-        "lightin_spu__sellable")[:2]
-    yallavip_album_instance = YallavipAlbum.objects.get(pk=yallavip_album_pk)
-    print ("正在处理相册 ", yallavip_album_instance.album.name)
+
+
+    print ("正在处理page ", page_no)
 
     spu_pks = ori_lightinalbums.values_list("lightin_spu__pk", flat=True)
     album_pks = []
-
-    print("待处理的相册图片pk",album_pks )
 
 
     #计算spu的促销价格，如果是价格有变动，删除原有fb图片，并重新生成新的图片
@@ -6233,8 +6224,6 @@ def prepare_promote_image_album_v3(yallavip_album_pk, lightinalbums_all):
         spu_pk = lightinalbum.lightin_spu.pk
         print("正在处理spu", spu_pk )
         updated = update_promote_price(spu_pk)
-        #only for debug 0430
-        #updated=True
         if updated:
             clear_album(spu_pk)
             print("正在处理lightinalbum", lightinalbum.pk)
@@ -6244,23 +6233,18 @@ def prepare_promote_image_album_v3(yallavip_album_pk, lightinalbums_all):
     print(album_pks)
     lightinalbums = LightinAlbum.objects.filter(pk__in=list(album_pks))
 
-
     spu_ims = lightinalbums.filter(~Q(image_pure=""),image_pure__isnull=False).values_list("image_pure", flat=True)
     if spu_ims.count()<2:
         print(spu_ims)
         print("没有无logo图片")
         return False
 
-
-
-
-
     handles = lightinalbums.values_list("lightin_spu__handle", flat=True)
 
     # 把spus的图拼成一张
     handles_name = ','.join(handles)
 
-    image_marked_url = combo_ad_image_v2(spu_ims, handles_name, yallavip_album_instance)
+    image_marked_url = combo_ad_image_v3(spu_ims, handles_name, page_no)
     print( image_marked_url )
 
     if not image_marked_url:

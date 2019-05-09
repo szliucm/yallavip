@@ -1860,6 +1860,179 @@ def combo_ad_image_v2(spu_ims, spus_name,yallavip_album_instance):
 
     return  destination_url
 
+def combo_ad_image_v3(spu_ims, spus_name,page_no):
+    from shop.photo_mark import clipResizeImg_new, get_remote_image,clipResizeImg_box
+    import os
+    from django.conf import settings
+    domain = "http://admin.yallavip.com"
+
+    try:
+        from PIL import Image, ImageDraw, ImageFont, ImageEnhance
+
+    except ImportError:
+        import Image, ImageDraw, ImageFont, ImageEnhance
+
+    ims = []
+
+    for spu_im in spu_ims:
+        im = get_remote_image(spu_im)
+        if not im:
+            print ("image打不开")
+            return None
+        ims.append(im)
+
+
+    # 开始拼图
+
+    item_count = len(spu_ims)
+    print("图片数量", item_count)
+    if item_count == 4:
+        # 四张图
+        # 先做个1080x1080的画布
+        layer = Image.new("RGB", (1080, 1080), "white")
+
+        layer.paste(clipResizeImg_new(ims[0], 540, 540), (0, 0))
+        layer.paste(clipResizeImg_new(ims[1], 540, 540), (540, 0))
+        layer.paste(clipResizeImg_new(ims[2], 540, 540), (0, 540))
+        layer.paste(clipResizeImg_new(ims[3], 540, 540), (540, 540))
+
+
+
+
+
+    elif item_count == 2:
+        # 两张图
+        # 先做个1200*628的画布
+        layer = Image.new("RGB", (1200, 628), "white")
+
+        layer.paste(clipResizeImg_new(ims[0], 600, 600), (0, 14))
+        layer.paste(clipResizeImg_new(ims[1], 600, 600), (600, 14))
+
+
+
+
+
+
+
+
+
+
+
+    elif item_count == 5:
+        # 五张图
+        # 先做个900x1000的画布
+        layer = Image.new("RGB", (900, 1180), "red")
+        layer.paste(clipResizeImg_new(ims[0], 540, 540), (0, 0))
+        layer.paste(clipResizeImg_new(ims[1], 540, 540), (0, 540))
+        layer.paste(clipResizeImg_new(ims[2], 360, 360), (540, 0))
+        layer.paste(clipResizeImg_new(ims[3], 360, 360), (540, 360))
+        layer.paste(clipResizeImg_new(ims[4], 360, 360), (540, 720))
+
+    elif item_count == 6:
+        # 六张图
+        # 先做个900x900的画布
+        layer = Image.new("RGB", (900, 1000), "red")
+
+        layer.paste(clipResizeImg_new(ims[0], 600, 600), (0, 0))
+        layer.paste(clipResizeImg_new(ims[1], 300, 300), (0, 600))
+        layer.paste(clipResizeImg_new(ims[2], 300, 300), (300, 600))
+        layer.paste(clipResizeImg_new(ims[3], 300, 300), (600, 0))
+        layer.paste(clipResizeImg_new(ims[4], 300, 300), (600, 300))
+        layer.paste(clipResizeImg_new(ims[5], 300, 300), (600, 600))
+    elif item_count == 7:
+        # 先做个900x130的画布
+        layer = Image.new("RGB", (900, 1300), "red")
+        layer.paste(clipResizeImg_new(ims[0], 450, 450), (0, 0))
+        layer.paste(clipResizeImg_new(ims[1], 450, 450), (450, 0))
+        layer.paste(clipResizeImg_new(ims[2], 450, 450), (0, 450))
+        layer.paste(clipResizeImg_new(ims[3], 450, 450), (450, 450))
+        layer.paste(clipResizeImg_new(ims[4], 300, 300), (0, 900))
+        layer.paste(clipResizeImg_new(ims[5], 300, 300), (300, 900))
+        layer.paste(clipResizeImg_new(ims[6], 300, 300), (600, 900))
+    elif item_count == 8:
+        # 先做个900x1150的画布
+        layer = Image.new("RGB", (900, 1150), "red")
+        layer.paste(clipResizeImg_new(ims[0], 450, 450), (0, 0))
+        layer.paste(clipResizeImg_new(ims[1], 450, 450), (450, 0))
+        layer.paste(clipResizeImg_new(ims[2], 300, 300), (0, 450))
+        layer.paste(clipResizeImg_new(ims[3], 300, 300), (0, 750))
+        layer.paste(clipResizeImg_new(ims[4], 300, 300), (300, 450))
+        layer.paste(clipResizeImg_new(ims[5], 300, 300), (300, 750))
+        layer.paste(clipResizeImg_new(ims[6], 300, 300), (600, 450))
+        layer.paste(clipResizeImg_new(ims[7], 300, 300), (600, 750))
+    elif item_count == 9:
+        # 先做个900x1000的画布
+        layer = Image.new("RGB", (900, 1000), "red")
+        layer.paste(clipResizeImg_new(ims[0], 300, 300), (0, 0))
+        layer.paste(clipResizeImg_new(ims[1], 300, 300), (0, 300))
+        layer.paste(clipResizeImg_new(ims[2], 300, 300), (0, 600))
+        layer.paste(clipResizeImg_new(ims[3], 300, 300), (300, 0))
+        layer.paste(clipResizeImg_new(ims[4], 300, 300), (300, 300))
+        layer.paste(clipResizeImg_new(ims[5], 300, 300), (300, 600))
+        layer.paste(clipResizeImg_new(ims[6], 300, 300), (600, 0))
+        layer.paste(clipResizeImg_new(ims[7], 300, 300), (600, 300))
+        layer.paste(clipResizeImg_new(ims[8], 300, 300), (600, 600))
+    elif item_count == 10:
+        # 先做个900x130的画布
+        layer = Image.new("RGB", (900, 925), "red")
+        layer.paste(clipResizeImg_new(ims[0], 300, 300), (0, 0))
+        layer.paste(clipResizeImg_new(ims[1], 300, 300), (0, 300))
+        layer.paste(clipResizeImg_new(ims[2], 300, 300), (300, 0))
+        layer.paste(clipResizeImg_new(ims[3], 300, 300), (300, 300))
+        layer.paste(clipResizeImg_new(ims[4], 300, 300), (600, 0))
+        layer.paste(clipResizeImg_new(ims[5], 300, 300), (600, 300))
+        layer.paste(clipResizeImg_new(ims[6], 225, 225), (0, 600))
+        layer.paste(clipResizeImg_new(ims[7], 225, 225), (225, 600))
+        layer.paste(clipResizeImg_new(ims[8], 225, 225), (450, 600))
+        layer.paste(clipResizeImg_new(ims[9], 225, 225), (675, 600))
+    else:
+        layer = None
+
+    # 整张图左上角打logo水印
+
+    if page_no:
+        logo = MyPage.objects.get(page_no=page_no).logo
+        domain = "http://admin.yallavip.com"
+        destination_url = domain + os.path.join(logo.url)
+        im_logo = get_remote_image(destination_url)
+
+        if not im_logo:
+            print ("logo image打不开")
+            return None
+
+        ims.append(im_logo)
+
+        # 把尺码水印文件加到新的图层上，然后把新旧图层融合
+        layer_logo = Image.new('RGBA', layer.size, (0, 0, 0, 0))
+        layer_logo.paste(im_logo, (0, 0))
+        layer = Image.composite(layer_logo, layer, layer_logo)
+
+    if layer:
+        out = layer.convert('RGB')
+
+
+        image_filename = spus_name+'.jpg'
+
+        destination = os.path.join(settings.MEDIA_ROOT, "ad/", image_filename)
+
+        out.save(destination, 'JPEG', quality=95)
+        # out.save('target%s.jpg'%(combo.SKU), 'JPEG')
+
+        destination_url = domain + os.path.join(settings.MEDIA_URL, "ad/", image_filename)
+        print("destination_url", destination_url)
+        return  destination_url
+
+
+
+    else:
+        print( "items数量问题")
+        destination_url =  None
+
+    for im in ims:
+        im.close()
+
+    return  destination_url
+
 def get_ad_sets(adaccount_no):
     adobjects = FacebookAdsApi.init(access_token=ad_tokens, debug=True)
 

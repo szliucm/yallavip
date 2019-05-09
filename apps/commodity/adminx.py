@@ -86,3 +86,16 @@ class BreadcrumbAdmin(object):
 
     exclude = []
     ordering = ['-spus_count',]
+
+@xadmin.sites.register(PagePromoteCate)
+class PagePromoteCateAdmin(object):
+    from prs.commodity import update_breadcrumb_count
+
+    actions = [ ]
+    list_display = ('mypage', 'breadcrumb',)
+    list_editable = []
+    search_fields = ['mypage', 'breadcrumb' ]
+    list_filter = ('breadcrumb',)
+
+    exclude = []
+    ordering = []
