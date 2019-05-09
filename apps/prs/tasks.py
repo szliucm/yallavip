@@ -6118,7 +6118,7 @@ def prepare_long_ad(page_no):
     for breadcrumb in breadcrumbs:
 
 
-    yallavip_breadcrumbs = lightinalbums_all.values("lightin_spu__breadcrumb").annotate(spu_count = Count(id)).filter(spu_count__gte=2)
+    #yallavip_breadcrumbs = lightinalbums_all.values("lightin_spu__breadcrumb").annotate(spu_count = Count(id)).filter(spu_count__gte=2)
 
 
 
