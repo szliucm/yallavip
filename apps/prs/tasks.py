@@ -6150,13 +6150,13 @@ def prepare_long_ad(page_no):
         cate_spus = spus_all.filter(breadcrumb__icontains = cate)
         #每次最多20个
         if cate_spus.count()>20:
-            count = 20
+            count = 10
         else:
-            count = cate_spus.count()
+            count = int(cate_spus.count()/2)
         print ("一共有%s个spu"%(count))
-        i=0
-        for i in int(count/2):
 
+        for i in rage(count):
+            print("当前处理 ",i)
             prepare_promote_image_album_v3(page_no ,
                                        [
                                            cate_spus[2*i].pk,
