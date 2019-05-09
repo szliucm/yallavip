@@ -5626,7 +5626,11 @@ def page_post(page_no, to_create_count,keyword=None,long_ad=False):
     adobjects = FacebookAdsApi.init(access_token=access_token, debug=True)
 
 
-    ads = YallavipAd.objects.filter(active=True, published=False,yallavip_album__page__page_no=page_no, long_ad=long_ad )
+    if long_ad:
+        ads = YallavipAd.objects.filter(active=True, published=False, page_no=page_no,
+                                        long_ad=long_ad)
+    else:
+        ads = YallavipAd.objects.filter(active=True, published=False,yallavip_album__page__page_no=page_no, long_ad=long_ad )
     if keyword:
         ads = ads.filter(yallavip_album__rule__name__icontains=keyword)
 
