@@ -6115,7 +6115,7 @@ def prepare_long_ad(page_no):
 
     #把主推品类的所有适合的产品都拿出来打广告
 
-    for breadcrumb in breadcrumbs:
+    #for breadcrumb in breadcrumbs:
 
 
     #yallavip_breadcrumbs = lightinalbums_all.values("lightin_spu__breadcrumb").annotate(spu_count = Count(id)).filter(spu_count__gte=2)
