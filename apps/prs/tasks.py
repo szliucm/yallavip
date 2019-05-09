@@ -6248,7 +6248,7 @@ def make_spu_pure_image(target_page, spu):
 
 
 def prepare_promote_image_album_v3(page_no, lightin_spu_pks):
-    from prs.fb_action import combo_ad_image_v2
+    from prs.fb_action import combo_ad_image_v3
 
 
     print ("正在处理page ", page_no)
