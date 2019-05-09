@@ -28,6 +28,8 @@ from .shop_action import sync_shop
 from facebook_business.api import FacebookAdsApi
 from facebook_business.adobjects.page import Page
 
+from shop.photo_mark import yallavip_mark_image
+
 my_app_id = "562741177444068"
 my_app_secret = "e6df363351fb5ce4b7f0080adad08a4d"
 #my_access_token = "EAAHZCz2P7ZAuQBABHO6LywLswkIwvScVqBP2eF5CrUt4wErhesp8fJUQVqRli9MxspKRYYA4JVihu7s5TL3LfyA0ZACBaKZAfZCMoFDx7Tc57DLWj38uwTopJH4aeDpLdYoEF4JVXHf5Ei06p7soWmpih8BBzadiPUAEM8Fw4DuW5q8ZAkSc07PrAX4pGZA4zbSU70ZCqLZAMTQZDZD"
@@ -4583,7 +4585,7 @@ def prepare_yallavip_photoes(page_no=None):
 @shared_task
 def prepare_yallavip_album_source(page_no=None):
     from django.db.models import Max
-    from shop.photo_mark import yallavip_mark_image
+
 
 
     lightinalbums_all = LightinAlbum.objects.filter(sourced=False,source_error="",yallavip_album__isnull = False )
@@ -4659,7 +4661,7 @@ def prepare_yallavip_album_material(page_no=None):
 
 @shared_task
 def prepare_a_album(lightinalbum_pk):
-    from shop.photo_mark import yallavip_mark_image
+
     ori_lightinalbum = LightinAlbum.objects.get(pk=lightinalbum_pk)
 
     spu_pk = ori_lightinalbum.lightin_spu.pk
