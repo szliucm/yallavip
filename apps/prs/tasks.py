@@ -6281,7 +6281,7 @@ def prepare_promote_image_album_v3(page_no, lightin_spu_pks):
               "How to order?Pls choice the product that you like it , then send us the picture, we will order it for you!🤩🤩"
     message = message + "\n[" + handles_name+ "]"
 
-    obj, created = YallavipAd.objects.update_or_create(yallavip_album=yallavip_album_instance,
+    obj, created = YallavipAd.objects.update_or_create(page_no=page_no,
                                                        spus_name=handles_name,
                                                        defaults={'image_marked_url': image_marked_url,
                                                                  'message': message,
