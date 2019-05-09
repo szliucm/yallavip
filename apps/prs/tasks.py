@@ -6123,7 +6123,7 @@ def prepare_long_ad(page_no):
                 annotate(album_count=Count("yallavip_album")).order_by("-album_count")
 
         for i in range(0,cate_lightinalbums.count(),2):
-                if cate_lightinalbums.count() > i+1:
+                try:
 
                     prepare_promote_image_album_v3(page_no ,
                                                [
@@ -6131,6 +6131,8 @@ def prepare_long_ad(page_no):
                                                    cate_lightinalbums[i + 1].get("lightin_spu__pk"),
                                                ]
                                                )
+                except:
+                    break
 
 
 
