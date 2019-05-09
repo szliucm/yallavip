@@ -52,6 +52,12 @@ class MyCategoryAdmin(object):
 
     spu_count.short_description = "SPU数量"
 
+    def thick_spu_count(self, obj):
+
+        return  Lightin_SPU.objects.filter(sellable__gt=10, breadcrumb__contains=obj.tags).count()
+
+    thick_spu_count.short_description = ">10的SPU数量"
+
     def size(self, obj):
         size_count = obj.cate_size.values("size","sku_quantity")
         return  str(size_count)
@@ -59,7 +65,7 @@ class MyCategoryAdmin(object):
     size.short_description = "尺码汇总"
 
 
-    list_display = ["super_cate", "super_name", "name", "level","tags","spu_count","size", "active","published" ,]
+    list_display = ["super_cate", "super_name", "name", "level","tags","spu_count","thick_spu_count","size", "active","published" ,]
 
 
     search_fields = ["name", ]
