@@ -82,3 +82,34 @@ class PageRule(models.Model):
 
     def __str__(self):
         return self.mypage.page
+
+
+
+# breadcrumb
+class Breadcrumb(models.Model):
+    breadcrumb = models.CharField(u'breadcrumb', default='', max_length=200)
+    spus_count = models.IntegerField(u'数量', default=0, blank=True, null=True)
+
+    class Meta:
+        verbose_name = "breadcrumb"
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.breadcrumb
+
+
+#page 主推 breadcrumb
+class PagePromoteCate(models.Model):
+
+    mypage = models.OneToOneField(MyPage, on_delete=models.CASCADE,  verbose_name="Page")
+
+    breadcrumb  = models.ManyToManyField(Breadcrumb, blank=False, verbose_name="breadcrumb",
+                                 related_name="breadcrumb_promote")
+
+
+    class Meta:
+        verbose_name = "page主推breadcrumb"
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.mypage.page
