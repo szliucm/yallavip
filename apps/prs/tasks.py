@@ -6287,7 +6287,7 @@ def prepare_promote_image_album_v3(page_no, lightin_spu_pks):
                                                        defaults={'image_marked_url': image_marked_url,
                                                                  'message': message,
                                                                  'active': True,
-                                                                 'long_ad':True,
+                                                                 'long_aded':True,
 
                                                                  }
                                                        )
