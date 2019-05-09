@@ -5718,7 +5718,7 @@ def post_ads(page_no, ad_type, to_create_count=1,keyword=None, long_ad=False):
     from django.db.models import Q
 
     if long_ad:
-        serial = 0
+        serial = "0"
     else:
         serial = get_serial()
 
