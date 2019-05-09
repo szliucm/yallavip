@@ -2096,8 +2096,8 @@ def get_ad_sets(adaccount_no):
 def choose_ad_set(page_no, ad_type, serial=None):
     import  random
 
-    if serial:
-        tag = page_no + '_' + ad_type + '_' + serial
+    if not serial :
+        tag = page_no + '_' + ad_type + '_' + str(serial)
     else:
         tag = page_no + '_' + ad_type + '_' + str(random.randint(1, 3))
     try:

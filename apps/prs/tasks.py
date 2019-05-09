@@ -5734,11 +5734,18 @@ def post_ads(page_no, ad_type, to_create_count=1,keyword=None, long_ad=False):
 
     if ad_type == "engagement":
         #ads = YallavipAd.objects.filter(~Q(object_story_id="" ),  object_story_id__isnull = False,active=True, published=True,engagement_aded=False, yallavip_album__page__page_no=page_no )
-        ads = YallavipAd.objects.filter(active=True, published=True, engagement_aded=False, yallavip_album__page__page_no=page_no).order_by("-fb_feed__like_count")
+        ads = YallavipAd.objects.filter(active=True, published=True, engagement_aded=False, long_ad=long_ad).order_by("-fb_feed__like_count")
     elif ad_type == "message":
-        ads = YallavipAd.objects.filter(active=True, engagement_aded= True, message_aded=False, yallavip_album__page__page_no=page_no).order_by("-fb_feed__like_count")
+        ads = YallavipAd.objects.filter(active=True, engagement_aded= True, message_aded=False, long_ad=long_ad).order_by("-fb_feed__like_count")
     else:
         return  False
+
+    if long_ad:
+        ads = ads.filter(page_no=page_no)
+    else:
+        ads= ads.filter(yallavip_album__page__page_no=page_no)
+
+
 
     if keyword:
         ads = ads.filter(yallavip_album__rule__name__icontains=keyword)
