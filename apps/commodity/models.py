@@ -95,7 +95,7 @@ class Breadcrumb(models.Model):
         verbose_name_plural = verbose_name
 
     def __str__(self):
-        return self.breadcrumb
+        return str(self.spus_count)+"_"+ self.breadcrumb
 
 
 #page 主推 breadcrumb

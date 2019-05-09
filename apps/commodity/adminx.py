@@ -81,7 +81,7 @@ class BreadcrumbAdmin(object):
     actions = ["update_breadcrumb_count", ]
     list_display = ('breadcrumb', 'spus_count',)
     list_editable = []
-    search_fields = ['breadcrumb', 'cates','prices', 'attrs', ]
+    search_fields = ['breadcrumb',  ]
     list_filter = ()
 
     exclude = []
