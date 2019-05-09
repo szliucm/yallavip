@@ -365,16 +365,17 @@ def lightin_mark_image(ori_image, handle, price1, price2, lightinalbum):
 
     return  destination, destination_url
 
-def yallavip_mark_image(ori_image, handle, price1, price2, lightinalbum):
+def yallavip_mark_image(ori_image, handle, price1, price2, target_page):
     from django.utils import timezone as datetime
     # 对图片进行处理
     ################
-    target_page = lightinalbum.yallavip_album.page
+
+
 
     logo = target_page.logo
     promote = target_page.promote
     price = target_page.price
-    album_promote = lightinalbum.yallavip_album.album.album_promte
+
 
     image = get_remote_image(ori_image)
 

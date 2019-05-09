@@ -4727,7 +4727,7 @@ def prepare_a_album(lightinalbum_pk):
             # 如果有相册促销标，就打相册促销标，否则打价格标签
 
             image_marked, image_pure_url, image_marked_url = yallavip_mark_image(image, spu.handle, str(price1), str(price2),
-                                                                 lightinalbum)
+                                                                 lightinalbum.yallavip_album.page)
             if not image_marked:
                 error = "打水印失败"
 
@@ -6115,19 +6115,20 @@ def prepare_long_ad(page_no):
     #把主推品类的所有适合的产品都拿出来打广告
 
     for cate in cates:
-        cate_lightinalbums = lightinalbums_all.filter(lightin_spu__breadcrumb__icontains = cate)
+
+        cate_lightinalbums = lightinalbums_all.\
+                filter(lightin_spu__breadcrumb__icontains = cate).\
+                values("lightin_spu__pk").\
+                annotate(album_count=Count("yallavip_album")).order_by("-album_count")
 
         for i in range(0,cate_lightinalbums.count(),2):
 
                 prepare_promote_image_album_v3(page_no ,
                                                [
-                                                   cate_lightinalbums[i],
-                                                   cate_lightinalbums[i + 1]
+                                                   cate_lightinalbums[i].get("lightin_spu__pk"),
+                                                   cate_lightinalbums[i + 1].get("lightin_spu__pk"),
                                                ]
                                                )
-
-        else:
-            print("没有符合条件的相册了", page_no)
 
 
 
@@ -6207,39 +6208,59 @@ def prepare_promote_image_album_v2(yallavip_album_pk, lightinalbums_all):
         spu.aded = True
         spu.save()
 
-def prepare_promote_image_album_v3(page_no, ori_lightinalbums):
+def make_spu_pure_image(target_page, spu):
+    # 价格
+    price1 = int(spu.yallavip_price)
+    price2 = int(price1 * random.uniform(5, 6))
+
+
+    # 准备图片
+    # 先取第一张，以后考虑根据实际有库存的sku的图片（待优化）
+    if spu.images_dict:
+        image = json.loads(spu.images_dict).values()
+        if image and len(image) > 0:
+            a = "/"
+            image_split = list(image)[0].split(a)
+
+            image_split[4] = '800x800'
+            image = a.join(image_split)
+
+        # 打水印
+        image_marked, image_pure_url, image_marked_url = yallavip_mark_image(image, spu.handle, str(price1),
+                                                                             str(price2),
+                                                                             target_page)
+        if not image_marked:
+            error = "打水印失败"
+
+    else:
+        print(album, spu.SPU, "没有图片")
+        error = "没有图片"
+
+    if error == "":
+        return image_pure_url
+    else:
+        return None
+
+
+
+
+def prepare_promote_image_album_v3(page_no, lightin_spu_pks):
     from prs.fb_action import combo_ad_image_v2
 
 
     print ("正在处理page ", page_no)
+    target_page= MyPage.objects.get(page_no=page_no)
 
-    spu_pks = ori_lightinalbums.values_list("lightin_spu__pk", flat=True)
-    album_pks = []
-
-
-    #计算spu的促销价格，如果是价格有变动，删除原有fb图片，并重新生成新的图片
-    for lightinalbum in ori_lightinalbums:
-        album_pks.append(lightinalbum.pk)
-
-        spu_pk = lightinalbum.lightin_spu.pk
-        print("正在处理spu", spu_pk )
-        updated = update_promote_price(spu_pk)
-        if updated:
-            clear_album(spu_pk)
-            print("正在处理lightinalbum", lightinalbum.pk)
-            prepare_a_album(lightinalbum.pk)
-
-    #重新读取
-    print(album_pks)
-    lightinalbums = LightinAlbum.objects.filter(pk__in=list(album_pks))
-
-    spu_ims = lightinalbums.filter(~Q(image_pure=""),image_pure__isnull=False).values_list("image_pure", flat=True)
-    if spu_ims.count()<2:
-        print(spu_ims)
-        print("没有无logo图片")
-        return False
-
-    handles = lightinalbums.values_list("lightin_spu__handle", flat=True)
+    spu_ims = []
+    handles = []
+    for spu_pk in lightin_spu_pks:
+        spu = Lightin_SPU.objects.get(pk=spu_pk)
+        spu_im = make_spu_pure_image(target_page, spu)
+        if spu_im:
+            spu_ims.append(spu_im)
+            handles.append(spu.handle)
+        else:
+            return  False
 
     # 把spus的图拼成一张
     handles_name = ','.join(handles)
