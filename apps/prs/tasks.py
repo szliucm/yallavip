@@ -5610,6 +5610,20 @@ def engagement_ads_long():
 
     return
 
+@shared_task
+def message_ads_long():
+    #选择需要推广的page
+    pages = MyPage.objects.filter(is_published=True, active=True, promotable=True)
+
+    #遍历每个page
+    for page in pages:
+        #post_engagement_ads(page.page_no, 1)
+        post_ads(page.page_no, "message",10,long_ad=True)
+
+
+
+    return
+
 
 # 自动生成消息ad
 @shared_task
@@ -6174,11 +6188,11 @@ def prepare_long_ad(page_no):
             count = 10
         else:
             count = int(cate_spus.count()/2)
-        print ("一共有%s个spu"%(count))
+        print ("一共有%s个"%(count))
 
         for i in range(count):
             print("当前处理 ",i, cate_spus)
-            spu_pks =  [cate_spus[2*i].pk, cate_spus[2*i + 1].pk]
+            spu_pks =  [cate_spus[0].pk, cate_spus[1].pk]
             prepare_promote_image_album_v3(page_no ,spu_pks)
 
 

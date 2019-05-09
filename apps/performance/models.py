@@ -21,7 +21,7 @@ class Sales(models.Model):
         verbose_name_plural = verbose_name
 
     def __str__(self):
-        return self.order_date
+        return str(self.order_date)
 
 '''
 class StaffPerformace(models.Model):
