@@ -73,3 +73,16 @@ class PageRuleAdmin(object):
             sync_yallavip_album(page_no=row.mypage.page_no)
 
     batch_sync_yallavip_album.short_description = "批量发布到相册"
+
+@xadmin.sites.register(SelectionRule)
+class Breadcrumb(object):
+    from prs.commodity import update_breadcrumb_count
+
+    actions = ["update_breadcrumb_count", ]
+    list_display = ('breadcrumb', 'spus_count',)
+    list_editable = []
+    search_fields = ['breadcrumb', 'cates','prices', 'attrs', ]
+    list_filter = ()
+
+    exclude = []
+    ordering = ['-spus_count',]
