@@ -1050,7 +1050,7 @@ class OrderDetailAdmin(object):
     #"fb_photo", "show_image", 'show_local_image','show_supply_status','alternative',
     list_display = ['order', 'sku',"handle","skuattr", 'product_quantity','stock',  'price','order_status', ]
 
-    search_fields = ["order__order_no",'sku',"order__logistic_no" ]
+    search_fields = ["order__order_no",'sku',"order__logistic_no", ]
 
     ordering = ['-order__order_time']
     list_filter = ("order__status","order__verify__verify_status","order__verify__sms_status",)

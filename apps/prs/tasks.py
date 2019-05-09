@@ -2088,8 +2088,12 @@ def mapping_order_lightin(order):
             orderdetail_lightin_list.append(orderdetail_lightin)
 
             # 更新barcode占用
+
             #barcode = inventory[1]
             #barcode.o_reserved = F("o_reserved") + inventory[2]
+
+
+
 
         OrderDetail_lightin.objects.bulk_create(orderdetail_lightin_list)
     else:
@@ -2125,6 +2129,9 @@ def get_barcodes(sku, quantity, price):
         else:
             occupied = quantity
             quantity = 0
+
+        lightin_barcode.synced=False
+        lightin_barcode.save()
 
         print("        条码 %s , 条码可售库存 %s 占用 %s" % (lightin_barcode, lightin_barcode.sellable, occupied))
 
@@ -6171,12 +6178,8 @@ def prepare_long_ad(page_no):
 
         for i in range(count):
             print("当前处理 ",i, cate_spus)
-            prepare_promote_image_album_v3(page_no ,
-                                       [
-                                           cate_spus[2*i].pk,
-                                           cate_spus[2*i + 1].pk,
-                                       ]
-                                       )
+            spu_pks =  [cate_spus[2*i].pk, cate_spus[2*i + 1].pk]
+            prepare_promote_image_album_v3(page_no ,spu_pks)
 
 
 
