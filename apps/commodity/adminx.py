@@ -96,6 +96,8 @@ class PagePromoteCateAdmin(object):
     list_editable = []
     search_fields = ['mypage', 'breadcrumb' ]
     list_filter = ('breadcrumb',)
+    filter_horizontal = ('breadcrumb',)
+    style_fields = {'breadcrumb': 'm2m_transfer'}
 
     exclude = []
     ordering = []
