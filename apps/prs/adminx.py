@@ -1177,3 +1177,18 @@ class YallavipAdAdmin(object):
     readonly_fields = ()
     actions = []
     ordering = []
+
+@xadmin.sites.register(PagePromoteCate)
+class PagePromoteCateAdmin(object):
+    from prs.commodity import update_breadcrumb_count
+
+    actions = [ ]
+    list_display = ('mypage', 'cate',)
+    list_editable = []
+    search_fields = ['mypage__page', 'cate__name' ]
+    list_filter = ('cate',)
+    filter_horizontal = ('cate',)
+    style_fields = {'cate': 'm2m_transfer'}
+
+    exclude = []
+    ordering = []

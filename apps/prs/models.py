@@ -957,3 +957,19 @@ class YallavipAd(models.Model):
     def __str__(self):
 
         return  self.spus_name
+
+#page 主推 cate
+class PagePromoteCate(models.Model):
+
+    mypage = models.OneToOneField(MyPage, on_delete=models.CASCADE,  verbose_name="Page")
+
+    cate  = models.ManyToManyField(MyCategory, blank=False, verbose_name="Cate",
+                                 related_name="cate_promote")
+
+
+    class Meta:
+        verbose_name = "page主推cate"
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.mypage.page

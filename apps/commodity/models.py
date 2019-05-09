@@ -98,18 +98,4 @@ class Breadcrumb(models.Model):
         return str(self.spus_count)+"_"+ self.breadcrumb
 
 
-#page 主推 breadcrumb
-class PagePromoteCate(models.Model):
 
-    mypage = models.OneToOneField(MyPage, on_delete=models.CASCADE,  verbose_name="Page")
-
-    breadcrumb  = models.ManyToManyField(Breadcrumb, blank=False, verbose_name="breadcrumb",
-                                 related_name="breadcrumb_promote")
-
-
-    class Meta:
-        verbose_name = "page主推breadcrumb"
-        verbose_name_plural = verbose_name
-
-    def __str__(self):
-        return self.mypage.page
