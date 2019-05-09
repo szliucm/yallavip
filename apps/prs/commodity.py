@@ -2,8 +2,8 @@ from prs.models import  *
 from commodity.models import Breadcrumb
 from django.db.models import Q, Count
 
-def update_breadcrumb_count():
-    spus = Lightin_SPU.objects.filter(vendor="lightin")
+def update_breadcrumb_count(sellable=10):
+    spus = Lightin_SPU.objects.filter(vendor="lightin", sellable__gt=sellable)
     spus_counts = spus.values("breadcrumb").annotate(spus_count = Count("SPU"))
 
     Breadcrumb.objects.all().delete()
