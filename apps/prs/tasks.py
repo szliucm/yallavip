@@ -6108,8 +6108,7 @@ def prepare_long_ad(page_no):
                                             lightin_spu__sellable__gt=10, lightin_spu__vendor = "lightin",
                                             lightin_spu__aded=False,
                                             published=True)
-    if keyword:
-        lightinalbums_all = lightinalbums_all.filter(yallavip_album__rule__name__icontains=keyword)
+
 
 
     #把主推品类的所有适合的产品都拿出来打广告
