@@ -6154,15 +6154,15 @@ def prepare_long_ad(page_no):
         else:
             count = cate_spus.count()
         print ("一共有%s个spu"%(count))
-        for i in range(0,count,2):
-            print ("当前处理 ",i)
-            if count > i+1:
-                    prepare_promote_image_album_v3(page_no ,
-                                               [
-                                                   cate_spus[i].pk,
-                                                   cate_spus[i + 1].pk,
-                                               ]
-                                               )
+        i=0
+        for i in int(count/2):
+
+            prepare_promote_image_album_v3(page_no ,
+                                       [
+                                           cate_spus[2*i].pk,
+                                           cate_spus[2*i + 1].pk,
+                                       ]
+                                       )
 
 
 
