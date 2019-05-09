@@ -81,7 +81,18 @@ class SizeAbsLabelAdmin(object):
     show_label.short_description = 'size_label'
     show_label.allow_tags = True
 
-    list_display = ["size_abs", "show_label", ]
+    def show_label_new(self, obj):
+
+        try:
+            img = mark_safe('<img src="%s" width="100px" />' % (obj.size_label_new.url,))
+        except Exception as e:
+            img = ''
+        return img
+
+    show_label_new.short_description = 'size_label_new'
+    show_label_new.allow_tags = True
+
+    list_display = ["size_abs", "show_label", "show_label_new",]
 
     search_fields = ["size_abs", ]
     list_filter = []

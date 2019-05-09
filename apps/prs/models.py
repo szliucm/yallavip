@@ -44,6 +44,7 @@ class MyCategory(models.Model):
 class SizeAbsLabel(models.Model):
     size_abs = models.CharField(u'规格缩写', default='', max_length=100, null=True, blank=True)
     size_label = models.ImageField(u'规格标签', upload_to='material/', default="", null=True, blank=True)
+    size_label_split = models.ImageField(u'新规格标签', upload_to='material/', default="", null=True, blank=True)
 
     size_count = models.IntegerField(u'关联计数', default=0, blank=True, null=True)
 
