@@ -6096,7 +6096,7 @@ def prepare_long_ad(page_no):
     from django.db.models import Count
 
     #取page对应的主推品类
-    cates =  PagePromoteCate.objects.filter(mypage__page_no = page_no).values_list("cate", flat=True)
+    cates =  PagePromoteCate.objects.filter(mypage__page_no = page_no).values_list("cate__tags", flat=True)
     if cates:
         cates = list(cates)
     else:
@@ -6105,7 +6105,7 @@ def prepare_long_ad(page_no):
 
     # 取库存大、单价高、已经发布到相册 且还未打广告的商品
     lightinalbums_all = LightinAlbum.objects.filter(yallavip_album__isnull=False, yallavip_album__page__page_no=page_no,
-                                            lightin_spu__sellable__gt=0, lightin_spu__SPU__vendor = "lightin",
+                                            lightin_spu__sellable__gt=10, lightin_spu__vendor = "lightin",
                                             lightin_spu__aded=False,
                                             published=True)
     if keyword:

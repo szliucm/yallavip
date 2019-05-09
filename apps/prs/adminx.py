@@ -54,13 +54,13 @@ class MyCategoryAdmin(object):
 
     def spu_count_5(self, obj):
 
-        return  Lightin_SPU.objects.filter(sellable__gt=5, breadcrumb__contains=obj.tags).count()
+        return  Lightin_SPU.objects.filter(sellable__gt=5, breadcrumb__icontains=obj.tags).count()
 
     spu_count_5.short_description = ">5的SPU数量"
 
     def spu_count_10(self, obj):
 
-        return  Lightin_SPU.objects.filter(sellable__gt=10, breadcrumb__contains=obj.tags).count()
+        return  Lightin_SPU.objects.filter(sellable__gt=10, breadcrumb__icontains=obj.tags).count()
 
     spu_count_10.short_description = ">10的SPU数量"
 
