@@ -81,7 +81,7 @@ class SizeAbsLabelAdmin(object):
     show_label.short_description = 'size_label'
     show_label.allow_tags = True
 
-    def size_label_split(self, obj):
+    def show_label_split(self, obj):
 
         try:
             img = mark_safe('<img src="%s" width="100px" />' % (obj.size_label_split.url,))
@@ -89,10 +89,10 @@ class SizeAbsLabelAdmin(object):
             img = ''
         return img
 
-    size_label_split.short_description = 'size_label_new'
-    size_label_split.allow_tags = True
+    show_label_split.short_description = 'size_label_new'
+    show_label_split.allow_tags = True
 
-    list_display = ["size_abs", "show_label", "size_label_split",]
+    list_display = ["size_abs", "show_label", "show_label_split",]
 
     search_fields = ["size_abs", ]
     list_filter = []
