@@ -1321,10 +1321,7 @@ class VerifyAdmin(object):
 
     buyer_name.short_description = "买家姓名"
 
-    def get_page(self, obj):
-        return MyPage.objects.get(page_no= obj.mailbox_id).page
 
-    get_page.short_description = "page"
     '''
     def queryset(self):
         qs = super(VerifyAdmin, self).queryset()
@@ -1332,7 +1329,7 @@ class VerifyAdmin(object):
     '''
 
     readonly_fields = ('order', 'order_time',)
-    list_display = ('order','show_conversation','get_page','order_time',"order_amount", "order_status","stock",'colored_verify_status', \
+    list_display = ('order','show_conversation','order_time',"order_amount", "order_status","stock",'colored_verify_status', \
                     'colored_sms_status',"sms_code",
                     'city','receiver_addr',
 
