@@ -4671,7 +4671,7 @@ def prepare_a_album(lightinalbum_pk):
 
     ori_lightinalbum = LightinAlbum.objects.get(pk=lightinalbum_pk)
 
-    spu = lightinalbum.lightin_spu
+    spu = ori_lightinalbum.lightin_spu
     spu_pk = spu.pk
     print("正在处理spu", spu_pk)
     updated = update_promote_price(spu)
