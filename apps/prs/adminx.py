@@ -1195,9 +1195,9 @@ class PagePromoteCateAdmin(object):
     list_editable = []
     search_fields = ['mypage__page', 'cate__name','promote_cate__name' ]
     list_filter = ('cate',)
-    #filter_horizontal = ('cate','promote_cate')
+    filter_horizontal = ('cate',)
     style_fields = {'cate': 'm2m_transfer',
-                    'promote_cate': 'm2m_transfer'
+
                     }
 
     exclude = []
