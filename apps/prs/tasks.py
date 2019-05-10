@@ -4324,6 +4324,7 @@ def get_shopify_inventory( ):
         if r.status_code == 200:
             data = json.loads(r.text)
             inventory_levels = data.get("inventory_levels")
+            print(inventory_levels)
             for inventory_level in inventory_levels:
 
                 inventory_item_id = inventory_level.get("inventory_item_id")
