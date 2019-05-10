@@ -4813,7 +4813,7 @@ def sync_yallavip_album(page_no=None):
     print("有%s个相册待更新" % (albums.count()))
 
 
-    access_token, long_token = get_token(page_no,"EAAcGAyHVbOEBAJ16lOnBtfVTYdBA2bktmZBkOLlXaprg12TOz8wogvzE1K2Eg4wCA6LqYvt7zpYRv748vJmfdQl3oe0kdMYLMa3wNYTTh1YidUrAW8YB8tmNJ7JSrnPfwVXrItHKZCAwqPvlKteqFc9URijhoEZBr5k7ftghRNnLJeWoXXSZBkQ9bN2vccqysGUkxwwsMI80f8YqRtxI")
+    access_token, long_token = get_token(page_no)
 
     if not access_token:
         error = "获取token失败"
