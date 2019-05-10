@@ -666,8 +666,12 @@ class YallavipAlbum(models.Model):
         verbose_name_plural = verbose_name
 
     def __str__(self):
-
-        return  self.page.page
+        if self.rule:
+            return  self.rule.name
+        elif self.cate:
+            return  self.cate.name
+        elif self.catesize:
+            return  self.catesize.size.name +" "+ self.catesize.size
 
 
 class LightinAlbum(models.Model):
