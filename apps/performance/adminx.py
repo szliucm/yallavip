@@ -61,6 +61,28 @@ def update_performance(days=3):
                                                                     "amount"),
                                                                 }
                                                       )
+    # 统计page业绩跟踪
+    page_counts = orders.annotate(date=TruncDate("order_time", tzinfo=riyadh)) \
+        .values("date", "status", "verify__mailbox_id").annotate(orders=Count("order_no"),
+                                                            amount=Sum("order_amount")).order_by("-date")
+
+    # 把相应的记录先删掉
+    PageTrack.objects.filter(order_date__gt=(today - timedelta(days=days))).delete()
+
+    for page_count in page_counts:
+        page_no = page_count.get("verify__mailbox_id")
+
+
+
+        obj, created = PageTrack.objects.update_or_create(order_date=page_count.get("date"),
+                                                           page_no=page_no,
+                                                           defaults={page_count.get("status"): page_count.get(
+                                                               "orders"),
+                                                                     page_count.get(
+                                                                         "status") + "_amount": page_count.get(
+                                                                         "amount"),
+                                                                     }
+                                                           )
 
 @xadmin.sites.register(Sales)
 class SalesAdmin(object):
@@ -115,3 +137,18 @@ class StaffTrackAdmin(object):
     actions = [ ]
     ordering = ['-order_date',"staff",]
 
+@xadmin.sites.register(PageTrack)
+class PageTrackTrackAdmin(object):
+    def page(self, obj):
+        return  MyPage.objects.get(page_no= obj.page_no).page
+    page.short_description = "Page"
+
+    list_display = ["order_date", "page", "open","open_amount", 'transit',"transit_amount", 'delivered',"delivered_amount", 'refused',"refused_amount","cancelled","cancelled_amount",   ]
+
+    # 'sku_name','img',
+    search_fields = [ ]
+    list_filter = [ "order_date",'page_no', ]
+    list_editable = []
+    readonly_fields = ()
+    actions = [ ]
+    ordering = ['-order_date',"page_no",]
