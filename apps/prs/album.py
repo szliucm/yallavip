@@ -3,7 +3,7 @@ from facebook_business.api import FacebookAdsApi
 from facebook_business.adobjects.page import Page
 
 from django.utils import timezone as dt
-from django.db.models import Q,
+from django.db.models import Q
 
 from fb.models import MyPage, MyAlbum
 from prs.models import YallavipAlbum,PagePromoteCate
