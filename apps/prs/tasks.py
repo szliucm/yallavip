@@ -4327,7 +4327,7 @@ def get_shopify_inventory( ):
             for inventory_level in inventory_levels:
 
                 inventory_item_id = inventory_level.get("inventory_item_id")
-                #print (inventory_item_id, inventory_level.get("available", 0))
+                print (inventory_item_id, inventory_level.get("available", 0))
                 if inventory_item_id :
                     try:
                         ShopifyVariant.objects.update_or_create(inventory_item_no = inventory_item_id,
