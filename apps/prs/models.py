@@ -667,7 +667,7 @@ class YallavipAlbum(models.Model):
 
     def __str__(self):
 
-        return  self.rule.name
+        return  self.page.page
 
 
 class LightinAlbum(models.Model):
