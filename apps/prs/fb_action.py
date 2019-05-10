@@ -42,10 +42,12 @@ APP_SCOPED_SYSTEM_USER_ID=100029952330435
 ad_tokens = "EAAHZCz2P7ZAuQBANXASqgDJV7vsZCKn4KoZCNAyEFUzWV4XFlvs3exbtdQJrLrVzkuIqpZCZBjKBwUJEL9lxFJE8zZA6pMtCQqgzWW6J1ldyjTUCztSs4kMybpsHi0lNfk45veF4SGjmXJwurTnskia71yZAQSqL0DxuXLCC3xFXooZC1tpB9AB9G"
 def get_token(target_page,token=None):
     systemuser_token = "EAAcGAyHVbOEBAP8G7Q3YZBfY5N0PHGzVlmSqgQgMm7jU3h95r5JnJlqSwCi9bqAORlcdHW3qwd16xE3YtTuPZAs1eitjs5G8ss8sQTFlYlRT98vpYY51HWXA3nK2ZCkDqXPuF9yTHaTZA17fFZAOLZAtX9J2fZCq9AL5V245MMWBZBwNy8eW4ZBlU39m9RpbggmZA2b07i1tUOzQZDZD"
+    '''
     pages = MyPage.objects.filter(page_no = target_page, active=True)
     if not pages:
         print ("page 不存在或者失活")
         return  None,None
+    '''
 
     #使用systemu_uer 的token
     url = "https://graph.facebook.com/v3.2/{}?fields=access_token".format(target_page)
@@ -57,10 +59,10 @@ def get_token(target_page,token=None):
 
     r = requests.get(url, param)
     data = json.loads(r.text)
-    # token可用，就要标识占用
+
     if r.status_code == 200:
 
-        return data["access_token"], systemuser_token
+        return data["access_token"], param["access_token"]
     else:
         print(r, r.text)
 
