@@ -2,6 +2,8 @@ from prs.fb_action import  get_token
 from facebook_business.api import FacebookAdsApi
 from facebook_business.adobjects.page import Page
 
+from django.utils import timezone as dt
+
 from fb.models import MyPage, MyAlbum
 from prs.models import YallavipAlbum,PagePromoteCate
 
