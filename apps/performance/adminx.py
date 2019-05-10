@@ -72,7 +72,8 @@ def update_performance(days=3):
     for page_count in page_counts:
         page_no = page_count.get("verify__mailbox_id")
 
-
+        if not page_no:
+            page_no = "unknown"
 
         obj, created = PageTrack.objects.update_or_create(order_date=page_count.get("date"),
                                                            page_no=page_no,
