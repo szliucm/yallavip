@@ -4344,9 +4344,7 @@ def get_shopify_inventory( ):
         "location_ids":[location_id],
 
     }
-    headers = {
 
-    }
     # 初始化SDK
     url = shop_url + "/admin/inventory_levels.json"
 
@@ -4356,7 +4354,7 @@ def get_shopify_inventory( ):
     for i in range(1,ids.count):
 
         prams["location_ids "] = ids.page(i)
-        r = requests.get(url, headers=headers, params)
+        r = requests.get(url,  params)
         if r.status_code == 200:
             data = json.loads(r.text)
             inventory_levels = data.get("inventory_levels")
