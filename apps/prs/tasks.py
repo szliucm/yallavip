@@ -2600,45 +2600,6 @@ def get_wms_quantity(barcodes=[]):
             page += 1;
 
 
-def get_all_shopify_quantity():
-    "GET /admin/inventory_levels.json?inventory_item_ids=808950810,39072856&location_ids=905684977,487838322"
-
-    page = 1
-
-    while 1:
-        print("正在处理第 %s 页" % (page))
-
-        param = {
-            "pageSize": "100",
-            "page": page,
-            "product_sku": "",
-            "product_sku_arr": [],
-            "warehouse_code": warehouse_code,
-            "warehouse_code_arr": []
-        }
-
-        service = "getProductInventory"
-
-        result = yunwms(service, param)
-
-        # print(result)
-        if result.get("ask") == "Success":
-            for data in result.get("data"):
-                Lightin_barcode.objects.update_or_create(
-                    barcode=data.get("product_sku"),
-                    defaults={
-                        "y_sellable": data.get("sellable"),
-                        "y_reserved": data.get("reserved"),
-                        "y_shipped": data.get("shipped")
-                        # "quantity":  int(data.get("sellable")) + int(data.get("reserved"))
-
-                    },
-
-                )
-        if result.get("nextPage") == "false":
-            break
-        else:
-            page += 1;
 
 
 def getShippingMethod():
@@ -4358,7 +4319,7 @@ def get_shopify_inventory( ):
     print("total page count", ids.num_pages  )
     for i in ids.page_range:
         print("page ", i)
-        params["location_ids "] = ids.page(i)
+        params["location_ids "] = ids.page(i).object_list
         r = requests.get(url,  params)
         if r.status_code == 200:
             data = json.loads(r.text)
