@@ -4319,7 +4319,7 @@ def get_shopify_inventory( ):
     print("total page count", ids.num_pages  )
     for i in ids.page_range:
         print("page ", i)
-        params["location_ids "] = ids.page(i).object_list
+        params["inventory_item_id"] = ids.page(i).object_list
         r = requests.get(url,  params)
         if r.status_code == 200:
             data = json.loads(r.text)
