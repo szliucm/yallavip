@@ -4288,7 +4288,7 @@ def zero_shopify_inventories():
 
             skus = ShopifyVariant.objects.filter(sku=row[0])
             skus.update(inventory_quantity=0)
-        #time.sleep(1)
+        time.sleep(1)
 
 def adjust_shopify_inventory(inventory_item_id,available_adjustment ):
     from shop.models import Shop, ShopifyProduct
@@ -4362,13 +4362,17 @@ def get_shopify_inventory( ):
 
                 inventory_item_id = inventory_level.get("inventory_item_id")
                 print (inventory_item_id, inventory_level.get("available", 0))
-                if inventory_item_id > 0:
-                    ShopifyVariant.objects.update_or_create(inventory_item_no = inventory_item_id,
+                if inventory_item_id :
+                    try:
+                        ShopifyVariant.objects.update_or_create(inventory_item_no = inventory_item_id,
                                                         defaults ={
                                                             "inventory_quantity": inventory_level.get("available",0),
                                                             "synced":True,
                                                         }
-                    )
+                        )
+                    except Exception as e:
+                        print(inventory_item_id, inventory_level.get("available",0), e)
+
 
         else:
             print(r.text)
