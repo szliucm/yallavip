@@ -4223,8 +4223,7 @@ def adjust_shopify_inventories():
 
     mysql = "select v.sku , v.inventory_item_no , s.o_sellable " \
             "from shop_shopifyvariant v, prs_lightin_sku s " \
-             "where v.sku= s.SKU "
-           # "where v.sku= s.SKU and v.inventory_quantity <> s.o_sellable"
+            "where v.sku= s.SKU and v.inventory_quantity <> s.o_sellable"
 
     rows = my_custom_sql(mysql)
 
@@ -4314,7 +4313,7 @@ def get_shopify_inventory( ):
     url = shop_url + "/admin/inventory_levels.json"
 
     print("开始获取库存")
-    variants = ShopifyVariant.objects.filter(synced=False).values_list("inventory_item_no",flat=True).order_by("inventory_item_no")
+    variants = ShopifyVariant.objects.filter(sku__istartswith='s',synced=False).values_list("inventory_item_no",flat=True).order_by("inventory_item_no")
     ids = Paginator(list(variants),50)
     print("total page count", ids.num_pages  )
     for i in ids.page_range:
@@ -4322,7 +4321,7 @@ def get_shopify_inventory( ):
 
         params["inventory_item_ids"] = ",".join(ids.page(i).object_list)
         r = requests.get(url,  params)
-        print(url, params)
+
         if r.status_code == 200:
             data = json.loads(r.text)
             inventory_levels = data.get("inventory_levels")
