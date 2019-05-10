@@ -38,7 +38,7 @@ class MyCategory(models.Model):
         app_label = 'prs'
 
     def __str__(self):
-        return self.name
+        return self.tags
 
 
 class SizeAbsLabel(models.Model):
@@ -640,6 +640,10 @@ class YallavipAlbum(models.Model):
     page = models.ForeignKey(MyPage, null=True, blank=True, verbose_name="Page",
                                 related_name="page_album", on_delete=models.CASCADE)
 
+    cate = models.ForeignKey(MyCategory, null=True, blank=True, verbose_name="MyCategory",
+                                 related_name="cate_album", on_delete=models.CASCADE)
+    catesize = models.ForeignKey(MyCategorySize, null=True, blank=True, verbose_name="MyCategorySize",
+                                    related_name="catesize_album", on_delete=models.CASCADE)
 
     rule = models.ForeignKey(SelectionRule, null=True, blank=True, verbose_name="SelectionRule",
                                     related_name="rule_album", on_delete=models.CASCADE)
