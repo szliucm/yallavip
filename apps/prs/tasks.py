@@ -4359,10 +4359,10 @@ def get_shopify_inventory( ):
             data = json.loads(r.text)
             inventory_levels = data.get("inventory_levels")
             for inventory_level in inventory_levels:
-                print (inventory_level.get("inventory_item_id"))
+                print (inventory_level.get("inventory_item_id"),inventory_level.get("available",0))
                 ShopifyVariant.objects.update_or_create(inventory_item_no = inventory_level.get("inventory_item_id"),
                                                         defaults ={
-                                                            "inventory_quantity": inventory_level.get("available"),
+                                                            "inventory_quantity": inventory_level.get("available",0),
                                                             "synced":True,
                                                         }
                 )
