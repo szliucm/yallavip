@@ -4355,8 +4355,9 @@ def get_shopify_inventory( ):
     print("开始获取库存")
     variants = ShopifyVariant.objects.filter(synced=False).values_list("inventory_item_no",flat=True).order_by("inventory_item_no")
     ids = Paginator(variants,50)
-    for i in range(1,ids.count):
-
+    print("total page count", ids.num_pages  )
+    for i in ids.page_range:
+        print("page ", i)
         params["location_ids "] = ids.page(i)
         r = requests.get(url,  params)
         if r.status_code == 200:
@@ -4365,7 +4366,7 @@ def get_shopify_inventory( ):
             for inventory_level in inventory_levels:
 
                 inventory_item_id = inventory_level.get("inventory_item_id")
-                print (inventory_item_id, inventory_level.get("available", 0))
+                #print (inventory_item_id, inventory_level.get("available", 0))
                 if inventory_item_id :
                     try:
                         ShopifyVariant.objects.update_or_create(inventory_item_no = inventory_item_id,
