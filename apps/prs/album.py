@@ -14,7 +14,7 @@ from prs.models import YallavipAlbum,PagePromoteCate
 
 def create_album(page_no , album_name ):
     access_token, long_token = get_token(page_no)
-    FacebookAdsApi.init(access_token=access_token)
+    FacebookAdsApi.init(access_token=access_token, debug=True)
 
     fields = ["created_time", "description", "id",
               "name", "count", "updated_time", "link",
