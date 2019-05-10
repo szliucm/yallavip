@@ -141,7 +141,11 @@ class StaffTrackAdmin(object):
 @xadmin.sites.register(PageTrack)
 class PageTrackTrackAdmin(object):
     def page(self, obj):
-        return  MyPage.objects.get(page_no= obj.page_no).page
+        from fb.models import MyPage
+        try:
+            return  MyPage.objects.get(page_no= obj.page_no).page
+        except:
+            return "unknown"
     page.short_description = "Page"
 
     list_display = ["order_date", "page", "open","open_amount", 'transit',"transit_amount", 'delivered',"delivered_amount", 'refused',"refused_amount","cancelled","cancelled_amount",   ]
