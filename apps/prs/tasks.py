@@ -4353,7 +4353,7 @@ def get_shopify_inventory( ):
     ids = Paginator(variants,50)
     for i in range(1,ids.count):
 
-        prams["location_ids "] = ids.page(i)
+        params["location_ids "] = ids.page(i)
         r = requests.get(url,  params)
         if r.status_code == 200:
             data = json.loads(r.text)
