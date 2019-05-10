@@ -3,6 +3,7 @@ from facebook_business.api import FacebookAdsApi
 from facebook_business.adobjects.page import Page
 
 from django.utils import timezone as dt
+from django.db.models import Q,
 
 from fb.models import MyPage, MyAlbum
 from prs.models import YallavipAlbum,PagePromoteCate
@@ -126,7 +127,7 @@ def sync_cate_album(page_no=None):
 #根据yallavip_album相册规则，生成相册图片记录
 #这里只处理根据品类创建相册的情况
 def prepare_yallavip_photoes(page_no=None):
-    from django.db import connection, transaction
+
 
     # 找出所有活跃的page
     pages = MyPage.objects.filter(active=True)
