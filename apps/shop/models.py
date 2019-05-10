@@ -136,7 +136,7 @@ class ShopifyVariant(models.Model):
     total_quantity = models.IntegerField(u'总销售数', default=0, blank=True, null=True)
 
     update_error = models.CharField(u'更新错误', max_length=500, default='', blank=True)
-    synced =  = models.BooleanField(u'同步库存', default=False)
+    synced = models.BooleanField(u'同步库存', default=False)
     class Meta:
         verbose_name = "变体"
         verbose_name_plural = verbose_name
