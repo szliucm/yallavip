@@ -4259,11 +4259,15 @@ def my_custom_sql(mysql):
     #return
 
 def adjust_shopify_inventories():
+
     mysql = "select v.sku , v.inventory_item_no , s.o_sellable " \
             "from shop_shopifyvariant v, prs_lightin_sku s " \
-            "where v.sku= s.SKU and v.inventory_quantity <> s.o_sellable"
+             "where v.sku= s.SKU "
+           # "where v.sku= s.SKU and v.inventory_quantity <> s.o_sellable"
 
     rows = my_custom_sql(mysql)
+
+
 
     for row in rows:
 

@@ -214,7 +214,7 @@ def sync_logistic_order():
 def updatelogistic_trail_lightin(type=None):
     from prs.tasks import  getTrack
     #扫描订单，生成待追踪列表
-    queryset = Order.objects.filter(~Q(track_status__in = ["CC"]),wms_status = "D" )
+    queryset = Order.objects.filter(~Q(track_status__in = ["CC"]),status = 'transit',wms_status = "D" )
 
     logistic_no_list = list(queryset.values_list("logistic_no",flat=True))
     print("一共有  %d  个包裹需要更新轨迹"%(queryset.count() ))
