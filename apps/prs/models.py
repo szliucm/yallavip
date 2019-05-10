@@ -967,7 +967,10 @@ class PagePromoteCate(models.Model):
 
     mypage = models.OneToOneField(MyPage, on_delete=models.CASCADE,  verbose_name="Page")
 
-    promote_cate  = models.ManyToManyField(MyCategory, blank=False, verbose_name="Cate",
+    cate = models.ManyToManyField(MyCategory, blank=False, verbose_name="Cate",
+                                          related_name="cate_page")
+
+    promote_cate  = models.ManyToManyField(MyCategory, blank=False, verbose_name="Promote Cate",
                                  related_name="cate_promote")
 
 
