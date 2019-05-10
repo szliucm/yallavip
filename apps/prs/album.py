@@ -57,6 +57,7 @@ def create_album(page_no , album_name ):
 
     return  obj
 
+#根据page cate 创建相册
 def sync_cate_album(page_no=None):
 
     # 找出所有活跃的page
@@ -122,9 +123,88 @@ def sync_cate_album(page_no=None):
                     )
 
 
+#根据yallavip_album相册规则，生成相册图片记录
+#这里只处理根据品类创建相册的情况
+def prepare_yallavip_photoes(page_no=None):
+    from django.db import connection, transaction
+
+    # 找出所有活跃的page
+    pages = MyPage.objects.filter(active=True)
+    if page_no:
+        pages = pages.filter(page_no=page_no)
+
+    for page in pages:
+        # 遍历page对应的相册
+        print("page is ", page)
+        albums = YallavipAlbum.objects.filter(page__pk= page.pk, active=True  )
+        print("albums is ", albums)
+        for album in albums:
+            is_sku = False
+            print("album is ", album)
 
 
 
+            rule = album.rule
 
-        #print("page %s 待删除 %s  待创建 %s 已有 %s "%(page, rules_to_del,rules_to_add,rules_have))
-        print("page %s 待删除 %s  待创建 %s 已有 %s " % (page, rules_to_del.count(), rules_to_add.count(), rules_have.count()))
+            # 拼接相册的筛选产品的条件
+            q_cate = Q()
+            q_cate.connector = 'OR'
+
+            if album.cate:
+                cate_name =  album.cate.tags
+
+            elif album.catesize:
+                cate_name = album.catesize.cate.tags
+
+            q_cate.children.append(('breadcrumb__contains', cate_name))
+
+            q_attr = Q()
+            q_attr.connector = 'OR'
+            if album.catesize:
+                q_attr.children.append(('spu_sku__skuattr__contains',  album.catesize.size))
+
+            con = Q()
+            con.add(q_cate, 'AND')
+            con.add(q_attr, 'AND')
+
+
+            # 根据品类找已经上架到shopify 但还未添加到相册的产品
+            product_list = []
+
+            if is_sku:
+                skus_to_add = Lightin_SKU.objects.filter(con, listed=True, locked=True, imaged=True,o_sellable__gt=0).\
+                    exclude(id__in = LightinAlbum.objects.filter(
+                                            yallavip_album__pk=album.pk,
+                                            lightin_sku__isnull=False).values_list('lightin_sku__id',flat=True)).distinct()
+
+                for sku_to_add in skus_to_add:
+
+                    name = "[" + sku_to_add.SKU + "]"
+                    items = sku_to_add.combo_item.all().values_list("lightin_sku__SKU", flat=True)
+                    for item in items:
+                        name = name + "\n" + item
+                    name = name + "\n\nPrice:  " + str(sku_to_add.sku_price) + "SAR"
+
+                    product = LightinAlbum(
+                        lightin_sku=sku_to_add,
+                        yallavip_album=album,
+                        name=name
+
+                    )
+                    product_list.append(product)
+
+            else:
+                products_to_add = Lightin_SPU.objects.filter(con, published=True,sellable__gt=0).exclude(id__in=
+                                                LightinAlbum.objects.filter(
+                                                    yallavip_album__pk=album.pk,
+                                                    lightin_spu__isnull=False).values_list(
+                                                    'lightin_spu__id',
+                                                    flat=True)).distinct()
+
+                for product_to_add in products_to_add:
+                    obj, created = LightinAlbum.objects.update_or_create(lightin_spu=product_to_add,
+                                                                         yallavip_album=album,
+                                                                   defaults={'name': product_to_add.title
+
+                                                                             }
+                                                                   )
