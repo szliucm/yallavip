@@ -4331,9 +4331,8 @@ def adjust_shopify_inventory(inventory_item_id,available_adjustment ):
         return "更新库存失败", False
 
 def get_shopify_inventory( ):
-    from shop.models import Shop, ShopifyProduct
-    from prs.shop_action import post_product_main, update_or_create_product
-    from .models import AliProduct
+
+    from django.core.paginator import Paginator
 
     dest_shop = "yallasale-com"
     location_id = "11796512810"
@@ -4342,36 +4341,37 @@ def get_shopify_inventory( ):
     shop_url = "https://%s:%s@%s.myshopify.com" % (shop_obj.apikey, shop_obj.password, shop_obj.shop_name)
 
     params = {
+        "location_ids":[location_id],
 
     }
     headers = {
-        "Content-Type": "application/json",
-        "charset": "utf-8",
 
     }
     # 初始化SDK
-    url = shop_url + "/inventory_levels.json?location_ids=%s"%(location_id)
+    url = shop_url + "/admin/inventory_levels.json"
 
-    print("开始更新库存")
-    print(url, json.dumps(params))
+    print("开始获取库存")
+    variants = ShopifyVariant.objects.filter(synced=False).values_list("inventory_item_no",flat=True).order_by("inventory_item_no")
+    ids = Paginator(variants,50)
+    for i in range(1,ids.count):
 
-    r = requests.get(url, headers=headers, data=json.dumps(params))
-    if r.status_code == 200:
-        data = json.loads(r.text)
-        inventory_levels = data.get("inventory_levels")
-        for inventory_level in inventory_levels:
-            print (inventory_level.get("inventory_item_id"))
-            ShopifyVariant.objects.update_or_create(inventory_item_id = inventory_level.get("inventory_item_id"),
-                                                    default ={
-                                                        "inventory_quantity": inventory_level.get("available")
-                                                    }
+        prams["location_ids "] = ids.page(i)
+        r = requests.get(url, headers=headers, params)
+        if r.status_code == 200:
+            data = json.loads(r.text)
+            inventory_levels = data.get("inventory_levels")
+            for inventory_level in inventory_levels:
+                print (inventory_level.get("inventory_item_id"))
+                ShopifyVariant.objects.update_or_create(inventory_item_no = inventory_level.get("inventory_item_id"),
+                                                        defaults ={
+                                                            "inventory_quantity": inventory_level.get("available")
+                                                            "synced":True,
+                                                        }
+                )
 
-
-            )
-
-    else:
-        print(r.text)
-        return "更新库存失败", False
+        else:
+            print(r.text)
+            return "获取库存失败", False
 
 #更新价格,顺便把库存策略改成无货后不不能下单
 def adjust_shopify_prices():
