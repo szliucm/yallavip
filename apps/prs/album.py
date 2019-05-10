@@ -6,7 +6,7 @@ from django.utils import timezone as dt
 from django.db.models import Q
 
 from fb.models import MyPage, MyAlbum
-from prs.models import YallavipAlbum,PagePromoteCate,Lightin_SPU
+from prs.models import YallavipAlbum,PagePromoteCate,Lightin_SPU,LightinAlbum
 
 
 #根据page cate 规则，更新page的相册
