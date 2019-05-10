@@ -2,12 +2,15 @@ from prs.fb_action import  get_token
 from facebook_business.api import FacebookAdsApi
 from facebook_business.adobjects.page import Page
 
+from celery import shared_task
+
 from django.utils import timezone as dt
 from django.db.models import Q
 
 from fb.models import MyPage, MyAlbum
 from prs.models import YallavipAlbum,PagePromoteCate,Lightin_SPU,LightinAlbum
 
+from shop.photo_mark import yallavip_mark_image
 
 #根据page cate 规则，更新page的相册
 #将page中失效的相册找出来并删掉
@@ -209,3 +212,121 @@ def prepare_yallavip_photoes(page_no=None):
 
                                                                              }
                                                                    )
+
+def prepare_yallavip_album_material(page_no=None):
+    from django.db.models import Max
+
+   #每次每个相册处理最多100张图片
+
+    lightinalbums_all = LightinAlbum.objects.filter(published=False, publish_error="无", material=False,
+                                                    material_error="无",lightin_spu__sellable__gt=0,
+                                                    yallavip_album__isnull = False,yallavip_album__active = True  )
+    if page_no:
+        lightinalbums_all = lightinalbums_all.filter(yallavip_album__page__page_no=page_no)
+
+
+    albums_list = lightinalbums_all.values_list('yallavip_album', flat=True).distinct()
+    print("albums_list is ", albums_list)
+
+    for album in albums_list:
+        #lightinalbums = lightinalbums_all.filter(yallavip_album=album).order_by("lightin_spu__sellable")[:100]
+        lightinalbums = lightinalbums_all.filter(yallavip_album=album).order_by("lightin_spu__sellable")
+        print(lightinalbums)
+
+        for lightinalbum in lightinalbums:
+            prepare_a_album.apply_async((lightinalbum.pk,), queue='photo')
+
+@shared_task
+def prepare_a_album(lightinalbum_pk):
+
+    ori_lightinalbum = LightinAlbum.objects.get(pk=lightinalbum_pk)
+
+    spu = lightinalbum.lightin_spu
+    spu_pk = spu.pk
+    print("正在处理spu", spu_pk)
+    updated = update_promote_price(spu)
+
+    lightinalbum = LightinAlbum.objects.get(pk=lightinalbum_pk)
+
+
+    spu = lightinalbum.lightin_spu
+    sku = lightinalbum.lightin_sku
+
+    print("prepare_a_album ",lightinalbum_pk,  spu)
+
+    if sku:
+        LightinAlbum.objects.filter(pk=lightinalbum.pk).update(
+            image_marked=sku.image_marked,
+
+            # batch_no=batch_no,
+            material=True
+        )
+
+    elif spu:
+        error = ""
+        # 准备文字
+        # 标题
+        title = spu.title
+        # 货号
+        if title.find(spu.handle) == -1:
+            name = title + "  [" + spu.handle + "]"
+        else:
+            name = title
+        # 规格
+        lightin_skus = Lightin_SKU.objects.filter(SPU=spu.SPU)
+        options = []
+        for sku in lightin_skus:
+            option = sku.skuattr
+            if option not in options:
+                options.append(option)
+
+        if len(options) > 0:
+            name = name + "\n\nSkus:  "
+
+        for option in options:
+            name = name + "\n\n   " + option
+
+        # 价格
+        price1 = int(spu.yallavip_price)
+        price2 = int(price1 * random.uniform(5, 6))
+        # 为了减少促销的麻烦，文案里不写价格了
+        # name = name + "\n\nPrice:  " + str(price1) + "SAR"
+
+        # 准备图片
+        # 先取第一张，以后考虑根据实际有库存的sku的图片（待优化）
+        if spu.images_dict:
+            image = json.loads(spu.images_dict).values()
+            if image and len(image) > 0:
+                a = "/"
+                image_split = list(image)[0].split(a)
+
+                image_split[4] = '800x800'
+                image = a.join(image_split)
+
+            # 打水印
+            # logo， page促销标
+            # 如果有相册促销标，就打相册促销标，否则打价格标签
+
+            image_marked, image_pure_url, image_marked_url = yallavip_mark_image(image, spu.handle, str(price1), str(price2),
+                                                                 lightinalbum.yallavip_album.page)
+            if not image_marked:
+                error = "打水印失败"
+
+        else:
+            print(album, spu.SPU, "没有图片")
+            error = "没有图片"
+
+        print("打水印",lightinalbum.pk, error)
+        if error == "":
+            LightinAlbum.objects.filter(pk=lightinalbum.pk).update(
+                name=name,
+                image_pure=image_pure_url,
+                image_marked=image_marked_url,
+
+                # batch_no=batch_no,
+                material=True
+            )
+        else:
+            LightinAlbum.objects.filter(pk=lightinalbum.pk).update(
+                material_error=error
+            )
