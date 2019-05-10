@@ -1723,10 +1723,6 @@ def combo_ad_image_v3(spu_ims, spus_name,page_no):
         layer.paste(clipResizeImg_new(ims[2], 540, 540), (0, 540))
         layer.paste(clipResizeImg_new(ims[3], 540, 540), (540, 540))
 
-
-
-
-
     elif item_count == 2:
         # 两张图
         # 先做个1200*628的画布
@@ -1734,16 +1730,6 @@ def combo_ad_image_v3(spu_ims, spus_name,page_no):
 
         layer.paste(clipResizeImg_new(ims[0], 600, 600), (0, 14))
         layer.paste(clipResizeImg_new(ims[1], 600, 600), (600, 14))
-
-
-
-
-
-
-
-
-
-
 
     elif item_count == 5:
         # 五张图

@@ -94,7 +94,7 @@ class CustomerAdmin(object):
                 img += '<br><a>out of stock</a><br><br>'
                 continue
 
-            skus = lightin_skus.values_list("SKU",   "o_sellable","lightin_spu__shopify_price", "skuattr",)
+            skus = lightin_skus.values_list("SKU",   "o_sellable","lightin_spu__yallavip_price", "skuattr",)
             for sku in skus:
                 #img += '<br><a>%s<br>规格: %s<br>库存: %s</a><br>' % ( sku[0], sku[1], str(sku[2]))
                 img += '<a>%s   [ %s sets]  [ %s SR]<br>%s</a><br>' % (sku[0],  str(sku[1]),sku[2], sku[3])
@@ -129,7 +129,7 @@ class CustomerAdmin(object):
 
         for lightin_sku in lightin_skus:
             #            img += '<br><a>sku: %s</a><br><br>' % (lightin_sku.SKU)
-            #print (lightin_sku, lightin_sku.SKU,  lightin_sku.o_sellable, lightin_sku.lightin_spu.shopify_price, lightin_sku.skuattr)
+            #print (lightin_sku, lightin_sku.SKU,  lightin_sku.o_sellable, lightin_sku.lightin_spu.yallavip_price, lightin_sku.skuattr)
             #print ("what's wrong",lightin_sku, lightin_sku.SKU,  lightin_sku.skuattr)
             #continue
             image = None
@@ -330,7 +330,7 @@ class CustomerAdmin(object):
                 if lightin_sku.comboed ==True or lightin_sku.SKU.find("579815")>=0 :
                     price = lightin_sku.sku_price
                 else:
-                    price = lightin_sku.lightin_spu.shopify_price
+                    price = lightin_sku.lightin_spu.yallavip_price
 
 
                 obj, created = Draft.objects.update_or_create(

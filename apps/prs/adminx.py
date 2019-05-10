@@ -1184,9 +1184,11 @@ class YallavipAdAdmin(object):
     actions = []
     ordering = []
 
+
+
 @xadmin.sites.register(PagePromoteCate)
 class PagePromoteCateAdmin(object):
-    from prs.commodity import update_breadcrumb_count
+
 
     actions = [ ]
     list_display = ('mypage', 'cate',)

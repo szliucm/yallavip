@@ -4671,8 +4671,10 @@ def prepare_a_album(lightinalbum_pk):
 
     ori_lightinalbum = LightinAlbum.objects.get(pk=lightinalbum_pk)
 
-    spu_pk = ori_lightinalbum.lightin_spu.pk
-    update_promote_price(spu_pk)
+    spu = lightinalbum.lightin_spu
+    spu_pk = spu.pk
+    print("正在处理spu", spu_pk)
+    updated = update_promote_price(spu)
 
     lightinalbum = LightinAlbum.objects.get(pk=lightinalbum_pk)
 
@@ -6080,11 +6082,8 @@ def split_conversation_link(verify):
         verify.save()
 
 #计算某个spu的促销价，修改sku，spu的促销价
-def update_promote_price(spu_pk):
-    try:
-        spu = Lightin_SPU.objects.get(pk = spu_pk )
-    except:
-        return False
+def update_promote_price(spu):
+
 
 
     #供货价的5倍 0.25*3.75*5
@@ -6216,9 +6215,11 @@ def prepare_promote_image_album_v2(yallavip_album_pk, lightinalbums_all):
     for lightinalbum in ori_lightinalbums:
         album_pks.append(lightinalbum.pk)
 
-        spu_pk = lightinalbum.lightin_spu.pk
+
+        spu = lightinalbum.lightin_spu
+        spu_pk = spu.pk
         print("正在处理spu", spu_pk )
-        updated = update_promote_price(spu_pk)
+        updated = update_promote_price(spu)
         #only for debug 0430
         #updated=True
         if updated:
