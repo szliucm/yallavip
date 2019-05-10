@@ -969,10 +969,11 @@ class PagePromoteCate(models.Model):
 
     cate = models.ManyToManyField(MyCategory, blank=False, verbose_name="Cate",
                                           related_name="cate_page")
+    cate_active = models.BooleanField(default=True, verbose_name="cate可用")
 
     promote_cate  = models.ManyToManyField(MyCategory, blank=False, verbose_name="Promote Cate",
                                  related_name="cate_promote")
-
+    promote_cate_active = models.BooleanField(default=True, verbose_name="promote_cate可用")
 
 
     class Meta:
