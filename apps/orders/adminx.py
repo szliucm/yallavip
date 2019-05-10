@@ -1345,11 +1345,18 @@ class VerifyAdmin(object):
 
     model_icon = 'fa fa-address-book-o'
 
-    actions = ['batch_copy',  'batch_simple','batch_complex', 'batch_sms', 'batch_confirmSMS','batch_timeoutSMS','batch_verify', 'batch_customercancel','batch_cscancel','batch_timeoutcancel', 'batch_notstart','batch_restart','batch_cancel_order', ]
+    actions = ['batch_paid', 'batch_copy',  'batch_simple','batch_complex', 'batch_sms', 'batch_confirmSMS','batch_timeoutSMS','batch_verify', 'batch_customercancel','batch_cscancel','batch_timeoutcancel', 'batch_notstart','batch_restart','batch_cancel_order', ]
     #'batch_error_money', 'batch_error_contact', 'batch_error_address', 'batch_error_cod', 'batch_error_note',
     #自定义django的admin后台action
 
+    def batch_paid(self, request, queryset):
+        # 定义actions函数
+        for row in queryset:
+            row.order.financial_status = "paid"
+            row.order.save()
 
+
+    batch_paid.short_description = "shopify订单确认支付"
 
     '''
     def batch_submit(self, request, queryset):
