@@ -2600,7 +2600,7 @@ def get_wms_quantity(barcodes=[]):
             page += 1;
 
 
-def get_shopify_quantity():
+def get_all_shopify_quantity():
     "GET /admin/inventory_levels.json?inventory_item_ids=808950810,39072856&location_ids=905684977,487838322"
 
     page = 1
@@ -4282,13 +4282,13 @@ def zero_shopify_inventories():
 
     rows = to_zero_products.values_list("sku","inventory_item_no")
     for row in rows:
-
+        if row.
         info, adjusted = adjust_shopify_inventory(row[1],0)
         if adjusted:
 
             skus = ShopifyVariant.objects.filter(sku=row[0])
             skus.update(inventory_quantity=0)
-        time.sleep(1)
+        #time.sleep(1)
 
 def adjust_shopify_inventory(inventory_item_id,available_adjustment ):
     from shop.models import Shop, ShopifyProduct
