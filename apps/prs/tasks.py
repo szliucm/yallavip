@@ -4282,13 +4282,13 @@ def zero_shopify_inventories():
 
     rows = to_zero_products.values_list("sku","inventory_item_no")
     for row in rows:
-        if row.
+
         info, adjusted = adjust_shopify_inventory(row[1],0)
         if adjusted:
 
             skus = ShopifyVariant.objects.filter(sku=row[0])
             skus.update(inventory_quantity=0)
-        #time.sleep(1)
+        time.sleep(1)
 
 def adjust_shopify_inventory(inventory_item_id,available_adjustment ):
     from shop.models import Shop, ShopifyProduct
@@ -4330,7 +4330,48 @@ def adjust_shopify_inventory(inventory_item_id,available_adjustment ):
         print(r.text)
         return "更新库存失败", False
 
+def get_shopify_inventory( ):
+    from shop.models import Shop, ShopifyProduct
+    from prs.shop_action import post_product_main, update_or_create_product
+    from .models import AliProduct
 
+    dest_shop = "yallasale-com"
+    location_id = "11796512810"
+    shop_obj = Shop.objects.get(shop_name=dest_shop)
+
+    shop_url = "https://%s:%s@%s.myshopify.com" % (shop_obj.apikey, shop_obj.password, shop_obj.shop_name)
+
+    params = {
+
+    }
+    headers = {
+        "Content-Type": "application/json",
+        "charset": "utf-8",
+
+    }
+    # 初始化SDK
+    url = shop_url + "/inventory_levels.json?location_ids=%s"%(location_id)
+
+    print("开始更新库存")
+    print(url, json.dumps(params))
+
+    r = requests.get(url, headers=headers, data=json.dumps(params))
+    if r.status_code == 200:
+        data = json.loads(r.text)
+        inventory_levels = data.get("inventory_levels")
+        for inventory_level in inventory_levels:
+            print (inventory_level.get("inventory_item_id"))
+            ShopifyVariant.objects.update_or_create(inventory_item_id = inventory_level.get("inventory_item_id"),
+                                                    default ={
+                                                        "inventory_quantity": inventory_level.get("available")
+                                                    }
+
+
+            )
+
+    else:
+        print(r.text)
+        return "更新库存失败", False
 
 #更新价格,顺便把库存策略改成无货后不不能下单
 def adjust_shopify_prices():
