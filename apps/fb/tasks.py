@@ -194,7 +194,7 @@ def download_album_photos(album):
                           created_time=photo["created_time"],
                           updated_time=photo["updated_time"],
                           active=True,
-                          name=photoget("name",""),
+                          name=photo.get("name",""),
                           picture=photo["picture"],
                           link=photo["link"],
                           like_count=photo["likes"]["summary"]["total_count"],
