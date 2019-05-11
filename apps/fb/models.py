@@ -217,6 +217,8 @@ class MyPhoto(models.Model):
 
     posted_times = models.IntegerField(u'发布到主页的次数',default=0,blank=True, null=True)
 
+    handle =  models.CharField(max_length=100,null=True, blank=True, verbose_name="handle")
+
     class Meta:
         verbose_name = "Photo"
         verbose_name_plural = verbose_name

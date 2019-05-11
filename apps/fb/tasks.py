@@ -343,3 +343,18 @@ def get_adaccount_ads(adaccount_no):
 
                                                                   }
                                                         )
+
+def update_photos_handle():
+    myphotos = MyPhoto.objects.filter(active=True)
+    for myphoto in myphotos:
+        try:
+            tmp = re.split(r"\[|\]", myphoto.name)
+            if (1 < len(tmp)):
+                myphoto.handle = tmp[1]
+            else:
+                myphoto.handle = ""
+
+        except KeyError:
+            myphoto.handle = ""
+
+        myphoto.save()
