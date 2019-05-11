@@ -1,28 +1,24 @@
 # Create your tasks here
 from __future__ import absolute_import, unicode_literals
 
+import json
+import requests
+from facebook_business.adobjects.ad import Ad
+from facebook_business.adobjects.adaccount import AdAccount
+from facebook_business.adobjects.adset import AdSet
+from facebook_business.adobjects.adsinsights import AdsInsights
+from facebook_business.adobjects.album import Album
+from facebook_business.adobjects.business import Business
+from facebook_business.adobjects.campaign import Campaign
+from facebook_business.adobjects.page import Page
+from facebook_business.adobjects.photo import Photo
+from facebook_business.adobjects.systemuser import SystemUser
+from facebook_business.adobjects.user import User
 from facebook_business.api import FacebookAdsApi
 from facebook_business.exceptions import FacebookRequestError
+from fb.models import *
+from prs.fb_action import get_token
 
-
-from facebook_business.adobjects.systemuser import SystemUser
-from facebook_business.adobjects.page import Page
-from facebook_business.adobjects.album import Album
-from facebook_business.adobjects.photo import Photo
-from facebook_business.adobjects.business import Business
-from facebook_business.adobjects.user import User
-from facebook_business.adobjects.adaccount import AdAccount
-from facebook_business.adobjects.campaign import Campaign
-from facebook_business.adobjects.adset import AdSet
-from facebook_business.adobjects.ad import Ad
-from facebook_business.adobjects.adsinsights import AdsInsights
-
-
-from fb.models import  *
-
-import  requests, json
-
-from prs.fb_action import  get_token
 
 #更新相册信息
 def update_albums():
@@ -85,25 +81,27 @@ def update_albums():
 #批量更新图片
 def batch_update_photos(limit = None):
     page_no_list = MyPage.objects.filter(active=True, is_published=True, promotable=True).values_list("page_no",flat=True)
-    queryset = MyAlbum.objects.filter(active=True,updated= False, page_no__in=page_no_list)
-    for album in queryset:
-        update_album_photos(album)
+    for page_no in page_no_list:
+        access_token, long_token = get_token(page_no)
+
+        if not access_token:
+            error = "获取token失败"
+            print error
+            continue
+        queryset = MyAlbum.objects.filter(active=True,updated= False, page_no=page_no)
+        adobjects = FacebookAdsApi.init(access_token=access_token, debug=True)
+        
+        for album in queryset:
+            update_album_photos(album)
 
 
 
 def update_album_photos(album):
     album_no = album.album_no
     page_no = album.page_no
-
-    access_token, long_token = get_token(page_no)
-
-    if not access_token:
-        error = "获取token失败"
-        return error, None
-
-    adobjects = FacebookAdsApi.init(access_token=access_token, debug=True)
+    
     # 重置原有相册的图片信息为不活跃
-    MyPhoto.objects.filter(album_no=album_no).update(active=False)
+    album.update(active=False)
 
     fields = ["id", "name", "created_time", "updated_time", "picture", "link",
               "likes.summary(true)", "comments.summary(true)"
@@ -149,6 +147,62 @@ def update_album_photos(album):
     album.save()
 
 
+# 批量更新图片
+def batch_download_photos(limit=None):
+    page_no_list = MyPage.objects.filter(active=True, is_published=True, promotable=True).values_list("page_no",
+                                                                                                      flat=True)
+    for page_no in page_no_list:
+        access_token, long_token = get_token(page_no)
+
+        if not access_token:
+            error = "获取token失败"
+            print error
+            continue
+        queryset = MyAlbum.objects.filter(active=True, updated=False, page_no=page_no)
+        adobjects = FacebookAdsApi.init(access_token=access_token, debug=True)
+
+        for album in queryset:
+            download_album_photos(album)
+
+def download_album_photos(album):
+    album_no = album.album_no
+    page_no = album.page_no
+
+    # 重置原有相册的图片信息为不活跃
+    album.delete()
+
+    fields = ["id", "name", "created_time", "updated_time", "picture", "link",
+              "likes.summary(true)", "comments.summary(true)"
+              ]
+    params = {
+        'limit': 100,
+
+    }
+    try:
+        photos = Album(album_no).get_photos(
+            fields=fields,
+            params=params,
+        )
+    except Exception as e:
+        print("获取Facebook数据出错", fields, e)
+        return
+    myphoto_list = []
+    for photo in photos:
+        myphoto = MyPhoto(photo_no=photo["id"],
+                          page_no=page_no,
+                          album_no=album_no,
+                          created_time=photo["created_time"],
+                          updated_time=photo["updated_time"],
+                          active=True,
+                          name=photoget("name",""),
+                          picture=photo["picture"],
+                          link=photo["link"],
+                          like_count=photo["likes"]["summary"]["total_count"],
+                          comment_count=photo["comments"]["summary"]["total_count"]
+
+                          )
+        myphoto_list.append(myphoto)
+    MyPhoto.objects.bulk_create(myphoto_list)
 
 
 def batch_update_feed():
