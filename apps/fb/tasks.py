@@ -192,13 +192,25 @@ def download_album_photos(album):
         return
     myphoto_list = []
     for photo in photos:
+        name = photo.get("name", ""),
+        try:
+            tmp = re.split(r"\[|\]", name)
+            if (1 < len(tmp)):
+                handle = tmp[1]
+            else:
+                handle = ""
+
+        except:
+            handle = ""
+
         myphoto = MyPhoto(photo_no=photo["id"],
                           page_no=page_no,
                           album_no=album_no,
                           created_time=photo["created_time"],
                           updated_time=photo["updated_time"],
                           active=True,
-                          name=photo.get("name",""),
+                          name=name,
+                          handle=handle,
                           picture=photo["picture"],
                           link=photo["link"],
                           like_count=photo["likes"]["summary"]["total_count"],
@@ -211,19 +223,24 @@ def download_album_photos(album):
 
 def batch_update_feed():
 
-    queryset = MyPage.objects.filter(active=True, is_published=True)
-    for row in queryset:
-        page_no = row.page_no
+    page_no_list = MyPage.objects.filter(active=True, is_published=True, promotable=True).values_list("page_no",flat=True)
+    for page_no in page_no_list:
+
         update_feed(page_no)
 
 def update_feed(page_no,days=2):
 
     import  datetime
 
+    if not access_token:
+        error = "获取token失败"
+        print (error)
+        return
+    adobjects = FacebookAdsApi.init(access_token=access_token, debug=True)
+
     today = datetime.date.today()
     start_time = str(today - datetime.timedelta(days=days))
-    access_token , systoken= get_token(page_no)
-    adobjects = FacebookAdsApi.init(access_token=access_token, debug=True)
+
     # 重置原有feed信息为不活跃
     MyFeed.objects.filter(page_no=page_no).update(active=False)
 
@@ -357,7 +374,7 @@ def update_photos_handle():
             else:
                 myphoto.handle = ""
 
-        except KeyError:
+        except:
             myphoto.handle = ""
 
         myphoto.save()
@@ -373,6 +390,7 @@ def delete_photos(page_no, photo_nos):
         return error, None
 
     FacebookAdsApi.init(access_token=access_token)
+    photo_deleted = []
     for photo_no in photo_nos:
 
         fields = [
@@ -389,7 +407,8 @@ def delete_photos(page_no, photo_nos):
             print("删除图片出错", photo_no, e)
 
         print("删除相册图片 LightinAlbum %s" % (photo_no))
-
+        photo_deleted.append(photo_no)
+    MyPhoto.objects.filter(photo_no__in = photo_deleted).delete()
 
 def list_to_dict(photos):
     photo_miss = {}
@@ -416,9 +435,16 @@ def delete_outstock_photos():
 
         photo_nos = photo_miss[page_no]
         print("page %s 待删除数量 %s  " % (page_no, len(photo_nos)))
+
+        #for debug
+        MyPhoto.objects.filter(photo_no__in=photo_nos).delete()
+        #for debug
+
         if photo_nos is None or len(photo_nos) == 0:
             continue
 
         delete_photos(page_no, photo_nos)
+
+
 
 
