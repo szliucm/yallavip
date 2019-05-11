@@ -156,7 +156,7 @@ def batch_download_photos(limit=None):
 
         if not access_token:
             error = "获取token失败"
-            print error
+            print(error)
             continue
         queryset = MyAlbum.objects.filter(active=True, updated=False, page_no=page_no)
         adobjects = FacebookAdsApi.init(access_token=access_token, debug=True)
