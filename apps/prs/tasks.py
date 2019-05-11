@@ -5587,8 +5587,8 @@ def auto_post_longads():
     for page in pages:
         #从符合条件的相册里选一个相册,    #发post
         print("正在处理page", page)
-
-        page_post(page.page_no, 10,keyword=None,long_ad=True)
+        page_no = page.page_no
+        page_post(page_no, 10,keyword=None,long_ad=True)
 
 
 
@@ -5620,7 +5620,8 @@ def engagement_ads_long():
     #遍历每个page
     for page in pages:
         #post_engagement_ads(page.page_no, 1)
-        post_ads(page.page_no, "engagement",20,long_ad=True)
+        page_no = page.page_no
+        post_ads(page_no, "engagement",20,long_ad=True)
 
 
 
@@ -6187,7 +6188,7 @@ def prepare_long_ad(page_no):
 
 
     # 取库存大、单价高、已经发布到相册 且还未打广告的商品
-    spus_all = Lightin_SPU.objects.filter(sellable__gt=10, vendor="lightin",longaded=False)
+    spus_all = Lightin_SPU.objects.filter(sellable__gt=5, vendor="lightin",longaded=False)
 
 
 
