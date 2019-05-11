@@ -21,6 +21,7 @@ from prs.fb_action import get_token
 
 from prs.tasks import my_custom_sql
 
+from prs.tasks import ad_tokens
 
 #更新相册信息
 def update_albums():
@@ -303,7 +304,7 @@ def batch_update_adaccount():
     id = "2076017356044262"
     adaccounts = User(id).get_ad_accounts(fields=fields, params=params, )
 
-    # 重置原有feed信息为不活跃
+
     MyAdAccount.objects.update(active=False)
     for adaccount in adaccounts:
         print(adaccount)
@@ -329,7 +330,7 @@ def batch_update_ad():
 
 
 def get_adaccount_ads(adaccount_no):
-    ad_tokens = "EAAHZCz2P7ZAuQBACZAZAQBZAJapY8bEy9AdtxewxBhIdgFi0iQa8imNrOaDGT9rcebKIFnaEXlEMKyC0IQ6CjZB9pL3bZBuuMK5hLbOtjLeXQ4CLPUNe7qXamuwyoG8v0IZBBVZAvURKzSNA3AWPwvwggKpkAgivX0zJvKJeZBZAaOSY5XoPTaOZBLrf"
+
     adobjects = FacebookAdsApi.init(access_token=ad_tokens, debug=True)
 
     fields =['id','account_id','ad_review_feedback','adlabels','adset_id','campaign_id', 'name','status',
