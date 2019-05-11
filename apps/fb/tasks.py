@@ -345,6 +345,7 @@ def get_adaccount_ads(adaccount_no):
                                                         )
 
 def update_photos_handle():
+    import  re
     myphotos = MyPhoto.objects.filter(active=True)
     for myphoto in myphotos:
         try:
