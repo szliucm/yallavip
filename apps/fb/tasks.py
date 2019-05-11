@@ -231,7 +231,7 @@ def batch_update_feed():
 def update_feed(page_no,days=2):
 
     import  datetime
-
+    access_token, long_token = get_token(page_no)
     if not access_token:
         error = "获取token失败"
         print (error)
