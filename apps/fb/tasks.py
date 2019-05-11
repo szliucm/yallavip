@@ -19,6 +19,8 @@ from facebook_business.exceptions import FacebookRequestError
 from fb.models import *
 from prs.fb_action import get_token
 
+from prs.tasks import my_custom_sql
+
 
 #更新相册信息
 def update_albums():
@@ -215,7 +217,7 @@ def batch_update_feed():
         update_feed(page_no)
 
 def update_feed(page_no,days=2):
-    from prs.tasks import my_custom_sql
+
     import  datetime
 
     today = datetime.date.today()
@@ -359,3 +361,64 @@ def update_photos_handle():
             myphoto.handle = ""
 
         myphoto.save()
+
+
+def delete_photos(page_no, photo_nos):
+    from facebook_business.adobjects.photo import Photo
+    access_token, long_token = get_token(page_no)
+    if not access_token:
+        error = "获取token失败"
+        print(error, page_no)
+
+        return error, None
+
+    FacebookAdsApi.init(access_token=access_token)
+    for photo_no in photo_nos:
+
+        fields = [
+        ]
+        params = {
+
+        }
+        try:
+            response = Photo(photo_no).api_delete(
+                fields=fields,
+                params=params,
+            )
+        except Exception as e:
+            print("删除图片出错", photo_no, e)
+
+        print("删除相册图片 LightinAlbum %s" % (photo_no))
+
+
+def list_to_dict(photos):
+    photo_miss = {}
+
+    for photo in photos:
+        page_no = photo[0]
+        fb_id = photo[1]
+        photo_list = photo_miss.get(page_no)
+        if not photo_list:
+            photo_list = []
+
+        if fb_id not in photo_list:
+            photo_list.append(fb_id)
+
+        photo_miss[page_no] = photo_list
+    return photo_miss
+
+def delete_outstock_photos():
+    mysql = " SELECT p.page_no, p.photo_no from fb_myphoto p, prs_lightin_spu s where p.handle = s.handle and sellable<=0"
+    photos = my_custom_sql(mysql)
+
+    photo_miss = list_to_dict(photos)
+    for page_no in photo_miss:
+
+        photo_nos = photo_miss[page_no]
+        print("page %s 待删除数量 %s  " % (page_no, len(photo_nos)))
+        if photo_nos is None or len(photo_nos) == 0:
+            continue
+
+        delete_photos(page_no, photo_nos)
+
+
