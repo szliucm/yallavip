@@ -163,6 +163,8 @@ def batch_download_photos(limit=None):
 
         for album in queryset:
             download_album_photos(album)
+            album.updated = True
+            album.save()
 
 def download_album_photos(album):
     album_no = album.album_no
