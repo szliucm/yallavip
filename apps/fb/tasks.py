@@ -243,7 +243,7 @@ def update_feed(page_no,days=2):
     start_time = str(today - datetime.timedelta(days=days))
 
     # 重置原有feed信息为不活跃
-    MyFeed.objects.filter(page_no=page_no).update(active=False)
+    MyFeed.objects.filter(page_no=page_no, created_time__gt=start_time).update(active=False)
 
     fields = ["created_time", "description", "id","full_picture",
               "type", "message", "name",
@@ -263,7 +263,7 @@ def update_feed(page_no,days=2):
         created_time = feed.get("created_time")
         print(created_time)
         if created_time < start_time:
-            print ("两天前的就不看了")
+            print ("%s天前的就不看了"%days)
             break
 
         obj, created = MyFeed.objects.update_or_create(feed_no=feed["id"],
@@ -459,7 +459,7 @@ def update_feeds_handles():
 
         except:
             handles = ""
-
+        print (feed.message, handles)
         feed.handles = handles
         feed.save()
 
