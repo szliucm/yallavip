@@ -17,11 +17,11 @@ from facebook_business.adobjects.user import User
 from facebook_business.api import FacebookAdsApi
 from facebook_business.exceptions import FacebookRequestError
 from fb.models import *
+
+from prs.models import  Lightin_SPU
 from prs.fb_action import get_token
 
-from prs.tasks import my_custom_sql
-
-from prs.tasks import ad_tokens
+from prs.tasks import my_custom_sql, ad_tokens
 
 #更新相册信息
 def update_albums():
