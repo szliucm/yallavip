@@ -437,9 +437,6 @@ def delete_outstock_photos():
         photo_nos = photo_miss[page_no]
         print("page %s 待删除数量 %s  " % (page_no, len(photo_nos)))
 
-        #for debug
-        MyPhoto.objects.filter(photo_no__in=photo_nos).delete()
-        #for debug
 
         if photo_nos is None or len(photo_nos) == 0:
             continue
@@ -468,44 +465,54 @@ def update_feeds_handles():
 
 
 def delete_outstock_feeds():
-
+    from  prs.tasks import delete_posts
     import time
 
-    feeds = MyFeed.objects.filter(active=True)
+    feeds = MyFeed.objects.filter(active=True, handles__isnull=False)
+    feed_nos = []
     for feed in feeds:
-        try:
-            tmp = re.split(r"\[|\]", feed.message)
-            if 1 < len(tmp):
-                handles = tmp[1]
-            else:
-                handles = ""
 
-        except:
-            handles = ""
+        handles = feed.handles.split(",")
+        spus_all = Lightin_SPU.objects.filter(handle__in=handles)
+        spus_outstock = spus_all.filter(sellable__lte=0)
+        if spus_outstock.count() > 0:
+            print("有spu无库存了", spus_outstock, feed, feed.feed_no)
+            feed_nos.append((feed.page_no,feed.feed_no))
 
-        feed.handles = handles
-        feed.save
+    feed_miss = list_to_dict(feed_nos)
+    for page_no in feed_miss:
 
+        feed_nos = feed_miss[page_no]
+        print("page %s 待删除数量 %s  " % (page_no, len(feed_nos)))
+        if feed_nos is None or len(feed_nos) == 0:
+            continue
 
+        delete_posts(page_no, feed_nos)
+
+        MyFeed.objects.filter(feed_no__in=feed_nos).update(active=False)
+
+def delete_nohandle_feeds():
+    feeds = MyFeed.objects.filter(active=True, handle__isnull=True)
+    feed_nos = []
+    for feed in feeds:
 
         spus_all = Lightin_SPU.objects.filter(handle__in=handles)
         spus_outstock = spus_all.filter(sellable__lte=0)
         if spus_outstock.count() > 0:
-            print("有spu无库存了", spus_outstock, ad, ad.ad_no)
+            print("有spu无库存了", spus_outstock, feed, feed.feed_no)
+            feed_nos.append((feed.page_no, feed.feed_no))
 
+    feed_miss = list_to_dict(feed_nos)
+    for page_no in feed_miss:
 
-            # 修改广告状态
-            ad_status = "DELETED"
-            info, updated = ad_update_status(ad.ad_no, status=ad_status)
-            if updated:
-                ad.ad_status = ad_status
+        feed_nos = feed_miss[page_no]
+        print("page %s 待删除数量 %s  " % (page_no, len(feed_nos)))
+        if photo_nos is None or len(photo_nos) == 0:
+            continue
 
-            else:
-                ad.update_error = info
-            time.sleep(20)
+        delete_posts(page_no, feed_nos)
 
-            ad.active = False
-            ad.save()
+        MyFeed.objects.filter(feed_no__in=feed_nos).update(active=False)
 
 
 

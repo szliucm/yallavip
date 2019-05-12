@@ -3843,6 +3843,58 @@ def valid_phone(x):
 
     return x
 
+def send_sms(verify_orders_checked):
+    from yunpian_python_sdk.model import constant as YC
+    from yunpian_python_sdk.ypclient import YunpianClient
+    import urllib
+    import sys
+    from django.utils import timezone as dt
+
+    clnt = YunpianClient('2f22880b34b7dc5c6d93ce21047601f9')
+
+    for verify_order  in verify_orders_checked:
+
+        #检验电话号码
+        phone_1 = verify_order.phone_1
+        if not len(phone_1) == 9:
+            #可能是多号码，也可能是号码不正确，先返回错误，不自动拆分多个电话号码
+            error = "电话号码错误"
+            verify_order.verify_status='SIMPLE'
+            verify_order.verify_comments ="phone to be confirm"
+            verify_order.save()
+            continue
+
+        #判断是否需要发送验证码
+        #还没做
+
+
+
+        # 随机生成验证码，避免作弊
+        code = "F"+ str(random.randint(0,99999)).zfill(5)
+        print(phone_1, code)
+
+        #发送验证码
+        param = {YC.MOBILE: "+966"+phone_1,
+                 YC.TEXT: '【YallaVIP】Please send  YallaVIP\'s Confirmation code#%s# to us by facebook messanger. We will deliver your order when we get your code.' %(code)}
+
+        urllib.parse.urlencode(param)
+        r = clnt.sms().single_send(param)
+
+        #记录本次发送的验证码
+        #tobe do
+        Sms.objects.create(
+            phone="966"+phone_1,
+            send_status=r.code(),
+            send_time=dt.now(),
+            content=code,
+            fail_reason=r.msg(),
+
+        )
+        # 记录发送状态到数据库
+        verify_order.sms_status = "WAIT"
+        verify_order.save()
+
+
 #自动发送验证码
 @shared_task
 def auto_smscode():
