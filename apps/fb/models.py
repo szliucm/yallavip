@@ -151,7 +151,7 @@ class MyFeed(models.Model):
     comment_count = models.CharField(max_length=100,null=True, blank=True, verbose_name="comment_count")
 
     like_count = models.IntegerField( null=True, blank=True, verbose_name="like_count")
-    handle = models.CharField(max_length=100, null=True, blank=True, verbose_name="handle")
+    handles = models.CharField(max_length=100, null=True, blank=True, verbose_name="handles")
 
     class Meta:
         verbose_name = "Feed"

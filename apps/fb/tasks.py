@@ -456,12 +456,16 @@ def update_feeds_handles():
                 handles = tmp[1]
             else:
                 handles = ""
+            print (handles)
+            feed.handles = handles
+            feed.save()
 
         except:
-            handles = ""
-        print (feed.message, handles)
-        feed.handles = handles
-        feed.save()
+            print (feed.message)
+
+
+
+
 
 def delete_outstock_feeds():
 
