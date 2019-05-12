@@ -606,6 +606,7 @@ class Lightin_SKU(models.Model):
     height = models.FloatField(verbose_name="height", default=0, blank=True, null=True)
 
     skuattr = models.TextField(default='', null=True, blank=True, verbose_name="skuattr")
+    size = models.CharField(default='', max_length=100, null=True, blank=True, verbose_name="size")
 
     #image = models.ImageField(u'组合图', upload_to='combo/', default="", null=True, blank=True)
     image = models.CharField(default='', max_length=200, null=True, blank=True, verbose_name="sku图")

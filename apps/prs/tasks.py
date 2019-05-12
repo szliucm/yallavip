@@ -6538,3 +6538,22 @@ def tag_aded_spus():
     Lightin_SPU.objects.filter(handle__in=spus_list).update(aded=True)
 
 
+
+def cal_sku_size():
+    skus = Lightin_SKU.objects.filter(lightin_spu__vendor="lightin",skuattr__icontains="size")
+    n = 0
+    for sku in skus:
+        n +=1
+
+        if n>100:
+            break
+        option_sets = sku.skuattr.split(";")
+
+        for option_set in option_sets:
+            print (option_set.lower())
+            if option_set.lower().find("size")>-1:
+                option_name, size = option_set.split("=")
+                sku.size = size
+                sku.save()
+                break
+
