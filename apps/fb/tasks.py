@@ -446,6 +446,32 @@ def delete_outstock_photos():
 
         delete_photos(page_no, photo_nos)
 
+def delete_outstock_ads():
+    from prs.fb_action import ad_update_status
+    import time
+
+    ads = MyAd.objects.filter(active=True,status="ACTIVE")
+    for ad in ads:
+        handles = ad.name.split("_")[2].split(",")
+        spus_all = Lightin_SPU.objects.filter(handle__in=handles)
+        spus_outstock = spus_all.filter(sellable__lte=0)
+        if spus_outstock.count() > 0:
+            print("有spu无库存了", spus_outstock, ad, ad.ad_no)
+
+
+            # 修改广告状态
+            ad_status = "DELETED"
+            info, updated = ad_update_status(ad.ad_no, status=ad_status)
+            if updated:
+                ad.ad_status = ad_status
+
+            else:
+                ad.update_error = info
+            time.sleep(20)
+
+            ad.active = False
+            ad.save()
+
 
 
 
