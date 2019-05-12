@@ -446,13 +446,44 @@ def delete_outstock_photos():
 
         delete_photos(page_no, photo_nos)
 
-def delete_outstock_ads():
-    from prs.fb_action import ad_update_status
+def update_feeds_handles():
+    import re
+    feeds = MyFeed.objects.filter(active=True)
+    for feed in feeds:
+        try:
+            tmp = re.split(r"\[|\]", feed.message)
+            if 1 < len(tmp):
+                handles = tmp[1]
+            else:
+                handles = ""
+
+        except:
+            handles = ""
+
+        feed.handles = handles
+        feed.save()
+
+def delete_outstock_feeds():
+
     import time
 
-    ads = MyAd.objects.filter(active=True,status="ACTIVE")
-    for ad in ads:
-        handles = ad.name.split("_")[2].split(",")
+    feeds = MyFeed.objects.filter(active=True)
+    for feed in feeds:
+        try:
+            tmp = re.split(r"\[|\]", feed.message)
+            if 1 < len(tmp):
+                handles = tmp[1]
+            else:
+                handles = ""
+
+        except:
+            handles = ""
+
+        feed.handles = handles
+        feed.save
+
+
+
         spus_all = Lightin_SPU.objects.filter(handle__in=handles)
         spus_outstock = spus_all.filter(sellable__lte=0)
         if spus_outstock.count() > 0:
