@@ -911,7 +911,7 @@ class LogisticCustomerServiceAdmin(object):
     list_editable = ['feedback',  ]
 
     search_fields = [ 'logistic_no' ]
-    list_filter = ('logistic_start_date','logistic_update_date', 'logistic_update_status', 'deal','package_status','yallavip_package_status','from_warehouse',)
+    list_filter = ('logistic_track_code', 'logistic_start_date','logistic_update_date', 'logistic_update_status', 'deal','package_status','yallavip_package_status','from_warehouse',)
     ordering = ['send_time']
 
 
