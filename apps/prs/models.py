@@ -512,9 +512,13 @@ class AliProduct_vendor(models.Model):
 
 
 class Lightin_SPU(models.Model):
+    mycategory = models.ForeignKey(MyCategory, null=True, blank=True, verbose_name="品类",
+                                    related_name="cate_spu", on_delete=models.CASCADE)
+
     SPU = models.CharField(default='',max_length=300, null=True, blank=True, verbose_name="SPU")
 
     vendor = models.CharField(default='',max_length=20, null=True, blank=True, verbose_name="Vendor")
+
 
     en_name = models.CharField(default='',max_length=300, null=True, blank=True, verbose_name="en_name")
     cn_name = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="cn_name")

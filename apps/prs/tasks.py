@@ -6540,20 +6540,31 @@ def tag_aded_spus():
 
 
 def cal_sku_size():
-    skus = Lightin_SKU.objects.filter(lightin_spu__vendor="lightin",skuattr__icontains="size")
-    n = 0
-    for sku in skus:
-        n +=1
+    skus = Lightin_SKU.objects.filter(lightin_spu__vendor="lightin",size="", skuattr__icontains="size")
 
-        if n>100:
-            break
+    for sku in skus:
+
         option_sets = sku.skuattr.split(";")
 
         for option_set in option_sets:
-            print (option_set.lower())
-            if option_set.lower().find("size")>-1:
-                option_name, size = option_set.split("=")
-                sku.size = size
-                sku.save()
-                break
+
+            if option_set.lower().find("size")>-1 :
+                options = option_set.split("=")
+                print(options)
+                if len(options) ==2 :
+                    sku.size = size[1]
+                    sku.save()
+                    break
+                else:
+                    print("没有尺码",sku.skuattr , option_set)
+
+def update_spu_cate():
+    spus = Lightin_SPU.objects.filter(vendor="lightin")
+    for spu in spus:
+        try:
+            spu.mycategory = MyCategory.objects.get(tags = spu.breadcrumb)
+            spu.save()
+        except Exception as e:
+            print(e)
+            print("对应不上cate", spu , spu.breadcrumb)
 
