@@ -5290,16 +5290,19 @@ def clean_breadcrumb():
 
     for spu in spus:
 
-        tags =  spu.breadcrumb.split(',')
-        n=0
+
+        if not spu.breadcrumb:
+            continue
+
+        tags = spu.breadcrumb.split(",")
+        new_tags = []
         for tag in tags:
-            if n==0:
-                new_breadscrumb = tag.strip()
-            else:
-                new_breadscrumb = new_breadscrumb +','+ tag.strip()
-            n += 1
-        print (new_breadscrumb)
-        spu.breadcrumb = new_breadscrumb
+            new_tag = tag.strip()
+            new_tags.append(new_tag)
+        new_tags = ",".join(new_tags)
+        print (new_tags)
+        spu.breadcrumb = new_tags
+
         spu.save()
 
 
@@ -6577,13 +6580,15 @@ def update_spu_cate():
 
 
 def update_spu_sizecount():
+    #先把所有的spu的size_count都置为0，再更新最新的状态
+    Lightin_SPU.objects.update(size_count=0)
     spu_sizes = Lightin_SKU.objects.filter(~Q(size=""), lightin_spu__size_count=0, o_sellable__gt=0, lightin_spu__vendor="lightin").\
         values("SPU").annotate(size_count = Count("size", distinct=True))
     for spu_size in spu_sizes:
         try:
-            spu = Lightin_SKU.objects.get(pk=spu_size.get("SPU"))
+            spu = Lightin_SPU.objects.get(SPU=spu_size.get("SPU"))
             spu.size_count = spu_size.get("size_count")
             spu.save()
         except Exception as e:
             print(e)
-            print("更新size_count 出错", spu )
+            print("更新size_count 出错", spu_size )
