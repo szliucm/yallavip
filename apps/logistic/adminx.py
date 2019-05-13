@@ -895,6 +895,7 @@ class LogisticCustomerServiceAdmin(object):
                      'order_no','order_comment', 'receiver_phone',
 
                     )
+                    #'show_conversation'
     '''
     list_display = ('logistic_no',
                     # 'yallavip_package_status','problem_type', 'response',
@@ -906,7 +907,7 @@ class LogisticCustomerServiceAdmin(object):
 
                     'order_no', 'order_comment',
 
-                    'show_conversation')
+                    )
     list_editable = ['feedback',  ]
 
     search_fields = [ 'logistic_no' ]
