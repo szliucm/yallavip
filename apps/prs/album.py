@@ -298,18 +298,11 @@ def prepare_yallavip_photoes_v2(page_no=None):
             is_sku = False
             print("album is ", album)
 
-
-
-            rule = album.rule
-
             # 拼接相册的筛选产品的条件
             q_cate = Q()
             q_cate.connector = 'OR'
 
-
             cate_name =  album.cate.tags
-
-
             q_cate.children.append(('breadcrumb__contains', cate_name))
 
             #先不管尺码，只管库存多的
@@ -351,7 +344,7 @@ def prepare_yallavip_photoes_v2(page_no=None):
                     product_list.append(product)
 
             else:
-                products_to_add = Lightin_SPU.objects.filter(con, published=True,sellable__gt=3).exclude(id__in=
+                products_to_add = Lightin_SPU.objects.filter(con, published=True,sellable__gt=5).exclude(id__in=
                                                 LightinAlbum.objects.filter(
                                                     yallavip_album__pk=album.pk,
                                                     lightin_spu__isnull=False).values_list(
@@ -400,7 +393,7 @@ def prepare_promote_v2(page_no):
                 count = 10
             else:
                 count = int(cate_spus.count() / 2)
-            print ("一共有%s个" % (count))
+            print ("一共有%s个广告组合" % (count))
 
             for i in range(count):
                 print("当前处理 ", i, cate_spus)

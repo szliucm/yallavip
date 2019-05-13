@@ -6252,7 +6252,7 @@ def prepare_long_ad(page_no):
 
     for cate in cates:
 
-        cate_spus = spus_all.filter(breadcrumb__icontains = cate, sellable__gt=10)
+        cate_spus = spus_all.filter(breadcrumb__icontains = cate, sellable__gt=3)
         #每次最多20个
         if cate_spus.count()>20:
             count = 10
