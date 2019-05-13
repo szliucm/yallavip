@@ -6575,3 +6575,15 @@ def update_spu_cate():
             print(e)
             print("对应不上cate", spu , spu.breadcrumb, spu.sellable)
 
+
+def update_spu_sizecount():
+    spu_sizes = Lightin_SKU.objects.filter(~Q(size=""), lightin_spu__size_count=0, o_sellable__gt=0, lightin_spu__vendor="lightin").\
+        values("SPU").annotate(size_count = Count("size", distinct=True))
+    for spu_size in spu_sizes:
+        try:
+            spu = Lightin_SKU.objects.get(pk=spu_size.get("SPU"))
+            spu.size_count = spu_size.get("size_count")
+            spu.save()
+        except Exception as e:
+            print(e)
+            print("更新size_count 出错", spu )
