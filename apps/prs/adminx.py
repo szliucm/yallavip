@@ -83,7 +83,7 @@ class MyCategoryAdmin(object):
     size.short_description = "尺码汇总"
 
 
-    list_display = ["super_cate", "super_name", "name", "level","tags","spu_count","spu_count_5","spu_count_10", "longaded_count","size", "active","published" ,]
+    list_display = ["super_cate", "super_name", "name", "level","tags","spu_count","spu_count_5","size_count_5","spu_count_10", "longaded_count","size", "active","published" ,]
 
 
     search_fields = ["name", ]
