@@ -2925,7 +2925,7 @@ def sync_shopify(minutes=10):
 
     cal_reserved(overtime=24)
 
-    delete_outstock_lightin_album()
+    #elete_outstock_lighin_album()
     auto_smscode()
 
 
