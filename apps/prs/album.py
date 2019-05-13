@@ -370,7 +370,7 @@ def prepare_yallavip_photoes_v2(page_no=None):
 
 #为促销做准备商品
 #相册和主推品类结合选品，打广告
-@task
+
 def prepare_promote_v2(page_no):
 
     import random
