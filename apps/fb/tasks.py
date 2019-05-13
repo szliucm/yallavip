@@ -427,6 +427,7 @@ def list_to_dict(photos):
         photo_miss[page_no] = photo_list
     return photo_miss
 
+@shared_task
 def delete_outstock_photos():
     mysql = " SELECT p.page_no, p.photo_no from fb_myphoto p, prs_lightin_spu s where p.handle = s.handle and sellable<=0"
     photos = my_custom_sql(mysql)
@@ -463,7 +464,7 @@ def update_feeds_handles():
 
 
 
-
+@shared_task
 def delete_outstock_feeds():
     from  prs.tasks import delete_posts
     import time

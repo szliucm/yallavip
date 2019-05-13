@@ -5192,6 +5192,7 @@ def change_product_publish_status(product_no, published):
         print(r.text)
         return "更新发布状态失败", False
 
+@shared_task
 def outstock_ads():
     from prs.fb_action import ad_update_status
     import time
