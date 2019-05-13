@@ -306,11 +306,9 @@ def prepare_yallavip_photoes_v2(page_no=None):
             q_cate = Q()
             q_cate.connector = 'OR'
 
-            if album.cate:
-                cate_name =  album.cate.tags
 
-            elif album.catesize:
-                cate_name = album.catesize.cate.tags
+            cate_name =  album.cate.tags
+
 
             q_cate.children.append(('breadcrumb__contains', cate_name))
 
