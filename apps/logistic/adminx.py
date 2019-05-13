@@ -894,7 +894,7 @@ class LogisticCustomerServiceAdmin(object):
 
                      'order_no','order_comment', 'receiver_phone',
 
-                    'show_conversation')
+                    )
     '''
     list_display = ('logistic_no',
                     # 'yallavip_package_status','problem_type', 'response',

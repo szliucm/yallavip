@@ -6559,12 +6559,19 @@ def cal_sku_size():
                     print("没有尺码",sku.skuattr , option_set)
 
 def update_spu_cate():
-    spus = Lightin_SPU.objects.filter(vendor="lightin")
+    spus = Lightin_SPU.objects.filter(vendor="lightin", mycategory__isnull=True)
     for spu in spus:
         try:
-            spu.mycategory = MyCategory.objects.get(tags = spu.breadcrumb)
+            tags = spu.breadcrumb.split(",")[:3]
+            new_tags = []
+            for tag in tags:
+                new_tag = tag.strip()
+                new_tags.append(new_tag)
+
+            spu.mycategory = MyCategory.objects.get(tags = ",".join(new_tags))
+            print (spu.mycategory)
             spu.save()
         except Exception as e:
             print(e)
-            print("对应不上cate", spu , spu.breadcrumb)
+            print("对应不上cate", spu , spu.breadcrumb, spu.sellable)
 
