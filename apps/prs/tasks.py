@@ -6236,7 +6236,7 @@ def prepare_long_ad(page_no):
     from django.db.models import Count
 
     #取page对应的主推品类
-    cates =  PagePromoteCate.objects.filter(mypage__page_no = page_no).values_list("cate__tags", flat=True)
+    cates =  PagePromoteCate.objects.filter(mypage__page_no = page_no).values_list("promote_cate__tags", flat=True)
     if cates:
         cates = list(cates)
     else:
@@ -6244,7 +6244,7 @@ def prepare_long_ad(page_no):
 
 
     # 取库存大、单价高、已经发布到相册 且还未打广告的商品
-    spus_all = Lightin_SPU.objects.filter(sellable__gt=5, vendor="lightin",longaded=False)
+    spus_all = Lightin_SPU.objects.filter( vendor="lightin",longaded=False)
 
 
 
@@ -6252,7 +6252,7 @@ def prepare_long_ad(page_no):
 
     for cate in cates:
 
-        cate_spus = spus_all.filter(breadcrumb__icontains = cate)
+        cate_spus = spus_all.filter(breadcrumb__icontains = cate, sellable__gt=10)
         #每次最多20个
         if cate_spus.count()>20:
             count = 10
