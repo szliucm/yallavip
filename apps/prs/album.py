@@ -413,7 +413,7 @@ def init_cate_sellable():
 
     for cate in cates:
         if cate.cate_size.all():
-            cate.sellable=5
+            cate.sellable=10
 
 def init_spu_one_size():
     from prs.models import Lightin_SKU,Lightin_SPU

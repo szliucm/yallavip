@@ -52,17 +52,18 @@ class MyCategoryAdmin(object):
 
     spu_count.short_description = "SPU数量"
 
+    def spu_onesize(self, obj):
+
+        return  Lightin_SPU.objects.filter(one_size=True, breadcrumb__icontains=obj.tags).count()
+
+    spu_onesize.short_description = "均码的SPU数量"
+
+
     def spu_count_5(self, obj):
 
         return  Lightin_SPU.objects.filter(sellable__gt=5, breadcrumb__icontains=obj.tags).count()
 
     spu_count_5.short_description = ">5的SPU数量"
-
-    def size_count_5(self, obj):
-
-        return  Lightin_SPU.objects.filter(size_count__gt=5, breadcrumb__icontains=obj.tags).count()
-
-    size_count_5.short_description = "size>5的SPU数量"
 
     def spu_count_10(self, obj):
 
@@ -83,7 +84,7 @@ class MyCategoryAdmin(object):
     size.short_description = "尺码汇总"
 
 
-    list_display = ["super_cate", "super_name", "name", "level","tags","spu_count","spu_count_5","size_count_5","spu_count_10", "longaded_count","size", "active","published" ,]
+    list_display = ["super_cate", "super_name", "name", "level","tags","spu_count","spu_onesize","spu_count_5","spu_count_10", "longaded_count","size", "active","published" ,]
 
 
     search_fields = ["name", ]
