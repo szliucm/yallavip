@@ -2541,11 +2541,11 @@ def sync_wms_quantity():
 
     barcodes = Lightin_barcode.objects.filter(synced=False).values_list("barcode",flat=True)
     get_wms_quantity(list(barcodes))
-    '''
+
     for mysql in mysqls:
         print(mysql)
         my_custom_sql(mysql)
-    '''
+
 def get_wms_quantity(barcodes=[]):
     page = 1
 
@@ -4270,6 +4270,7 @@ def my_custom_sql(mysql):
     #row = cursor.fetchone()
     #transaction.commit_unless_managed()
     #return
+
 
 def adjust_shopify_inventories():
 
@@ -6593,3 +6594,49 @@ def update_spu_sizecount():
         except Exception as e:
             print(e)
             print("更新size_count 出错", spu_size )
+
+def delete_outstock_album_sku():
+    fb_dict ={}
+
+    yallavip_albums = YallavipAlbum.objects.filter(active=True, rule__isnull =False, rule__attrs__isnull=False)
+    for yallavip_album in yallavip_albums:
+        page_no = yallavip_album.page.page_no
+        size = yallavip_album.rule.attrs
+        lightin_album = LightinAlbum.objects.filter(yallavip_album = yallavip_album, deleted=False)
+        spus = lightin_album.values("lightin_spu")
+
+
+        skus_all = Lightin_SKU.objects.filter(lightin_spu__in = spus, skuattr__icontains=size)
+        spus_sellable =  skus_all.values("lightin_spu").annotate(sellable=Sum("o_sellable"))
+
+        print(yallavip_album, size, spus.count())
+        #print(spus_sellable)
+        spu_todelete=[]
+        for spu_sellable in spus_sellable:
+            spu = spu_sellable["lightin_spu"]
+            sellable = spu_sellable["sellable"]
+
+            if sellable <= 0:
+                spu_todelete.append(spu)
+
+        fb_todelete = lightin_album.filter(lightin_spu__in = spu_todelete).values_list("fb_id",flat=True)
+
+        fb_list = fb_dict.get(page_no)
+        if not fb_list:
+            fb_list = []
+
+        fb_list +=  fb_todelete
+
+        fb_dict[page_no] = fb_list
+
+    # 选择所有可用的page
+    for page_no in fb_dict:
+
+
+        fb_ids = fb_dict[page_no]
+        print("page %s 待删除数量 %s  " % (page_no, len(fb_ids)))
+        if fb_ids is None or len(fb_ids) == 0:
+            continue
+
+        delete_photos(page_no, fb_ids)
+        LightinAlbum.objects.filter(fb_id__in=fb_ids).update(deleted=True)

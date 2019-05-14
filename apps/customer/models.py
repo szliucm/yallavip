@@ -48,6 +48,7 @@ class Receiver(models.Model):
     CITIES = (
         ("None", "暂不支持"),
         ("Other", "人工处理"),
+        ("Abu Arish", "Abu Arish"),
         ("Abha", "Abha"),
         ("Abqaiq", "Abqaiq"),
         ("Ain Dar", "Ain Dar"),

@@ -305,6 +305,22 @@ def prepare_yallavip_photoes_v2(page_no=None):
             cate_name =  album.cate.tags
             q_cate.children.append(('breadcrumb__contains', cate_name))
 
+            #如果没尺码，就全上
+            #如果有尺码，one-size 的全上
+            #其他尺码的，就要sellable > n 的才上
+            q_sellable = Q()
+            q_sellable.connector = 'AND'
+
+            cate_sizes = album.cate.cate_size.all().distinct()
+            if cate_sizes:
+                q_sellable.children.append(('sellable__gt',  album.cate.sellable_gt))
+
+                sellable_gt = cate.sellable_gt
+
+
+
+
+
             #先不管尺码，只管库存多的
             q_attr = Q()
             q_attr.connector = 'OR'
