@@ -24,7 +24,7 @@ class MyCategory(models.Model):
 
     collcetion_no = models.CharField(u'collcetion_no', default='', max_length=500, null=True, blank=True)
     publishe_error = models.CharField(u'publishe_error', default='', max_length=500, null=True, blank=True)
-
+    sellable_gt = models.IntegerField(u'最低库存', default=0, blank=True, null=True)
     '''
     cate_1 = models.CharField(u'cate_1', default='', max_length=256, null=True, blank=True)
     cate_2 = models.CharField(u'cate_2', default='', max_length=256, null=True, blank=True)
