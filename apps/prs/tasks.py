@@ -4888,7 +4888,12 @@ def sync_yallavip_album(page_no=None):
         return error
 
     for album in albums:
-        lightinalbums = lightinalbums_all.filter(yallavip_album=album).order_by("lightin_spu__sellable").values_list("pk",flat=True)[:100]
+        if album.cate.sellable_gt > 0:
+            sellable_gt = album.cate.sellable_gt
+        else:
+            sellable_gt = 0
+
+        lightinalbums = lightinalbums_all.filter(yallavip_album=album, lightin_spu__sellable__gt=sellable_gt).order_by("lightin_spu__sellable").values_list("pk",flat=True)[:100]
         #sync_yallavip_album_batch.apply_async((lightinalbums,), queue='fb')
 
         sync_yallavip_album_batch(lightinalbums,access_token)
