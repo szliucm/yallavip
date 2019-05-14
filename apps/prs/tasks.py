@@ -5206,11 +5206,17 @@ def outstock_ads():
     #遍历所有活跃的广告，如果有spu已经无库存，就设置active为false，
     # 如果published为True,则将广告删除
     ads = YallavipAd.objects.filter(active=True)
+
+    delete_outstock_ad(ads.filter(published=False))
+    delete_outstock_ad(ads.filter(published = True))
+
+
+def delete_outstock_ad(ads):
     for ad in ads:
 
         handles = ad.spus_name.split(",")
         spus_all = Lightin_SPU.objects.filter( handle__in=handles)
-        spus_outstock = spus_all.filter(sellable__lte=0)
+        spus_outstock = spus_all.filter(sellable__lte=4)
         if spus_outstock.count()>0:
             print("有spu无库存了", spus_outstock, ad, ad.ad_id)
 
