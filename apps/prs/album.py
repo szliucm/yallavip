@@ -308,28 +308,18 @@ def prepare_yallavip_photoes_v2(page_no=None):
             #如果没尺码，就全上
             # 如果有尺码，均码的全上（one-size, free-size）
             #其他尺码的，就要sellable > n 的才上
-            q_sellable = Q()
-            q_sellable.connector = 'AND'
+            q_size = Q()
+            q_size.connector = 'OR'
 
-            if album.cate.cate_size:
-                cate_sizes = album.cate.cate_size.filter(size__icontains="size")
-                if not cate_sizes:
-                    q_sellable.children.append(('sellable__gt',  album.cate.sellable_gt))
-
-
-            q_attr = Q()
-            q_attr.connector = 'OR'
-            '''
-            if album.catesize:
-                q_attr.children.append(('spu_sku__skuattr__contains',  album.catesize.size))
-            '''
+            if album.cate.sellable_gt >0 :
+                q_size.children.append(('sellable__gt', album.cate.sellable_gt))
+                q_size.children.append(('skuattr__icontains',"Free size"))
+                q_size.children.append(('skuattr__icontains', "One-Size"))
+                q_size.children.append(('skuattr__icontains', "One Size"))
 
             con = Q()
             con.add(q_cate, 'AND')
-            con.add(q_sellable, 'AND')
-            con.add(q_attr, 'AND')
-
-
+            con.add(q_size, 'AND')
 
             # 根据品类找已经上架到shopify 但还未添加到相册的产品
             product_list = []
@@ -414,6 +404,45 @@ def prepare_promote_v2(page_no):
                 prepare_promote_image_album_v3(page_no, spu_pks)
         else:
             print("没有符合条件的相册了", page_no)
+
+def init_cate_sellable():
+
+    cates = MyCategory.objects.all()
+
+    for cate in cates:
+        if cate.cate_size.all():
+            cate.sellable=5
+
+def init_spu_one_size():
+    skus = Lightin_SKU.objects.filter(lightin_spu__vendor="lightin")
+
+    q_size = Q()
+    q_size.connector = 'OR'
+    q_size.children.append(('skuattr__icontains', "Free size"))
+    q_size.children.append(('skuattr__icontains', "One-Size"))
+    q_size.children.append(('skuattr__icontains', "One Size"))
+
+    q_nosize = ~Q()
+    q_nosize.connector = 'OR'
+    q_nosize.children.append(('skuattr__icontains', "size"))
+
+    con = Q()
+    con.add(q_size, 'OR')
+    con.add(q_nosize, 'OR')
+
+    spus = skus.filter(con).values_list("lightin_spu",flat=True).distinct()
+
+    Lightin_SPU.objects.filter(pk__in=spus).update(one_size=True)
+
+
+
+
+
+
+
+
+
+
 
 
 

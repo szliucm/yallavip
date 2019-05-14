@@ -576,6 +576,8 @@ class Lightin_SPU(models.Model):
 
     longaded = models.BooleanField(default=False, verbose_name="长期广告状态")
     size_count = models.IntegerField(u'size数量', default=0, blank=True, null=True)
+    one_size = models.BooleanField(default=False, verbose_name="均码")
+
     class Meta:
         verbose_name = "兰亭SPU"
         verbose_name_plural = verbose_name
