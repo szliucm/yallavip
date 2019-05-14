@@ -891,7 +891,7 @@ class Lightin_SKUAdmin(object):
 
     # 'sku_name','img',
     search_fields = ["SPU", "SKU","lightin_spu__handle",]
-    list_filter = ["skuattr", "SPU","lightin_spu__breadcrumb"]
+    list_filter = ["skuattr", "SPU","lightin_spu__breadcrumb","lightin_spu__vendor",]
     list_editable = []
     readonly_fields = ()
     actions = []
