@@ -2182,6 +2182,9 @@ def fulfill_orders_lightin():
     #shopify发货
     sync_Shipped_order_shopify()
 
+    #同步wms库存
+    sync_wms_quantity()
+
 
 def update_stock(order_list, action):
     # SKU 库存
