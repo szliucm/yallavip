@@ -311,9 +311,12 @@ def prepare_yallavip_photoes_v2(page_no=None):
             q_size = Q()
             q_size.connector = 'OR'
 
+            #多尺码的cate，要么是均码，要么有最低库存要求，
+            #缺省情况下，已经要求库存大于0了
             if album.cate.sellable_gt >0 :
                 q_size.children.append(('sellable__gt', album.cate.sellable_gt))
                 q_size.children.append(('one_size',True))
+
 
             con = Q()
             con.add(q_cate, 'AND')
@@ -345,7 +348,7 @@ def prepare_yallavip_photoes_v2(page_no=None):
                     product_list.append(product)
 
             else:
-                products_to_add = Lightin_SPU.objects.filter(con, published=True,sellable__gt=5).exclude(id__in=
+                products_to_add = Lightin_SPU.objects.filter(sellable__gt=0).filter(con, published=True).exclude(id__in=
                                                 LightinAlbum.objects.filter(
                                                     yallavip_album__pk=album.pk,
                                                     lightin_spu__isnull=False).values_list(
