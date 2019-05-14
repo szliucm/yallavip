@@ -313,9 +313,7 @@ def prepare_yallavip_photoes_v2(page_no=None):
 
             if album.cate.sellable_gt >0 :
                 q_size.children.append(('sellable__gt', album.cate.sellable_gt))
-                q_size.children.append(('skuattr__icontains',"Free size"))
-                q_size.children.append(('skuattr__icontains', "One-Size"))
-                q_size.children.append(('skuattr__icontains', "One Size"))
+                q_size.children.append(('one_size',True))
 
             con = Q()
             con.add(q_cate, 'AND')
@@ -433,7 +431,7 @@ def init_spu_one_size():
 
     spus = skus.filter(con).values_list("lightin_spu",flat=True).distinct()
 
-    Lightin_SPU.objects.filter(pk__in=spus).update(one_size=True)
+    Lightin_SPU.objects.filter(pk__in=list(spus)).update(one_size=True)
 
 
 
