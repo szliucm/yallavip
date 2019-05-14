@@ -1014,7 +1014,13 @@ class LightinAlbumAdmin(object):
 
     sellable.short_description = "sellable"
 
-    list_display = ["lightin_spu","sellable",  "yallavip_album","page","batch_no","name","source_photo", "fb_id", "published","publish_error","published_time",]
+    def spu_onesize(self, obj):
+
+        return  obj.lightin_spu.one_size
+
+    spu_onesize.short_description = "均码的SPU数量"
+
+    list_display = ["lightin_spu","sellable", "spu_onesize",  "yallavip_album","page","batch_no","name","source_photo", "fb_id", "published","publish_error","published_time",]
     # 'sku_name','img',
 
     search_fields = ["lightin_spu__SPU","yallavip_album__album__name","name",]
