@@ -315,7 +315,8 @@ def prepare_yallavip_photoes_v2(page_no=None):
             #缺省情况下，已经要求库存大于0了
             if album.cate.sellable_gt >0 :
                 q_size.children.append(('sellable__gt', album.cate.sellable_gt))
-                q_size.children.append(('one_size',True))
+
+            q_size.children.append(('one_size',True))
 
 
             con = Q()
