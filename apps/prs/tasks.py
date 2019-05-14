@@ -4876,7 +4876,7 @@ def sync_yallavip_album(page_no=None):
         lightinalbums_all = lightinalbums_all.filter(
             yallavip_album__page__page_no=page_no)
 
-    albums = lightinalbums_all.values_list('yallavip_album', "cate__sellable_gt").distinct()
+    albums = lightinalbums_all.values_list('yallavip_album', "yallavip_album__cate__sellable_gt").distinct()
     print("有%s个相册待更新" % (albums.count()))
 
 
@@ -4888,8 +4888,8 @@ def sync_yallavip_album(page_no=None):
         return error
 
     for album in albums:
-        if album["cate__sellable_gt"] > 0:
-            sellable_gt = album["cate__sellable_gt"]
+        if album["yallavip_album__cate__sellable_gt"] > 0:
+            sellable_gt = album["yallavip_album__cate__sellable_gt"]
         else:
             sellable_gt = 0
 
