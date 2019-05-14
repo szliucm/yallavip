@@ -5200,8 +5200,7 @@ def change_product_publish_status(product_no, published):
 
 @shared_task
 def outstock_ads():
-    from prs.fb_action import ad_update_status
-    import time
+
 
     #遍历所有活跃的广告，如果有spu已经无库存，就设置active为false，
     # 如果published为True,则将广告删除
@@ -5212,6 +5211,9 @@ def outstock_ads():
 
 
 def delete_outstock_ad(ads):
+    from prs.fb_action import ad_update_status
+    import time
+
     for ad in ads:
 
         handles = ad.spus_name.split(",")
