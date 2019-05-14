@@ -414,6 +414,7 @@ def init_cate_sellable():
             cate.sellable=5
 
 def init_spu_one_size():
+    from prs.models import Lightin_SKU,Lightin_SPU
     skus = Lightin_SKU.objects.filter(lightin_spu__vendor="lightin")
 
     q_size = Q()
