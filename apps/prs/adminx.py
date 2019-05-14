@@ -54,7 +54,7 @@ class MyCategoryAdmin(object):
 
     def spu_onesize(self, obj):
 
-        return  Lightin_SPU.objects.filter(one_size=True, breadcrumb__icontains=obj.tags).count()
+        return  Lightin_SPU.objects.filter(one_size=True, sellable__gt=0,breadcrumb__icontains=obj.tags).count()
 
     spu_onesize.short_description = "均码的SPU数量"
 
