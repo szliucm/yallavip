@@ -385,7 +385,7 @@ def prepare_promote_v2(page_no):
         # 取库存大、单价高、已经发布到相册 且还未打广告的商品
         lightinalbums_all = LightinAlbum.objects.filter( yallavip_album__page__page_no=page_no,
                                                          yallavip_album__cate=cate,
-                                                lightin_spu__sellable__gt=5, lightin_spu__vendor = "lightin",
+                                                lightin_spu__sellable__gt=0, lightin_spu__vendor = "lightin",
                                                 lightin_spu__yallavip_price__gt=30,lightin_spu__yallavip_price__lte=100,
                                                 aded=False,
                                                 published=True)
