@@ -2543,7 +2543,8 @@ def sync_wms_quantity():
 
 
     barcodes = Lightin_barcode.objects.filter(synced=False).values_list("barcode",flat=True)
-    get_wms_quantity(list(barcodes))
+    if barcodes:
+        get_wms_quantity(list(barcodes))
 
     for mysql in mysqls:
         print(mysql)
@@ -5201,6 +5202,16 @@ def change_product_publish_status(product_no, published):
         print(r.text)
         return "更新发布状态失败", False
 
+#同步myad和yallavipad
+def sync_ads():
+    ads = MyAd.objects.filter(active=True).values_list("ad_no",flat=True)
+
+    YallavipAd.objects.update(ad_status="",engagement_ad_status="", message_ad_status="")
+    YallavipAd.objects.filter(ad_id__in = ads).update(ad_status="active")
+    YallavipAd.objects.filter(engagement_ad_id__in=ads).update(engagement_ad_status="active")
+    YallavipAd.objects.filter(message_ad_id__in=ads).update(message_ad_status="active")
+
+
 @shared_task
 def outstock_ads():
 
@@ -5209,56 +5220,63 @@ def outstock_ads():
     # 如果published为True,则将广告删除
     ads = YallavipAd.objects.filter(active=True)
 
-    delete_outstock_ad(ads.filter(published=False))
-    delete_outstock_ad(ads.filter(published = True))
+    delete_outstock_ad(ads)
+
 
 
 def delete_outstock_ad(ads):
     from prs.fb_action import ad_update_status
     import time
+    ads_todelete = []
 
     for ad in ads:
 
         handles = ad.spus_name.split(",")
         spus_all = Lightin_SPU.objects.filter( handle__in=handles)
-        spus_outstock = spus_all.filter(sellable__lte=4)
+        spus_all.update(aded=False)
+
+        spus_outstock = spus_all.filter(sellable__lte=0)
         if spus_outstock.count()>0:
             print("有spu无库存了", spus_outstock, ad, ad.ad_id)
+            ads_todelete.append(ad)
 
-            if ad.published == True:
-                # 修改广告状态
-                ad_status = "DELETED"
+    print("有 %s 条广告待删除"%len(ads_todelete))
 
-                if ad.ad_id:
-                    info, updated = ad_update_status(ad.ad_id, status=ad_status)
-                    if updated:
-                        ad.ad_status = ad_status
-                    else:
-                        ad.update_error = info
-                    time.sleep(20)
+    for ad in ads_todelete:
 
-                if ad.engagement_ad_id:
-                    info, updated = ad_update_status(ad.engagement_ad_id, status=ad_status)
-                    if updated:
-                        ad.engagement_ad_status = ad_status
-                    else:
-                        ad.engagement_ad_publish_error = info
-                    time.sleep(20)
-                if ad.message_ad_id:
-                    info, updated = ad_update_status(ad.message_ad_id, status=ad_status)
-                    if updated:
-                        ad.message_ad_status = ad_status
-                    else:
-                        ad.message_ad_publish_error = info
-                    time.sleep(20)
+        # 修改广告状态
+        ad_status = "DELETED"
 
-            ad.active=False
-            ad.save()
+        if ad.ad_status == "active":
+            print("ad待删除")
+            info, updated = ad_update_status(ad.ad_id, status=ad_status)
+            if updated:
+                ad.ad_status = ad_status
+            else:
+                ad.update_error = info
+            time.sleep(20)
 
-            #修改spu状态
-            for spu in spus_all:
-                spu.aded=False
-                spu.save()
+        if ad.engagement_ad_status == "active":
+            print("engagement_ad待删除")
+            info, updated = ad_update_status(ad.engagement_ad_id, status=ad_status)
+            if updated:
+                ad.engagement_ad_status = ad_status
+            else:
+                ad.engagement_ad_publish_error = info
+            time.sleep(20)
+        if ad.message_ad_status == "active":
+            print("message_ad待删除")
+            info, updated = ad_update_status(ad.message_ad_id, status=ad_status)
+            if updated:
+                ad.message_ad_status = ad_status
+            else:
+                ad.message_ad_publish_error = info
+            time.sleep(20)
+
+        ad.active=False
+        ad.save()
+
+
 
 
 
