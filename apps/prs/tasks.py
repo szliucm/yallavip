@@ -44,8 +44,9 @@ if DEBUG:
     appKey = "9dca0be4c02bed9e37c1c4189bc1f41b"
 else:
     warehouse_code = "W07"
+    shipping_methods = ["ARAMEX_KSA","FETCHR_SAUDI_DOM"]
     #shipping_method = "FETCHR_SAUDI_DOM"
-    shipping_method = "ARAMEX_KSA"
+    #shipping_method = "ARAMEX_KSA"
     appToken = "909fa3df3b98c26a9221774fe5545afd"
     appKey = "b716b7eb938e9a46ad836e20de0f8b07"
 
@@ -2251,6 +2252,8 @@ def fulfill_order_lightin(order):
             "quantity": order_item.quantity,
         }
         items.append(item)
+    #选择物流公司
+    shipping_method=  shipping_methods[1]
 
     param = {
         "platform": "B2C",
@@ -3948,15 +3951,8 @@ def auto_smscode():
 
     #审单
 
-    # 检验城市是否在派送范围
-    # 更新城市名到标准
-    #直接引用订单里的城市名
-    #mysql = 'update orders_verify l, orders_order o set l.city = trim( lower(o.receiver_city)) where l.order_id = o.id and trim( lower(o.receiver_city)) in ("riyadh","jeddah","dammam","makkah","madinah","buraidah","tabuk","khobar","jubail","khamis mushait","qatif","hail","kharj","onaiza","abha","dhahran","hawea/taif","dawadmi","hafer al batin","yanbu","hofuf","alrass","majma","yanbu al baher","mubaraz","qunfudah","baha","seihat","afif","bukeiriah","qassim","nwariah","badaya","hawtat bani tamim","hinakeya","muzahmiah","aflaj","rabigh","ras tanura","majarda","namas","khulais","abqaiq","hotat sudair","jouf","mikhwa","jumum","sajir","tarut","al-jsh","biljurashi","haqil","sabt el alaya","sarat obeida","uyun","zulfi","alhada","anak","artawiah","awamiah","ayn fuhayd","qarah","nabiya","shefa","tanuma","turaif","damad","horaimal","kara","rahima","mahad al dahab","thumair","al tuwal","balasmar","batha","hadeethah","karboos","wadi fatmah",)'
-    #my_custom_sql(mysql)
 
-    #mysql = 'update orders_verify l set l.city = "jazan" where l.city ="jizan"'
 
-    #my_custom_sql(mysql)
 
     #不在派送范围的直接标记问题单
     verify_orders_outrang = verify_orders.filter(city ="None").update(verify_comments ="out of range")
