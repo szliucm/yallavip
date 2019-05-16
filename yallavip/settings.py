@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     'prs',
     'shop',
     'mytest',
+    'tomtop',
 
 
     'import_export',
