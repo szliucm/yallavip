@@ -57,7 +57,7 @@ def download_category():
     if data.get("code") == 200:
         cates = data.get("data")
         category_list=[]
-        TomtopCategory.objects.delete()
+        TomtopCategory.objects.all().delete()
         for cate in cates:
             # print("row is ",row)
             category = TomtopCategory(
