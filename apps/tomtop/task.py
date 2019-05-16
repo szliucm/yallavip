@@ -9,22 +9,16 @@ def get_token():
         "charset": "utf-8",
 
     }
-    # 初始化SDK
-
     url = "http://dpapi.quarkscm.com/v1/customer/login"
-
-    print("开始创建主体")
-    print(url, json.dumps(params))
 
     r = requests.post(url, headers=headers, data=json.dumps(params))
     if r.status_code == 200:
 
         try:
             data = json.loads(r.text)
-            print("创建的新产品", r, data)
             return  data.get("access-token")
         except:
-            print("创建产品主体失败")
+            print("获取token失败")
             print(url, json.dumps(params))
             print(r)
             print(r.text)
@@ -34,8 +28,6 @@ def download_category():
 
     params = {
         'lang' : "en_US",
-
-
     }
     headers = {
         'Accept': 'application/json',
@@ -46,18 +38,35 @@ def download_category():
     }
     url = "http://dpapi.quarkscm.com/v1/catalog/download"
 
-    print("开始创建主体")
-    print(url, json.dumps(params))
+    print("开始下载分类")
 
     r = requests.post(url, headers=headers, data=json.dumps(params))
     if r.status_code == 200:
 
         try:
             data = json.loads(r.text)
-            print("创建的新产品", r, data)
+
         except:
-            print("创建产品主体失败")
+            print("下载分类失败")
             print(url, json.dumps(params))
             print(r)
             print(r.text)
             return None
+
+    if data.get("code") == 200:
+        cates = data.get("data")
+        category_list=[]
+        TomtopCategory.objects.delete()
+        for cate in cates:
+            # print("row is ",row)
+            category = TomtopCategory(
+                cate_no=cate.get("_id"),
+                name=cate.get("name"),
+                parent_no=cate.get("parent_id"),
+
+                level=cate.get("level"),
+            )
+            category_list.append(category)
+        TomtopCategory.objects.bulk_create(category_list)
+
+
