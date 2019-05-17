@@ -164,12 +164,16 @@ def convert_messages_data(conversation_no,messages, datetime_since):
             print("无新可更了")
             break
 
+        content = message["message"].encode('utf-8')
+        if len(content) > 1000:
+            content = content[:1000]
+
         new_message = Message(
             conversation_no=conversation_no,
             message_no=message_no,
 
             created_time=created_time,
-            message_content=message["message"].encode('utf-8'),
+            message_content= content,
             from_id=message["from"]["id"],
             from_name=message["from"]["name"],
             to_id=message["to"]["data"][0]["id"],
@@ -179,9 +183,7 @@ def convert_messages_data(conversation_no,messages, datetime_since):
 
         )
 
-        content = message["message"].encode('utf-8')
-        if len(content)>1000:
-            print (message["message"].encode('utf-8'))
+
 
         message_list.append(new_message)
         message_no_list.append(message_no)
