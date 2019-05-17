@@ -4274,7 +4274,7 @@ def my_custom_sql(mysql):
 
 def adjust_shopify_inventories():
 
-    mysql = "select v.sku , v.inventory_item_no , s.o_sellable " \
+    mysql = "select v.sku , v.inventory_item_no , s.o_sellable - v.inventory_quantity " \
             "from shop_shopifyvariant v, prs_lightin_sku s " \
             "where v.sku= s.SKU and v.inventory_quantity <> s.o_sellable"
 
@@ -4314,7 +4314,7 @@ def zero_shopify_inventories():
 def adjust_shopify_inventory(inventory_item_id,available_adjustment ):
     from shop.models import Shop, ShopifyProduct
     from prs.shop_action import post_product_main, update_or_create_product
-    from .models import AliProduct
+
 
     dest_shop = "yallasale-com"
     location_id = "11796512810"
