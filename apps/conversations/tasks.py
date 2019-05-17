@@ -113,41 +113,42 @@ def convert_messages(row,conversation_no, datetime_since):
 
 
     if message_count > 0:
-        message_list = []
+
         messages_data = row["messages"]
-        while True:
-            all_got, new_message_list = convert_messages_data(conversation_no, messages_data["data"], datetime_since)
-            message_list += new_message_list
 
-            if not all_got:
-                # Check if the next link exists
+        all_got = convert_messages_data(conversation_no, messages_data["data"], datetime_since)
+
+
+
+        while not all_got:
+            # Check if the next link exists
+            try:
+                next_link = messages_data["paging"]["next"]
+            except KeyError:
+                next_link = None
+
+            if next_link:
+                print("有下一页")
+
+                r = requests.get(next_link.replace("limit=25", "limit=100"))
                 try:
-                    next_link = messages_data["paging"]["next"]
+                    messages_data = json.loads(r.text)
+
                 except KeyError:
-                    next_link = None
-
-                if next_link:
-                    print("有下一页")
-
-                    r = requests.get(next_link.replace("limit=25", "limit=100"))
-                    try:
-                        next_messages_data = json.loads(r.text)
-
-                    except KeyError:
-                        print("convert_messages_data  completed")
-                        return message_list
-
-                    message_list += convert_messages_data(conversation_no, next_messages_data[data], datetime_since)
-
-                else:
+                    print("convert_messages_data  completed")
                     break
+
+
+                all_got = convert_messages_data(conversation_no,next_messages_data["data"] , datetime_since)
+
             else:
                 break
 
-        Proxy.objects.bulk_create(message_list)
 
 def convert_messages_data(conversation_no,messages, datetime_since):
     message_list = []
+    message_no_list = []
+
     all_got = False
 
     for message in messages:
@@ -177,9 +178,19 @@ def convert_messages_data(conversation_no,messages, datetime_since):
 
 
         )
-        message_list.append(message)
 
-    return  all_got , message_list
+        message_list.append(message)
+        message_no_list.append(message_no)
+
+    Message.objects.filter(message_no__in=message_no_list)
+    Message.objects.bulk_create(message_list)
+
+
+    return  all_got
+
+def save_message(new_message_list):
+    for new_message in new_message_list:
+
 
 
 
