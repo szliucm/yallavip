@@ -5,6 +5,7 @@ from prs.fb_action import  get_token
 import  json, requests
 import  time
 import  datetime
+import pytz
 from django.utils import timezone as dt
 
 
@@ -164,6 +165,7 @@ def convert_messages_data(conversation_no,messages, datetime_since):
 
         print("update message : ", message_no, created_time)
         update_time = datetime.datetime.strptime(created_time, "%Y-%m-%dT%H:%M:%S+0000")
+        update_time = update_time.replace(tzinfo=pytz.timezone('UTC'))
         if update_time <= datetime_since:
             all_got = True
             print("无新可更了")
