@@ -4293,7 +4293,7 @@ def adjust_shopify_inventories():
             skus.update(inventory_quantity=row[2])
         n -= 1
         print("还有 %s条待更新" % n)
-        time.sleep(1)
+        #time.sleep(1)
 
 #把不在lightin_sku 里且库存大于0 的variant的库存都改成0
 def zero_shopify_inventories():
