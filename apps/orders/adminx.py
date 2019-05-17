@@ -1334,12 +1334,12 @@ class VerifyAdmin(object):
                     'city','receiver_addr',
 
                     'receiver_phone','phone_1', 'phone_2', 'verify_comments','verify_time',"final_staff",'cs_reply',\
-                   'facebook_user_name', 'sales',)
+                   'facebook_user_name', 'sales','conversation_link',)
 
     #'cancel', 'error_money', 'error_contact', \    'error_address', 'error_cod', 'error_note','warhouse_comment','wait_status',
 
     ordering = ['-order__order_time']
-    list_editable = ['phone_1', 'phone_2','verify_comments','city',"sms_code",]
+    list_editable = ['phone_1', 'phone_2','verify_comments','city',"sms_code","conversation_link",]
     search_fields = ['order__order_no','order__logistic_no','verify_comments','cs_reply',"phone_1", "order__receiver_city",]
     list_filter = ('order__status','order__financial_status','order__fulfillment_status',"order__wms_status", 'verify_status', 'sms_status', 'error_contact',"city",)
 
