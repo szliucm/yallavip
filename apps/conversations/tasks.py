@@ -1,5 +1,5 @@
 from .models import *
-from fb.models import PageSync
+from fb.models import MyPage, PageSync
 
 from prs.fb_action import  get_token
 import  json, requests
@@ -29,7 +29,7 @@ def convert_conversation_data(page_no, response_json, got_time, datetime_since):
                                                                        'link': row.get("link"),
                                                                        'updated_time': row.get("updated_time"),
                                                                         "got_time": got_time,
-                                                                       'customer': row["participants"]["data"][0]["name"]
+                                                                       'customer': row["participants"]["data"][0]["name"][:50]
                                                                        }
                                                              )
 

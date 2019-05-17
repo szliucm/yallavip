@@ -10,7 +10,7 @@ class Conversation(models.Model):
 
     got_time = models.DateTimeField(null=True, blank=True, verbose_name="最后获取时间")
 
-    customer = models.CharField(max_length=100,null=True, blank=True, verbose_name="客户")
+    customer = models.CharField(max_length=500,null=True, blank=True, verbose_name="客户")
 
     class Meta:
         verbose_name = "会话"
