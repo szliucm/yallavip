@@ -30,7 +30,7 @@ class Message(models.Model):
     from_name = models.CharField(max_length=100,null=True, blank=True, verbose_name="发送者")
     to_id = models.CharField(max_length=50,null=True, blank=True, verbose_name="接收ID")
     to_name  = models.CharField(max_length=100,null=True, blank=True, verbose_name="接收者")
-    #image= models.CharField(max_length=30,null=True, blank=True, verbose_name="接收者")
+    attachments= models.CharField(max_length=30,null=True, blank=True, verbose_name="附件")
 
     class Meta:
         verbose_name = "消息"
