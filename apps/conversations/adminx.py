@@ -31,7 +31,7 @@ class ConversationAdmin(object):
 
     import_export_args = {'import_resource_class': ConversationResource, 'export_resource_class': ConversationResource}
 
-    list_display = ["conversation_no", "page_no", "link", "updated_time", ]
+    list_display = ["conversation_no", "page_no", "link", "updated_time","customer" ,]
     search_fields = ['conversation_no', ]
 
     class MessageInline(object):
@@ -58,7 +58,7 @@ class MessageAdmin(object):
     import_export_args = {'import_resource_class': MessageResource, 'export_resource_class': MessageResource}
 
     list_display = ["conversation_no", "message_no", "message_content", "created_time",'from_name', ]
-
+    ordering = ["conversation_no","created_time",]
 
 class PageUpdateAdmin(object):
     actions = ["batch_updatepage", ]
