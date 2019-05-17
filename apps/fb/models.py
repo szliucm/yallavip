@@ -368,7 +368,19 @@ class SysConfig(models.Model):
 
 
 
+class PageSync(models.Model):
+    page_no = models.CharField(u'主页ID', default='', max_length=100, blank=True)
 
+    conversation_update_time = models.DateTimeField(u'会话最后更新时间', auto_now=False, null=True, blank=True)
+
+
+    class Meta:
+        verbose_name = "主页更新"
+        verbose_name_plural = verbose_name
+
+
+    def __str__(self):
+        return self.page_no
 
 
 

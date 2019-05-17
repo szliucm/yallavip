@@ -1,8 +1,10 @@
 from .models import Conversation
+from fb.models import PageSync
 
 from prs.fb_action import  get_token
 import  json, requests
 import  time
+from django.utils import timezone as dt
 
 
 def convert_conversation_data(page_no, response_json_list, datetime_since):
@@ -11,11 +13,6 @@ def convert_conversation_data(page_no, response_json_list, datetime_since):
         data = response_json.get("data")
         for i in range(len(data)):
             row = data[i]
-            updated_time = row.get("updated_time")
-            print (updated_time)
-            if updated_time < datetime_since:
-                break
-
             obj, created = Conversation.objects.update_or_create(conversation_no=row.get("id"),
                                                                  defaults={
                                                                            'page_no': page_no,
@@ -45,17 +42,21 @@ def get_conversation_data(page_no, token, offset, field_input,  datetime_since):
 
 
 def get_conversations(page_no):
+
+
     field_input = 'id,is_subscribed,link,participants,message_count,unread_count,\
                                     updated_time,messages{created_time,id,message,\
                                     sticker,tags,from,to,attachments}'
     token , long_token = get_token(page_no)
     offset = 0
     response_json_list = []
-    latest_updated_time = Conversation.objects.filter(page_no=page_no).aggregate(Max('updated_time')).get("updated_time__max")
-    if latest_updated_time:
-        datetime_since = int(latest_updated_time.timestamp())
+    pagesync = PageSync.objects.filter(page_no=page_no)
+    if pagesync:
+        datetime_since = int(pagesync.conversation_update_time.timestamp())
     else:
         datetime_since = int(time.mktime((2018, 1, 1, 0, 0, 0, 0, 0, 0)))
+
+    pagesync.conversation_update_time = dt.now()
 
     while True:
         try:
@@ -66,6 +67,7 @@ def get_conversations(page_no):
                 break
 
             check = data['data']
+            print(check[0]["updated_time"])
             '''
             if (check[0]["updated_time"] < date_since):
                 print("无新可更")
@@ -85,6 +87,7 @@ def get_conversations(page_no):
             return
 
     convert_conversation_data(page_no, response_json_list, datetime_since)
+    pagesync.save()
 
 def batch_get_conversations():
     pages = MyPage.objects.filter(is_published=True, active=True, promotable=True)
