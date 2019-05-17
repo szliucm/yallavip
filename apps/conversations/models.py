@@ -27,7 +27,7 @@ class Message(models.Model):
     conversation_no = models.CharField(max_length=50, null=True, blank=True, verbose_name="会话ID")
     message_no = models.CharField(max_length=100, null=True, blank=True, verbose_name="消息ID")
     created_time = models.DateTimeField(null=True, blank=True, verbose_name="消息创建时间")
-    message_content = models.CharField(max_length=2048,null=True, blank=True, verbose_name="消息正文")
+    message_content = models.CharField(max_length=5000,null=True, blank=True, verbose_name="消息正文")
     from_id  = models.CharField(max_length=50,null=True, blank=True, verbose_name="发送ID")
     from_name = models.CharField(max_length=100,null=True, blank=True, verbose_name="发送者")
     to_id = models.CharField(max_length=50,null=True, blank=True, verbose_name="接收ID")

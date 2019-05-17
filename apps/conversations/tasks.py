@@ -165,8 +165,8 @@ def convert_messages_data(conversation_no,messages, datetime_since):
             break
 
         content = message["message"].encode('utf-8')
-        if len(content) > 1000:
-            content = content[:1000]
+        if len(content) > 300:
+            content = content[:300]
 
         new_message = Message(
             conversation_no=conversation_no,
