@@ -61,7 +61,7 @@ def get_conversations(page_no):
     while True:
         try:
 
-            got, data = self.get_conversation_data(page_no, token, str(offset), field_input, datetime_since)
+            got, data = get_conversation_data(page_no, token, str(offset), field_input, datetime_since)
 
             if not got:
                 break
