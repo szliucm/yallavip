@@ -57,7 +57,7 @@ def get_conversations(page_no):
     if pagesync:
         datetime_since = pagesync.conversation_update_time
     else:
-        datetime_since = int(time.mktime((2018, 1, 1, 0, 0, 0, 0, 0, 0)))
+        datetime_since = datetime.datetime(2018, 1, 1, 0, 0, 0, tzinfo="UTC")
 
     datetime_since_stamp = int(datetime_since.timestamp())
 
