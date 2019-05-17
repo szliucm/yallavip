@@ -4281,7 +4281,9 @@ def adjust_shopify_inventories():
     rows = my_custom_sql(mysql)
 
 
+    n = len(rows)
 
+    print("一共有 %s条待更新"%n)
     for row in rows:
 
         info, adjusted = adjust_shopify_inventory(row[1],row[2])
@@ -4289,6 +4291,8 @@ def adjust_shopify_inventories():
 
             skus = ShopifyVariant.objects.filter(sku=row[0])
             skus.update(inventory_quantity=row[2])
+        n -= 1
+        print("还有 %s条待更新" % n)
         time.sleep(1)
 
 #把不在lightin_sku 里且库存大于0 的variant的库存都改成0

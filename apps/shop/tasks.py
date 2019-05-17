@@ -815,8 +815,7 @@ def download_product(page=0):
 
             i = i + 1
 
-
-
+            print("当前是第%s页" % (i))
 
             # products = shopify.Product.find(page=i,limit=limit,updated_at_min=shop.updated_time)
             url = shop_url + "/admin/products.json"
@@ -836,7 +835,7 @@ def download_product(page=0):
 
             insert_product(shop_name, products)
 
-            print("当前是第%s页" % (i))
+
 
 
         except Exception as e:
