@@ -387,8 +387,8 @@ class OrderConversation(models.Model):
     order = models.ForeignKey(Order, related_name='order2conversation', null=False,
                               verbose_name="订单", on_delete=models.CASCADE)
 
-    conversation = models.ForeignKey(Conversation, related_name='conversation2order', null=False,
-                                     verbose_name="会话", on_delete=models.CASCADE)
+    #conversation = models.ForeignKey(Conversation, related_name='conversation2order', null=False,
+     #                                verbose_name="会话", on_delete=models.CASCADE)
 
 
     class Meta:
