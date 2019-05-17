@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils.html import format_html
-from conversations.models import Conversation
+#from conversations.models import Conversation
 from prs.models import  Lightin_SPU, Lightin_SKU,Lightin_barcode
 from customer.models import  Customer
 
@@ -401,8 +401,8 @@ class OrderConversation(models.Model):
 
 
 class Verification(models.Model):
-    conversation = models.ForeignKey(Conversation, related_name='verification2conversation', null=True, blank=True,
-                                     verbose_name="会话", on_delete=models.CASCADE)
+    #conversation = models.ForeignKey(Conversation, related_name='verification2conversation', null=True, blank=True,
+     #                                verbose_name="会话", on_delete=models.CASCADE)
 
 
     # order_no = order_no = models.CharField(u'订单号',default='',  max_length=50,  blank=True)
