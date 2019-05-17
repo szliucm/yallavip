@@ -4286,7 +4286,7 @@ def adjust_shopify_inventories():
     print("一共有 %s条待更新"%n)
     for row in rows:
 
-        info, adjusted = adjust_shopify_inventory(row[1],row[2])
+        info, adjusted = adjust_shopify_inventory(row[1],int(row[2]))
         if adjusted:
 
             skus = ShopifyVariant.objects.filter(sku=row[0])
