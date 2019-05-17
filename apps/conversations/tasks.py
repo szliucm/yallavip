@@ -179,6 +179,10 @@ def convert_messages_data(conversation_no,messages, datetime_since):
 
         )
 
+        content = message["message"].encode('utf-8')
+        if len(content)>1000:
+            print (message["message"].encode('utf-8'))
+
         message_list.append(message)
         message_no_list.append(message_no)
 
