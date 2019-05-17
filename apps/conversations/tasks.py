@@ -56,16 +56,17 @@ def get_conversations(page_no):
     token , long_token = get_token(page_no)
     offset = 0
     response_json_list = []
-    pagesync = PageSync.objects.filter(page_no=page_no)
-    if pagesync:
+    try:
+        pagesync = PageSync.objects.get(page_no=page_no)
+
         datetime_since = pagesync.conversation_update_time
-    else:
+    except:
         datetime_since = datetime.datetime(2019, 3, 1, 0, 0, 0)
 
     datetime_since_stamp = int(datetime_since.timestamp())
 
 
-    pagesync.conversation_update_time = dt.now()
+    conversation_update_time = dt.now()
 
     while True:
         try:
@@ -95,8 +96,12 @@ def get_conversations(page_no):
             print("Error with get request.")
             return
 
+    obj, created = PageSync.objects.update_or_create(page_no=page_no,
+                                                         defaults={
+                                                             'conversation_update_time': conversation_update_time,
 
-    pagesync.save()
+                                                         }
+                                                         )
 
 def batch_get_conversations():
     pages = MyPage.objects.filter(is_published=True, active=True, promotable=True)
