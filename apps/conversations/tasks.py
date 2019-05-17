@@ -188,8 +188,7 @@ def convert_messages_data(conversation_no,messages, datetime_since):
 
     return  all_got
 
-def save_message(new_message_list):
-    for new_message in new_message_list:
+
 
 
 
