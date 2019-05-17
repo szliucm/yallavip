@@ -17,7 +17,7 @@ def convert_conversation_data(page_no, response_json, got_time, datetime_since):
         row = data[i]
         conversation_no = row.get("id")
         print("conversation_no", conversation_no,row.get("updated_time"))
-        update_time = conversation_no,row.get("updated_time")
+        update_time = datetime.datetime.strptime(conversation_no,row.get("updated_time"), "%Y-%m-%dT%H:%M:%S+0000")
         update_time = update_time.replace(tzinfo=pytz.timezone('UTC'))
 
         if (update_time < datetime_since):
@@ -85,7 +85,8 @@ def get_conversations(page_no):
 
             check = data['data']
             print("当前的更新时间", offset, check[0]["updated_time"])
-            update_time = check[0]["updated_time"]
+            update_time = datetime.datetime.strptime(check[0]["updated_time"], "%Y-%m-%dT%H:%M:%S+0000")
+
             update_time = update_time.replace(tzinfo=pytz.timezone('UTC'))
 
             if (update_time < datetime_since):
