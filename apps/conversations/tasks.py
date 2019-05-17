@@ -4,6 +4,7 @@ from fb.models import PageSync
 from prs.fb_action import  get_token
 import  json, requests
 import  time
+import  datetime
 from django.utils import timezone as dt
 
 
@@ -46,7 +47,7 @@ def get_conversation_data(page_no, token, offset, field_input,  datetime_since):
 
 
 def get_conversations(page_no):
-    import  datetime
+
 
     field_input = 'id,is_subscribed,link,participants,message_count,unread_count,\
                                     updated_time,messages{created_time,id,message,\
