@@ -137,7 +137,7 @@ def convert_messages(row,conversation_no, datetime_since):
                         print("convert_messages_data  completed")
                         return message_list
 
-                    message_list += convert_messages_data(conversation_no, next_messages_data, datetime_since)
+                    message_list += convert_messages_data(conversation_no, next_messages_data[data], datetime_since)
 
                 else:
                     break
