@@ -4407,7 +4407,7 @@ def get_shopify_inventory( ):
 def adjust_shopify_prices():
     mysql = "select v.sku , v.variant_no, s.sku_price " \
             "from shop_shopifyvariant v, prs_lightin_sku s " \
-            "where v.sku= s.SKU and v.price <> s.sku_price and update_error='' and s.o_sellable>0"
+            "where v.sku= s.SKU and v.price <> s.sku_price and update_error='' and s.o_sellable>0  order by s.sku_price"
 
     rows = my_custom_sql(mysql)
     n = len(rows)
