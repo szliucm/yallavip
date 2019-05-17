@@ -153,7 +153,8 @@ def convert_messages_data(conversation_no,messages, datetime_since):
         message_no = message["id"]
 
         print("update message : ", message_no, created_time)
-        if created_time <= datetime_since:
+        update_time = datetime.datetime.strptime(created_time, "%Y-%m-%dT%H:%M:%S+0000")
+        if update_time <= datetime_since:
             all_got = True
             print("无新可更了")
             break
