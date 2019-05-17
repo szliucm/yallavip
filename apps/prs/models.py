@@ -36,6 +36,7 @@ class MyCategory(models.Model):
         verbose_name_plural = verbose_name
 
         app_label = 'prs'
+        ordering = ['name']
 
     def __str__(self):
         return self.tags
