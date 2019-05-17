@@ -69,6 +69,7 @@ def get_conversations(page_no):
         datetime_since = pagesync.conversation_update_time
     except:
         datetime_since = datetime.datetime(2019, 3, 1, 0, 0, 0)
+        datetime_since = datetime_since.replace(tzinfo=pytz.timezone('UTC'))
 
     datetime_since_stamp = int(datetime_since.timestamp())
 
