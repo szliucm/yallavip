@@ -7,23 +7,24 @@ import  time
 from django.utils import timezone as dt
 
 
-def convert_conversation_data(page_no, response_json_list, datetime_since):
+def convert_conversation_data(page_no, response_json, got_time, datetime_since):
 
-    for response_json in response_json_list:
-        data = response_json.get("data")
-        for i in range(len(data)):
-            row = data[i]
-            conversation_no = row.get("id")
-            obj, created = Conversation.objects.update_or_create(conversation_no=conversation_no,
-                                                                 defaults={
-                                                                           'page_no': page_no,
-                                                                           'link': row.get("link"),
-                                                                           'updated_time': row.get("updated_time"),
-                                                                           'customer': row["participants"]["data"][0]["name"]
-                                                                           }
-                                                                 )
 
-            convert_messages(row, conversation_no, datetime_since)
+    data = response_json.get("data")
+    for i in range(len(data)):
+        row = data[i]
+        conversation_no = row.get("id")
+        obj, created = Conversation.objects.update_or_create(conversation_no=conversation_no,
+                                                             defaults={
+                                                                       'page_no': page_no,
+                                                                       'link': row.get("link"),
+                                                                       'updated_time': row.get("updated_time"),
+                                                                        "got_time": got_time,
+                                                                       'customer': row["participants"]["data"][0]["name"]
+                                                                       }
+                                                             )
+
+        convert_messages(row, conversation_no, datetime_since)
 
     return
 
@@ -45,7 +46,7 @@ def get_conversation_data(page_no, token, offset, field_input,  datetime_since):
 
 
 def get_conversations(page_no):
-
+    import  datetime
 
     field_input = 'id,is_subscribed,link,participants,message_count,unread_count,\
                                     updated_time,messages{created_time,id,message,\
@@ -57,15 +58,16 @@ def get_conversations(page_no):
     if pagesync:
         datetime_since = pagesync.conversation_update_time
     else:
-        datetime_since = datetime.datetime(2018, 1, 1, 0, 0, 0, tzinfo="UTC")
+        datetime_since = datetime.datetime(2019, 3, 1, 0, 0, 0)
 
     datetime_since_stamp = int(datetime_since.timestamp())
+
 
     pagesync.conversation_update_time = dt.now()
 
     while True:
         try:
-
+            got_time = dt.now()
             got, data = get_conversation_data(page_no, token, str(offset), field_input, datetime_since_stamp)
 
             if not got:
@@ -79,7 +81,7 @@ def get_conversations(page_no):
                 break
             '''
 
-            response_json_list.append(data)
+            convert_conversation_data(page_no, data, got_time, datetime_since)
 
             if (len(check) >= 100):
                 offset += 100
@@ -91,7 +93,7 @@ def get_conversations(page_no):
             print("Error with get request.")
             return
 
-    convert_conversation_data(page_no, response_json_list, datetime_since)
+
     pagesync.save()
 
 def batch_get_conversations():
