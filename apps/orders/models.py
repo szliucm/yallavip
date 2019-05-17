@@ -416,7 +416,7 @@ class Verification(models.Model):
     class Meta:
         verbose_name = "会话-验证码"
         verbose_name_plural = verbose_name
-        unique_together = (("conversation", "verify_code"),)
+        #unique_together = (("conversation", "verify_code"),)
 
 
     def __str__(self):
