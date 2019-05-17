@@ -139,7 +139,7 @@ def convert_messages(row,conversation_no, datetime_since):
                     break
 
 
-                all_got = convert_messages_data(conversation_no,next_messages_data["data"] , datetime_since)
+                all_got = convert_messages_data(conversation_no,messages_data["data"] , datetime_since)
 
             else:
                 break
