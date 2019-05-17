@@ -4293,7 +4293,7 @@ def adjust_shopify_inventories():
             skus.update(inventory_quantity=row[2])
         n -= 1
         print("还有 %s条待更新" % n)
-        #time.sleep(1)
+        time.sleep(1)
 
 #把不在lightin_sku 里且库存大于0 的variant的库存都改成0
 def zero_shopify_inventories():
@@ -4410,7 +4410,9 @@ def adjust_shopify_prices():
             "where v.sku= s.SKU and v.price <> s.sku_price and update_error=''"
 
     rows = my_custom_sql(mysql)
+    n = len(rows)
 
+    print("一共有 %s条待更新" % n)
     for row in rows:
         print ("更新变体价格： ",row[0],row[2])
 
@@ -4420,6 +4422,10 @@ def adjust_shopify_prices():
             vs.update(price=row[2],inventory_policy = "deny",update_error="")
         else:
             vs.update(update_error = info)
+
+        n -= 1
+        print("还有 %s条待更新" % n)
+        time.sleep(1)
 
 #根据库存更新产品可视状态
 #所有sku都没有货的，就隐藏
