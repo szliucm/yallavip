@@ -1,4 +1,4 @@
-from .models import Conversation
+from .models import *
 from fb.models import PageSync
 
 from prs.fb_action import  get_token
@@ -15,6 +15,7 @@ def convert_conversation_data(page_no, response_json, got_time, datetime_since):
     for i in range(len(data)):
         row = data[i]
         conversation_no = row.get("id")
+        print("conversation_no", conversation_no,row.get("updated_time"))
         obj, created = Conversation.objects.update_or_create(conversation_no=conversation_no,
                                                              defaults={
                                                                        'page_no': page_no,
@@ -75,7 +76,7 @@ def get_conversations(page_no):
                 break
 
             check = data['data']
-            print(check[0]["updated_time"])
+            print("当前的更新时间", offset, check[0]["updated_time"])
             '''
             if (check[0]["updated_time"] < datetime_since):
                 print("无新可更")
@@ -126,6 +127,8 @@ def convert_messages(row,conversation_no, datetime_since):
                     next_link = None
 
                 if next_link:
+                    print("有下一页")
+
                     r = requests.get(next_link.replace("limit=25", "limit=100"))
                     try:
                         next_messages_data = json.loads(r.text)
