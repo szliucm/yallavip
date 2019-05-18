@@ -436,6 +436,17 @@ def filter_product(cate):
 
     return  con
 
+def get_promote_ads(page_no):
+    # 取page对应的主推品类
+    cates = PagePromoteCate.objects.filter(mypage__page_no=page_no).values_list("promote_cate__tags", flat=True)
+    if cates:
+        cates = list(cates)
+    else:
+        return None, None
+    ads = YallavipAd.objects.filter(page_no=page_no, active=True, published=True, cate__in=cates)
+
+    return ads, cates
+
 
 @shared_task
 def post_ads_v2(page_no, ad_type, to_create_count=1,keyword=None):
@@ -443,6 +454,13 @@ def post_ads_v2(page_no, ad_type, to_create_count=1,keyword=None):
     from prs.fb_action import  choose_ad_set
 
     from django.db.models import Q
+
+    # 取page对应的主推品类
+    cates = PagePromoteCate.objects.filter(mypage__page_no=page_no).values_list("promote_cate__tags", flat=True)
+    if cates:
+        cates = list(cates)
+    else:
+        return
 
     serial = get_serial()
 
@@ -455,20 +473,17 @@ def post_ads_v2(page_no, ad_type, to_create_count=1,keyword=None):
         return False
 
     adaccount_no = "act_1903121643086425"
-
+    ads =  YallavipAd.objects.filter(page_no=page_no, active=True, published=True, cate__in = cates)
+    if keyword:
+        ads = ads.filter(yallavip_album__rule__name__icontains=keyword)
 
     if ad_type == "engagement":
         #ads = YallavipAd.objects.filter(~Q(object_story_id="" ),  object_story_id__isnull = False,active=True, published=True,engagement_aded=False, yallavip_album__page__page_no=page_no )
-        ads = YallavipAd.objects.filter(active=True, published=True, engagement_aded=False, long_ad=long_ad).order_by("-fb_feed__like_count")
+        ads = ads.filter( engagement_aded=False).order_by("-fb_feed__like_count")
     elif ad_type == "message":
-        ads = YallavipAd.objects.filter(active=True, engagement_aded= True, message_aded=False, long_ad=long_ad).order_by("-fb_feed__like_count")
+        ads = ads.filter( engagement_aded= True, message_aded=False).order_by("-fb_feed__like_count")
     else:
         return  False
-
-    ads = ads.filter(page_no=page_no)
-
-
-
 
     if keyword:
         ads = ads.filter(yallavip_album__rule__name__icontains=keyword)

@@ -5858,6 +5858,41 @@ def page_post(page_no, to_create_count,keyword=None,long_ad=False):
                 pass
 
             ad.save()
+@shared_task
+def page_post_v2(page_no, to_create_count):
+    import time
+
+    # 取page对应的待推ads
+    ads, cates = get_promote_ads(page_no)
+    if not ads:
+        return
+
+    access_token, long_token = get_token(page_no)
+    print (access_token, long_token, page_no)
+    if not long_token:
+        return
+    adobjects = FacebookAdsApi.init(access_token=access_token, debug=True)
+
+    for cate in cates:
+
+        ads = ads.filter(cate=cate)
+
+        i=1
+        for ad in ads:
+            if i>to_create_count:
+                break
+            else:
+                i += 1
+            spus_count = len(ad.spus_name.split(","))
+
+            if spus_count == 2:
+                info, posted = link_page_post(page_no, access_token, ad)
+                if posted:
+                    ad.object_story_id = info
+                    ad.published = True
+                else:
+                    ad.publish_error = info
+            ad.save()
 
 def get_serial():
     #根据日期生成序列号，目的是为了便于跟踪每天的表现
@@ -5940,6 +5975,71 @@ def post_ads(page_no, ad_type, to_create_count=1,keyword=None, long_ad=False):
             ad.save()
             time.sleep(30)
 
+
+@shared_task
+def post_ads_v2(page_no, ad_type, to_create_count=1, keyword=None):
+    import time
+    from prs.fb_action import choose_ad_set
+
+    from django.db.models import Q
+
+    # 取page对应的待推ads
+    ads , cates = get_promote_ads(page_no)
+    if not ads:
+        return
+
+
+    serial = get_serial()
+
+    # 每天的广告放进同一个组，保持广告的持续性，先设成三组，看看效果
+    # 库存深的单独放一个组
+    adset_no = choose_ad_set(page_no, ad_type, serial)
+    if not adset_no:
+        print("没有adset")
+        return False
+
+    adaccount_no = "act_1903121643086425"
+
+    if keyword:
+        ads = ads.filter(yallavip_album__rule__name__icontains=keyword)
+
+    if ad_type == "engagement":
+        # ads = YallavipAd.objects.filter(~Q(object_story_id="" ),  object_story_id__isnull = False,active=True, published=True,engagement_aded=False, yallavip_album__page__page_no=page_no )
+        ads = ads.filter(engagement_aded=False).order_by("-fb_feed__like_count")
+    elif ad_type == "message":
+        ads = ads.filter(engagement_aded=True, message_aded=False).order_by("-fb_feed__like_count")
+    else:
+        return False
+
+    if keyword:
+        ads = ads.filter(yallavip_album__rule__name__icontains=keyword)
+
+    adobjects = FacebookAdsApi.init(access_token=ad_tokens, debug=True)
+    for cate in cates:
+
+        ads = ads.filter(cate=cate)
+        i = 1
+        for ad in ads:
+            if i > to_create_count:
+                break
+
+            i += 1
+
+            fb_ad = post_ad(page_no, adaccount_no, adset_no, serial, ad)
+            print("new ad is ", fb_ad)
+            if fb_ad:
+                if ad_type == "engagement":
+                    ad.engagement_ad_id = fb_ad.get("id")
+
+                    ad.engagement_aded = True
+                    ad.engagement_ad_published_time = dt.now()
+                elif ad_type == "message":
+                    ad.message_ad_id = fb_ad.get("id")
+                    ad.message_aded = True
+                    ad.message_ad_published_time = dt.now()
+
+                ad.save()
+                time.sleep(30)
 
 def post_ad(page_no,adaccount_no, adset_no, serial, ad):
     from facebook_business.adobjects.adaccount import AdAccount
