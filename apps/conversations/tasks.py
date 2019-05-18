@@ -192,9 +192,9 @@ def convert_messages_data(conversation_no,messages, datetime_since):
             created_time=created_time,
             message_content= content,
             from_id=message["from"]["id"],
-            from_name=message["from"]["name"],
+            from_name=message["from"]["name"][:50],
             to_id=message["to"]["data"][0]["id"],
-            to_name=message["to"]["data"][0]["name"],
+            to_name=message["to"]["data"][0]["name"][:50],
 
 
 
