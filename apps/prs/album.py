@@ -375,7 +375,7 @@ def prepare_promote_v2(page_no):
     from prs.tasks import prepare_promote_image_album_v3
 
     # 取page对应的主推品类
-    cates = PagePromoteCate.objects.filter(mypage__page_no=page_no).values_list("cate", flat=True)
+    cates = PagePromoteCate.objects.filter(mypage__page_no=page_no).values_list("promote_cate", flat=True)
     if cates:
         cates = list(cates)
     else:
