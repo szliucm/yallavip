@@ -297,31 +297,8 @@ def prepare_yallavip_photoes_v2(page_no=None):
         for album in albums:
             is_sku = False
             print("album is ", album)
+            con = filter_product(album.cate)
 
-            # 拼接相册的筛选产品的条件
-            q_cate = Q()
-            q_cate.connector = 'OR'
-
-            cate_name =  album.cate.tags
-            q_cate.children.append(('breadcrumb__contains', cate_name))
-
-            #如果没尺码，就全上
-            # 如果有尺码，均码的全上（one-size, free-size）
-            #其他尺码的，就要sellable > n 的才上
-            q_size = Q()
-            q_size.connector = 'OR'
-
-            #多尺码的cate，要么是均码，要么有最低库存要求，
-            #缺省情况下，已经要求库存大于0了
-            if album.cate.sellable_gt >0 :
-                q_size.children.append(('sellable__gt', album.cate.sellable_gt))
-
-            q_size.children.append(('one_size',True))
-
-
-            con = Q()
-            con.add(q_cate, 'AND')
-            con.add(q_size, 'AND')
 
             # 根据品类找已经上架到shopify 但还未添加到相册的产品
             product_list = []
@@ -368,44 +345,37 @@ def prepare_yallavip_photoes_v2(page_no=None):
 #相册和主推品类结合选品，打广告
 
 def prepare_promote_v2(page_no):
-
     import random
 
     from django.db.models import Count
-    from prs.tasks import prepare_promote_image_album_v3
 
     # 取page对应的主推品类
-    cates = PagePromoteCate.objects.filter(mypage__page_no=page_no).values_list("promote_cate", flat=True)
-    if cates:
-        cates = list(cates)
-    else:
+    try:
+        cates = PagePromoteCate.objects.get(mypage__page_no=page_no).promote_cate.all()
+    except:
+
+        print ("没有促销品类")
         return
 
+    # 取库存大、单价高、已经发布到相册 且还未打广告的商品
+    spus_all = Lightin_SPU.objects.filter(vendor="lightin", aded=False,sellable__gt=0)
+
+    # 把主推品类的所有适合的产品都拿出来打广告
+
     for cate in cates:
-        # 取库存大、单价高、已经发布到相册 且还未打广告的商品
-        lightinalbums_all = LightinAlbum.objects.filter( yallavip_album__page__page_no=page_no,
-                                                         yallavip_album__cate=cate,
-                                                lightin_spu__sellable__gt=0, lightin_spu__vendor = "lightin",
-                                                lightin_spu__yallavip_price__gt=30,lightin_spu__yallavip_price__lte=100,
-                                                aded=False,
-                                                published=True)
-
-
-        if lightinalbums_all:
-            cate_spus = lightinalbums_all.values_list("lightin_spu",flat=True)
-            # 每次最多20个
-            if cate_spus.count() > 20:
-                count = 10
-            else:
-                count = int(cate_spus.count() / 2)
-            print ("一共有%s个广告组合" % (count))
-
-            for i in range(count):
-                print("当前处理 ", i, cate_spus)
-                spu_pks = [cate_spus[i*2], cate_spus[i*2+1]]
-                prepare_promote_image_album_v3(cate,page_no, spu_pks)
+        con = filter_product(cate)
+        cate_spus = spus_all.filter(con)
+        # 每次最多20个
+        if cate_spus.count() > 20:
+            count = 10
         else:
-            print("没有符合条件的相册了", page_no)
+            count = int(cate_spus.count() / 2)
+        print ("一共有%s个" % (count))
+
+        for i in range(count):
+            print("当前处理 ", i, cate_spus)
+            spu_pks = [cate_spus[0].pk, cate_spus[1].pk]
+            prepare_promote_image_album_v3(cate.tags, page_no, spu_pks)
 
 def init_cate_sellable():
 
@@ -438,8 +408,98 @@ def init_spu_one_size():
 
     Lightin_SPU.objects.filter(pk__in=list(spus)).update(one_size=True)
 
+# 根据 MyCategory 拼接筛选产品的条件
+def filter_product(cate):
+    q_cate = Q()
+    q_cate.connector = 'OR'
 
 
+    q_cate.children.append(('breadcrumb__contains', cate.tags))
+
+    #如果没尺码，就全上
+    # 如果有尺码，均码的全上（one-size, free-size）
+    #其他尺码的，就要sellable > n 的才上
+    q_size = Q()
+    q_size.connector = 'OR'
+
+    #多尺码的cate，要么是均码，要么有最低库存要求，
+    #缺省情况下，已经要求库存大于0了
+    if cate.sellable_gt >0 :
+        q_size.children.append(('sellable__gt', cate.sellable_gt))
+
+    q_size.children.append(('one_size',True))
+
+
+    con = Q()
+    con.add(q_cate, 'AND')
+    con.add(q_size, 'AND')
+
+    return  con
+
+
+@shared_task
+def post_ads_v2(page_no, ad_type, to_create_count=1,keyword=None):
+    import time
+    from prs.fb_action import  choose_ad_set
+
+    from django.db.models import Q
+
+    serial = get_serial()
+
+
+    #每天的广告放进同一个组，保持广告的持续性，先设成三组，看看效果
+    #库存深的单独放一个组
+    adset_no = choose_ad_set(page_no, ad_type,serial)
+    if not adset_no:
+        print("没有adset")
+        return False
+
+    adaccount_no = "act_1903121643086425"
+
+
+    if ad_type == "engagement":
+        #ads = YallavipAd.objects.filter(~Q(object_story_id="" ),  object_story_id__isnull = False,active=True, published=True,engagement_aded=False, yallavip_album__page__page_no=page_no )
+        ads = YallavipAd.objects.filter(active=True, published=True, engagement_aded=False, long_ad=long_ad).order_by("-fb_feed__like_count")
+    elif ad_type == "message":
+        ads = YallavipAd.objects.filter(active=True, engagement_aded= True, message_aded=False, long_ad=long_ad).order_by("-fb_feed__like_count")
+    else:
+        return  False
+
+    ads = ads.filter(page_no=page_no)
+
+
+
+
+    if keyword:
+        ads = ads.filter(yallavip_album__rule__name__icontains=keyword)
+
+
+
+    adobjects = FacebookAdsApi.init(access_token=ad_tokens, debug=True)
+    i=1
+    for ad in ads:
+        if i>to_create_count:
+            break
+
+        i += 1
+
+
+        fb_ad = post_ad(page_no,adaccount_no, adset_no, serial, ad)
+        print("new ad is ", fb_ad)
+        if fb_ad:
+            if ad_type == "engagement":
+                ad.engagement_ad_id = fb_ad.get("id")
+
+                ad.engagement_aded = True
+                ad.engagement_ad_published_time = dt.now()
+            elif ad_type == "message":
+                ad.message_ad_id = fb_ad.get("id")
+                ad.message_aded = True
+                ad.message_ad_published_time = dt.now()
+
+
+            ad.save()
+            time.sleep(30)
 
 
 

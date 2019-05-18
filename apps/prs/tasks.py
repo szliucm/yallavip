@@ -5882,6 +5882,7 @@ def post_ads(page_no, ad_type, to_create_count=1,keyword=None, long_ad=False):
     else:
         serial = get_serial()
 
+
     #每天的广告放进同一个组，保持广告的持续性，先设成三组，看看效果
     #库存深的单独放一个组
     adset_no = choose_ad_set(page_no, ad_type,serial)
@@ -5938,6 +5939,7 @@ def post_ads(page_no, ad_type, to_create_count=1,keyword=None, long_ad=False):
 
             ad.save()
             time.sleep(30)
+
 
 def post_ad(page_no,adaccount_no, adset_no, serial, ad):
     from facebook_business.adobjects.adaccount import AdAccount

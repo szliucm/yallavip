@@ -109,24 +109,24 @@ def download_product(spus):
 
 
         except:
-            print("下载分类失败")
+            print("下载商品失败")
             print(url, json.dumps(params))
             print(r)
             print(r.text)
             return None
 
-    if data.get("code") == 200:
-        cates = data.get("data")
-        category_list=[]
-        TomtopCategory.objects.all().delete()
-        for cate in cates:
-            # print("row is ",row)
-            category = TomtopCategory(
-                cate_no=cate.get("_id"),
-                name=cate.get("name"),
-                parent_no=cate.get("parent_id"),
+        if data.get("code") == 200:
+            cates = data.get("data")
+            category_list=[]
+            TomtopCategory.objects.all().delete()
+            for cate in cates:
+                # print("row is ",row)
+                category = TomtopCategory(
+                    cate_no=cate.get("_id"),
+                    name=cate.get("name"),
+                    parent_no=cate.get("parent_id"),
 
-                level=cate.get("level"),
-            )
-            category_list.append(category)
-        TomtopCategory.objects.bulk_create(category_list)
+                    level=cate.get("level"),
+                )
+                category_list.append(category)
+            TomtopCategory.objects.bulk_create(category_list)
