@@ -403,7 +403,7 @@ def prepare_promote_v2(page_no):
             for i in range(count):
                 print("当前处理 ", i, cate_spus)
                 spu_pks = [cate_spus[i*2], cate_spus[i*2+1]]
-                prepare_promote_image_album_v3(page_no, spu_pks)
+                prepare_promote_image_album_v3(cate,page_no, spu_pks)
         else:
             print("没有符合条件的相册了", page_no)
 

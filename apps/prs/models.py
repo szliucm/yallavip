@@ -959,7 +959,7 @@ class YallavipAd(models.Model):
     message_ad_publish_error = models.CharField(default='无', max_length=256, null=True, blank=True, verbose_name="message_ad_publish_error")
 
     long_ad = models.BooleanField(default=False, verbose_name="long_ad")
-
+    cate = models.CharField(default='无', max_length=500, null=True, blank=True, verbose_name="cate_tags")
     def cal_sellable(self):
         handle_list = self.spus_name.split(",")
         sellable = Lightin_SPU.objects.filter(handle__in=handle_list).values("handle", "sellable")

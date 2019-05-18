@@ -5770,6 +5770,13 @@ def message_ads():
 @shared_task
 def page_post(page_no, to_create_count,keyword=None,long_ad=False):
     import time
+    # 取page对应的主推品类
+    cates = PagePromoteCate.objects.filter(mypage__page_no=page_no).values_list("promote_cate", flat=True)
+    if cates:
+        cates = list(cates)
+    else:
+        return
+
 
     access_token, long_token = get_token(page_no)
     print (access_token, long_token, page_no)
@@ -6307,7 +6314,7 @@ def prepare_long_ad(page_no):
         for i in range(count):
             print("当前处理 ",i, cate_spus)
             spu_pks =  [cate_spus[0].pk, cate_spus[1].pk]
-            prepare_promote_image_album_v3(page_no ,spu_pks)
+            prepare_promote_image_album_v3(cate, page_no ,spu_pks)
 
 
 
@@ -6427,7 +6434,7 @@ def make_spu_pure_image(target_page, spu):
 
 
 
-def prepare_promote_image_album_v3(page_no, lightin_spu_pks):
+def prepare_promote_image_album_v3(cate, page_no, lightin_spu_pks):
     from prs.fb_action import combo_ad_image_v3
 
 
@@ -6468,6 +6475,7 @@ def prepare_promote_image_album_v3(page_no, lightin_spu_pks):
                                                                  'message': message,
                                                                  'active': True,
                                                                  'long_ad':True,
+                                                                 'cate':cate,
 
                                                                  }
                                                        )
