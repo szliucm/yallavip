@@ -5868,6 +5868,8 @@ def page_post_v2(page_no, to_create_count):
     if not ads:
         return
 
+    ads = ads.filter(published=False)
+
     access_token, long_token = get_token(page_no)
     print (access_token, long_token, page_no)
     if not long_token:
@@ -5988,6 +5990,7 @@ def post_ads_v2(page_no, ad_type, to_create_count=1, keyword=None):
     ads , cates = get_promote_ads(page_no)
     if not ads:
         return
+    ads = ads.filter(published=True)
 
 
     serial = get_serial()
@@ -6006,9 +6009,9 @@ def post_ads_v2(page_no, ad_type, to_create_count=1, keyword=None):
 
     if ad_type == "engagement":
         # ads = YallavipAd.objects.filter(~Q(object_story_id="" ),  object_story_id__isnull = False,active=True, published=True,engagement_aded=False, yallavip_album__page__page_no=page_no )
-        ads = ads.filter(engagement_aded=False).order_by("-fb_feed__like_count")
+        ads = ads.filter( engagement_aded=False).order_by("-fb_feed__like_count")
     elif ad_type == "message":
-        ads = ads.filter(engagement_aded=True, message_aded=False).order_by("-fb_feed__like_count")
+        ads = ads.filter( engagement_aded=True, message_aded=False).order_by("-fb_feed__like_count")
     else:
         return False
 
