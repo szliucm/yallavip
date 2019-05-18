@@ -29,6 +29,7 @@ from facebook_business.api import FacebookAdsApi
 from facebook_business.adobjects.page import Page
 
 from shop.photo_mark import yallavip_mark_image
+from prs.album import get_promote_ads
 
 my_app_id = "562741177444068"
 my_app_secret = "e6df363351fb5ce4b7f0080adad08a4d"
