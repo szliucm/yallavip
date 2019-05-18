@@ -374,8 +374,9 @@ def prepare_promote_v2(page_no):
         print ("一共有%s个" % (count))
 
         for i in range(count):
-            print("当前处理 ", i, cate_spus)
+
             spu_pks = [cate_spus[0].pk, cate_spus[1].pk]
+            print("当前处理 ", i, cate.tags, page_no, spu_pks)
             prepare_promote_image_album_v3(cate.tags, page_no, spu_pks)
 
 def init_cate_sellable():
