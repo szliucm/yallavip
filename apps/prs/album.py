@@ -348,6 +348,7 @@ def prepare_promote_v2(page_no):
     import random
 
     from django.db.models import Count
+    from prs.tasks import  prepare_promote_image_album_v3
 
     # 取page对应的主推品类
     try:
