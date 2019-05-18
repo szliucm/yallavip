@@ -5766,6 +5766,7 @@ def message_ads():
 
 
 #先post，然后基于post发广告
+#每次每个cate发一张，尝试多样性或者专业性哪个更好
 #这只适合互动型广告
 @shared_task
 def page_post(page_no, to_create_count,keyword=None,long_ad=False):
@@ -5784,79 +5785,79 @@ def page_post(page_no, to_create_count,keyword=None,long_ad=False):
         return
     adobjects = FacebookAdsApi.init(access_token=access_token, debug=True)
 
-
-    if long_ad:
-        ads = YallavipAd.objects.filter(active=True, published=False, page_no=page_no,cate__in=cates,
-                                        long_ad=long_ad)
-    else:
-        ads = YallavipAd.objects.filter(active=True, published=False,yallavip_album__page__page_no=page_no, long_ad=long_ad )
-    if keyword:
-        ads = ads.filter(yallavip_album__rule__name__icontains=keyword)
-
-    #如果数量不够，且不是长期广告就创建
-    if ads.count() < to_create_count and not long_ad:
-        prepare_promote(page_no, to_create_count - ads.count(), keyword)
-
-    i=1
-    for ad in ads:
-        if i>to_create_count:
-            break
+    for cate in cates:
+        if long_ad:
+            ads = YallavipAd.objects.filter(active=True, published=False, page_no=page_no,cate=cate,
+                                            long_ad=long_ad)
         else:
-            i += 1
-        spus_count = len(ad.spus_name.split(","))
-        if spus_count == 4:
-            try:
-                # 创建page photo
-                fields = [
-                ]
-                params = {
-                    'url': ad.image_marked_url,
-                    'published': 'false',
-                }
-                photo_to_be_post = Page(page_no).create_photo(
-                    fields=fields,
-                    params=params,
-                )
-                photo_to_be_post_id = photo_to_be_post.get_id()
+            ads = YallavipAd.objects.filter(active=True, published=False,yallavip_album__page__page_no=page_no, cate=cate,long_ad=long_ad )
+        if keyword:
+            ads = ads.filter(yallavip_album__rule__name__icontains=keyword)
 
-                # 创建post
-                fields = [
-                    'object_id',
-                ]
+        #如果数量不够，且不是长期广告就创建
+        if ads.count() < to_create_count and not long_ad:
+            prepare_promote(page_no, to_create_count - ads.count(), keyword)
 
-                params = {
-                    'message': ad.message,
-                    # 'attached_media': [{'media_fbid': photo_to_be_post_id}],
-                    'attached_media': [{'media_fbid': photo_to_be_post_id}],
-                    "call_to_action": {"type": "MESSAGE_PAGE",
-                                       "value": {"app_destination": "MESSENGER"}},
-                }
-
-                feed_post = Page(page_no).create_feed(
-                    fields=fields,
-                    params=params,
-                )
-                print (feed_post)
-
-                #object_story_id = feed_post.get_id()
-                ad.object_story_id = feed_post.get_id()
-                ad.published = True
-
-            except Exception as e:
-                print(e)
-                error = e.api_error_message()
-                ad.publish_error = error
-        if spus_count == 2:
-            info, posted = link_page_post(page_no, access_token, ad)
-            if posted:
-                ad.object_story_id = info
-                ad.published = True
+        i=1
+        for ad in ads:
+            if i>to_create_count:
+                break
             else:
-                ad.publish_error = info
+                i += 1
+            spus_count = len(ad.spus_name.split(","))
+            if spus_count == 4:
+                try:
+                    # 创建page photo
+                    fields = [
+                    ]
+                    params = {
+                        'url': ad.image_marked_url,
+                        'published': 'false',
+                    }
+                    photo_to_be_post = Page(page_no).create_photo(
+                        fields=fields,
+                        params=params,
+                    )
+                    photo_to_be_post_id = photo_to_be_post.get_id()
 
-            pass
+                    # 创建post
+                    fields = [
+                        'object_id',
+                    ]
 
-        ad.save()
+                    params = {
+                        'message': ad.message,
+                        # 'attached_media': [{'media_fbid': photo_to_be_post_id}],
+                        'attached_media': [{'media_fbid': photo_to_be_post_id}],
+                        "call_to_action": {"type": "MESSAGE_PAGE",
+                                           "value": {"app_destination": "MESSENGER"}},
+                    }
+
+                    feed_post = Page(page_no).create_feed(
+                        fields=fields,
+                        params=params,
+                    )
+                    print (feed_post)
+
+                    #object_story_id = feed_post.get_id()
+                    ad.object_story_id = feed_post.get_id()
+                    ad.published = True
+
+                except Exception as e:
+                    print(e)
+                    error = e.api_error_message()
+                    ad.publish_error = error
+            if spus_count == 2:
+                info, posted = link_page_post(page_no, access_token, ad)
+                if posted:
+                    ad.object_story_id = info
+                    ad.published = True
+                else:
+                    ad.publish_error = info
+
+                pass
+
+            ad.save()
 
 def get_serial():
     #根据日期生成序列号，目的是为了便于跟踪每天的表现
