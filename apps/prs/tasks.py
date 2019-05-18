@@ -6561,6 +6561,8 @@ def prepare_promote_image_album_v3(cate, page_no, lightin_spu_pks):
             return  False
 
     # 把spus的图拼成一张
+    if len(handles) != 2:
+        return
     handles_name = ','.join(handles)
 
     image_marked_url = combo_ad_image_v3(spu_ims, handles_name, page_no)
