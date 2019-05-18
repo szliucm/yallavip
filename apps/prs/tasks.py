@@ -5771,7 +5771,7 @@ def message_ads():
 def page_post(page_no, to_create_count,keyword=None,long_ad=False):
     import time
     # 取page对应的主推品类
-    cates = PagePromoteCate.objects.filter(mypage__page_no=page_no).values_list("promote_cate", flat=True)
+    cates = PagePromoteCate.objects.filter(mypage__page_no=page_no).values_list("promote_cate__tags", flat=True)
     if cates:
         cates = list(cates)
     else:
@@ -5786,7 +5786,7 @@ def page_post(page_no, to_create_count,keyword=None,long_ad=False):
 
 
     if long_ad:
-        ads = YallavipAd.objects.filter(active=True, published=False, page_no=page_no,
+        ads = YallavipAd.objects.filter(active=True, published=False, page_no=page_no,cate__in=cates,
                                         long_ad=long_ad)
     else:
         ads = YallavipAd.objects.filter(active=True, published=False,yallavip_album__page__page_no=page_no, long_ad=long_ad )
