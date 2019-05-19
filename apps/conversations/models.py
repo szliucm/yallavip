@@ -1,5 +1,7 @@
 from django.db import models
 from django.utils.html import format_html
+from pytz import timezone
+from datetime import datetime,timedelta
 
 # Create your models here.
 class Conversation(models.Model):
@@ -13,13 +15,17 @@ class Conversation(models.Model):
 
     customer = models.CharField(max_length=500,null=True, blank=True, verbose_name="客户")
 
-    def cal_status(self):
+    def cal_last_message(self):
         message = Message.objects.filter(conversation_no=self.conversation_no).order_by("-created_time").first()
+        return  message
+
+    def cal_status(self):
+        message = self.cal_last_message()
         if message.from_name == self.customer:
             color_code = "red"
             status = "待回复"
         else:
-            color_code = "blue"
+            #color_code = "blue"
             status = "已回复"
 
         return  format_html(
@@ -32,6 +38,15 @@ class Conversation(models.Model):
     cal_status.short_description = "状态"
     status = property(cal_status)
 
+    def cal_lost_time(self):
+        cst_tz = timezone('Asia/Riyadh')
+
+
+        now = datetime.now().replace(tzinfo=cst_tz)
+        message = self.cal_last_message()
+        return (now - message.created_time).minutes
+
+
     class Meta:
         verbose_name = "会话"
         verbose_name_plural = verbose_name
@@ -41,7 +56,7 @@ class Conversation(models.Model):
         return  self.conversation_no
 
 
-class Message(models.Model):
+class FbMessage(models.Model):
     #conversation_no = models.ForeignKey(Conversation,to_field = 'conversation_no',  related_name='conversation', null=True, blank=True, verbose_name="会话",
     #                             on_delete=models.CASCADE)
     #conversation = models.ForeignKey(Conversation, related_name='conversation',null=True, blank=True, verbose_name="会话",on_delete=models.CASCADE)

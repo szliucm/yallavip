@@ -12,7 +12,7 @@ import xadmin
 from django.shortcuts import get_object_or_404,get_list_or_404,render
 from import_export import resources,fields
 from import_export.widgets import ForeignKeyWidget
-from .models import Message, Conversation  ,PageUpdate
+from .models import FbMessage, Conversation  ,PageUpdate
 
 class ConversationResource(resources.ModelResource):
 
@@ -53,8 +53,8 @@ class MessageResource(resources.ModelResource):
         fields = ( 'conversation_no', 'message_no','message_content','from_id','from_name','to_id','to_name',)
         # exclude = ()
 
-@xadmin.sites.register(Message)
-class MessageAdmin(object):
+@xadmin.sites.register(FbMessage)
+class FbMessageAdmin(object):
     import_export_args = {'import_resource_class': MessageResource, 'export_resource_class': MessageResource}
 
     list_display = ["conversation_no", "message_no", "message_content", "created_time",'from_name', ]
