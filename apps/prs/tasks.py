@@ -2933,6 +2933,8 @@ def sync_shopify(minutes=10):
 
     cal_reserved(overtime=24)
 
+    adjust_shopify_inventories()
+
     #elete_outstock_lighin_album()
     auto_smscode()
 
@@ -4275,7 +4277,7 @@ def my_custom_sql(mysql):
 
 def adjust_shopify_inventories():
 
-    mysql = "select v.sku , v.inventory_item_no , s.o_sellable - v.inventory_quantity " \
+    mysql = "select v.sku , v.inventory_item_no , s.o_sellable - v.inventory_quantity, s.o_sellable , v.inventory_quantity " \
             "from shop_shopifyvariant v, prs_lightin_sku s " \
             "where v.sku= s.SKU and v.inventory_quantity <> s.o_sellable"
 
@@ -4286,12 +4288,12 @@ def adjust_shopify_inventories():
 
     print("一共有 %s条待更新"%n)
     for row in rows:
-
+        print("正在处理", row[0],row[1], row[2],row[3],row[4])
         info, adjusted = adjust_shopify_inventory(row[1],int(row[2]))
         if adjusted:
 
             skus = ShopifyVariant.objects.filter(sku=row[0])
-            skus.update(inventory_quantity=row[2])
+            skus.update(inventory_quantity=row[3])
         n -= 1
         print("还有 %s条待更新" % n)
         time.sleep(1)
