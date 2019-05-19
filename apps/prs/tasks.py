@@ -5972,7 +5972,7 @@ def post_ads(page_no, ad_type, to_create_count=1,keyword=None, long_ad=False):
 @shared_task
 def post_ads_v2(page_no, ad_type, to_create_count=1, keyword=None):
     import time
-    from prs.fb_action import choosepost_ads_v2(page_no, ad_type, to_create_count=1, keyword=None):_ad_set
+    from prs.fb_action import choose_ad_set
 
     from django.db.models import Q
 
