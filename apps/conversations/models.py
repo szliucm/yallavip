@@ -12,9 +12,21 @@ class Conversation(models.Model):
 
     customer = models.CharField(max_length=500,null=True, blank=True, verbose_name="客户")
 
+    def cal_status(self):
+        message = Message.objects.filter(conversation_no=self.conversation_no).order_by("-created_time").first()
+        if message.from_name == self.customer:
+            return "待回复"
+        else:
+            return  "已回复"
+
+
+    cal_status.short_description = "状态"
+    status = property(cal_status)
+
     class Meta:
         verbose_name = "会话"
         verbose_name_plural = verbose_name
+        ordering = ["status","updated_time",]
     def __str__(self):
         #return 'business.facebook.com'+ self.link
         return  self.conversation_no
