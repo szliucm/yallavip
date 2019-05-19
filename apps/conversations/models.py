@@ -15,9 +15,17 @@ class Conversation(models.Model):
     def cal_status(self):
         message = Message.objects.filter(conversation_no=self.conversation_no).order_by("-created_time").first()
         if message.from_name == self.customer:
-            return "待回复"
+            color_code = "red"
+            status = "待回复"
         else:
-            return  "已回复"
+            color_code = "blue"
+            status = "已回复"
+
+        return  format_html(
+            '<span style="background-color::{};">{}</span>',
+            color_code,
+            status,
+        )
 
 
     cal_status.short_description = "状态"
