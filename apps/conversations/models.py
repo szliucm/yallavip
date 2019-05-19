@@ -75,7 +75,7 @@ class FbMessage(models.Model):
         verbose_name_plural = verbose_name
 
     def __str__(self):
-        return self.message_id
+        return self.message_no
 
 
 class PageUpdate(models.Model):
