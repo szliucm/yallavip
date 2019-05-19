@@ -23,7 +23,7 @@ class Conversation(models.Model):
             status = "已回复"
 
         return  format_html(
-            '<span style="background-color::{};">{}</span>',
+            '<span style="background-color:{};">{}</span>',
             color_code,
             status,
         )
