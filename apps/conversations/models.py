@@ -26,7 +26,7 @@ class Conversation(models.Model):
     class Meta:
         verbose_name = "会话"
         verbose_name_plural = verbose_name
-        ordering = ["status","updated_time",]
+        ordering = ["updated_time",]
     def __str__(self):
         #return 'business.facebook.com'+ self.link
         return  self.conversation_no
