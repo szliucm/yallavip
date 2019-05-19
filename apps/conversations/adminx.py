@@ -47,7 +47,7 @@ class MessageResource(resources.ModelResource):
 
 
     class Meta:
-        model = Message
+        model = FbMessage
         skip_unchanged = True
         report_skipped = True
         import_id_fields = ('message_no',)
