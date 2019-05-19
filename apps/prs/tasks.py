@@ -5660,19 +5660,7 @@ def auto_prepare_image():
 
 
 
-#自动生成post
-@shared_task
-def auto_post():
-    #选择需要推广的page
-    pages = MyPage.objects.filter(is_published=True, active=True, promotable=True)
-
-    #遍历每个page
-    for page in pages:
-        #从符合条件的相册里选一个相册,    #发post
-        print("正在处理page", page)
-        #page_post.apply_async((page.page_no, 1), queue='fb')
-        page_post(page.page_no, 1)
-        #post_engagement_ads(page.page_no, 1)
+#
 
 
 
@@ -5984,7 +5972,7 @@ def post_ads(page_no, ad_type, to_create_count=1,keyword=None, long_ad=False):
 @shared_task
 def post_ads_v2(page_no, ad_type, to_create_count=1, keyword=None):
     import time
-    from prs.fb_action import choose_ad_set
+    from prs.fb_action import choosepost_ads_v2(page_no, ad_type, to_create_count=1, keyword=None):_ad_set
 
     from django.db.models import Q
 
@@ -6804,3 +6792,57 @@ def delete_outstock_album_sku():
 
         delete_photos(page_no, fb_ids)
         LightinAlbum.objects.filter(fb_id__in=fb_ids).update(deleted=True)
+
+#自动生成post
+@shared_task
+def auto_prepare_promote():
+    from prs.album import  prepare_promote_v2
+    #选择需要推广的page
+    pages = MyPage.objects.filter(is_published=True, active=True, promotable=True)
+
+    #遍历每个page
+    for page in pages:
+        page_no = page.page_no
+        prepare_promote_v2(page_no)
+
+自动生成post
+@shared_task
+def auto_page_post():
+    #选择需要推广的page
+    pages = MyPage.objects.filter(is_published=True, active=True, promotable=True)
+
+    #遍历每个page
+    for page in pages:
+        #从符合条件的相册里选一个相册,    #发post
+        print("正在处理page", page)
+        page_no = page.page_no
+
+        to_create_count = 1
+        page_post_v2(page_no, to_create_count)
+
+
+@shared_task
+def auto_engagement_ads():
+    #选择需要推广的page
+    pages = MyPage.objects.filter(is_published=True, active=True, promotable=True)
+
+    #遍历每个page
+    for page in pages:
+
+        page_no = page.page_no
+        ad_type = "engagement"
+        to_create_count = 10
+        post_ads_v2(page_no, ad_type, to_create_count)
+
+@shared_task
+def auto_message_ads():
+    #选择需要推广的page
+    pages = MyPage.objects.filter(is_published=True, active=True, promotable=True)
+
+    #遍历每个page
+    for page in pages:
+
+        page_no = page.page_no
+        ad_type = "message"
+        to_create_count = 5
+        post_ads_v2(page_no, ad_type, to_create_count)
