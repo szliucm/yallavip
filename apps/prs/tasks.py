@@ -6805,7 +6805,7 @@ def auto_prepare_promote():
         page_no = page.page_no
         prepare_promote_v2(page_no)
 
-自动生成post
+#自动生成post
 @shared_task
 def auto_page_post():
     #选择需要推广的page
