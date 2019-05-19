@@ -44,7 +44,15 @@ class Conversation(models.Model):
 
         now = datetime.now().replace(tzinfo=cst_tz)
         message = self.cal_last_message()
-        return (now - message.created_time).minutes
+        time_span = now - message.created_time
+        if time_span.days >1:
+            return  str(time_span.days)+"天前"
+        elif time_span.seconds >3600:
+            return str(int(time_span.seconds /3600))+"小时前"
+        else:
+            return str(int(time_span.seconds / 60)) + "分钟前"
+    cal_lost_time.short_description = "重要性"
+    lost_time = property(cal_lost_time)
 
 
     class Meta:
