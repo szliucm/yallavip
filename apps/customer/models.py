@@ -4,6 +4,7 @@ from prs.models import  Lightin_SKU
 
 # Create your models here.
 
+from orders.models import  CITY
 
 class Customer(models.Model):
     name = models.CharField(u'客户姓名', default='', max_length=100, blank=False,null=False)
@@ -44,7 +45,7 @@ class Receiver(models.Model):
     )
     country_code = models.CharField(u'country_code', choices=COUNTRIES, default='SA', max_length=10, blank=False,
                                     null=False)
-
+    '''
     CITIES = (
         ("None", "暂不支持"),
         ("Other", "人工处理"),
@@ -138,7 +139,7 @@ class Receiver(models.Model):
         ("Yanbu Al Baher", "Yanbu Al Baher"),
 
     )
-    '''
+    
     #fetchr
     ("Riyadh", "Riyadh"),
         ("Jeddah", "Jeddah"),
@@ -240,7 +241,7 @@ class Receiver(models.Model):
         ("Wadi Fatmah", "Wadi Fatmah"),
     '''
 
-    city = models.CharField(u'city', choices=CITIES, default='', max_length=20, blank=False, null=False)
+    city = models.CharField(u'city', choices=CITY, default='', max_length=20, blank=False, null=False)
     address1 = models.CharField(u'address1', default='', max_length=100, blank=False, null=False)
     address2 = models.CharField(u'address2', default='', max_length=100, blank=True)
     address3 = models.CharField(u'address3', default='', max_length=100, blank=True)
