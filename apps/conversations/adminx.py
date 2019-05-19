@@ -34,8 +34,9 @@ class ConversationAdmin(object):
     list_display = ["conversation_no", "page_no", "link", "updated_time","customer" ,"status",]
     search_fields = ['conversation_no', ]
 
+
     class MessageInline(object):
-        model = Message
+        model = FbMessage
         extra = 1
         style = 'tab'
 
