@@ -25,7 +25,7 @@ class Conversation(models.Model):
             color_code = "red"
             status = "待回复"
         else:
-            #color_code = "blue"
+            color_code = "white"
             status = "已回复"
 
         return  format_html(
