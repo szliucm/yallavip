@@ -185,7 +185,7 @@ def convert_messages_data(conversation_no,messages, datetime_since):
         if len(content) > 300:
             content = content[:300]
 
-        new_message = Message(
+        new_message = FbMessage(
             conversation_no=conversation_no,
             message_no=message_no,
 
@@ -205,8 +205,8 @@ def convert_messages_data(conversation_no,messages, datetime_since):
         message_list.append(new_message)
         message_no_list.append(message_no)
 
-    Message.objects.filter(message_no__in=message_no_list)
-    Message.objects.bulk_create(message_list)
+    FbMessage.objects.filter(message_no__in=message_no_list).delete()
+    FbMessage.objects.bulk_create(message_list)
 
 
     return  all_got
