@@ -31,7 +31,7 @@ class ConversationAdmin(object):
 
     import_export_args = {'import_resource_class': ConversationResource, 'export_resource_class': ConversationResource}
 
-    list_display = ["conversation_no", "page_no", "link", "updated_time","customer" ,"lost_time","status",]
+    list_display = ["customer" , "lost_time","status",]
     search_fields = ['conversation_no', ]
 
 

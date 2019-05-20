@@ -16,7 +16,8 @@ class Conversation(models.Model):
     customer = models.CharField(max_length=500,null=True, blank=True, verbose_name="客户")
 
     def cal_last_message(self):
-        message = FbMessage.objects.filter(conversation_no=self.conversation_no).order_by("-created_time").first()
+        messages = FbMessage.objects.filter(conversation_no=self.conversation_no).order_by("-created_time").values("content",flat=True)[:3]
+
         return  message
 
     def cal_status(self):
