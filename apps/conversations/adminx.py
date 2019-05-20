@@ -14,6 +14,8 @@ from import_export import resources,fields
 from import_export.widgets import ForeignKeyWidget
 from .models import FbMessage, Conversation  ,PageUpdate
 
+from django.utils.safestring import mark_safe
+
 class ConversationResource(resources.ModelResource):
 
     class Meta:
@@ -28,7 +30,7 @@ class ConversationResource(resources.ModelResource):
 
 @xadmin.sites.register(Conversation)
 class ConversationAdmin(object):
-    from django.utils.safestring import mark_safe
+
 
     def customer_link(self, obj):
         return mark_safe(
