@@ -28,10 +28,18 @@ class ConversationResource(resources.ModelResource):
 
 @xadmin.sites.register(Conversation)
 class ConversationAdmin(object):
+    def customer_link(self, obj):
+        return mark_safe(
+            '<a href="http://business.facebook.com%s" target="view_window">%s</a>'
+            % (obj.link,obj.customer))
+
+    customer_link.short_description = '会话链接'
+    customer_link.allow_tags = True
+
 
     import_export_args = {'import_resource_class': ConversationResource, 'export_resource_class': ConversationResource}
 
-    list_display = ["customer" , "lost_time","status", "last_message",]
+    list_display = ["conversation_no", "customer_link" , "lost_time","status", "last_message",]
     search_fields = ['customer', ]
 
 

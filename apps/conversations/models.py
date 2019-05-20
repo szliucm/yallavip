@@ -41,15 +41,12 @@ class Conversation(models.Model):
             color_code = "white"
             status = "已回复"
 
-        '''
+
         return  format_html(
             '<span style="background-color:{};">{}</span>',
             color_code,
             status,
         )
-        '''
-
-        return  mark_safe('<a href="http://business.facebook.com%s" target="view_window"><span style="background-color:%s;">%s</span></a>' %(obj.link,  color_code, status))
 
     cal_status.short_description = "状态"
     status = property(cal_status)
