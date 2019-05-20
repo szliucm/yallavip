@@ -68,7 +68,7 @@ def get_conversations(page_no):
 
         datetime_since = pagesync.conversation_update_time
     except:
-        datetime_since = datetime.datetime(2019, 5, 19, 0, 0, 0)
+        datetime_since = datetime.datetime(2019, 5, 16, 0, 0, 0)
         datetime_since = datetime_since.replace(tzinfo=pytz.timezone('UTC'))
 
     datetime_since_stamp = int(datetime_since.timestamp())
@@ -184,6 +184,8 @@ def convert_messages_data(conversation_no,messages, datetime_since):
         content = message["message"]
         if len(content) > 300:
             content = content[:300]
+        elif len(content) == 0:
+            content = "attachments"
 
         new_message = FbMessage(
             conversation_no=conversation_no,
