@@ -59,7 +59,9 @@ def create_album(page_no , album_name ):
 
 
 
-    return  obj
+        return  obj
+    else:
+        return  None
 
 #根据page cate 创建相册
 def sync_cate_album(page_no=None):
@@ -267,16 +269,19 @@ def sync_cate_album_v2(page_no=None):
             else:
                 print (cate.name)
                 new_album = create_album(page.page_no, cate.name)
-                YallavipAlbum.objects.create(
-                    page=page,
-                    cate=cate,
-                    catesize=None,
-                    album=new_album,
-                    published=True,
-                    publish_error="",
-                    published_time=dt.now(),
-                    active=True
-                )
+                if new_album:
+                    YallavipAlbum.objects.create(
+                        page=page,
+                        cate=cate,
+                        catesize=None,
+                        album=new_album,
+                        published=True,
+                        publish_error="",
+                        published_time=dt.now(),
+                        active=True
+                    )
+                else:
+                    print("创建相册失败！")
 
 #根据yallavip_album相册规则，生成相册图片记录
 #这里只处理根据品类创建相册的情况
@@ -371,7 +376,7 @@ def prepare_promote_v2(page_no):
             count = 10
         else:
             count = int(cate_spus.count() / 2)
-        print ("一共有%s个" % (count))
+        print (cate, "一共有%s个广告可以准备" % (count))
 
         for i in range(int(count/2)):
 
