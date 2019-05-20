@@ -28,6 +28,7 @@ class ConversationResource(resources.ModelResource):
 
 @xadmin.sites.register(Conversation)
 class ConversationAdmin(object):
+    from django.utils.safestring import mark_safe
     def customer_link(self, obj):
         return mark_safe(
             '<a href="http://business.facebook.com%s" target="view_window">%s</a>'
