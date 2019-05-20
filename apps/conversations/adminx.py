@@ -31,8 +31,9 @@ class ConversationAdmin(object):
 
     import_export_args = {'import_resource_class': ConversationResource, 'export_resource_class': ConversationResource}
 
-    list_display = ["customer" , "lost_time","status",]
-    search_fields = ['conversation_no', ]
+    list_display = ["customer" , "lost_time","status", "last_message",]
+    search_fields = ['customer', ]
+
 
 
     class MessageInline(object):

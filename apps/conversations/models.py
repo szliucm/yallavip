@@ -16,9 +16,17 @@ class Conversation(models.Model):
     customer = models.CharField(max_length=500,null=True, blank=True, verbose_name="客户")
 
     def cal_last_message(self):
-        messages = FbMessage.objects.filter(conversation_no=self.conversation_no).order_by("-created_time").values("content",flat=True)[:3]
+        messages = FbMessage.objects.filter(conversation_no=self.conversation_no).order_by("-created_time").values("from_name","message_content")
+        lenght = messages.count()
+        latest_messages = messages[lenght-5:lenght]
+        last_message=""
+        for message in latest_messages:
+            last_message += "[" + message['from_name'] + "]: " +message ['message_content'] +"\n"
 
-        return  message
+        return  last_message
+
+    cal_last_message.short_description = "最后的对话"
+    last_message = property(cal_last_message)
 
     def cal_status(self):
         message = self.cal_last_message()
@@ -29,12 +37,15 @@ class Conversation(models.Model):
             color_code = "white"
             status = "已回复"
 
+        '''
         return  format_html(
             '<span style="background-color:{};">{}</span>',
             color_code,
             status,
         )
+        '''
 
+        return  mark_safe('<a href="http://business.facebook.com%s" target="view_window"><span style="background-color:%s;">%s</span></a>' %(obj.link,  color_code, status))
 
     cal_status.short_description = "状态"
     status = property(cal_status)
@@ -59,7 +70,7 @@ class Conversation(models.Model):
     class Meta:
         verbose_name = "会话"
         verbose_name_plural = verbose_name
-        ordering = ["updated_time",]
+        ordering = ["-updated_time",]
     def __str__(self):
         #return 'business.facebook.com'+ self.link
         return  self.conversation_no
