@@ -18,7 +18,11 @@ class Conversation(models.Model):
     def cal_last_message(self):
         messages = FbMessage.objects.filter(conversation_no=self.conversation_no).order_by("-created_time").values("from_name","message_content")
         lenght = messages.count()
-        latest_messages = messages[lenght-5:lenght]
+        if lenght >5:
+            first = lenght -5
+        else:
+            first = 0
+        latest_messages = messages[first:lenght]
         last_message=""
         for message in latest_messages:
             last_message += "[" + message['from_name'] + "]: " +message ['message_content'] +"\n"
