@@ -220,7 +220,8 @@ def flush_conversation_status():
     #cst_tz = timezone('Asia/Riyadh')
     #now = datetime.now().replace(tzinfo=cst_tz)
     now = dt.now()
-
+    n = conversations.count()
+    print ("一共有%s个对话待更新")
     for conversation in conversations:
         messages = FbMessage.objects.filter(conversation_no=conversation.conversation_no).order_by("created_time").values(
             "from_name", "message_content","created_time")
@@ -267,6 +268,9 @@ def flush_conversation_status():
         conversation.has_newmessage = False
         conversation.save()
 
+        n -= 1
+        if n%100 == 0:
+            print ("还有%s个对话待更新")
 
 
 
