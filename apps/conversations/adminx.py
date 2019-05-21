@@ -15,6 +15,7 @@ from import_export.widgets import ForeignKeyWidget
 from .models import FbMessage, FbConversation  ,PageUpdate
 
 from django.utils.safestring import mark_safe
+from django.utils import timezone as dt
 
 class FbConversationResource(resources.ModelResource):
 
@@ -39,7 +40,7 @@ class FbConversationAdmin(object):
     customer_link.allow_tags = True
 
     def lost_time(self,obj):
-        time_span = now - obj.updated_time
+        time_span = dt.now() - obj.updated_time
 
         lost_time = ""
         if time_span.days >= 1:

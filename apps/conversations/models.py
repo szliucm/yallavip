@@ -2,11 +2,14 @@ from django.db import models
 from django.utils.html import format_html
 from pytz import timezone
 from datetime import datetime,timedelta
+from fb.models import  MyPage
 
 # Create your models here.
 class FbConversation(models.Model):
 
     conversation_no = models.CharField(default='', unique=True, max_length=50,  blank=True, verbose_name="会话ID")
+    page = models.ForeignKey(MyPage, related_name='page_conversation', null=True, blank=True,
+                                     verbose_name="Page", on_delete=models.CASCADE)
     page_no = models.CharField(max_length=30, null=True, blank=True, verbose_name="PageID")
     link = models.CharField(max_length=100,null=True, blank=True, verbose_name="链接")
     updated_time = models.DateTimeField(null=True, blank=True, verbose_name="最后更新时间")
