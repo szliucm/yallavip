@@ -21,7 +21,7 @@ def convert_conversation_data(page_no, response_json, got_time, datetime_since):
         update_time = update_time.replace(tzinfo=pytz.timezone('UTC'))
 
         if (update_time < datetime_since):
-            print("page %s conversation 无新可更"%page_no)
+            print("page %s conversation 无新可更"%page_no, update_time, datetime_since)
             break
 
 
@@ -178,7 +178,7 @@ def convert_messages_data(fbconversation, conversation_no,messages, datetime_sin
         created_time = message["created_time"]
         message_no = message["id"]
 
-        print("update message : ", message_no, created_time)
+        #print("update message : ", message_no, created_time)
         update_time = datetime.datetime.strptime(created_time, "%Y-%m-%dT%H:%M:%S+0000")
         update_time = update_time.replace(tzinfo=pytz.timezone('UTC'))
         if update_time <= datetime_since:
