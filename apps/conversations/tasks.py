@@ -31,10 +31,16 @@ def convert_conversation_data(page_no, response_json, got_time, datetime_since):
                                                                        'link': row.get("link"),
                                                                        'updated_time': row.get("updated_time"),
                                                                         'has_newmessage':True,
+
                                                                         "got_time": got_time,
                                                                        'customer': row["participants"]["data"][0]["name"][:50]
                                                                        }
                                                              )
+
+        if conversation.task_type == "已解决":
+            conversation.task_type = "售前"
+            conversation.save()
+
         convert_messages(conversation, row, conversation_no, datetime_since)
 
         flush_conversation(conversation, got_time)
