@@ -221,7 +221,7 @@ def flush_conversation_status():
     #now = datetime.now().replace(tzinfo=cst_tz)
     now = dt.now()
     n = conversations.count()
-    print ("一共有%s个对话待更新")
+    print ("一共有%s个对话待更新"%n)
     for conversation in conversations:
         messages = FbMessage.objects.filter(conversation_no=conversation.conversation_no).order_by("created_time").values(
             "from_name", "message_content","created_time")
@@ -270,7 +270,7 @@ def flush_conversation_status():
 
         n -= 1
         if n%100 == 0:
-            print ("还有%s个对话待更新")
+            print ("还有%s个对话待更新"%n)
 
 
 
