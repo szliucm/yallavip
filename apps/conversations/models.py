@@ -49,7 +49,7 @@ class FbConversation(models.Model):
 class FbMessage(models.Model):
     #conversation_no = models.ForeignKey(Conversation,to_field = 'conversation_no',  related_name='conversation', null=True, blank=True, verbose_name="会话",
     #                             on_delete=models.CASCADE)
-    #conversation = models.ForeignKey(Conversation, related_name='conversation',null=True, blank=True, verbose_name="会话",on_delete=models.CASCADE)
+    conversation = models.ForeignKey(FbConversation, related_name='fbconversation_message',null=True, blank=True, verbose_name="会话",on_delete=models.CASCADE)
     conversation_no = models.CharField(max_length=50, null=True, blank=True, verbose_name="会话ID")
     message_no = models.CharField(max_length=100, null=True, blank=True, verbose_name="消息ID")
     created_time = models.DateTimeField(null=True, blank=True, verbose_name="消息创建时间")
