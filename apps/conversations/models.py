@@ -20,9 +20,8 @@ class FbConversation(models.Model):
     lost_time = models.CharField(max_length=500,null=True, blank=True, verbose_name="重要性")
 
     def cal_status(self):
-        if self.status == "待回复"
+        if self.status == "待回复":
             color_code = "red"
-
         else:
             color_code = "white"
 
