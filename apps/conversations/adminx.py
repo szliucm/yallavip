@@ -38,8 +38,8 @@ class FbConversationAdmin(object):
     customer_link.short_description = '会话链接'
     customer_link.allow_tags = True
 
-    def lost_time(self):
-        time_span = now - self.updated_time
+    def lost_time(self,obj):
+        time_span = now - obj.updated_time
 
         lost_time = ""
         if time_span.days >= 1:
