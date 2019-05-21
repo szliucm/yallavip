@@ -264,6 +264,7 @@ def flush_conversation_status():
         conversation.last_message = last_message[:499]
         conversation.status = status
         conversation.lost_time = lost_time
+        conversation.has_newmessage = False
         conversation.save()
 
 
