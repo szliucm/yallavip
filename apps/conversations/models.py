@@ -35,59 +35,7 @@ class FbConversation(models.Model):
     cal_status.short_description = "状态"
     color_status = property(cal_status)
 
-    '''
-    def cal_last_message(self):
-        messages = FbMessage.objects.filter(conversation_no=self.conversation_no).order_by("-created_time").values("from_name","message_content")
-        lenght = messages.count()
-        if lenght >5:
-            first = lenght -5
-        else:
-            first = 0
-        latest_messages = messages[first:lenght]
-        last_message=""
-        for message in latest_messages:
-            last_message += "[" + message['from_name'] + "]: " +message ['message_content'] +"\n"
 
-        return  last_message
-
-    cal_last_message.short_description = "最后的对话"
-    last_message = property(cal_last_message)
-
-    def cal_status(self):
-        message = self.cal_last_message()
-        if message.from_name == self.customer:
-            color_code = "red"
-            status = "待回复"
-        else:
-            color_code = "white"
-            status = "已回复"
-
-
-        return  format_html(
-            '<span style="background-color:{};">{}</span>',
-            color_code,
-            status,
-        )
-
-    cal_status.short_description = "状态"
-    status = property(cal_status)
-
-    def cal_lost_time(self):
-        cst_tz = timezone('Asia/Riyadh')
-
-
-        now = datetime.now().replace(tzinfo=cst_tz)
-        message = self.cal_last_message()
-        time_span = now - message.created_time
-        if time_span.days >1:
-            return  str(time_span.days)+"天前"
-        elif time_span.seconds >3600:
-            return str(int(time_span.seconds /3600))+"小时前"
-        else:
-            return str(int(time_span.seconds / 60)) + "分钟前"
-    cal_lost_time.short_description = "重要性"
-    lost_time = property(cal_lost_time)
-    '''
 
     class Meta:
         verbose_name = "会话"

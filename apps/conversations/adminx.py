@@ -44,6 +44,7 @@ class FbConversationAdmin(object):
     list_display = ["conversation_no", "customer_link" , "lost_time","color_status", "last_message",]
     search_fields = ['customer', ]
     list_filter = ["status","lost_time", ]
+    ordering = ["-updated_time"]
 
 
     class MessageInline(object):
