@@ -1147,7 +1147,7 @@ class OrderConverstaionAdmin(object):
     list_display = ["order", "conversation",'show_conversation']
     search_fields = ['order__order_no', 'conversation__conversation_no' ]
     ordering = ['-order__order_no']
-
+'''
 class VerificationResource(resources.ModelResource):
     conversation = fields.Field(
         column_name='conversation_no',
@@ -1174,7 +1174,7 @@ class VerificationResource(resources.ModelResource):
         import_id_fields = ("conversation","verify_code",)
         fields = ( "conversation","verify_code","verify_time","message_content")
         # exclude = ()
-
+'''
 
 class VerificationAdmin(object):
     def show_conversation(self, obj):
@@ -1188,8 +1188,8 @@ class VerificationAdmin(object):
 
     show_conversation.short_description = "会话"
 
-    import_export_args = {'import_resource_class': VerificationResource,
-                          'export_resource_class': VerificationResource}
+    #import_export_args = {'import_resource_class': VerificationResource,
+    #                      'export_resource_class': VerificationResource}
 
     list_display = [ "conversation","verify_code","verify_time","valid","message_content"]
     search_fields = ["conversation__conversation_no","verify_code"]
