@@ -26,7 +26,6 @@ class FbConversationResource(resources.ModelResource):
         fields = ('page_no','conversation_no','link','updated_time','customer')
         # exclude = ()
 
-
 @xadmin.sites.register(FbConversation)
 class FbConversationAdmin(object):
 
