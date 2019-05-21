@@ -18,9 +18,17 @@ class FbConversation(models.Model):
     last_message = models.CharField(max_length=500,null=True, blank=True, verbose_name="最后的对话")
     status = models.CharField(max_length=500,null=True, blank=True, verbose_name="状态")
     lost_time = models.CharField(max_length=500,null=True, blank=True, verbose_name="重要性")
+    TASK_TYPE = (
+
+        ("售前", "售前"),
+        ("售后", "售后"),
+        ("已解决", "已解决"),
+
+    )
+    task_type = models.CharField(choices=TASK_TYPE,default="售前", max_length=50,null=True, blank=True, verbose_name="任务类型")
 
     def cal_status(self):
-        if self.status == "待回复":
+        if self.status == "待回复" and self.task_type !="已解决":
             color_code = "red"
         else:
             color_code = "white"
