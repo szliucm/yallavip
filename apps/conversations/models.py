@@ -28,7 +28,15 @@ class FbConversation(models.Model):
         ("已解决", "已解决"),
 
     )
+    TASK_STAT = (
+
+        ("未解决", "未解决"),
+        ("已解决", "已解决"),
+
+    )
     task_type = models.CharField(choices=TASK_TYPE,default="售前", max_length=50,null=True, blank=True, verbose_name="任务类型")
+    task_stat = models.CharField(choices=TASK_STAT, default="未解决", max_length=50, null=True, blank=True,
+                                 verbose_name="任务状态")
 
     def cal_status(self):
         if self.status == "待回复" and self.task_type !="已解决":
@@ -45,6 +53,22 @@ class FbConversation(models.Model):
 
     cal_status.short_description = "状态"
     color_status = property(cal_status)
+
+    def cal_task_status(self):
+        if self.task_type == "售后" and self.task_stat =="未解决":
+            color_code = "red"
+        else:
+            color_code = "white"
+
+
+        return format_html(
+            '<span style="background-color:{};">{}</span>',
+            color_code,
+            self.task_stat,
+        )
+
+    cal_task_status.short_description = "任务状态"
+    color_task_status = property(cal_task_status)
 
 
 
