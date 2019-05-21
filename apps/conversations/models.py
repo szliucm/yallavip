@@ -10,7 +10,6 @@ class FbConversation(models.Model):
     page_no = models.CharField(max_length=30, null=True, blank=True, verbose_name="PageID")
     link = models.CharField(max_length=100,null=True, blank=True, verbose_name="链接")
     updated_time = models.DateTimeField(null=True, blank=True, verbose_name="最后更新时间")
-
     has_newmessage = models.BooleanField(default=False, verbose_name="有新消息")
 
     got_time = models.DateTimeField(null=True, blank=True, verbose_name="最后获取时间")
