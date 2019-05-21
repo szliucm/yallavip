@@ -96,6 +96,7 @@ def batch_update_photos(limit = None):
         adobjects = FacebookAdsApi.init(access_token=access_token, debug=True)
         
         for album in queryset:
+            print ("开始获取相册%s图片"%album)
             update_album_photos(album)
 
 
@@ -129,6 +130,7 @@ def update_album_photos(album):
         except KeyError:
             name = ""
 
+        print ("get photo", name)
         obj, created = MyPhoto.objects.update_or_create(photo_no=photo["id"],
                                                         defaults={'page_no': page_no,
                                                                   'album_no': album_no,
@@ -496,7 +498,7 @@ def list_to_dict(photos):
 
 @shared_task
 def delete_outstock_photos():
-    mysql = " SELECT p.page_no, p.photo_no from fb_myphoto p, prs_lightin_spu s where p.handle = s.handle and sellable<=0"
+    mysql = " SELECT p.page_no, p.photo_no from fb_myphoto p, prs_lightin_spu s where p.handle = s.handle and s.sellable<=0"
     photos = my_custom_sql(mysql)
 
     photo_miss = list_to_dict(photos)

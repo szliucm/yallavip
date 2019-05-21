@@ -213,6 +213,49 @@ def convert_messages_data(conversation_no,messages, datetime_since):
 
     return  all_got
 
+def flush_conversation_status():
+    #取出有新消息的会话
+    conversations = Conversation.objects.filter(has_newmessage=True)
+    cst_tz = timezone('Asia/Riyadh')
+    now = datetime.now().replace(tzinfo=cst_tz)
+
+    for conversation in conversations:
+        messages = FbMessage.objects.filter(conversation_no=conversation.conversation_no).order_by("-created_time").values(
+            "from_name", "message_content")
+
+        #取最新三条消息，拼接起来
+        lenght = messages.count()
+        if lenght > 3:
+            first = lenght - 3
+        else:
+            first = 0
+        latest_messages = messages[first:lenght]
+        last_message = ""
+        for message in latest_messages:
+            last_message += "[" + message['from_name'] + "]: " + message['message_content'] + "\n"
+
+        #根据最后一条信息的发送人，设定对话的状态：已回复 or 等待回复
+        message = messages.first()
+        if message.from_name == conversation.customer:
+            status = "待回复"
+        else:
+            status = "已回复"
+
+        #计算最后一条消息的时间和当前时间的差
+        time_span = now - message.created_time
+        if time_span.days > 1:
+            lost_time = str(time_span.days) + "天前"
+        elif time_span.seconds > 3600:
+            lost_time = str(int(time_span.seconds / 3600)) + "小时前"
+        else:
+            lost_time = str(int(time_span.seconds / 60)) + "分钟前"
+
+        #保存到数据库中
+        conversation.last_message = last_message[:499]
+        conversation.status = status
+        conversation.lost_time = lost_time
+        conversation.save()
+
 
 
 

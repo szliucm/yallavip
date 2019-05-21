@@ -11,10 +11,16 @@ class Conversation(models.Model):
     link = models.CharField(max_length=100,null=True, blank=True, verbose_name="链接")
     updated_time = models.DateTimeField(null=True, blank=True, verbose_name="最后更新时间")
 
+    has_newmessage = models.BooleanField(default=False, verbose_name="有新消息")
+
     got_time = models.DateTimeField(null=True, blank=True, verbose_name="最后获取时间")
 
     customer = models.CharField(max_length=500,null=True, blank=True, verbose_name="客户")
+    last_message = models.CharField(max_length=500,null=True, blank=True, verbose_name="最后的对话")
+    status = models.CharField(max_length=500,null=True, blank=True, verbose_name="状态")
+    lost_time = models.CharField(max_length=500,null=True, blank=True, verbose_name="重要性")
 
+    '''
     def cal_last_message(self):
         messages = FbMessage.objects.filter(conversation_no=self.conversation_no).order_by("-created_time").values("from_name","message_content")
         lenght = messages.count()
@@ -66,7 +72,7 @@ class Conversation(models.Model):
             return str(int(time_span.seconds / 60)) + "分钟前"
     cal_lost_time.short_description = "重要性"
     lost_time = property(cal_lost_time)
-
+    '''
 
     class Meta:
         verbose_name = "会话"
