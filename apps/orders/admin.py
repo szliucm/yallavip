@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404, get_list_or_404, render
 from import_export import resources, fields
 from import_export.widgets import ForeignKeyWidget
 from .models import Order, Verify, OrderConversation,ClientService
-from conversations.models import Conversation
+#from conversations.models import Conversation
 from django.db import models
 from yunpian_python_sdk.model import constant as YC
 from yunpian_python_sdk.ypclient import YunpianClient
