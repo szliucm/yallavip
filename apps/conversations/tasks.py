@@ -23,17 +23,20 @@ def convert_conversation_data(page_no, response_json, got_time, datetime_since):
         if (update_time < datetime_since):
             print("无新可更")
             break
+
+
         obj, created = FbConversation.objects.update_or_create(conversation_no=conversation_no,
                                                              defaults={
                                                                        'page_no': page_no,
                                                                        'link': row.get("link"),
                                                                        'updated_time': row.get("updated_time"),
+                                                                        'has_newmessage':True,
                                                                         "got_time": got_time,
                                                                        'customer': row["participants"]["data"][0]["name"][:50]
                                                                        }
                                                              )
+        convert_messages(obj, row, conversation_no, datetime_since)
 
-        convert_messages(row, conversation_no, datetime_since)
 
     return
 
@@ -62,7 +65,7 @@ def get_conversations(page_no):
                                     sticker,tags,from,to,attachments}'
     token , long_token = get_token(page_no)
     offset = 0
-    response_json_list = []
+
     try:
         pagesync = PageSync.objects.get(page_no=page_no)
 
@@ -122,7 +125,7 @@ def batch_get_conversations():
         get_conversations(page_no)
         
 
-def convert_messages(row,conversation_no, datetime_since):
+def convert_messages(fbconversation, row,conversation_no, datetime_since):
     '''This will get the list of people who commented on the post,
     which can be joined to the feed table by post_id. '''
     message_count = row.get("message_count")
@@ -132,7 +135,7 @@ def convert_messages(row,conversation_no, datetime_since):
 
         messages_data = row["messages"]
 
-        all_got = convert_messages_data(conversation_no, messages_data["data"], datetime_since)
+        all_got = convert_messages_data(fbconversation, conversation_no, messages_data["data"], datetime_since)
 
 
 
@@ -155,13 +158,13 @@ def convert_messages(row,conversation_no, datetime_since):
                     break
 
 
-                all_got = convert_messages_data(conversation_no,messages_data["data"] , datetime_since)
+                all_got = convert_messages_data(fbconversation, conversation_no,messages_data["data"] , datetime_since)
 
             else:
                 break
 
 
-def convert_messages_data(conversation_no,messages, datetime_since):
+def convert_messages_data(fbconversation, conversation_no,messages, datetime_since):
     message_list = []
     message_no_list = []
 
@@ -188,6 +191,7 @@ def convert_messages_data(conversation_no,messages, datetime_since):
             content = "attachments"
 
         new_message = FbMessage(
+            conversation = fbconversation,
             conversation_no=conversation_no,
             message_no=message_no,
 
