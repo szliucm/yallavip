@@ -225,6 +225,10 @@ def flush_conversation_status():
     for conversation in conversations:
         messages = FbMessage.objects.filter(conversation_no=conversation.conversation_no).order_by("created_time").values(
             "from_name", "message_content","created_time")
+        if not message:
+            print ("没有消息")
+            continue
+
 
         #取最新三条消息，拼接起来
         lenght = messages.count()
@@ -239,7 +243,7 @@ def flush_conversation_status():
 
         #根据最后一条信息的发送人，设定对话的状态：已回复 or 等待回复
         message = messages.last()
-        if message["from_name"] == conversation.customer:
+        if message.get("from_name") == conversation.customer:
             status = "待回复"
         else:
             status = "已回复"
