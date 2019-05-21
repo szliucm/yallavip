@@ -22,7 +22,7 @@ from .models import *
 from shop.models import ShopifyProduct, ShopifyVariant,Combination,ShopifyImage
 from fb.models import MyPhoto
 
-from conversations.models import Conversation
+#from conversations.models import Conversation
 from logistic.models import Package
 from product.models import Product
 from django.db import models
