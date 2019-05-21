@@ -49,7 +49,7 @@ class FbConversation(models.Model):
 
 
     class Meta:
-        verbose_name = "会话"
+        verbose_name = "实时会话"
         verbose_name_plural = verbose_name
         ordering = ["-updated_time",]
     def __str__(self):
