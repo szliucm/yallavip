@@ -19,7 +19,14 @@ class FbConversation(models.Model):
 
     customer = models.CharField(max_length=500,null=True, blank=True, verbose_name="客户")
     last_message = models.CharField(max_length=500,null=True, blank=True, verbose_name="最后的对话")
-    status = models.CharField(max_length=500,null=True, blank=True, verbose_name="状态")
+
+    STATUS = (
+
+        ("待回复", "待回复"),
+        ("已回复", "已回复"),
+
+    )
+    status = models.CharField(choices=STATUS,max_length=500,null=True, blank=True, verbose_name="状态")
     #lost_time = models.CharField(max_length=500,null=True, blank=True, verbose_name="重要性")
     TASK_TYPE = (
 
