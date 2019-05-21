@@ -261,6 +261,7 @@ def flush_conversation(conversation, now):
         status = "已回复"
 
     #计算最后一条消息的时间和当前时间的差
+    '''
     time_span = now - message["created_time"]
 
     lost_time = ""
@@ -270,7 +271,7 @@ def flush_conversation(conversation, now):
         lost_time += str(int(time_span.seconds / 3600)) + "小时前"
     else:
         lost_time += str(int(time_span.seconds / 60)) + "分钟前"
-    '''
+
     print(conversation)
     print (last_message)
     print(status)
@@ -280,7 +281,7 @@ def flush_conversation(conversation, now):
     #保存到数据库中
     conversation.last_message = last_message[:499]
     conversation.status = status
-    conversation.lost_time = lost_time
+    #conversation.lost_time = lost_time
     conversation.has_newmessage = False
     conversation.save()
 

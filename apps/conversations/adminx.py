@@ -38,6 +38,19 @@ class FbConversationAdmin(object):
     customer_link.short_description = '会话链接'
     customer_link.allow_tags = True
 
+    def lost_time(self):
+        time_span = now - self.updated_time
+
+        lost_time = ""
+        if time_span.days >= 1:
+            lost_time = str(time_span.days) + "天前"
+        elif time_span.seconds >= 3600:
+            lost_time += str(int(time_span.seconds / 3600)) + "小时前"
+        else:
+            lost_time += str(int(time_span.seconds / 60)) + "分钟前"
+
+    lost_time.short_description = "状态"
+
 
     import_export_args = {'import_resource_class': FbConversationResource, 'export_resource_class': FbConversationResource}
 
