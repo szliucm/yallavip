@@ -4923,7 +4923,7 @@ def sync_yallavip_album_batch(lightinalbums,access_token):
 
     for lightinalbum in lightinalbums:
         #error, posted = post_yallavip_album(lightinalbum)
-        post_yallavip_album.apply_async((lightinalbum,access_token), queue='fb')
+        post_yallavip_album.apply_async((lightinalbum,access_token), queue='album')
         # 更新Facebook图片数据库记录
         '''
         if posted is not None:
