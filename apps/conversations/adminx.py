@@ -60,7 +60,7 @@ class FbConversationAdmin(object):
     list_display = ["conversation_no", "customer_link" , "lost_time","color_status","task_type", "task_stat", "last_message",]
     list_editable = ["task_type","task_stat",]
     search_fields = ['customer', ]
-    list_filter = ["status","task_type", "task_stat", "page_no", ]
+    list_filter = ["status","task_type", "task_stat", "page", ]
     ordering = ["-updated_time"]
 
 

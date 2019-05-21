@@ -130,11 +130,15 @@ def get_conversations(page_no):
                                                          )
 @shared_task
 def batch_get_conversations():
+    from prs.tasks import my_custom_sql
     pages = MyPage.objects.filter(is_published=True, active=True, promotable=True)
 
     for page in pages:
         page_no = page.page_no
         get_conversations(page_no)
+
+    mysql = "update conversations_fbconversation c , fb_mypage p set c.page_id = p.id where c.page_no = p.page_no and c.page_id is NULL"
+    my_custom_sql(mysql)
         
 
 def convert_messages(fbconversation, row,conversation_no, datetime_since):
@@ -174,6 +178,7 @@ def convert_messages(fbconversation, row,conversation_no, datetime_since):
 
             else:
                 break
+
 
 
 def convert_messages_data(fbconversation, conversation_no,messages, datetime_since):
