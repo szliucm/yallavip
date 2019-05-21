@@ -23,7 +23,7 @@ def convert_conversation_data(page_no, response_json, got_time, datetime_since):
         if (update_time < datetime_since):
             print("无新可更")
             break
-        obj, created = Conversation.objects.update_or_create(conversation_no=conversation_no,
+        obj, created = FbConversation.objects.update_or_create(conversation_no=conversation_no,
                                                              defaults={
                                                                        'page_no': page_no,
                                                                        'link': row.get("link"),
@@ -214,14 +214,16 @@ def convert_messages_data(conversation_no,messages, datetime_since):
     return  all_got
 
 def flush_conversation_status():
+
     #取出有新消息的会话
-    conversations = Conversation.objects.filter(has_newmessage=True)
-    cst_tz = timezone('Asia/Riyadh')
-    now = datetime.now().replace(tzinfo=cst_tz)
+    conversations = FbConversation.objects.filter(has_newmessage=True)
+    #cst_tz = timezone('Asia/Riyadh')
+    #now = datetime.now().replace(tzinfo=cst_tz)
+    now = dt.now()
 
     for conversation in conversations:
-        messages = FbMessage.objects.filter(conversation_no=conversation.conversation_no).order_by("-created_time").values(
-            "from_name", "message_content")
+        messages = FbMessage.objects.filter(conversation_no=conversation.conversation_no).order_by("created_time").values(
+            "from_name", "message_content","created_time")
 
         #取最新三条消息，拼接起来
         lenght = messages.count()
@@ -232,23 +234,31 @@ def flush_conversation_status():
         latest_messages = messages[first:lenght]
         last_message = ""
         for message in latest_messages:
-            last_message += "[" + message['from_name'] + "]: " + message['message_content'] + "\n"
+            last_message += "[" + message['from_name'] + "]: " + message['message_content'] + "-----"
 
         #根据最后一条信息的发送人，设定对话的状态：已回复 or 等待回复
-        message = messages.first()
-        if message.from_name == conversation.customer:
+        message = messages.last()
+        if message["from_name"] == conversation.customer:
             status = "待回复"
         else:
             status = "已回复"
 
         #计算最后一条消息的时间和当前时间的差
-        time_span = now - message.created_time
-        if time_span.days > 1:
-            lost_time = str(time_span.days) + "天前"
-        elif time_span.seconds > 3600:
-            lost_time = str(int(time_span.seconds / 3600)) + "小时前"
+        time_span = now - message["created_time"]
+
+        lost_time = ""
+        if time_span.days >= 1:
+            lost_time = str(time_span.days) + "天"
+        if time_span.seconds >= 3600:
+            lost_time += str(int(time_span.seconds / 3600)) + "小时"
         else:
-            lost_time = str(int(time_span.seconds / 60)) + "分钟前"
+            lost_time += str(int(time_span.seconds / 60)) + "分钟前"
+        '''
+        print(conversation)
+        print (last_message)
+        print(status)
+        print (now, message["created_time"], lost_time)
+        '''
 
         #保存到数据库中
         conversation.last_message = last_message[:499]

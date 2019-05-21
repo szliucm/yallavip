@@ -12,14 +12,14 @@ import xadmin
 from django.shortcuts import get_object_or_404,get_list_or_404,render
 from import_export import resources,fields
 from import_export.widgets import ForeignKeyWidget
-from .models import FbMessage, Conversation  ,PageUpdate
+from .models import FbMessage, FbConversation  ,PageUpdate
 
 from django.utils.safestring import mark_safe
 
-class ConversationResource(resources.ModelResource):
+class FbConversationResource(resources.ModelResource):
 
     class Meta:
-        model = Conversation
+        model = FbConversation
         skip_unchanged = True
         report_skipped = True
         import_id_fields = ('conversation_no',)
@@ -28,8 +28,8 @@ class ConversationResource(resources.ModelResource):
 
 
 
-@xadmin.sites.register(Conversation)
-class ConversationAdmin(object):
+@xadmin.sites.register(FbConversation)
+class FbConversationAdmin(object):
 
 
     def customer_link(self, obj):
@@ -41,7 +41,7 @@ class ConversationAdmin(object):
     customer_link.allow_tags = True
 
 
-    import_export_args = {'import_resource_class': ConversationResource, 'export_resource_class': ConversationResource}
+    import_export_args = {'import_resource_class': FbConversationResource, 'export_resource_class': FbConversationResource}
 
     list_display = ["conversation_no", "customer_link" , "lost_time","status", "last_message",]
     search_fields = ['customer', ]
@@ -144,7 +144,7 @@ class PageUpdateAdmin(object):
 
 
 
-                obj, created = Conversation.objects.update_or_create(conversation_no=conversation_no,
+                obj, created = FbConversation.objects.update_or_create(conversation_no=conversation_no,
                                                                     defaults={'conversation_no' : conversation_no,
                                                                               'page_no' : target_page,
                                                                               'link': link,

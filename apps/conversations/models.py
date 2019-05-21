@@ -4,7 +4,7 @@ from pytz import timezone
 from datetime import datetime,timedelta
 
 # Create your models here.
-class Conversation(models.Model):
+class FbConversation(models.Model):
 
     conversation_no = models.CharField(default='', unique=True, max_length=50,  blank=True, verbose_name="会话ID")
     page_no = models.CharField(max_length=30, null=True, blank=True, verbose_name="PageID")
