@@ -1,3 +1,5 @@
+from __future__ import absolute_import, unicode_literals
+
 from .models import *
 from fb.models import MyPage, PageSync
 
@@ -7,7 +9,7 @@ import  time
 import  datetime
 import pytz
 from django.utils import timezone as dt
-
+from celery import shared_task, task
 
 def convert_conversation_data(page_no, response_json, got_time, datetime_since):
 
@@ -126,7 +128,7 @@ def get_conversations(page_no):
 
                                                          }
                                                          )
-
+@shared_task
 def batch_get_conversations():
     pages = MyPage.objects.filter(is_published=True, active=True, promotable=True)
 
