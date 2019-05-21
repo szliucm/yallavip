@@ -41,7 +41,7 @@ class FbConversationAdmin(object):
 
     import_export_args = {'import_resource_class': FbConversationResource, 'export_resource_class': FbConversationResource}
 
-    list_display = ["conversation_no", "customer_link" , "lost_time","color_status",  "last_message",]
+    list_display = ["conversation_no", "customer_link" , "lost_time","color_status", "task_type", "last_message",]
     list_editable = ["task_type",]
     search_fields = ['customer', ]
     list_filter = ["status","task_type","lost_time", ]
