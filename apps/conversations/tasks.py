@@ -237,7 +237,7 @@ def convert_messages_data(fbconversation, conversation_no,messages, datetime_sin
 def flush_conversations():
 
     #取出有新消息的会话
-    conversations = FbConversation.objects.filter(has_newmessage=True)
+    conversations = FbConversation.objects.filter()
     #cst_tz = timezone('Asia/Riyadh')
     #now = datetime.now().replace(tzinfo=cst_tz)
     now = dt.now()
