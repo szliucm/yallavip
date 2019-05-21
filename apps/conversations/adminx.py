@@ -27,7 +27,6 @@ class FbConversationResource(resources.ModelResource):
         # exclude = ()
 
 
-
 @xadmin.sites.register(FbConversation)
 class FbConversationAdmin(object):
 

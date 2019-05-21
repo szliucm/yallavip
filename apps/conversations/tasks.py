@@ -225,7 +225,7 @@ def flush_conversation_status():
     for conversation in conversations:
         messages = FbMessage.objects.filter(conversation_no=conversation.conversation_no).order_by("created_time").values(
             "from_name", "message_content","created_time")
-        if not message:
+        if not messages:
             print ("没有消息")
             continue
 
