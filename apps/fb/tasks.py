@@ -23,6 +23,7 @@ from prs.fb_action import get_token
 
 from prs.tasks import my_custom_sql, ad_tokens
 from celery import shared_task, task
+from django.db.models import Q
 
 #更新相册信息
 def update_albums():
@@ -99,7 +100,7 @@ def batch_update_photos(limit = None):
             print ("开始获取相册%s图片"%album)
             update_album_photos(album)
 
-
+    update_photos_handle()
 
 def update_album_photos(album):
     album_no = album.album_no
@@ -223,6 +224,7 @@ def download_album_photos(album):
                           )
         myphoto_list.append(myphoto)
     MyPhoto.objects.bulk_create(myphoto_list)
+    update_photos_handle()
 
 
 def batch_update_feed():
@@ -292,6 +294,8 @@ def update_feed(page_no,days=2):
 
     mysql = "update prs_yallavipad a , fb_myfeed f set a.fb_feed_id = f.id where f.feed_no=a.object_story_id"
     my_custom_sql(mysql)
+
+    update_feeds_handles()
 
 
 def update_conversation(page_no,days=2):
@@ -498,7 +502,7 @@ def list_to_dict(photos):
 
 @shared_task
 def delete_outstock_photos():
-    mysql = " SELECT p.page_no, p.photo_no from fb_myphoto p, prs_lightin_spu s where p.handle = s.handle and s.sellable<=0"
+    mysql = " SELECT p.page_no, p.photo_no from fb_myphoto p, prs_lightin_spu s where p.handle = s.handle and s.handle<>'' and s.sellable<=0"
     photos = my_custom_sql(mysql)
 
     photo_miss = list_to_dict(photos)
@@ -538,7 +542,7 @@ def delete_outstock_feeds():
     from  prs.tasks import delete_posts
     import time
 
-    feeds = MyFeed.objects.filter(active=True, handles__isnull=False)
+    feeds = MyFeed.objects.filter(~Q(handles=""), active=True, handles__isnull=False)
     feed_nos = []
     for feed in feeds:
 
