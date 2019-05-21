@@ -1110,7 +1110,7 @@ class OrderDetailAdmin(object):
         qs = super().queryset()
         return qs.filter(order__status="OPEN" )
     '''
-
+'''
 class OrderConverstaionResource(resources.ModelResource):
     order = fields.Field(
         column_name='order_no',
@@ -1129,11 +1129,11 @@ class OrderConverstaionResource(resources.ModelResource):
         import_id_fields = ('order','conversation')
         fields = ('order', 'conversation')
         # exclude = ()
-
+'''
 
 class OrderConverstaionAdmin(object):
-    import_export_args = {'import_resource_class': OrderConverstaionResource,
-                          'export_resource_class': OrderConverstaionResource}
+    #import_export_args = {'import_resource_class': OrderConverstaionResource,
+    #                      'export_resource_class': OrderConverstaionResource}
 
     def show_conversation(self, obj):
         return  mark_safe(
