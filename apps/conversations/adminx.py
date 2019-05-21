@@ -42,7 +42,7 @@ class FbConversationAdmin(object):
 
     import_export_args = {'import_resource_class': FbConversationResource, 'export_resource_class': FbConversationResource}
 
-    list_display = ["conversation_no", "customer_link" , "lost_time","status", "last_message",]
+    list_display = ["conversation_no", "customer_link" , "lost_time","color_status", "last_message",]
     search_fields = ['customer', ]
 
 

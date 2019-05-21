@@ -19,6 +19,23 @@ class FbConversation(models.Model):
     status = models.CharField(max_length=500,null=True, blank=True, verbose_name="状态")
     lost_time = models.CharField(max_length=500,null=True, blank=True, verbose_name="重要性")
 
+    def cal_status(self):
+        if self.status == "待回复"
+            color_code = "red"
+
+        else:
+            color_code = "white"
+
+
+        return format_html(
+            '<span style="background-color:{};">{}</span>',
+            color_code,
+            self.status,
+        )
+
+    cal_status.short_description = "状态"
+    color_status = property(cal_status)
+
     '''
     def cal_last_message(self):
         messages = FbMessage.objects.filter(conversation_no=self.conversation_no).order_by("-created_time").values("from_name","message_content")

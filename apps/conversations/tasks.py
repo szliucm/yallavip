@@ -253,9 +253,9 @@ def flush_conversation_status():
 
         lost_time = ""
         if time_span.days >= 1:
-            lost_time = str(time_span.days) + "天"
-        if time_span.seconds >= 3600:
-            lost_time += str(int(time_span.seconds / 3600)) + "小时"
+            lost_time = str(time_span.days) + "天前"
+        elif time_span.seconds >= 3600:
+            lost_time += str(int(time_span.seconds / 3600)) + "小时前"
         else:
             lost_time += str(int(time_span.seconds / 60)) + "分钟前"
         '''
