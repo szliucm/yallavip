@@ -4889,18 +4889,24 @@ def sync_yallavip_album(page_no=None):
         lightinalbums_all = lightinalbums_all.filter(
             yallavip_album__page__page_no=page_no)
 
-    albums = lightinalbums_all.values_list('yallavip_album', "yallavip_album__cate__sellable_gt").distinct()
-    print("有%s个相册待更新" % (albums.count()))
+    print("有%s个相册待更新" % (lightinalbums_all.count()))
 
 
-    access_token, long_token = get_token(page_no)
 
-    if not access_token:
-        error = "获取token失败"
-        print (error,page_no)
-        return error
 
-    for album in albums:
+    for album in lightinalbums_all:
+
+        #albums = lightinalbums_all.values_list('yallavip_album', "yallavip_album__cate__sellable_gt").distinct()
+
+        yallavip_album = album.yallavip_album
+
+        access_token, long_token = get_token(yallavip_album.page.page_no)
+
+        if not access_token:
+            error = "获取token失败"
+            print (error, page_no)
+            continue
+
         '''
         if album[1]> 0:
             sellable_gt = album[1]
@@ -4909,7 +4915,7 @@ def sync_yallavip_album(page_no=None):
             '''
         sellable_gt = 1
 
-        lightinalbums = lightinalbums_all.filter(yallavip_album=album[0], lightin_spu__sellable__gt=sellable_gt).order_by("lightin_spu__sellable").values_list("pk",flat=True)[:100]
+        lightinalbums = lightinalbums_all.filter(yallavip_album=yallavip_album, lightin_spu__sellable__gt=sellable_gt).order_by("lightin_spu__sellable").values_list("pk",flat=True)[:100]
         #sync_yallavip_album_batch.apply_async((lightinalbums,), queue='fb')
         print ("准备发布图片到相册 %s,共%s条"%(album[0],lightinalbums.count()))
         sync_yallavip_album_batch(lightinalbums,access_token)
