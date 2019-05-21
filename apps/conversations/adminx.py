@@ -50,6 +50,8 @@ class FbConversationAdmin(object):
         else:
             lost_time += str(int(time_span.seconds / 60)) + "分钟前"
 
+        return  lost_time
+
     lost_time.short_description = "状态"
 
 
