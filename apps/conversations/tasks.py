@@ -239,7 +239,7 @@ def flush_conversation(conversation, now):
         "from_name", "message_content","created_time")
     if not messages:
         print ("没有消息")
-        continue
+        return
 
 
     #取最新三条消息，拼接起来
