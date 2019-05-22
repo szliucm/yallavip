@@ -45,7 +45,7 @@ def convert_conversation_data(page_no, response_json, got_time, datetime_since):
 
         convert_messages(conversation, row, conversation_no, datetime_since)
 
-        flush_conversation(conversation, got_time)
+        flush_conversation( got_time)
 
 
     return
