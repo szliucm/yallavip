@@ -4680,6 +4680,8 @@ def prepare_yallavip_album_source(page_no=None):
         lightinalbums_all = lightinalbums_all.filter(yallavip_album__page__page_no=page_no)
 
 
+
+
     albums_list = lightinalbums_all.values_list('yallavip_album', flat=True).distinct()
     print("albums_list is ", albums_list)
 
@@ -4721,7 +4723,7 @@ def prepare_yallavip_album_source(page_no=None):
 
 
 @shared_task
-def prepare_yallavip_album_material(page_no=None):
+def prepare_yallavip_album_material(page_no=None, free_delivery=False):
     from django.db.models import Max
 
    #每次每个相册处理最多100张图片
@@ -4737,24 +4739,24 @@ def prepare_yallavip_album_material(page_no=None):
     print("albums_list is ", albums_list)
 
     for album in albums_list:
-        #lightinalbums = lightinalbums_all.filter(yallavip_album=album).order_by("lightin_spu__sellable")[:100]
+
         lightinalbums = lightinalbums_all.filter(yallavip_album=album).order_by("lightin_spu__sellable")
         print(lightinalbums)
 
         for lightinalbum in lightinalbums:
-            prepare_a_album.apply_async((lightinalbum.pk,), queue='fb')
-            #prepare_a_album(lightinalbum.pk)
+            prepare_a_album.apply_async((lightinalbum.pk,free_delivery), queue='fb')
+
 
 
 @shared_task
-def prepare_a_album(lightinalbum_pk):
+def prepare_a_album(lightinalbum_pk, free_delivery=False):
 
     ori_lightinalbum = LightinAlbum.objects.get(pk=lightinalbum_pk)
 
     spu = ori_lightinalbum.lightin_spu
     spu_pk = spu.pk
     print("正在处理spu", spu_pk)
-    updated = update_promote_price(spu)
+    updated = update_promote_price(spu, free_delivery)
 
     lightinalbum = LightinAlbum.objects.get(pk=lightinalbum_pk)
 
@@ -4797,7 +4799,9 @@ def prepare_a_album(lightinalbum_pk):
             name = name + "\n\n   " + option
 
         # 价格
+
         price1 = int(spu.yallavip_price)
+
         price2 = int(price1 * random.uniform(5, 6))
         # 为了减少促销的麻烦，文案里不写价格了
         # name = name + "\n\nPrice:  " + str(price1) + "SAR"
@@ -6303,9 +6307,14 @@ def split_conversation_link(verify):
         verify.save()
 
 #计算某个spu的促销价，修改sku，spu的促销价
-def update_promote_price(spu):
+def update_promote_price(spu, free_delivery=False):
 
-
+    if free_delivery:
+        fee = 25
+        spu.free_deliveried = True
+    else:
+        fee = 0
+        spu.free_deliveried = False
 
     #供货价的5倍 0.25*3.75*5
     multiple_price = spu.vendor_supply_price * 5
@@ -6316,9 +6325,12 @@ def update_promote_price(spu):
     else:
         promote_price = round(multiple_price)
 
-    if promote_price != spu.yallavip_price:
+    promote_price += fee
+
+    if promote_price != spu.yallavip_price :
         #修改spu价格
         spu.yallavip_price = promote_price
+
         spu.promoted = True
         spu.save()
 

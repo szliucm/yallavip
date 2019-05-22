@@ -574,6 +574,7 @@ class Lightin_SPU(models.Model):
 
     active = models.BooleanField(default=True, verbose_name="有效性")
     promoted = models.BooleanField(default=False, verbose_name="促销状态")
+    free_deliveried = models.BooleanField(default=False, verbose_name="包邮状态")
 
     longaded = models.BooleanField(default=False, verbose_name="长期广告状态")
     size_count = models.IntegerField(u'size数量', default=0, blank=True, null=True)

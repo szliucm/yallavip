@@ -45,7 +45,7 @@ def convert_conversation_data(page_no, response_json, got_time, datetime_since):
 
         convert_messages(conversation, row, conversation_no, datetime_since)
 
-        flush_conversation( conversation)
+        #flush_conversation( conversation)
 
 
     return
@@ -137,7 +137,7 @@ def batch_get_conversations():
         page_no = page.page_no
         get_conversations(page_no)
 
-    #flush_conversations(hours=1)
+    flush_conversations(hours=1)
     mysql = "update conversations_fbconversation c , fb_mypage p set c.page_id = p.id where c.page_no = p.page_no and c.page_id is NULL"
     my_custom_sql(mysql)
         
