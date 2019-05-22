@@ -20,7 +20,7 @@ from .models import *
         LogisticAccount,OverseaOrder,OverseaSkuRank,MyOrder,MyOrderDetail, Order_History
 '''
 from shop.models import ShopifyProduct, ShopifyVariant,Combination,ShopifyImage
-from fb.models import MyPhoto
+from fb.models import MyPhoto,MyPage
 
 #from conversations.models import Conversation
 from logistic.models import Package
