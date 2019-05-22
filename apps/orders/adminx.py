@@ -1334,7 +1334,7 @@ class VerifyAdmin(object):
     '''
 
     readonly_fields = ('order', 'order_time',)
-    list_display = ('order','show_conversation','order_time',"order_amount", "order_status","stock",'colored_verify_status', \
+    list_display = ('order','page','show_conversation','order_time',"order_amount", "order_status","stock",'colored_verify_status', \
                     'colored_sms_status',"sms_code",
                     'city','receiver_addr',
 
@@ -1767,7 +1767,7 @@ class ClientServiceAdmin(object):
     batch_normal.short_description = "批量正常"
 
     ordering = ['-order__order_time']
-    list_display = ('order', 'page', 'order_time','order_status','stock','order_logistic_update_status', 'colored_verify_status', \
+    list_display = ('order',  'order_time','order_status','stock','order_logistic_update_status', 'colored_verify_status', \
                     'receiver_city', 'city','receiver_addr',
                     'colored_sms_status',"sms_code",
                     "deal_outofstock","real_amount",
