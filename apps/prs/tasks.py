@@ -6831,7 +6831,7 @@ def auto_page_post():
         print("正在处理page", page)
         page_no = page.page_no
 
-        to_create_count = 1
+        to_create_count = 10
         page_post_v2(page_no, to_create_count)
 
 

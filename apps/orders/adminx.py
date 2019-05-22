@@ -1203,6 +1203,11 @@ class VerificationAdmin(object):
 
 class VerifyAdmin(object):
     # import_export_args = {'import_resource_class': MessageResource, 'export_resource_class': MessageResource}
+    def page(self, obj):
+        return MyPage.objects.get(page_no = obj.mailbox_id)
+
+    page.short_description = "Page"
+
     def order_sku_count(self, obj):
         return  obj.order.order_orderdetail.all().count()
 
@@ -1762,7 +1767,7 @@ class ClientServiceAdmin(object):
     batch_normal.short_description = "批量正常"
 
     ordering = ['-order__order_time']
-    list_display = ('order', 'order_time','order_status','stock','order_logistic_update_status', 'colored_verify_status', \
+    list_display = ('order', 'page', 'order_time','order_status','stock','order_logistic_update_status', 'colored_verify_status', \
                     'receiver_city', 'city','receiver_addr',
                     'colored_sms_status',"sms_code",
                     "deal_outofstock","real_amount",

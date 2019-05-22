@@ -588,6 +588,16 @@ def delete_nohandle_feeds():
 
         MyFeed.objects.filter(feed_no__in=feed_nos).update(active=False)
 
+def delete_nohandle_feeds(page_no, type):
+    feeds = MyFeed.objects.filter(page_no=page_no, created_time__lt='2019-05-21')
+    feed_nos = feeds.values_list("feed_no", flat=True)
+
+    print("page %s 待删除数量 %s  " % (page_no, len(feed_nos)))
+
+
+    delete_posts(page_no, feed_nos)
+
+    MyFeed.objects.filter(feed_no__in=feed_nos).update(active=False)
 
 
 
