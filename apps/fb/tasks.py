@@ -597,7 +597,7 @@ def delete_nohandle_feeds(page_no, type):
 
     delete_posts(page_no, feed_nos)
 
-    MyFeed.objects.filter(feed_no__in=feed_nos).update(active=False)
+    MyFeed.objects.filter(feed_no__in=list(feed_nos)).update(active=False)
 
 
 

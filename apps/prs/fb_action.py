@@ -1834,7 +1834,7 @@ def combo_ad_image_v3(spu_ims, spus_name,page_no):
         # out.save('target%s.jpg'%(combo.SKU), 'JPEG')
 
         destination_url = domain + os.path.join(settings.MEDIA_URL, "ad/", image_filename)
-        print("destination_url", destination_url)
+        #print("destination_url", destination_url)
         return  destination_url
 
 

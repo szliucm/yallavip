@@ -392,7 +392,7 @@ def yallavip_mark_image(ori_image, handle, price1, price2, target_page):
     image_filename = image_filename.replace(' ', '')
     destination = os.path.join(settings.MEDIA_ROOT, "product/", image_filename)
 
-    print("pure destination", destination)
+    #print("pure destination", destination)
 
     pure.save(destination,'JPEG',quality = 95)
 

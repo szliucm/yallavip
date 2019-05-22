@@ -6572,7 +6572,7 @@ def prepare_promote_image_album_v3(cate, page_no, lightin_spu_pks):
     handles_name = ','.join(handles)
 
     image_marked_url = combo_ad_image_v3(spu_ims, handles_name, page_no)
-    print( image_marked_url )
+    #print( image_marked_url )
 
     if not image_marked_url:
         print("没有生成广告图片")
