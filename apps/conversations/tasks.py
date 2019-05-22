@@ -257,7 +257,7 @@ def flush_conversation(conversation):
         print ("没有消息")
         return
 
-    last_message , status = deal_message(messages)
+    last_message , status = deal_message(conversation.customer, messages)
     # 保存到数据库中
     conversation.last_message = last_message[:499]
     conversation.status = status
@@ -265,7 +265,7 @@ def flush_conversation(conversation):
     conversation.has_newmessage = False
     conversation.save()
 
-def deal_message(messages):
+def deal_message(customer, messages):
     #取最新三条消息，拼接起来
     length = messages.count()
     if length > 3:
@@ -279,7 +279,7 @@ def deal_message(messages):
 
     #根据最后一条信息的发送人，设定对话的状态：已回复 or 等待回复
     message = messages[length-1]
-    if message.get("from_name") == conversation.customer:
+    if message.get("from_name") == customer:
         status = "待回复"
     else:
         status = "已回复"
