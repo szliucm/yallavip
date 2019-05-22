@@ -278,7 +278,7 @@ def deal_message(messages):
         last_message += "[" + message['from_name'] + "]: " + message['message_content'] + "-----"
 
     #根据最后一条信息的发送人，设定对话的状态：已回复 or 等待回复
-    message = messages[length]
+    message = messages[length-1]
     if message.get("from_name") == conversation.customer:
         status = "待回复"
     else:
