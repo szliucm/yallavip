@@ -215,29 +215,7 @@ def prepare_yallavip_photoes(page_no=None):
                                                                              }
                                                                    )
 
-def prepare_yallavip_album_material(page_no=None, free_delivery=False):
-    from django.db.models import Max
-    from prs.tasks import  prepare_a_album
 
-   #每次每个相册处理最多100张图片
-
-    lightinalbums_all = LightinAlbum.objects.filter(published=False, publish_error="无", material=False,
-                                                    material_error="无",lightin_spu__sellable__gt=0,
-                                                    yallavip_album__isnull = False,yallavip_album__active = True  )
-    if page_no:
-        lightinalbums_all = lightinalbums_all.filter(yallavip_album__page__page_no=page_no)
-
-
-    albums_list = lightinalbums_all.values_list('yallavip_album', flat=True).distinct()
-    print("albums_list is ", albums_list)
-
-    for album in albums_list:
-        #lightinalbums = lightinalbums_all.filter(yallavip_album=album).order_by("lightin_spu__sellable")[:100]
-        lightinalbums = lightinalbums_all.filter(yallavip_album=album).order_by("lightin_spu__sellable")
-        print(lightinalbums)
-
-        for lightinalbum in lightinalbums:
-            prepare_a_album.apply_async((lightinalbum.pk,free_delivery), queue='photo')
 
 
 #################################################################################################
@@ -345,6 +323,31 @@ def prepare_yallavip_photoes_v2(page_no=None):
 
                                                                              }
                                                                    )
+
+
+def prepare_yallavip_album_material(page_no=None, free_delivery=False):
+    from django.db.models import Max
+    from prs.tasks import  prepare_a_album
+
+   #每次每个相册处理最多100张图片
+
+    lightinalbums_all = LightinAlbum.objects.filter(published=False, publish_error="无", material=False,
+                                                    material_error="无",lightin_spu__sellable__gt=0,
+                                                    yallavip_album__isnull = False,yallavip_album__active = True  )
+    if page_no:
+        lightinalbums_all = lightinalbums_all.filter(yallavip_album__page__page_no=page_no)
+
+
+    albums_list = lightinalbums_all.values_list('yallavip_album', flat=True).distinct()
+    print("albums_list is ", albums_list)
+
+    for album in albums_list:
+        #lightinalbums = lightinalbums_all.filter(yallavip_album=album).order_by("lightin_spu__sellable")[:100]
+        lightinalbums = lightinalbums_all.filter(yallavip_album=album).order_by("lightin_spu__sellable")
+        print(lightinalbums)
+
+        for lightinalbum in lightinalbums:
+            prepare_a_album.apply_async((lightinalbum.pk,free_delivery), queue='photo')
 
 #为促销做准备商品
 #相册和主推品类结合选品，打广告
