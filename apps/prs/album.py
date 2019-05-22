@@ -373,7 +373,7 @@ def prepare_promote_v2(page_no):
 
     for cate in cates:
         con = filter_product(cate)
-        cate_spus = spus_all.filter(con)
+        cate_spus = spus_all.filter(con).order_by("?")
         # 每次最多20个
         if cate_spus.count() > 20:
             count = 10
