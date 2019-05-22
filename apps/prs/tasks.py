@@ -4721,7 +4721,7 @@ def prepare_yallavip_album_source(page_no=None):
 
             lightinalbum.save()
 
-
+'''
 @shared_task
 def prepare_yallavip_album_material(page_no=None, free_delivery=False):
     from django.db.models import Max
@@ -4745,7 +4745,7 @@ def prepare_yallavip_album_material(page_no=None, free_delivery=False):
 
         for lightinalbum in lightinalbums:
             prepare_a_album.apply_async((lightinalbum.pk,free_delivery), queue='fb')
-
+'''
 
 
 @shared_task
