@@ -458,6 +458,23 @@ def get_promote_ads(page_no):
 
     return ads, cates
 
+#把page对应品类的sku全部设置包邮
+def chang_page_free_delivery(page_no):
+    from prs.tasks import update_promote_price
+
+    albums = YallavipAlbum.objects.filter(page__page_no= page_no, active=True)
+    for album in albums:
+
+
+        spus = Lightin_SPU.objects.filter(breadcrumb__contains=album.cate.tags).distinct()
+        print(album.cate, spus.count())
+
+        for spu in spus:
+            update_promote_price(spu, True)
+
+
+
+
 
 
 

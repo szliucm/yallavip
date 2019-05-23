@@ -15,6 +15,7 @@ class Sales(models.Model):
     refused_amount = models.IntegerField(u'refused金额', default=0, blank=True, null=True)
     cancelled = models.IntegerField(u'取消数量', default=0, blank=True, null=True)
     cancelled_amount = models.IntegerField(u'取消金额', default=0, blank=True, null=True)
+    delivered_reate = models.IntegerField(u'签收率', default=0, blank=True, null=True)
 
     class Meta:
         verbose_name = "整体业绩"
@@ -52,6 +53,7 @@ class StaffTrack(models.Model):
     refused_amount = models.IntegerField(u'refused金额', default=0, blank=True, null=True)
     cancelled = models.IntegerField(u'取消数量', default=0, blank=True, null=True)
     cancelled_amount = models.IntegerField(u'取消金额', default=0, blank=True, null=True)
+    delivered_reate = models.IntegerField(u'签收率', default=0, blank=True, null=True)
 
     class Meta:
         verbose_name = "客服业绩"
