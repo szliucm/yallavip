@@ -129,7 +129,7 @@ class StaffPerformaceAdmin(object):
 
 @xadmin.sites.register(StaffTrack)
 class StaffTrackAdmin(object):
-    list_display = ["order_date", "staff", "open","open_amount", 'transit',"transit_amount", 'delivered',"delivered_amount", 'refused',"refused_amount","cancelled","cancelled_amount",   ]
+    list_display = ["order_date", "staff", "delivered_rate","open","open_amount", 'transit',"transit_amount", 'delivered',"delivered_amount", 'refused',"refused_amount","cancelled","cancelled_amount",   ]
 
     # 'sku_name','img',
     search_fields = ["staff", ]
@@ -149,7 +149,7 @@ class PageTrackTrackAdmin(object):
             return "unknown"
     page.short_description = "Page"
 
-    list_display = ["order_date", "page", "open","open_amount", 'transit',"transit_amount", 'delivered',"delivered_amount", 'refused',"refused_amount","cancelled","cancelled_amount",   ]
+    list_display = ["order_date", "page", "delivered_rate","open","open_amount", 'transit',"transit_amount", 'delivered',"delivered_amount", 'refused',"refused_amount","cancelled","cancelled_amount",   ]
 
     # 'sku_name','img',
     search_fields = [ ]

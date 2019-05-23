@@ -65,6 +65,17 @@ class StaffTrack(models.Model):
     cancelled = models.IntegerField(u'取消数量', default=0, blank=True, null=True)
     cancelled_amount = models.IntegerField(u'取消金额', default=0, blank=True, null=True)
     #delivered_reate = models.IntegerField(u'签收率', default=0, blank=True, null=True)
+    def cal_delivered_rate(self):
+
+        total = self.transit + self.delivered+ self.refused
+        if total>0:
+            return   "{:.0%}".format( self.delivered/ total )
+        else:
+            return  0
+
+
+    cal_delivered_rate.short_description = "签收率"
+    delivered_rate = property(cal_delivered_rate)
 
     class Meta:
         verbose_name = "客服业绩"
@@ -86,7 +97,17 @@ class PageTrack(models.Model):
     refused_amount = models.IntegerField(u'refused金额', default=0, blank=True, null=True)
     cancelled = models.IntegerField(u'取消数量', default=0, blank=True, null=True)
     cancelled_amount = models.IntegerField(u'取消金额', default=0, blank=True, null=True)
+    def cal_delivered_rate(self):
 
+        total = self.transit + self.delivered+ self.refused
+        if total>0:
+            return   "{:.0%}".format( self.delivered/ total )
+        else:
+            return  0
+
+
+    cal_delivered_rate.short_description = "签收率"
+    delivered_rate = property(cal_delivered_rate)
     class Meta:
         verbose_name = "Page业绩"
         verbose_name_plural = verbose_name
