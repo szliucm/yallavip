@@ -5798,7 +5798,7 @@ def page_post_v2(page_no, to_create_count):
 
     # 取page对应的待推ads
     ads_all, cates = get_promote_ads(page_no)
-    if not ads:
+    if not ads_all:
         return
 
     ads_all = ads_all.filter(published=False)
