@@ -5229,69 +5229,7 @@ def sync_ads():
     YallavipAd.objects.filter(message_ad_id__in=ads).update(message_ad_status="active")
 
 
-@shared_task
-def outstock_ads():
 
-
-    #遍历所有活跃的广告，如果有spu已经无库存，就设置active为false，
-    # 如果published为True,则将广告删除
-    ads = YallavipAd.objects.filter(active=True)
-
-    delete_outstock_ad(ads)
-
-
-
-def delete_outstock_ad(ads):
-    from prs.fb_action import ad_update_status
-    import time
-    ads_todelete = []
-
-    for ad in ads:
-
-        handles = ad.spus_name.split(",")
-        spus_all = Lightin_SPU.objects.filter( handle__in=handles)
-        spus_all.update(aded=False)
-
-        spus_outstock = spus_all.filter(sellable__lte=0)
-        if spus_outstock.count()>0:
-            print("有spu无库存了", spus_outstock, ad, ad.ad_id)
-            ads_todelete.append(ad)
-
-    print("有 %s 条广告待删除"%len(ads_todelete))
-
-    for ad in ads_todelete:
-
-        # 修改广告状态
-        ad_status = "DELETED"
-
-        if ad.ad_status == "active":
-            print("ad待删除")
-            info, updated = ad_update_status(ad.ad_id, status=ad_status)
-            if updated:
-                ad.ad_status = ad_status
-            else:
-                ad.update_error = info
-            time.sleep(20)
-
-        if ad.engagement_ad_status == "active":
-            print("engagement_ad待删除")
-            info, updated = ad_update_status(ad.engagement_ad_id, status=ad_status)
-            if updated:
-                ad.engagement_ad_status = ad_status
-            else:
-                ad.engagement_ad_publish_error = info
-            time.sleep(20)
-        if ad.message_ad_status == "active":
-            print("message_ad待删除")
-            info, updated = ad_update_status(ad.message_ad_id, status=ad_status)
-            if updated:
-                ad.message_ad_status = ad_status
-            else:
-                ad.message_ad_publish_error = info
-            time.sleep(20)
-
-        ad.active=False
-        ad.save()
 
 
 
