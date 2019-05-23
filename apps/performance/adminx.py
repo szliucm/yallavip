@@ -6,7 +6,7 @@ from orders.models import Order
 
 
 def update_performance(days=3):
-    from django.db.models import Count, Sum, Q
+    from django.db.models import Count, Sum, Q,F
     import pytz
     from datetime import datetime,timedelta
     # from django.utils import timezone as dt
@@ -35,7 +35,7 @@ def update_performance(days=3):
                                                       #type=sales_count.get("status"),
                                                       defaults={sales_count.get("status"): sales_count.get("orders"),
                                                                 sales_count.get("status")+"_amount": sales_count.get("amount"),
-                                                                "delivered_rate": F("delivered")/(F('transit')+f('delivered')+F('refused'))
+                                                                "delivered_rate": int(F("delivered")/(F('transit')+F('delivered')+F('refused')))
 
                                                                 }
                                                       )
@@ -88,7 +88,7 @@ def update_performance(days=3):
 
 @xadmin.sites.register(Sales)
 class SalesAdmin(object):
-    list_display = ["order_date", "open","open_amount", 'transit',"transit_amount",  'delivered',"delivered_amount", 'refused',"refused_amount","cancelled","cancelled_amount", ]
+    list_display = ["order_date", "delivered_rate", "open","open_amount", 'transit',"transit_amount",  'delivered',"delivered_amount", 'refused',"refused_amount","cancelled","cancelled_amount", ]
 
     # 'sku_name','img',
     search_fields = [ ]
