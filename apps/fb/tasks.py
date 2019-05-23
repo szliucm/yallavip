@@ -601,7 +601,7 @@ def delete_nohandle_feeds(page_no, type):
 
 @shared_task
 def delete_outstock_ads():
-
+    from prs.models import  YallavipAd
 
     #遍历所有活跃的广告，如果有spu已经无库存，就设置active为false，
     # 如果published为True,则将广告删除
