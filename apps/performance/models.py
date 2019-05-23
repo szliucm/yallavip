@@ -10,7 +10,7 @@ class Sales(models.Model):
     transit = models.IntegerField(u'已交运数量', default=0, blank=True, null=True)
     transit_amount = models.IntegerField(u'已交运金额', default=0, blank=True, null=True)
     deliveried  = models.IntegerField(u'deliveried数量', default=0, blank=True, null=True)
-    deliveried _amount = models.IntegerField(u'deliveried金额', default=0, blank=True, null=True)
+    deliveried_amount = models.IntegerField(u'deliveried金额', default=0, blank=True, null=True)
     refused = models.IntegerField(u'refused数量', default=0, blank=True, null=True)
     refused_amount = models.IntegerField(u'refused金额', default=0, blank=True, null=True)
     cancelled = models.IntegerField(u'取消数量', default=0, blank=True, null=True)
