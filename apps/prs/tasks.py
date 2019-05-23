@@ -6831,7 +6831,7 @@ def auto_page_post():
         print("正在处理page", page)
         page_no = page.page_no
 
-        to_create_count = 10
+        to_create_count = 5
         page_post_v2(page_no, to_create_count)
 
 
@@ -6845,7 +6845,7 @@ def auto_engagement_ads():
 
         page_no = page.page_no
         ad_type = "engagement"
-        to_create_count = 10
+        to_create_count = 5
         post_ads_v2(page_no, ad_type, to_create_count)
 
 @shared_task
