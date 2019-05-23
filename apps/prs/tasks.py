@@ -5797,11 +5797,11 @@ def page_post_v2(page_no, to_create_count):
     import time
 
     # 取page对应的待推ads
-    ads, cates = get_promote_ads(page_no)
+    ads_all, cates = get_promote_ads(page_no)
     if not ads:
         return
 
-    ads = ads.filter(published=False)
+    ads_all = ads_all.filter(published=False)
 
     access_token, long_token = get_token(page_no)
     print (access_token, long_token, page_no)
@@ -5811,8 +5811,8 @@ def page_post_v2(page_no, to_create_count):
 
     for cate in cates:
 
-        ads = ads.filter(cate=cate)
-        print(cate,"有 %s 条广告待投放"%ads.count())
+        ads = ads_all.filter(cate=cate)
+        print(cate,"有 %s 条post待发布"%ads.count())
 
         i=1
         for ad in ads:
