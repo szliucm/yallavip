@@ -20,7 +20,7 @@ class Sales(models.Model):
 
         total = self.transit + self.delivered+ self.refused
         if total>0:
-            return   "{:.2%}".format( self.delivered/ total )
+            return   "{:.0%}".format( self.delivered/ total )
         else:
             return  0
 
