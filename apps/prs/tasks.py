@@ -5921,10 +5921,10 @@ def post_ads_v2(page_no, ad_type, to_create_count=1, keyword=None):
     from django.db.models import Q
 
     # 取page对应的待推ads
-    ads , cates = get_promote_ads(page_no)
+    ads_all , cates = get_promote_ads(page_no)
     if not ads:
         return
-    ads = ads.filter(published=True)
+    ads_all = ads_all.filter(published=True)
 
 
     serial = get_serial()
@@ -5939,23 +5939,23 @@ def post_ads_v2(page_no, ad_type, to_create_count=1, keyword=None):
     adaccount_no = "act_1903121643086425"
 
     if keyword:
-        ads = ads.filter(yallavip_album__rule__name__icontains=keyword)
+        ads_all = ads_all.filter(yallavip_album__rule__name__icontains=keyword)
 
     if ad_type == "engagement":
         # ads = YallavipAd.objects.filter(~Q(object_story_id="" ),  object_story_id__isnull = False,active=True, published=True,engagement_aded=False, yallavip_album__page__page_no=page_no )
-        ads = ads.filter( engagement_aded=False).order_by("-fb_feed__like_count")
+        ads_all = ads_all.filter( engagement_aded=False).order_by("-fb_feed__like_count")
     elif ad_type == "message":
-        ads = ads.filter( engagement_aded=True, message_aded=False).order_by("-fb_feed__like_count")
+        ads_all = ads_all.filter( engagement_aded=True, message_aded=False).order_by("-fb_feed__like_count")
     else:
         return False
 
     if keyword:
-        ads = ads.filter(yallavip_album__rule__name__icontains=keyword)
+        ads_all = ads_all.filter(yallavip_album__rule__name__icontains=keyword)
 
     adobjects = FacebookAdsApi.init(access_token=ad_tokens, debug=True)
     for cate in cates:
 
-        ads = ads.filter(cate=cate)
+        ads = ads_all.filter(cate=cate)
         i = 1
         for ad in ads:
             if i > to_create_count:
