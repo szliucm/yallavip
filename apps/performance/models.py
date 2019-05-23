@@ -18,8 +18,11 @@ class Sales(models.Model):
     #delivered_rate = models.IntegerField(u'签收率', default=0, blank=True, null=True)
     def cal_delivered_rate(self):
 
-
-        return   "{:.2%}".format( self.delivered/( self.transit + self.delivered+ self.refused))
+        total = self.transit + self.delivered+ self.refused
+        if total>0:
+            return   "{:.2%}".format( self.delivered/ total )
+        else:
+            return  0
 
 
     cal_delivered_rate.short_description = "签收率"
