@@ -35,7 +35,7 @@ def update_performance(days=3):
                                                       #type=sales_count.get("status"),
                                                       defaults={sales_count.get("status"): sales_count.get("orders"),
                                                                 sales_count.get("status")+"_amount": sales_count.get("amount"),
-                                                                "delivered_rate": int(100 * F("delivered")/(F('transit')+F('delivered')+F('refused')))
+                                                                #"delivered_rate": int(100 * F("delivered")/(F('transit')+F('delivered')+F('refused')))
 
                                                                 }
                                                       )
