@@ -5956,6 +5956,7 @@ def post_ads_v2(page_no, ad_type, to_create_count=1, keyword=None):
     for cate in cates:
 
         ads = ads_all.filter(cate=cate)
+        print("品类 %s 有%s条 %s 广告可发布",cate, ads.count(), ad_type)
         i = 1
         for ad in ads:
             if i > to_create_count:
