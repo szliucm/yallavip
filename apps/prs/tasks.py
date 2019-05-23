@@ -5977,8 +5977,12 @@ def post_ads_v2(page_no, ad_type, to_create_count=1, keyword=None):
                     ad.message_aded = True
                     ad.message_ad_published_time = dt.now()
 
-                ad.save()
-                time.sleep(30)
+            else:
+                ad.active=False
+
+            ad.save()
+            time.sleep(30)
+
 
 def post_ad(page_no,adaccount_no, adset_no, serial, ad):
     from facebook_business.adobjects.adaccount import AdAccount
