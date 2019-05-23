@@ -30,12 +30,12 @@ def update_performance(days=3):
     Sales.objects.filter(order_date__gt=(today - timedelta(days=days))).delete()
 
     for sales_count in sales_counts:
-        if sales_count.get("status") in ['open', 'transit','delivered', 'refused', 'cancelled']:
+        if sales_count.get("status") in ['open', 'transit','deliveried', 'refused', 'cancelled']:
             obj, created = Sales.objects.update_or_create(order_date=sales_count.get("date"),
                                                       #type=sales_count.get("status"),
                                                       defaults={sales_count.get("status"): sales_count.get("orders"),
                                                                 sales_count.get("status")+"_amount": sales_count.get("amount"),
-                                                                "delivered_rate": int(100 * F("delivered")/(F('transit')+F('delivered')+F('refused')))
+                                                                "deliveried_rate": int(100 * F("deliveried")/(F('transit')+F('deliveried')+F('refused')))
 
                                                                 }
                                                       )
@@ -54,7 +54,7 @@ def update_performance(days=3):
         if not staff:
             staff = "unknown"
         print(track_count.get("status"))
-        if track_count.get("status") in ['open','transit','delivered', 'refused','cancelled']:
+        if track_count.get("status") in ['open','transit','deliveried', 'refused','cancelled']:
             obj, created = StaffTrack.objects.update_or_create(order_date=track_count.get("date"),
                                                         staff=staff,
                                                       defaults={track_count.get("status"): track_count.get("orders"),
@@ -88,7 +88,7 @@ def update_performance(days=3):
 
 @xadmin.sites.register(Sales)
 class SalesAdmin(object):
-    list_display = ["order_date", "delivered_rate", "open","open_amount", 'transit',"transit_amount",  'delivered',"delivered_amount", 'refused',"refused_amount","cancelled","cancelled_amount", ]
+    list_display = ["order_date", "deliveried_rate", "open","open_amount", 'transit',"transit_amount",  'deliveried',"deliveried_amount", 'refused',"refused_amount","cancelled","cancelled_amount", ]
 
     # 'sku_name','img',
     search_fields = [ ]
@@ -129,7 +129,7 @@ class StaffPerformaceAdmin(object):
 
 @xadmin.sites.register(StaffTrack)
 class StaffTrackAdmin(object):
-    list_display = ["order_date", "staff", "open","open_amount", 'transit',"transit_amount", 'delivered',"delivered_amount", 'refused',"refused_amount","cancelled","cancelled_amount",   ]
+    list_display = ["order_date", "staff", "open","open_amount", 'transit',"transit_amount", 'deliveried',"deliveried_amount", 'refused',"refused_amount","cancelled","cancelled_amount",   ]
 
     # 'sku_name','img',
     search_fields = ["staff", ]
@@ -149,7 +149,7 @@ class PageTrackTrackAdmin(object):
             return "unknown"
     page.short_description = "Page"
 
-    list_display = ["order_date", "page", "open","open_amount", 'transit',"transit_amount", 'delivered',"delivered_amount", 'refused',"refused_amount","cancelled","cancelled_amount",   ]
+    list_display = ["order_date", "page", "open","open_amount", 'transit',"transit_amount", 'deliveried',"deliveried_amount", 'refused',"refused_amount","cancelled","cancelled_amount",   ]
 
     # 'sku_name','img',
     search_fields = [ ]
