@@ -5,6 +5,9 @@ class Sales(models.Model):
     order_date = models.DateField(u'订单日期', auto_now=False, null=True, blank=True)
     #type = models.CharField(u'类型', default='', max_length=200, blank=True)
     #count = models.IntegerField(u'数量', default=0, blank=True, null=True)
+    conversation_count = models.IntegerField(u'会话数', default=0, blank=True, null=True)
+    message_count = models.IntegerField(u'消息数', default=0, blank=True, null=True)
+
     open = models.IntegerField(u'审核中数量', default=0, blank=True, null=True)
     open_amount = models.IntegerField(u'审核中金额', default=0, blank=True, null=True)
     transit = models.IntegerField(u'已交运数量', default=0, blank=True, null=True)

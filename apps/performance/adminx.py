@@ -18,6 +18,10 @@ def update_performance(days=3):
     today = datetime(now.year, now.month, now.day, tzinfo=riyadh)
 
 
+
+    #统计订单
+
+
     #orders = Order.objects.all()
 
     orders = Order.objects.filter(order_time__gt=(today - timedelta(days=days)))
@@ -40,7 +44,21 @@ def update_performance(days=3):
                                                                 }
                                                       )
 
+    # 统计会话
+    session_counts = FbMessage.objects.annotate(date=TruncDate("created_time", tzinfo=riyadh)) \
+        .values("date").annotate(conversation_count=Count("conversation_no", distinct=True),
+                                 message_count=Count("message_no")).order_by("-date")
 
+    for session_count in session_counts:
+        obj, created = Sales.objects.update_or_create(order_date=session_count.get("date"),
+
+                                                      defaults={
+                                                          "conversation_count": session_count.get(
+                                                              "conversation_count"),
+                                                          "message_count": session_count.get("message_count"),
+
+                                                      }
+                                                      )
 
     #统计客服业绩跟踪
     track_counts = orders.annotate(date=TruncDate("order_time", tzinfo=riyadh)) \
