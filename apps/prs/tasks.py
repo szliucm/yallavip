@@ -6803,3 +6803,21 @@ def auto_message_ads():
         ad_type = "message"
         to_create_count = 5
         post_ads_v2(page_no, ad_type, to_create_count)
+
+def test_funmart_product():
+    url = "http://47.96.143.109:9527/api/getInfoBySku"
+    param = dict()
+    param["sku"] = "C-170809052"
+
+
+    r = requests.post(url, data=json.dumps(param))
+    print(r.status_code, r.text)
+
+def test_funmart_order():
+    url = " http://47.98.80.172/api/searchOrder"
+    param = dict()
+    param["order_no"] = "112115244631159272"
+
+
+    r = requests.post(url, data=json.dumps(param))
+    print(r.status_code, r.text)

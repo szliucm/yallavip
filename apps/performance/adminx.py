@@ -2,6 +2,7 @@ import xadmin
 
 from .models import *
 from orders.models import Order
+from conversations.models import FbMessage
 
 
 
@@ -106,7 +107,7 @@ def update_performance(days=3):
 
 @xadmin.sites.register(Sales)
 class SalesAdmin(object):
-    list_display = ["order_date", "delivered_rate", "open","open_amount", 'transit',"transit_amount",  'delivered',"delivered_amount", 'refused',"refused_amount","cancelled","cancelled_amount", ]
+    list_display = ["order_date", "conversation_count", "message_count", "delivered_rate", "open","open_amount", 'transit',"transit_amount",  'delivered',"delivered_amount", 'refused',"refused_amount","cancelled","cancelled_amount", ]
 
     # 'sku_name','img',
     search_fields = [ ]
