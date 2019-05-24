@@ -46,7 +46,8 @@ def update_performance(days=3):
                                                       )
 
     # 统计会话
-    session_counts = FbMessage.objects.annotate(date=TruncDate("created_time", tzinfo=riyadh)) \
+    session_counts = FbMessage.objects.filter(created_time__gt=(today - timedelta(days=days)))\
+        .annotate(date=TruncDate("created_time", tzinfo=riyadh)) \
         .values("date").annotate(conversation_count=Count("conversation_no", distinct=True),
                                  message_count=Count("message_no")).order_by("-date")
 
