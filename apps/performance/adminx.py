@@ -95,8 +95,8 @@ def update_performance(days=3):
 
         if not page_no:
             page_no = "unknown"
-
-        obj, created = PageTrack.objects.update_or_create(order_date=page_count.get("date"),
+        if page_count.get("status") in ['open', 'transit', 'delivered', 'refused', 'cancelled']:
+            obj, created = PageTrack.objects.update_or_create(order_date=page_count.get("date"),
                                                            page_no=page_no,
                                                            defaults={page_count.get("status"): page_count.get(
                                                                "orders"),
