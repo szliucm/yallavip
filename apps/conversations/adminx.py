@@ -52,12 +52,12 @@ class FbConversationAdmin(object):
 
         return  lost_time
 
-    lost_time.short_description = "状态"
+    lost_time.short_description = "重要性"
 
 
     import_export_args = {'import_resource_class': FbConversationResource, 'export_resource_class': FbConversationResource}
 
-    list_display = ["conversation_no", "customer_link" , "lost_time","color_status","task_type", "task_stat", "last_message",]
+    list_display = ["conversation_no", "message_count", "customer_link" , "lost_time","color_status","task_type", "task_stat", "last_message",]
     list_editable = ["task_type","task_stat",]
     search_fields = ['customer', ]
     list_filter = ["status","task_type", "task_stat", "page", ]

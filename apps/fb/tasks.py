@@ -395,7 +395,7 @@ def batch_update_ad():
 
     queryset = MyAdAccount.objects.filter(account_status ='1',active=True)
     for adaccount in queryset:
-        get_adaccount_ads(adaccount)
+        get_adaccount_ads(adaccount.adaccount_no)
 
 
 def get_adaccount_ads(adaccount_no):

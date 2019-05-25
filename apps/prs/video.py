@@ -1,6 +1,6 @@
 #coding:utf-8
 import os
-import cv2
+#import cv2
 from PIL import Image
 from shop.photo_mark import  price_for_video
 
@@ -71,7 +71,7 @@ def get_order_video(order):
 # -*- coding: utf-8 -*-
 import os
 from PIL import Image
-from ffmpy3 import FFmpeg
+#from ffmpy3 import FFmpeg
 
 def get_order_video_v2(order):
 

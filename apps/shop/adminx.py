@@ -29,7 +29,7 @@ from logistic.models import Package
 from fb.models import MyPage
 from orders.models import Order,OrderDetail
 
-import shopify
+#import shopify
 import requests
 import json
 

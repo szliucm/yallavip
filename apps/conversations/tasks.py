@@ -29,13 +29,14 @@ def convert_conversation_data(page_no, response_json, got_time, datetime_since):
 
         conversation, created = FbConversation.objects.update_or_create(conversation_no=conversation_no,
                                                              defaults={
-                                                                       'page_no': page_no,
-                                                                       'link': row.get("link"),
-                                                                       'updated_time': row.get("updated_time"),
-                                                                        'has_newmessage':True,
+                                                                 'page_no': page_no,
+                                                                 'message_count': row.get("message_count"),
+                                                                   'link': row.get("link"),
+                                                                   'updated_time': row.get("updated_time"),
+                                                                    'has_newmessage':True,
 
-                                                                        "got_time": got_time,
-                                                                       'customer': row["participants"]["data"][0]["name"][:50]
+                                                                    "got_time": got_time,
+                                                                   'customer': row["participants"]["data"][0]["name"][:50]
                                                                        }
                                                              )
 

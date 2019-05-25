@@ -235,7 +235,7 @@ def returned_package():
 
     return True
 
-
+'''
 # 生成海外仓包裹的视频
 @shared_task
 def package_video():
@@ -261,7 +261,7 @@ def package_slideshow():
     package = packages.first()
     order = Order.objects.filter(order_no=package.order_no).first()
     get_order_slideshow(order)
-
+'''
 
 # 同步海外仓包裹的状态，已经发布到主站的信息，更新到prs里
 @shared_task
@@ -3769,7 +3769,7 @@ def post_combo_feed():
     except ImportError:
         import Image, ImageDraw, ImageFont, ImageEnhance
 
-    from .video import fb_slideshow
+    #from .video import fb_slideshow
 
     page_nos = MyPage.objects.filter(active=True, is_published=True).values_list('page_no', flat=True)
     # page_nos = ["281101289261739"]   #for debug
@@ -6807,7 +6807,7 @@ def auto_message_ads():
 def test_funmart_product():
     url = "http://47.96.143.109:9527/api/getInfoBySku"
     param = dict()
-    param["sku"] = "C-170809052"
+    param["sku"] = "C-170809038"
 
 
     r = requests.post(url, data=json.dumps(param))
