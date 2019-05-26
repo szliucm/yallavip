@@ -11,7 +11,7 @@ class FbConversation(models.Model):
     page = models.ForeignKey(MyPage, related_name='page_conversation', null=True, blank=True,
                                      verbose_name="Page", on_delete=models.CASCADE)
     page_no = models.CharField(max_length=30, null=True, blank=True, verbose_name="PageID")
-    #message_count =     quantity = models.IntegerField(u'message_count', default=0, blank=True, null=True)
+    message_count =     quantity = models.IntegerField(u'message_count', default=0, blank=True, null=True)
 
     link = models.CharField(max_length=100,null=True, blank=True, verbose_name="链接")
     updated_time = models.DateTimeField(null=True, blank=True, verbose_name="最后更新时间")
