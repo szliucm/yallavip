@@ -52,6 +52,9 @@ class FbConversationAdmin(object):
 
         return  lost_time
 
+
+
+
     lost_time.short_description = "重要性"
 
 
