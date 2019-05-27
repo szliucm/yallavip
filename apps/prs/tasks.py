@@ -6311,17 +6311,16 @@ def update_free_shipping_price(spu, free_shipping=True):
     promote_price += fee
 
     if free_shipping:
-        if promote_price != spu.free_shipping_price :
-            #修改spu价格
-            spu.free_shipping_price = promote_price
-            spu.free_shipping = True
-            spu.save()
-            #修改spu对应的skus的价格
-            spu.spu_sku.update(free_shipping_price = promote_price )
 
-            return  True
-        else:
-            return False
+        #修改spu价格
+        spu.free_shipping_price = promote_price
+        spu.free_shipping = True
+        spu.save()
+        #修改spu对应的skus的价格
+        spu.spu_sku.update(free_shipping_price = promote_price )
+
+
+
 
 #删除spu在所有相册中的图片
 def clear_album(spu_pk):
