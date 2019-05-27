@@ -89,7 +89,7 @@ class StaffTrack(models.Model):
 
 class PageTrack(models.Model):
     order_date = models.DateField(u'订单日期', auto_now=False, null=True, blank=True)
-    page_no = models.CharField(u'客服', default='', max_length=200, blank=True)
+    page_no = models.CharField(u'page_no', default='', max_length=200, blank=True)
     open = models.IntegerField(u'审核中数量', default=0, blank=True, null=True)
     open_amount = models.IntegerField(u'审核中金额', default=0, blank=True, null=True)
     transit = models.IntegerField(u'已交运数量', default=0, blank=True, null=True)
