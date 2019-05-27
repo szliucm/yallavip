@@ -347,7 +347,7 @@ def prepare_yallavip_album_material(page_no=None, free_delivery=False):
         print(lightinalbums)
 
         for lightinalbum in lightinalbums:
-            prepare_a_album.apply_async((lightinalbum.pk,free_delivery), queue='photo')
+            prepare_a_album.apply_async((lightinalbum.pk,), queue='photo')
 
 #为促销做准备商品
 #相册和主推品类结合选品，打广告
