@@ -365,7 +365,7 @@ def lightin_mark_image(ori_image, handle, price1, price2, lightinalbum):
 
     return  destination, destination_url
 
-def yallavip_mark_image(ori_image, handle, price1, price2, target_page):
+def yallavip_mark_image(ori_image, handle, price1, price2, target_page, free_shipping):
     from django.utils import timezone as datetime
     # 对图片进行处理
     ################
@@ -373,7 +373,11 @@ def yallavip_mark_image(ori_image, handle, price1, price2, target_page):
 
 
     logo = target_page.logo
-    promote = target_page.promote
+    if free_shipping:
+        promote = target_page.promote
+    else:
+        promote = None
+
     price = target_page.price
 
 

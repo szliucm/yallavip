@@ -4749,7 +4749,7 @@ def prepare_yallavip_album_material(page_no=None, free_delivery=False):
 
 
 @shared_task
-def prepare_a_album(lightinalbum_pk, free_delivery=False):
+def prepare_a_album(lightinalbum_pk):
 
     ori_lightinalbum = LightinAlbum.objects.get(pk=lightinalbum_pk)
 
@@ -4825,7 +4825,7 @@ def prepare_a_album(lightinalbum_pk, free_delivery=False):
             # 如果有相册促销标，就打相册促销标，否则打价格标签
 
             image_marked, image_pure_url, image_marked_url = yallavip_mark_image(image, spu.handle, str(price1), str(price2),
-                                                                 lightinalbum.yallavip_album.page)
+                                                                 lightinalbum.yallavip_album.page, spu.free_shipping)
             if not image_marked:
                 error = "打水印失败"
 
