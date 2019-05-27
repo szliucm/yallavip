@@ -416,7 +416,7 @@ def get_adaccount_ads(adaccount_no):
     ads = AdAccount(adaccount_no).get_ads(fields=fields, params=params, )
 
     # 重置原有ad信息为不活跃
-    MyAd.objects.filter(account_no=account_no).update(active=False)
+    MyAd.objects.filter(account_no=adaccount_no).update(active=False)
     for ad in ads:
         obj, created = MyAd.objects.update_or_create(ad_no=ad["id"],
                                                         defaults={
