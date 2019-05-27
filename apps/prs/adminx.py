@@ -819,7 +819,7 @@ class Lightin_SPUAdmin(object):
     # 'sku_name','img',
 
     search_fields = ["SPU","handle","breadcrumb", ]
-    list_filter = ["vendor"]
+    list_filter = ["vendor","free_shipping", ]
     list_editable = []
     readonly_fields = ()
     actions = []

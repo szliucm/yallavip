@@ -527,6 +527,7 @@ class Lightin_SPU(models.Model):
     cate_1 = models.CharField(u'cate_1', default='', max_length=256, null=True, blank=True)
     cate_2 = models.CharField(u'cate_2', default='', max_length=256, null=True, blank=True)
     cate_3 = models.CharField(u'cate_3', default='', max_length=256, null=True, blank=True)
+    cate_3 = models.CharField(u'cate_3', default='', max_length=256, null=True, blank=True)
 
     vendor_sale_price = models.FloatField(verbose_name="供方销售价",default=0)
     vendor_supply_price = models.FloatField(verbose_name="供方采购价", default=0)
@@ -547,6 +548,8 @@ class Lightin_SPU(models.Model):
     got_time = models.DateTimeField(null=True, blank=True, verbose_name="更新时间")
 
     yallavip_price = models.FloatField(u'yallavip售价', default=0, blank=True, null=True)
+    free_shipping_price = models.FloatField(u'yallavip包邮价', default=0, blank=True, null=True)
+
     shopify_price = models.FloatField(u'shopify售价', default=0, blank=True, null=True)
 
     published = models.BooleanField(default=False, verbose_name="发布到shopify状态")
@@ -575,7 +578,7 @@ class Lightin_SPU(models.Model):
 
     active = models.BooleanField(default=True, verbose_name="有效性")
     promoted = models.BooleanField(default=False, verbose_name="促销状态")
-    free_deliveried = models.BooleanField(default=False, verbose_name="包邮状态")
+    free_shipping = models.BooleanField(default=False, verbose_name="包邮状态")
 
     longaded = models.BooleanField(default=False, verbose_name="长期广告状态")
     size_count = models.IntegerField(u'size数量', default=0, blank=True, null=True)
@@ -630,7 +633,7 @@ class Lightin_SKU(models.Model):
 
     combo_error = models.CharField(default='', max_length=100, null=True, blank=True, verbose_name="组合错误")
     sku_price = models.IntegerField(u'sku售价', default=0, blank=True, null=True)
-
+    free_shipping_price = models.FloatField(u'yallavip包邮价', default=0, blank=True, null=True)
     #listing_status = models.BooleanField(u'发布到Facebook', default=False)
 
     #y_sellable = models.IntegerField(u'wms_可售数量', default=0, blank=True, null=True)
@@ -724,6 +727,7 @@ class LightinAlbum(models.Model):
     deleted_time = models.DateTimeField(null=True, blank=True, verbose_name="删除时间")
 
     aded = models.BooleanField(default=False, verbose_name="广告状态")
+    free_shipping = models.BooleanField(default=False, verbose_name="包邮状态")
 
     class Meta:
         verbose_name = "相册图片"
@@ -969,6 +973,9 @@ class YallavipAd(models.Model):
 
     cal_sellable.short_description = "可售库存"
     sellable = property(cal_sellable)
+
+
+    free_shipping = models.BooleanField(default=False, verbose_name="包邮状态")
 
 
     class Meta:

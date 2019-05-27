@@ -6252,12 +6252,13 @@ def split_conversation_link(verify):
 #计算某个spu的促销价，修改sku，spu的促销价
 def update_promote_price(spu, free_delivery=False):
 
+
     if free_delivery:
         fee = 25
-        spu.free_deliveried = True
+        spu.free_shipping = True
     else:
         fee = 0
-        spu.free_deliveried = False
+        spu.free_shipping = False
 
     #供货价的5倍 0.25*3.75*5
     multiple_price = spu.vendor_supply_price * 5
@@ -6283,6 +6284,41 @@ def update_promote_price(spu, free_delivery=False):
         return  True
     else:
         return False
+
+#计算某个spu的促销价，修改sku，spu的促销价
+def update_free_shipping_price(spu, free_shipping=True):
+
+
+    if free_shipping:
+        fee = 25
+        spu.free_shipping = True
+    else:
+        fee = 0
+        spu.free_shipping = False
+
+    #供货价的5倍 0.25*3.75*5
+    multiple_price = spu.vendor_supply_price * 5
+    #供应商售价的6折 3.75*0.6
+    discount_price = spu.vendor_sale_price * 2.25
+    if multiple_price < discount_price:
+        promote_price = round(discount_price)
+    else:
+        promote_price = round(multiple_price)
+
+    promote_price += fee
+
+    if free_shipping:
+        if promote_price != spu.free_shipping_price :
+            #修改spu价格
+            spu.free_shipping_price = promote_price
+            spu.free_shipping = True
+            spu.save()
+            #修改spu对应的skus的价格
+            spu.spu_sku.update(free_shipping_price = promote_price )
+
+            return  True
+        else:
+            return False
 
 #删除spu在所有相册中的图片
 def clear_album(spu_pk):
