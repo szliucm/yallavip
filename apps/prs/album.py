@@ -325,7 +325,7 @@ def prepare_yallavip_photoes_v2(page_no=None):
                                                                    )
 
 
-def prepare_yallavip_album_material(page_no=None, free_delivery=False):
+def prepare_yallavip_album_material(page_no=None):
     from django.db.models import Max
     from prs.tasks import  prepare_a_album
 
