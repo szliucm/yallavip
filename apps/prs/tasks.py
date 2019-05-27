@@ -6535,7 +6535,7 @@ def prepare_promote_image_album_v3(cate, page_no, lightin_spu_pks):
     from prs.fb_action import combo_ad_image_v3
 
 
-    print ("正在处理page ", page_no)
+    print ("正在处理page ", cate, page_no, lightin_spu_pks)
     target_page= MyPage.objects.get(page_no=page_no)
     spus=[]
     spu_ims = []
