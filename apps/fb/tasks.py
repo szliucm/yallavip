@@ -508,6 +508,7 @@ def delete_outstock_photos():
     photos = my_custom_sql(mysql)
 
     photo_miss = list_to_dict(photos)
+    print("共有%s个图片待删除"%len(photo_miss))
     for page_no in photo_miss:
 
         photo_nos = photo_miss[page_no]
@@ -679,13 +680,14 @@ def delete_outstock_ad(ads):
 
     for ad in ads:
 
-        handles = ad.name.split(",")
+        handles = ad.name.split("_")[-1].split(",")
         spus_all = Lightin_SPU.objects.filter(handle__in=handles)
-        #spus_all.update(aded=False)
+
 
         spus_outstock = spus_all.filter(sellable__lte=0)
         if spus_outstock.count() > 0:
-            print("有spu无库存了", spus_outstock, ad, ad.ad_id)
+            print("有spu无库存了", spus_outstock, ad )
+            spus_all.update(aded=False)
             ads_todelete.append(ad)
 
     print("有 %s 条广告待删除" % len(ads_todelete))
@@ -714,7 +716,7 @@ def delete_outstock_ad(ads):
 
 @shared_task
 def delete_outstock():
-    delete_outstock_photos()
+    delete_outstock_photos.apply_async((), queue='outstock')
     delete_outstock_feeds()
     delete_outstock_ads()
 
