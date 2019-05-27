@@ -391,12 +391,14 @@ def batch_update_adaccount():
 
 
 def batch_update_ad():
+    adaccount_no = "1903121643086425"
+    get_adaccount_ads(adaccount_no)
 
-
+    '''
     queryset = MyAdAccount.objects.filter(account_status ='1',active=True)
     for adaccount in queryset:
         get_adaccount_ads(adaccount.adaccount_no)
-
+    '''
 
 def get_adaccount_ads(adaccount_no):
 
@@ -414,7 +416,7 @@ def get_adaccount_ads(adaccount_no):
     ads = AdAccount(adaccount_no).get_ads(fields=fields, params=params, )
 
     # 重置原有ad信息为不活跃
-    MyAd.objects.update(active=False)
+    MyAd.objects.filter(account_no=account_no).update(active=False)
     for ad in ads:
         obj, created = MyAd.objects.update_or_create(ad_no=ad["id"],
                                                         defaults={
@@ -599,6 +601,7 @@ def delete_nohandle_feeds(page_no, type):
 
     MyFeed.objects.filter(feed_no__in=list(feed_nos)).update(active=False)
 
+'''
 @shared_task
 def delete_outstock_ads():
     from prs.models import  YallavipAd
@@ -662,6 +665,52 @@ def delete_outstock_ad(ads):
 
         ad.active=False
         ad.save()
+'''
+@shared_task
+def delete_outstock_ads():
+    ads = MyAd.objects.filter(active=True)
+    delete_outstock_ad(ads)
+
+def delete_outstock_ad(ads):
+    from prs.fb_action import ad_update_status
+    import time
+
+    ads_todelete = []
+
+    for ad in ads:
+
+        handles = ad.name.split(",")
+        spus_all = Lightin_SPU.objects.filter(handle__in=handles)
+        #spus_all.update(aded=False)
+
+        spus_outstock = spus_all.filter(sellable__lte=0)
+        if spus_outstock.count() > 0:
+            print("有spu无库存了", spus_outstock, ad, ad.ad_id)
+            ads_todelete.append(ad)
+
+    print("有 %s 条广告待删除" % len(ads_todelete))
+
+    for ad in ads_todelete:
+
+        # 修改广告状态
+        ad_status = "DELETED"
+
+
+        print("ad待删除")
+        info, updated = ad_update_status(ad.ad_no, status=ad_status)
+        if updated:
+            ad.ad_status = ad_status
+        else:
+            ad.update_error = info
+        time.sleep(20)
+
+
+
+        ad.active = False
+        ad.save()
+
+
+
 
 @shared_task
 def delete_outstock():
