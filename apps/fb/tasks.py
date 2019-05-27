@@ -704,7 +704,7 @@ def delete_outstock_ad(ads):
             ad.ad_status = ad_status
         else:
             ad.update_error = info
-        time.sleep(20)
+        time.sleep(30)
 
 
 
@@ -717,8 +717,8 @@ def delete_outstock_ad(ads):
 @shared_task
 def delete_outstock():
     delete_outstock_photos.apply_async((), queue='outstock')
-    delete_outstock_feeds()
-    delete_outstock_ads()
+    delete_outstock_feeds.apply_async((), queue='outstock')
+    delete_outstock_ads.apply_async((), queue='outstock')
 
 
 
