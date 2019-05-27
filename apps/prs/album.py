@@ -380,7 +380,7 @@ def prepare_promote_v2(page_no):
             count = int(cate_spus.count() / 2)
         print (cate, "一共有%s个广告可以准备" % (count))
 
-        for i in range(int(count/2)):
+        for i in range(int(count)):
 
             spu_pks = [cate_spus[i*2].pk, cate_spus[i*2+1].pk]
             print("当前处理 ", i, cate.tags, page_no, spu_pks)
