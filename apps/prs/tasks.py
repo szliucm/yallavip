@@ -6542,8 +6542,8 @@ def prepare_promote_image_album_v3(cate, page_no, lightin_spu_pks):
     handles = []
     for spu_pk in lightin_spu_pks:
         spu = Lightin_SPU.objects.get(pk=spu_pk)
-        #spu_im = make_spu_pure_image(target_page, spu)
-        spu_im = LightinAlbum.objects.get(yallavip_album__page=target_page, lightin_spu=spu).image_pure
+        spu_im = make_spu_pure_image(target_page, spu)
+        #spu_im = LightinAlbum.objects.get(yallavip_album__page=target_page, lightin_spu=spu).image_pure
         if spu_im:
             spus.append(spu)
             spu_ims.append(spu_im)
