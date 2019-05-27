@@ -20,7 +20,9 @@ class MyPage(models.Model):
 
     logo = models.ImageField(u'logo', upload_to='material/',default="",null=True, blank=True)
     price = models.ImageField(u'价格标签', upload_to='material/',default="",null=True, blank=True)
+
     promote = models.ImageField(u'促销标签', upload_to='material/',default="",null=True, blank=True)
+    promote_1 = models.ImageField(u'促销标签_1', upload_to='material/', default="", null=True, blank=True)
 
     active = models.BooleanField(u"page状态",default=False)
     promotable = models.BooleanField(u"推广状态", default=False)

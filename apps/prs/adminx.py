@@ -809,13 +809,14 @@ class Lightin_SPUAdmin(object):
 
         else:
             photos = "no photo"
+            return photos
 
     photo.short_description = "图片"
 
     import_export_args = {"import_resource_class": Lightin_SPUResource,
                           "export_resource_class": Lightin_SPUResource}
 
-    list_display = [ "SPU","handle", "sellable", "yallavip_price","en_name","cn_name", "photo","vendor","link", ]
+    list_display = [ "SPU","handle", "sellable","free_shipping",  "yallavip_price","free_shipping_price", "en_name","cn_name", "photo","vendor","link", ]
     # 'sku_name','img',
 
     search_fields = ["SPU","handle","breadcrumb", ]

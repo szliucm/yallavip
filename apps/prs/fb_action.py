@@ -1803,24 +1803,59 @@ def combo_ad_image_v3(spu_ims, spus_name,page_no):
     else:
         layer = None
 
-    # 整张图左上角打logo水印
+    # 整张图左上角打logo水印，右上角打上包邮，顶上正中间打买赠
 
     if page_no:
-        logo = MyPage.objects.get(page_no=page_no).logo
         domain = "http://admin.yallavip.com"
+        #logo
+        logo = MyPage.objects.get(page_no=page_no).logo
         destination_url = domain + os.path.join(logo.url)
         im_logo = get_remote_image(destination_url)
-
         if not im_logo:
             print ("logo image打不开")
             return None
-
         ims.append(im_logo)
 
-        # 把尺码水印文件加到新的图层上，然后把新旧图层融合
+        # 把水印文件加到新的图层上，然后把新旧图层融合
         layer_logo = Image.new('RGBA', layer.size, (0, 0, 0, 0))
         layer_logo.paste(im_logo, (0, 0))
         layer = Image.composite(layer_logo, layer, layer_logo)
+
+        #买增
+        promote_1 = MyPage.objects.get(page_no=page_no).promote_1
+        destination_url = domain + os.path.join(promote_1.url)
+        im_promote_1 = get_remote_image(destination_url)
+        if not im_promote_1:
+            print ("promote_1 image打不开")
+            return None
+        bw, bh = im_promote_1.size
+        ims.append(im_promote_1)
+
+        # 把水印文件加到新的图层上，然后把新旧图层融合
+        layer_promote_1 = Image.new('RGBA', layer.size, (0, 0, 0, 0))
+        layer_promote_1.paste(im_promote_1, (600-int(bw/2), 0))
+        layer = Image.composite(layer_promote_1, layer, layer_promote_1)
+
+
+        #包邮
+        promote = MyPage.objects.get(page_no=page_no).promote
+        destination_url = domain + os.path.join(promote.url)
+        im_promote = get_remote_image(destination_url)
+        if not im_promote:
+            print ("promote image打不开")
+            return None
+        bw, bh = im_promote.size
+        ims.append(im_promote)
+
+        # 把水印文件加到新的图层上，然后把新旧图层融合
+        layer_promote = Image.new('RGBA', layer.size, (0, 0, 0, 0))
+        layer_promote.paste(im_promote, (1200-bw, 0))
+        layer = Image.composite(layer_promote, layer, layer_promote)
+
+
+
+
+
 
     if layer:
         out = layer.convert('RGB')

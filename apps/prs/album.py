@@ -366,14 +366,14 @@ def prepare_promote_v2(page_no):
         print ("没有促销品类")
         return
 
-    # 取库存大、单价高、已经发布到相册 且还未打广告的商品
-    spus_all = Lightin_SPU.objects.filter(~Q(handle=""),handle__isnull=False,vendor="lightin", aded=False,sellable__gt=0)
+    # 取库存大、单价高、已经发布到相册 且还未打广告，单件包邮的商品
+    spus_all = Lightin_SPU.objects.filter(~Q(handle=""),handle__isnull=False,vendor="lightin", aded=False,sellable__gt=0, free_shipping=True)
 
     # 把主推品类的所有适合的产品都拿出来打广告
 
     for cate in cates:
         con = filter_product(cate)
-        cate_spus = spus_all.filter(con).order_by("?")
+        cate_spus = spus_all.filter(con).distinct().order_by("?")
         # 每次最多20个
         if cate_spus.count() > 20:
             count = 10

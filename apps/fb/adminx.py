@@ -74,8 +74,19 @@ class MyPageAdmin(object):
     show_promote.short_description = '促销标签'
     show_promote.allow_tags = True
 
+    def show_promote_1(self, obj):
+
+        try:
+            img = mark_safe('<img src="%s" width="100px" />' % (obj.promote_1.url,))
+        except Exception as e:
+            img = ''
+        return img
+
+    show_promote_1.short_description = '促销标签'
+    show_promote_1.allow_tags = True
+
     #actions = ["batch_updatepage", ]
-    list_display = ('page', 'page_no','is_published','active','link','message',  'show_logo','show_price','show_promote','promotable',
+    list_display = ('page', 'page_no','is_published','active','link','message',  'show_logo','show_price','show_promote','show_promote_1','promotable',
                    )
 
     list_editable = ['active','promotable',]
