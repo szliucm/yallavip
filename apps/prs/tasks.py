@@ -4756,7 +4756,7 @@ def prepare_a_album(lightinalbum_pk, free_delivery=False):
     spu = ori_lightinalbum.lightin_spu
     spu_pk = spu.pk
     print("正在处理spu", spu_pk)
-    updated = update_promote_price(spu, free_delivery)
+    #updated = update_promote_price(spu, free_delivery)
 
     lightinalbum = LightinAlbum.objects.get(pk=lightinalbum_pk)
 
@@ -4800,7 +4800,10 @@ def prepare_a_album(lightinalbum_pk, free_delivery=False):
 
         # 价格
 
-        price1 = int(spu.yallavip_price)
+        if spu.free_shipping:
+            price1 = int(spu.free_shipping_price)
+        else:
+            price1 = int(spu.yallavip_price)
 
         price2 = int(price1 * random.uniform(5, 6))
         # 为了减少促销的麻烦，文案里不写价格了
@@ -6431,7 +6434,7 @@ def prepare_promote_image_album_v2(yallavip_album_pk, lightinalbums_all):
         spu = lightinalbum.lightin_spu
         spu_pk = spu.pk
         print("正在处理spu", spu_pk )
-        updated = update_promote_price(spu)
+        #updated = update_promote_price(spu)
         #only for debug 0430
         #updated=True
         if updated:
