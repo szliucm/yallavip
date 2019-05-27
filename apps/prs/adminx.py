@@ -929,6 +929,11 @@ class Lightin_barcodeAdmin(object):
 @xadmin.sites.register(YallavipAlbum)
 class YallavipAlbumAdmin(object):
 
+    def free_shipping_count(self, obj):
+        return LightinAlbum.objects.filter(yallavip_album=obj,lightin_spu__free_shipping=True ).count()
+
+    free_shipping_count.short_description = "包邮数量"
+
     def published_count(self, obj):
         return LightinAlbum.objects.filter(yallavip_album=obj, published=True).count()
 
@@ -949,7 +954,7 @@ class YallavipAlbumAdmin(object):
 
     sellable.short_description = "sellable"
 
-    list_display = ["page","rule",  "album","published","published_count","readypublish_count", "topublish_count", "deleted", "active",]
+    list_display = ["page","rule",  "album","free_shipping_count","published","published_count","readypublish_count", "topublish_count", "deleted", "active",]
     # 'sku_name','img',
 
     search_fields = ["album__name",]
