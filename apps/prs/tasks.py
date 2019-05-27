@@ -6513,7 +6513,7 @@ def make_spu_pure_image(target_page, spu):
         # 打水印
         image_marked, image_pure_url, image_marked_url = yallavip_mark_image(image, spu.handle, str(price1),
                                                                              str(price2),
-                                                                             target_page)
+                                                                             target_page,spu.free_shipping)
         if not image_marked:
             error = "打水印失败"
 
