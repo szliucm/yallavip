@@ -6,6 +6,7 @@ from celery import shared_task, task
 import json
 import requests
 from  .models import *
+from prs.tasks import my_custom_sql
 
 def test_funmart_product():
     url = "http://47.96.143.109:9527/api/getInfoBySku"
@@ -45,7 +46,7 @@ def deal_funmart_orders():
 
 
 def download_skus():
-    from prs.tasks import my_custom_sql
+
 
     # 没有下载的sku就下载sku；
     skus = FunmartSKU.objects.filter(downloaded=False)
@@ -68,14 +69,16 @@ def download_spus():
     print(spu_list)
     FunmartSPU.objects.bulk_create(spu_list)
 
+    #外键关联
+    mysql = "update funmart_funmartspu p , funmart_funmartsku k set k.funmart_spu_id = p.id where p.SPU=k.SPU"
+    my_custom_sql(mysql)
+
     # spu没有下载的就下载spu
     funmartspus = FunmartSPU.objects.filter(downloaded=False)
     for spu in funmartspus:
         get_funmart_spu.apply_async((spu.SPU,), queue='funmart')
 
-    #外键关联
-    mysql = "update funmart_funmartspu p , funmart_funmartsku k set k.funmart_spu_id = p.id where p.SPU=k.SPU"
-    my_custom_sql(mysql)
+
 
 @shared_task
 def get_funmart_order(track_code):
