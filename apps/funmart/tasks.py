@@ -64,10 +64,11 @@ def deal_funmart_orders():
     skus = items.values_list("sku",flat=True).distinct()
 
     for sku in skus:
+        print("deal sku", sku)
         funmartskus = FunmartSKU.objects.filter(SKU=sku)
         if funmartskus and funmartskus[0].funmart_spu:
             continue
-
+        print("need to get")
         funmartsku = get_funmart_sku(sku)
         spu = funmartsku.SPU
 
@@ -96,6 +97,7 @@ def get_funmart_sku(sku):
         return_data = json.loads(r.text)
         if return_data.get("code") == '00001':
             data = return_data.get("data")
+            print("data")
 
             funmartsku = FunmartSKU.objects.create(
                 SPU=data.get("spu"),
@@ -106,6 +108,8 @@ def get_funmart_sku(sku):
 
             )
             return  funmartsku
+    else:
+        print (return_data.get("message"))
 
     return None
 
@@ -118,6 +122,7 @@ def get_funmart_spu(spu):
         return_data = json.loads(r.text)
         if return_data.get("code") == '00001':
             data = return_data.get("data")
+            print("data")
 
             funmartspu = FunmartSPU.objects.create(
                 SPU=data.get("spu"),
@@ -134,6 +139,8 @@ def get_funmart_spu(spu):
 
             )
             return  funmartspu
+    else:
+        print (return_data.get("message"))
 
     return None
 
