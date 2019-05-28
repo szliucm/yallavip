@@ -79,7 +79,8 @@ class FunmartSKUAdmin(object):
     def show_photo(self, obj):
 
         try:
-            img = mark_safe('<img src="%s" width="100px" />' % (obj.images[0]))
+            photo = obj.images.strip("[]").split(",")
+            img = mark_safe('<img src="%s" width="100px" />' % (photo[0].strip("'")))
             print(img)
         except Exception as e:
             img = ''
