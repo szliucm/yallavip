@@ -21,8 +21,8 @@ class FunmartOrderResource(resources.ModelResource):
         model = FunmartOrder
         skip_unchanged = True
         report_skipped = True
-        import_id_fields = ('order_no',)
-        fields = ('order_no','track_code',)
+        import_id_fields = ('track_code',)
+        fields = ('track_code',)
         # exclude = ()
 
 @xadmin.sites.register(FunmartOrder)

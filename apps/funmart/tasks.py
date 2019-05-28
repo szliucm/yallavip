@@ -18,10 +18,11 @@ def download_funmart_orders():
     url = " http://47.98.80.172/api/searchOrder"
     param = dict()
 #    param["order_no"] = "112115244631159272"
+#    param["track_code"] = "31548099306"
 
     orders = FunmartOrder.objects.filter(downloaded=False)
     for order in orders:
-        param["order_no"] = order.order_no
+        param["track_code"] = order.track_code
         r = requests.post(url, data=json.dumps(param))
         if r.status_code == 200:
             return_data = json.loads(r.text)
