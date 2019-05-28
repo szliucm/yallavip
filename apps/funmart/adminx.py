@@ -15,7 +15,6 @@ from import_export import resources, fields
 from import_export.widgets import ForeignKeyWidget
 from .models import *
 
-
 @xadmin.sites.register(FunmartOrder)
 class FunmartOrderAdmin(object):
 
