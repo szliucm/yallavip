@@ -50,8 +50,9 @@ def download_skus():
     # 没有下载的sku就下载sku；
     skus = FunmartSKU.objects.filter(downloaded=False)
     for sku in skus:
-        get_funmart_sku(sku.SKU)
+        get_funmart_sku.apply_async((sku.SKU,), queue='funmart')
 
+def download_spus():
     # 把新的spu插入到spu列表
     spus_to_add = FunmartSKU.objects.filter(downloaded=True).exclude(SPU__in=
                         FunmartSPU.objects.all().values_list(
@@ -70,7 +71,7 @@ def download_skus():
     # spu没有下载的就下载spu
     funmartspus = FunmartSPU.objects.filter(downloaded=False)
     for spu in funmartspus:
-        get_funmart_spu(spu.SPU)
+        get_funmart_spu.apply_async((spu.SPU), queue='funmart')
 
     #外键关联
     mysql = "update funmart_funmartspu p , funmart_funmartsku k set k.funmart_spu_id = p.id where p.SPU=k.SPU"
@@ -116,7 +117,7 @@ def get_funmart_order(track_code):
             print (return_data.get("message"))
 
 
-
+@shared_task
 def get_funmart_sku(sku):
     print("get sku info", sku)
     url = "http://47.96.143.109:9527/api/getInfoBySku"
@@ -147,6 +148,7 @@ def get_funmart_sku(sku):
 
     return None
 
+@shared_task
 def get_funmart_spu(spu):
     print("get spu info", spu)
 
