@@ -15,9 +15,19 @@ from import_export import resources, fields
 from import_export.widgets import ForeignKeyWidget
 from .models import *
 
+class FunmartOrderResource(resources.ModelResource):
+
+    class Meta:
+        model = FunmartOrder
+        skip_unchanged = True
+        report_skipped = True
+        import_id_fields = ('order_no',)
+        fields = ('order_no')
+        # exclude = ()
+
 @xadmin.sites.register(FunmartOrder)
 class FunmartOrderAdmin(object):
-
+    import_export_args = {'import_resource_class': FunmartOrderResource, 'export_resource_class': FunmartOrderResource}
 
     list_display = ["order_no", "track_code", "ship_method","upload_date", ]
     list_editable = []
