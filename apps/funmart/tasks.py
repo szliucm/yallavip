@@ -5,6 +5,7 @@ from celery import shared_task, task
 
 import json
 import requests
+from  .models import *
 
 def test_funmart_product():
     url = "http://47.96.143.109:9527/api/getInfoBySku"
