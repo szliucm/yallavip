@@ -41,7 +41,7 @@ class FunmartOrderAdmin(object):
 
 @xadmin.sites.register(FunmartOrderItem)
 class FunmartOrderItemAdmin(object):
-    list_display = ["order_no", "sku", "quantity", "price","ship_method",  ]
+    list_display = ["order_no", "sku", "quantity", "price",  ]
     list_editable = []
 
     search_fields = ["order_no", 'sku', ]
