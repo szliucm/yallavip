@@ -11,12 +11,10 @@ def test_funmart_product():
     url = "http://47.96.143.109:9527/api/getInfoBySku"
     param = dict()
     param["sku"] = "C-170809038"
-
-
     r = requests.post(url, data=json.dumps(param))
     print(r.status_code, r.text)
 
-def get_funmart_order():
+def download_funmart_orders():
     url = " http://47.98.80.172/api/searchOrder"
     param = dict()
 #    param["order_no"] = "112115244631159272"
@@ -58,4 +56,15 @@ def get_funmart_order():
             else:
                 print (return_data.get("message"))
 
+def deal_funmart_orders():
+    url = "http://47.96.143.109:9527/api/getInfoBySku"
+    param = dict()
+    items = FunmartOrderItem.objects.filter(order__downloaded=True, order__dealed=False)
 
+    skus = items.values_list("sku",flat=True).distinct()
+
+    for order in orders:
+        param["order_no"] = order.order_no
+        r = requests.post(url, data=json.dumps(param))
+        if r.status_code == 200:
+            return_data = json.loads(r.text)
