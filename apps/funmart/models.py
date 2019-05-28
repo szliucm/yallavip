@@ -52,6 +52,7 @@ class FunmartSPU(models.Model):
     link = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="link")
     sale_price = models.FloatField(verbose_name="sale_price", default=0)
     skuList = models.TextField(default='', null=True, blank=True, verbose_name="skuList")
+    downloaded = models.BooleanField(u"downloaded", default=False)
 
     class Meta:
         verbose_name = "Funmart SPU"
@@ -70,6 +71,7 @@ class FunmartSKU(models.Model):
 
     images = models.TextField(default='', null=True, blank=True, verbose_name="images")
     sale_price = models.FloatField(verbose_name="sale_price", default=0)
+    downloaded = models.BooleanField(u"downloaded", default=False)
 
     class Meta:
         verbose_name = "Funmart SKU"

@@ -58,34 +58,53 @@ def download_funmart_orders():
                 print (return_data.get("message"))
 
 def deal_funmart_orders():
+    #按批次扫描包裹，没有的sku则新增sku
+    skus_to_add = FunmartOrderItem.objects.filter(order__downloaded=True, order__dealed=False).exclude(sku__in=
+                        FunmartSKU.objects.all().values_list(
+                            'SKU',flat=True)).values_list("sku", flat=True).distinct()
 
-    #遍历所有没有处理的订单，sku没有的就下载sku，对应的spu没有下载的就下载spu
-    items = FunmartOrderItem.objects.filter(order__downloaded=True, order__dealed=False)
+    sku_list = []
+    for sku_to_add in skus_to_add:
+        sku = FunmartSKU(
+            SKU = sku_to_add,
+        )
 
-    skus = items.values_list("sku",flat=True).distinct()
+        sku_list.append(sku)
 
+    print(sku_list)
+    FunmartSKU.objects.bulk_create(sku_list)
+
+
+
+
+
+def download_skus():
+
+    # 没有下载的sku就下载sku；
+    skus = FunmartSKU.objects.filter(downloaded=False)
     for sku in skus:
-        print("deal sku", sku)
-        funmartskus = FunmartSKU.objects.filter(SKU=sku)
-        if funmartskus and funmartskus[0].funmart_spu:
-            continue
-        print("need to get")
-        funmartsku = get_funmart_sku(sku)
-        spu = funmartsku.SPU
+        get_funmart_sku(sku.SKU)
 
-        funmartspus = FunmartSPU.objects.filter(SPU=spu)
-        if funmartspus:
-            funmartsku.funmart_spu = funmartspus[0]
-        else:
-            funmartspu = get_funmart_spu(spu)
-            funmartsku.funmart_spu = funmartspu
+    # 把新的spu插入到spu列表
+    spus_to_add = FunmartSKU.objects.filter(downloaded=True).exclude(SPU__in=
+                        FunmartSPU.objects.all().values_list(
+                            'SPU', flat=True)).values_list("SPU", flat=True).distinct()
 
+    spu_list = []
+    for spu_to_add in spus_to_add:
+        spu = FunmartSPU(
+            SPU=spu_to_add,
+        )
+        spu_list.append(spu)
 
+    print(spu_list)
+    FunmartSPU.objects.bulk_create(spu_list)
 
-        funmartsku.save()
+    # spu没有下载的就下载spu
+    funmartspus = FunmartSPU.objects.filter(downloaded=False)
+    for spu in funmartspus:
+        get_funmart_spu(spu.SPU)
 
-    orders = items.values_list("order__pk",flat=True).distinct()
-    FunmartOrder.objects.filter(pk__in=list(orders)).update(dealed=True)
 
 
 
@@ -94,23 +113,27 @@ def get_funmart_sku(sku):
     param = dict()
     param["sku"] = sku
     r = requests.post(url, data=json.dumps(param))
+
     if r.status_code == 200:
         return_data = json.loads(r.text)
         if return_data.get("code") == '00001':
             data = return_data.get("data")
 
 
-            funmartsku = FunmartSKU.objects.create(
-                SPU=data.get("spu"),
-                SKU=data.get("sku"),
-                skuattr=data.get("skuattr"),
-                images=data.get("images"),
-                sale_price=data.get("price"),
-
-            )
+            funmartsku, created = FunmartSKU.objects.update_or_create(
+                                    SKU=data.get("sku"),
+                                    defaults={
+                                        'SPU' : data.get("spu"),
+                                        'skuattr' : data.get("skuattr"),
+                                        'images' : data.get("images"),
+                                        'sale_price' : data.get("price"),
+                                        'downloaded': True
+                                    }
+                                )
             return  funmartsku
-    else:
-        print (return_data.get("message"))
+
+        else:
+            print (return_data.get("message"))
 
     return None
 
@@ -125,20 +148,26 @@ def get_funmart_spu(spu):
             data = return_data.get("data")
 
 
-            funmartspu = FunmartSPU.objects.create(
+            funmartspu ,created= FunmartSPU.objects.update_or_create.create(
                 SPU=data.get("spu"),
-                cate_1=data.get("top_category"),
-                cate_2=data.get("second_category"),
-                cate_3=data.get("third_category"),
-                en_name=data.get("en_name"),
-                skuattr=data.get("skuattr"),
-                description=data.get("description"),
-                images=data.get("images"),
-                link=data.get("online_url"),
-                sale_price=data.get("price"),
-                skuList=data.get("skuList"),
-
+                defaults ={
+                    'cate_1': data.get("top_category"),
+                    'cate_2': data.get("second_category"),
+                    'cate_3': data.get("third_category"),
+                    'en_name': data.get("en_name"),
+                    'skuattr': data.get("skuattr"),
+                    'description': data.get("description"),
+                    'images': data.get("images"),
+                    'link': data.get("online_url"),
+                    'sale_price': data.get("price"),
+                    "skuList":data.get("skuList"),
+                    'downloaded': True
+                }
             )
+
+
+
+
             return  funmartspu
     else:
         print (return_data.get("message"))

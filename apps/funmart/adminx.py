@@ -42,7 +42,7 @@ class FunmartOrderAdmin(object):
     list_filter = ( "ship_method","upload_date", )
     ordering = []
 
-    actions = [ "update_funmart_orders"]
+    actions = [ ]
 
     def update_funmart_orders(self, request, queryset):
         from funmart.tasks import  download_funmart_orders
