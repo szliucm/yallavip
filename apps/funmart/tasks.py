@@ -72,20 +72,20 @@ def deal_funmart_orders():
         spu = funmartsku.SPU
 
         funmartspus = FunmartSPU.objects.filter(SPU=spu)
-        if not funmartspus:
+        if funmartspus:
+            funmartsku.funmart_spu = funmartspus[0]
+        else:
             funmartspu = get_funmart_spu(spu)
             funmartsku.funmart_spu = funmartspu
-        else:
-            funmartsku.funmart_spu = funmartspus[0]
+
+
 
         funmartsku.save()
 
+    orders = items.values_list("order__pk",flat=True).distinct()
+    FunmartOrder.objects.filter(pk__in=orders).update(order__dealed=True)
 
 
-        param["order_no"] = order.order_no
-        r = requests.post(url, data=json.dumps(param))
-        if r.status_code == 200:
-            return_data = json.loads(r.text)
 
 def get_funmart_sku(sku):
     url = "http://47.96.143.109:9527/api/getInfoBySku"
@@ -100,9 +100,9 @@ def get_funmart_sku(sku):
             funmartsku = FunmartSKU.objects.create(
                 SPU=data.get("spu"),
                 SKU=data.get("sku"),
-                skuattr=item.get("skuattr"),
-                image=item.get("images"),
-                sale_price=item.get("price"),
+                skuattr=data.get("skuattr"),
+                image=data.get("images"),
+                sale_price=data.get("price"),
 
             )
             return  funmartsku
@@ -122,15 +122,15 @@ def get_funmart_spu(spu):
             funmartspu = FunmartSPU.objects.create(
                 SPU=data.get("spu"),
                 cate_1=data.get("top_category"),
-                cate_2=item.get("second_category"),
-                cate_3=item.get("third_category"),
-                en_name=item.get("en_name"),
+                cate_2=data.get("second_category"),
+                cate_3=data.get("third_category"),
+                en_name=data.get("en_name"),
                 skuattr=data.get("skuattr"),
                 description=data.get("description"),
-                images=item.get("images"),
-                link=item.get("online_url"),
-                sale_price=item.get("price"),
-                skuList=item.get("skuList"),
+                images=data.get("images"),
+                link=data.get("online_url"),
+                sale_price=data.get("price"),
+                skuList=data.get("skuList"),
 
             )
             return  funmartspu
