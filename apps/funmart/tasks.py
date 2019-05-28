@@ -43,7 +43,7 @@ def get_funmart_order():
                         order = order,
                         order_no = data.get("order_no"),
                         sku = item.get("sku"),
-                        quantity = item.get("quantity"),
+                        quantity = item.get("qty"),
                         price = item.get("price"),
 
 
