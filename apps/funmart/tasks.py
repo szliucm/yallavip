@@ -57,14 +57,84 @@ def download_funmart_orders():
                 print (return_data.get("message"))
 
 def deal_funmart_orders():
-    url = "http://47.96.143.109:9527/api/getInfoBySku"
-    param = dict()
+
+    #遍历所有没有处理的订单，sku没有的就下载sku，对应的spu没有下载的就下载spu
     items = FunmartOrderItem.objects.filter(order__downloaded=True, order__dealed=False)
 
     skus = items.values_list("sku",flat=True).distinct()
 
-    for order in orders:
+    for sku in skus:
+        funmartskus = FunmartSKU.objects.filter(SKU=sku)
+        if funmartskus and funmartskus[0].funmart_spu:
+            continue
+
+        funmartsku = get_funmart_sku(sku)
+        spu = funmartsku.SPU
+
+        funmartspus = FunmartSPU.objects.filter(SPU=spu)
+        if not funmartspus:
+            funmartspu = get_funmart_spu(spu)
+            funmartsku.funmart_spu = funmartspu
+        else:
+            funmartsku.funmart_spu = funmartspus[0]
+
+        funmartsku.save()
+
+
+
         param["order_no"] = order.order_no
         r = requests.post(url, data=json.dumps(param))
         if r.status_code == 200:
             return_data = json.loads(r.text)
+
+def get_funmart_sku(sku):
+    url = "http://47.96.143.109:9527/api/getInfoBySku"
+    param = dict()
+    param["sku"] = sku
+    r = requests.post(url, data=json.dumps(param))
+    if r.status_code == 200:
+        return_data = json.loads(r.text)
+        if return_data.get("code") == '00001':
+            data = return_data.get("data")
+
+            funmartsku = FunmartSKU.objects.create(
+                SPU=data.get("spu"),
+                SKU=data.get("sku"),
+                skuattr=item.get("skuattr"),
+                image=item.get("images"),
+                sale_price=item.get("price"),
+
+            )
+            return  funmartsku
+
+    return None
+
+def get_funmart_spu(spu):
+    url = "http://47.96.143.109:9527/api/getInfoBySku"
+    param = dict()
+    param["sku"] = spu
+    r = requests.post(url, data=json.dumps(param))
+    if r.status_code == 200:
+        return_data = json.loads(r.text)
+        if return_data.get("code") == '00001':
+            data = return_data.get("data")
+
+            funmartspu = FunmartSPU.objects.create(
+                SPU=data.get("spu"),
+                cate_1=data.get("top_category"),
+                cate_2=item.get("second_category"),
+                cate_3=item.get("third_category"),
+                en_name=item.get("en_name"),
+                skuattr=data.get("skuattr"),
+                description=data.get("description"),
+                images=item.get("images"),
+                link=item.get("online_url"),
+                sale_price=item.get("price"),
+                skuList=item.get("skuList"),
+
+            )
+            return  funmartspu
+
+    return None
+
+
