@@ -76,7 +76,18 @@ class FunmartSPUAdmin(object):
 
 @xadmin.sites.register(FunmartSKU)
 class FunmartSKUAdmin(object):
-    list_display = ["SKU", "SPU", "skuattr", "images", "sale_price" ]
+    def show_photo(self, obj):
+
+        try:
+            img = mark_safe('<img src="%s" width="100px" />' % (obj.images[0]))
+        except Exception as e:
+            img = ''
+        return img
+
+    show_photo.short_description = 'photo'
+    show_photo.allow_tags = True
+
+    list_display = ["SKU", "SPU", "skuattr", "images", "sale_price" ,"show_photo",]
     list_editable = []
 
     search_fields = ["SKU", 'SPU', ]
