@@ -78,6 +78,7 @@ def download_skus():
 
 @shared_task
 def get_funmart_order(track_code):
+    order = FunmartOrder.objects.get(track_code=track_code)
     url = " http://47.98.80.172/api/searchOrder"
     param = dict()
     param["track_code"] = track_code
