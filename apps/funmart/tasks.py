@@ -71,7 +71,7 @@ def download_spus():
     # spu没有下载的就下载spu
     funmartspus = FunmartSPU.objects.filter(downloaded=False)
     for spu in funmartspus:
-        get_funmart_spu.apply_async((spu.SPU), queue='funmart')
+        get_funmart_spu.apply_async((spu.SPU,), queue='funmart')
 
     #外键关联
     mysql = "update funmart_funmartspu p , funmart_funmartsku k set k.funmart_spu_id = p.id where p.SPU=k.SPU"
