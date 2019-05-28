@@ -42,8 +42,15 @@ class FunmartOrderAdmin(object):
     list_filter = ( "ship_method","upload_date", )
     ordering = []
 
-    actions = [ ]
+    actions = [ "update_funmart_orders"]
 
+    def update_funmart_orders(self, request, queryset):
+        from funmart.tasks import  download_funmart_orders
+
+        download_funmart_orders()
+        return
+
+    update_funmart_orders.short_description = "update funmart orders"
 
 @xadmin.sites.register(FunmartOrderItem)
 class FunmartOrderItemAdmin(object):
