@@ -6,7 +6,7 @@ import json
 import time
 from datetime import datetime, timedelta, timezone
 import base64
-
+from django.db.models import Sum
 import numpy as np, re
 import xadmin
 from xadmin.layout import Main, Side, Fieldset, Row, AppendedText
