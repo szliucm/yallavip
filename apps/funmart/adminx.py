@@ -51,7 +51,7 @@ class FunmartOrderItemAdmin(object):
     actions = []
 
 @xadmin.sites.register(FunmartSPU)
-class FunmartSPUItemAdmin(object):
+class FunmartSPUAdmin(object):
     list_display = ["SPU", "cate_1", "cate_2", "cate_3", "en_name", "skuattr", "images", "link","sale_price", "skuList", ]
     list_editable = []
 
@@ -61,8 +61,8 @@ class FunmartSPUItemAdmin(object):
 
     actions = []
 
-@xadmin.sites.register(FunmartOrderItem)
-class FunmartOrderItemAdmin(object):
+@xadmin.sites.register(FunmartSKU)
+class FunmartSKUAdmin(object):
     list_display = ["SKU", "SPU", "skuattr", "images", "sale_price" ]
     list_editable = []
 
