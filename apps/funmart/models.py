@@ -68,7 +68,7 @@ class FunmartSKU(models.Model):
 
     skuattr = models.TextField(default='', null=True, blank=True, verbose_name="属性字典")
 
-    image = models.CharField(default='', max_length=200, null=True, blank=True, verbose_name="sku图")
+    image = models.TextField(default='', null=True, blank=True, verbose_name="sku图")
     sale_price = models.FloatField(verbose_name="供方实际销售价", default=0)
 
     class Meta:
