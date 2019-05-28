@@ -30,6 +30,7 @@ def download_funmart_orders():
                 data = return_data.get("data")
 
                 order.track_code = data.get("track_code")
+                order.order_no = data.get("order_no")
                 order.ship_method = data.get("ship_method")
                 order.downloaded = True
                 order.save()
