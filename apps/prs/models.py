@@ -527,7 +527,7 @@ class Lightin_SPU(models.Model):
     cate_1 = models.CharField(u'cate_1', default='', max_length=256, null=True, blank=True)
     cate_2 = models.CharField(u'cate_2', default='', max_length=256, null=True, blank=True)
     cate_3 = models.CharField(u'cate_3', default='', max_length=256, null=True, blank=True)
-    cate_3 = models.CharField(u'cate_3', default='', max_length=256, null=True, blank=True)
+
 
     vendor_sale_price = models.FloatField(verbose_name="供方销售价",default=0)
     vendor_supply_price = models.FloatField(verbose_name="供方采购价", default=0)
