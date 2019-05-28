@@ -2375,7 +2375,11 @@ def sync_Shipped_order_lightin(days=1):
                     continue
                 print("当前处理订单 ", order_no, data.get("order_status"), data.get("tracking_no"))
 
-                order = Order.objects.get(order_no=order_no)
+                try:
+                    order = Order.objects.get(order_no=order_no)
+                except:
+                    print("not found order", order_no)
+                    continue
                 if order:
                     send_time = None
 
