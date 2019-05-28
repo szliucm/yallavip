@@ -15,48 +15,13 @@ def test_funmart_product():
     print(r.status_code, r.text)
 
 def download_funmart_orders():
-    url = " http://47.98.80.172/api/searchOrder"
-    param = dict()
-#    param["order_no"] = "112115244631159272"
-#    param["track_code"] = "31548099306"
+
 
     orders = FunmartOrder.objects.filter(downloaded=False)
     for order in orders:
-        param["track_code"] = order.track_code
-        r = requests.post(url, data=json.dumps(param))
-        if r.status_code == 200:
-            return_data = json.loads(r.text)
-            if return_data.get("code") == '00001':
-                data = return_data.get("data")
 
-                order.track_code = data.get("track_code")
-                order.order_no = data.get("order_no")
-                order.ship_method = data.get("ship_method")
-                order.downloaded = True
-                order.save()
+        get_funmart_order.apply_async((order.track_code,), queue='funmart')
 
-                orderitems = data.get("orderItems")
-
-                FunmartOrderItem.objects.filter(order_no = data.get("order_no")).delete()
-                orderitem_list = []
-                for item in orderitems:
-                    orderitem = FunmartOrderItem(
-                        order = order,
-                        order_no = data.get("order_no"),
-                        sku = item.get("sku"),
-                        quantity = item.get("qty"),
-                        price = item.get("price"),
-
-
-
-                    )
-
-                    orderitem_list.append(orderitem)
-
-                print(orderitem_list)
-                FunmartOrderItem.objects.bulk_create(orderitem_list)
-            else:
-                print (return_data.get("message"))
 
 def deal_funmart_orders():
     #按批次扫描包裹，没有的sku则新增sku
@@ -80,6 +45,7 @@ def deal_funmart_orders():
 
 
 def download_skus():
+    from prs.tasks import my_custom_sql
 
     # 没有下载的sku就下载sku；
     skus = FunmartSKU.objects.filter(downloaded=False)
@@ -106,6 +72,47 @@ def download_skus():
     for spu in funmartspus:
         get_funmart_spu(spu.SPU)
 
+    #外键关联
+    mysql = "update funmart_funmartspu p , funmart_funmartsku k set k.funmart_spu_id = p.id where p.SPU=k.SPU"
+    my_custom_sql(mysql)
+
+
+def get_funmart_order(track_code):
+    url = " http://47.98.80.172/api/searchOrder"
+    param = dict()
+    param["track_code"] = track_code
+    r = requests.post(url, data=json.dumps(param))
+    if r.status_code == 200:
+        return_data = json.loads(r.text)
+        if return_data.get("code") == '00001':
+            data = return_data.get("data")
+
+            order.track_code = data.get("track_code")
+            order.order_no = data.get("order_no")
+            order.ship_method = data.get("ship_method")
+            order.downloaded = True
+            order.save()
+
+            orderitems = data.get("orderItems")
+
+            FunmartOrderItem.objects.filter(order_no=data.get("order_no")).delete()
+            orderitem_list = []
+            for item in orderitems:
+                orderitem = FunmartOrderItem(
+                    order=order,
+                    order_no=data.get("order_no"),
+                    sku=item.get("sku"),
+                    quantity=item.get("qty"),
+                    price=item.get("price"),
+
+                )
+
+                orderitem_list.append(orderitem)
+
+            print(orderitem_list)
+            FunmartOrderItem.objects.bulk_create(orderitem_list)
+        else:
+            print (return_data.get("message"))
 
 
 
