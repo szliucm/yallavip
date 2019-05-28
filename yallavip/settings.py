@@ -61,6 +61,7 @@ INSTALLED_APPS = [
     'shop',
     'mytest',
     'tomtop',
+    'funmart',
 
 
     'import_export',
