@@ -152,7 +152,7 @@ def get_funmart_spu(spu):
             data = return_data.get("data")
 
 
-            funmartspu ,created= FunmartSPU.objects.update_or_create.create(
+            funmartspu ,created= FunmartSPU.objects.update_or_create(
                 SPU=data.get("spu"),
                 defaults ={
                     'cate_1': data.get("top_category"),
