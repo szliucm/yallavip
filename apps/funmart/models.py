@@ -7,7 +7,7 @@ class FunmartOrder(models.Model):
     track_code = models.CharField(u'track_code', default='', max_length=50, blank=True)
     ship_method = models.CharField(u'ship_method', default='', max_length=50, blank=True)
     upload_date = models.DateField(u'扫描日期', auto_now=True, null=True, blank=True)
-    downloaded =  = models.BooleanField(u"已下载", default=False)
+    downloaded =  models.BooleanField(u"已下载", default=False)
 
     class Meta:
         verbose_name = "Funmart 订单"
