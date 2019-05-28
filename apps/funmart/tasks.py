@@ -84,7 +84,7 @@ def deal_funmart_orders():
         funmartsku.save()
 
     orders = items.values_list("order__pk",flat=True).distinct()
-    FunmartOrder.objects.filter(pk__in=orders).update(order__dealed=True)
+    FunmartOrder.objects.filter(pk__in=list(orders)).update(dealed=True)
 
 
 
@@ -97,13 +97,13 @@ def get_funmart_sku(sku):
         return_data = json.loads(r.text)
         if return_data.get("code") == '00001':
             data = return_data.get("data")
-            print("data")
+
 
             funmartsku = FunmartSKU.objects.create(
                 SPU=data.get("spu"),
                 SKU=data.get("sku"),
                 skuattr=data.get("skuattr"),
-                image=data.get("images"),
+                images=data.get("images"),
                 sale_price=data.get("price"),
 
             )
@@ -122,7 +122,7 @@ def get_funmart_spu(spu):
         return_data = json.loads(r.text)
         if return_data.get("code") == '00001':
             data = return_data.get("data")
-            print("data")
+
 
             funmartspu = FunmartSPU.objects.create(
                 SPU=data.get("spu"),
