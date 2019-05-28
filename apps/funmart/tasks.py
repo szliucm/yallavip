@@ -76,7 +76,7 @@ def download_skus():
     mysql = "update funmart_funmartspu p , funmart_funmartsku k set k.funmart_spu_id = p.id where p.SPU=k.SPU"
     my_custom_sql(mysql)
 
-
+@shared_task
 def get_funmart_order(track_code):
     url = " http://47.98.80.172/api/searchOrder"
     param = dict()
