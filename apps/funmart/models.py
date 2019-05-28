@@ -61,7 +61,7 @@ class FunmartSPU(models.Model):
 
 class FunmartSPU(models.Model):
     funmart_spu = models.ForeignKey(FunmartSPU, null=True, blank=True, verbose_name="SPU外键",
-                                    related_name="spu_sku", on_delete=models.CASCADE)
+                                    related_name="funmartspu_sku", on_delete=models.CASCADE)
     SPU = models.CharField(default='',max_length=300, null=True, blank=True, verbose_name="SPU")
     SKU = models.CharField(default='', max_length=100, null=True, blank=True, verbose_name="SKU")
 
