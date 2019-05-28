@@ -109,6 +109,7 @@ def download_skus():
 
 
 def get_funmart_sku(sku):
+    print("get sku info", sku)
     url = "http://47.96.143.109:9527/api/getInfoBySku"
     param = dict()
     param["sku"] = sku
@@ -138,6 +139,8 @@ def get_funmart_sku(sku):
     return None
 
 def get_funmart_spu(spu):
+    print("get spu info", spu)
+
     url = "http://47.96.143.109:9527/api/getInfoBySku"
     param = dict()
     param["sku"] = spu
