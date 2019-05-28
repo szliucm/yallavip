@@ -34,4 +34,4 @@ class FunmartOrderItem(models.Model):
 
 
     def __str__(self):
-        return self.order_no
+        return self.order_no + '_' + self.sku

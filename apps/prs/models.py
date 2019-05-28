@@ -40,7 +40,7 @@ class MyCategory(models.Model):
 
     def __str__(self):
         #return self.tags
-        return str(self.level) +'----'+ self.name
+        return str(self.level) +'-'+ self.name
 
 
 class SizeAbsLabel(models.Model):
