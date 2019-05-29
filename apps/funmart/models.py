@@ -52,6 +52,32 @@ class ScanOrder(models.Model):
     track_code = models.CharField(u'track_code', default='', max_length=50, blank=True)
     batch_no = models.IntegerField(u'batch_no', default=0, blank=True, null=True)
     downloaded = models.BooleanField(u"downloaded", default=False)
+    shelfed = models.BooleanField(u"shelfed", default=False)
+
+    class Meta:
+        verbose_name = "ScanOrder"
+        verbose_name_plural = verbose_name
+
+
+    def __str__(self):
+        return self.track_code
+
+class BatchSKU(models.Model):
+
+
+    SKU = models.CharField(default='', max_length=100, null=True, blank=True, verbose_name="SKU")
+    order_count = models.IntegerField(u'batch_count', default=0, blank=True, null=True)
+    quantity = models.IntegerField(u'quantity', default=0, blank=True, null=True)
+
+    ACTION = (
+        ("Shelf", "Shelf"),
+        ("Normal_Shelf", "Normal_Shelf"),
+        ("Normal_Case", "Normal_Case"),
+        ("Drug_No_Size", "Drug_No_Size"),
+        ("Drug_Size", "Drug_Size"),
+
+    )
+    action = models.CharField(choices=ACTION,default='', max_length=100, null=True, blank=True, verbose_name="Action")
 
     class Meta:
         verbose_name = "ScanOrder"

@@ -232,12 +232,8 @@ def deal_image(im,logo = None ,handle = None, price = None,price1 = None, price2
 
 
         # 根据不同促销形式，打标到不同位置'
-        if (version == 'combo'):
-            layer.paste(mark, (bw - 300 - int(lw * scale / 2), 0))
-        elif (version == 'surprise'):
-            layer.paste(mark, (bw - int(lw * scale), 0))
-        else:
-            layer.paste(mark, ( int((bw-lw)/2) , 0))
+
+        layer.paste(mark, ( int((bw-lw)/2) , 0))
 
         out = Image.composite(layer, im, layer)
 

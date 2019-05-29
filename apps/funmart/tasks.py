@@ -239,6 +239,10 @@ def lable_spus():
     drug_spus = spus_count.filter(order_count__lt=5).values_list("funmart_sku__SPU", flat=True)
     FunmartSPU.objects.filter(SPU__in=list(drug_spus)).update(sale_type="drug")
 
+def batch_sku():
+    track_code_list = list(ScanOrder.objects.filter(downloaded=True,shelfed=False ).values_list("track_code",flat=True))
+    sku_counts = FunmartOrderItem.objects.filter(track_code__in=track_code_list).values("sku").annotate(order_count=Count("track_code",distinct=True), quantity=Sum(quantity))
+
 
 
 
