@@ -19,6 +19,8 @@ class FunmartSPU(models.Model):
     skuList = models.TextField(default='', null=True, blank=True, verbose_name="skuList")
     downloaded = models.BooleanField(u"downloaded", default=False)
 
+    sale_type = models.CharField(default='', max_length=30, null=True, blank=True, verbose_name="sale_type")
+
     class Meta:
         verbose_name = "Funmart SPU"
         verbose_name_plural = verbose_name

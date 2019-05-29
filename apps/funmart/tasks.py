@@ -7,6 +7,7 @@ import json
 import requests
 from  .models import *
 from prs.tasks import my_custom_sql
+from django.db.models import Count
 
 def test_funmart_product():
     url = "http://47.96.143.109:9527/api/getInfoBySku"
@@ -196,7 +197,19 @@ def get_funmart_spu(spu):
 #5<订单数<30,normal
 #订单数<5， drug
 def lable_spus():
-    FunmartOrderItem.objects.values("sku")
+    mysql = "update funmart_funmartorderitem i , funmart_funmartsku k set i.funmart_sku_id = k.id where i.sku=k.SKU"
+    my_custom_sql(mysql)
+
+    spus_count = FunmartOrderItem.objects.filter(~Q(funmart_sku__SPU="")).values("funmart_sku__SPU").annotate(order_count=Count("order_no",distinct=True))
+
+    hot_spus =  spus_count.filter(order_count__gte=30).values_list("funmart_sku__SPU", flat=True)
+    FunmartSPU.object.filter(SPU__in = hot_spus).update(sale_type="hot")
+
+    normal_spus = spus_count.filter(order_count__lt=30,order_count__gte=5).values_list("funmart_sku__SPU", flat=True)
+    FunmartSPU.object.filter(SPU__in=normal_spus).update(sale_type="normal")
+
+    drug_spus = spus_count.filter(order_count__lt=5).values_list("funmart_sku__SPU", flat=True)
+    FunmartSPU.object.filter(SPU__in=drug_spus).update(sale_type="drug")
 
 
 
