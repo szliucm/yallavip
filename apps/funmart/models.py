@@ -47,6 +47,19 @@ class FunmartSKU(models.Model):
     def __str__(self):
         return self.SKU
 
+class ScanOrder(models.Model):
+    track_code = models.CharField(u'track_code', default='', max_length=50, blank=True)
+    batch_no = models.IntegerField(u'batch_no', default=0, blank=True, null=True)
+    downloaded = models.BooleanField(u"downloaded", default=False)
+
+    class Meta:
+        verbose_name = "ScanOrder"
+        verbose_name_plural = verbose_name
+
+
+    def __str__(self):
+        return self.track_code
+
 class FunmartOrder(models.Model):
     order_no = models.CharField(u'order_no', default='', max_length=50, blank=True)
     track_code = models.CharField(u'track_code', default='', max_length=50, blank=True)

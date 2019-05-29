@@ -16,19 +16,38 @@ from import_export.widgets import ForeignKeyWidget
 from .models import *
 from django.utils.safestring import mark_safe
 
-class FunmartOrderResource(resources.ModelResource):
+class ScanOrderResource(resources.ModelResource):
 
     class Meta:
-        model = FunmartOrder
+        model = ScanOrder
         skip_unchanged = True
         report_skipped = True
         import_id_fields = ('track_code','batch_no',)
         fields = ('track_code','batch_no',)
         # exclude = ()
 
+
+@xadmin.sites.register(ScanOrder)
+class ScanOrderAdmin(object):
+    import_export_args = {'import_resource_class': ScanOrderResource, 'export_resource_class': ScanOrderResource}
+
+
+
+    list_display = ["track_code", "batch_no","downloaded",   ]
+    list_editable = []
+
+    search_fields = ['track_code', ]
+    list_filter = ( "batch_no","downloaded",  )
+    ordering = []
+
+    actions = [ ]
+
+
+
+
 @xadmin.sites.register(FunmartOrder)
 class FunmartOrderAdmin(object):
-    import_export_args = {'import_resource_class': FunmartOrderResource, 'export_resource_class': FunmartOrderResource}
+
 
     def item_count(self, obj):
 
