@@ -21,6 +21,9 @@ class FunmartOrder(models.Model):
 class FunmartOrderItem(models.Model):
     order = models.ForeignKey(FunmartOrder, related_name='funmartorder_orderitem', null=False, on_delete=models.CASCADE,
                               verbose_name="Order")
+    funmart_sku = models.ForeignKey(FunmartSKU, null=True, blank=True, verbose_name="funmart_sku",
+                                    related_name="funmartsku_order", on_delete=models.CASCADE)
+
     order_no = models.CharField(u'order_no', default='', max_length=50, blank=True)
     sku = models.CharField(u'sku', default='', max_length=50, blank=True)
 

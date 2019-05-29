@@ -138,8 +138,8 @@ def get_funmart_sku(sku):
                                     SKU=data.get("sku"),
                                     defaults={
                                         'SPU' : data.get("spu"),
-                                        'skuattr' : data.get("skuattr"),
-                                        'images' : data.get("images"),
+                                        'skuattr' : json.dumps(data.get("skuattr")),
+                                        'images' : json.dumps(data.get("images")),
                                         'sale_price' : data.get("price"),
                                         'downloaded': True
                                     }
@@ -172,12 +172,12 @@ def get_funmart_spu(spu):
                     'cate_2': data.get("second_category"),
                     'cate_3': data.get("third_category"),
                     'en_name': data.get("en_name"),
-                    'skuattr': data.get("skuattr"),
+                    'skuattr': json.dumps(data.get("skuattr")),
                     'description': data.get("description"),
-                    'images': data.get("images"),
+                    'images': json.dumps(data.get("images")),
                     'link': data.get("online_url"),
                     'sale_price': data.get("price"),
-                    "skuList":data.get("skuList"),
+                    "skuList":json.dumps(data.get("skuList")),
                     'downloaded': True
                 }
             )
@@ -190,5 +190,14 @@ def get_funmart_spu(spu):
         print (return_data.get("message"))
 
     return None
+
+#根据订单汇总，给spu打标
+#订单数>30,hot
+#5<订单数<30,normal
+#订单数<5， drug
+def lable_spus():
+    FunmartOrderItem.objects.values("sku")
+
+
 
 
