@@ -118,7 +118,7 @@ def fill_image(image):
     return new_image
 
 #各种打标
-def deal_image(im,logo = None ,handle = None, price = None,price1 = None, price2=None, promote = None,album_promote = None,type="album"):
+def deal_image(im,logo = None ,handle = None, price = None,price1 = None, price2=None, promote = None,promote_1 = None,album_promote = None,type="album"):
     version = ''  # 调试用
 
 
@@ -220,6 +220,24 @@ def deal_image(im,logo = None ,handle = None, price = None,price1 = None, price2
             layer.paste(mark, (bw - int(lw * scale), 0))
         else:
             layer.paste(mark, (bw - int(lw * scale ), 0))
+
+        out = Image.composite(layer, im, layer)
+
+    #图片上方中心的促销标
+    if promote_1:
+
+        mark = Image.open(promote_1)
+        lw, lh = mark.size
+        mark = mark.resize((int(lw * scale), int(lh * scale)), Image.ANTIALIAS)
+
+
+        # 根据不同促销形式，打标到不同位置'
+        if (version == 'combo'):
+            layer.paste(mark, (bw - 300 - int(lw * scale / 2), 0))
+        elif (version == 'surprise'):
+            layer.paste(mark, (bw - int(lw * scale), 0))
+        else:
+            layer.paste(mark, ( int((bw-lw)/2) , 0))
 
         out = Image.composite(layer, im, layer)
 
@@ -375,8 +393,10 @@ def yallavip_mark_image(ori_image, handle, price1, price2, target_page, free_shi
     logo = target_page.logo
     if free_shipping:
         promote = target_page.promote
+        promote_1 = target_page.promote_1
     else:
         promote = None
+        promote_1 = None
 
     price = target_page.price
 
@@ -387,7 +407,7 @@ def yallavip_mark_image(ori_image, handle, price1, price2, target_page, free_shi
         return  False, None,None
 
     #制作水印图
-    pure, image = deal_image(image, logo, handle=handle, price=price, promote=promote,  price1=price1, price2=price2, album_promote=None,type="album")
+    pure, image = deal_image(image, logo, handle=handle, price=price, promote=promote, promote_1=promote_1, price1=price1, price2=price2, album_promote=None,type="album")
 
     # 处理完的图片保存到本地
 

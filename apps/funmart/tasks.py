@@ -7,7 +7,7 @@ import json
 import requests
 from  .models import *
 from prs.tasks import my_custom_sql
-from django.db.models import Count
+from django.db.models import Count,Q
 
 def test_funmart_product():
     url = "http://47.96.143.109:9527/api/getInfoBySku"
