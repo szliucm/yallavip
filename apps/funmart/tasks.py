@@ -203,13 +203,13 @@ def lable_spus():
     spus_count = FunmartOrderItem.objects.filter(~Q(funmart_sku__SPU="")).values("funmart_sku__SPU").annotate(order_count=Count("order_no",distinct=True))
 
     hot_spus =  spus_count.filter(order_count__gte=30).values_list("funmart_sku__SPU", flat=True)
-    FunmartSPU.object.filter(SPU__in = hot_spus).update(sale_type="hot")
+    FunmartSPU.objects.filter(SPU__in = list(hot_spus)).update(sale_type="hot")
 
     normal_spus = spus_count.filter(order_count__lt=30,order_count__gte=5).values_list("funmart_sku__SPU", flat=True)
-    FunmartSPU.object.filter(SPU__in=normal_spus).update(sale_type="normal")
+    FunmartSPU.objects.filter(SPU__in=list(normal_spus)).update(sale_type="normal")
 
     drug_spus = spus_count.filter(order_count__lt=5).values_list("funmart_sku__SPU", flat=True)
-    FunmartSPU.object.filter(SPU__in=drug_spus).update(sale_type="drug")
+    FunmartSPU.objects.filter(SPU__in=list(drug_spus)).update(sale_type="drug")
 
 
 
