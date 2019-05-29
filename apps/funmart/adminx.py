@@ -117,3 +117,16 @@ class FunmartSKUAdmin(object):
     ordering = []
 
     actions = []
+
+@xadmin.sites.register(BatchSKU)
+class BatchSKUAdmin(object):
+
+
+    list_display = ["SKU", "sale_type", "order_count",  "quantity" ,"action",]
+    list_editable = []
+
+    search_fields = ["SKU",  ]
+    list_filter = ( "sale_type","action",)
+    ordering = []
+
+    actions = []

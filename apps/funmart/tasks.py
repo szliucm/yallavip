@@ -7,7 +7,7 @@ import json
 import requests
 from  .models import *
 from prs.tasks import my_custom_sql
-from django.db.models import Count,Q
+from django.db.models import Count,Q,Sum
 
 def test_funmart_product():
     url = "http://47.96.143.109:9527/api/getInfoBySku"
@@ -248,7 +248,7 @@ def batch_sku():
     skus = FunmartSKU.objects.filter(SKU__in=skus_list).values("SKU","funmart_spu__sale_type" ,"skuattr")
 
 
-    BatchSKU.objects.delete()
+    BatchSKU.objects.all().delete()
     batch_sku_list=[]
     for sku in skus_list:
         sku_count = sku_counts.get(sku=sku)
@@ -260,7 +260,7 @@ def batch_sku():
         sale_type = funmart_sku.get("funmart_spu__sale_type")
         sku_attr = funmart_sku.get("skuattr")
 
-        if sale_type == hot:
+        if sale_type == "hot":
             action = "Shelf"
 
         elif sale_type == "normal":
