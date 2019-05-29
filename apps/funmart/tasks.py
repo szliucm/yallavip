@@ -241,7 +241,53 @@ def lable_spus():
 
 def batch_sku():
     track_code_list = list(ScanOrder.objects.filter(downloaded=True,shelfed=False ).values_list("track_code",flat=True))
-    sku_counts = FunmartOrderItem.objects.filter(track_code__in=track_code_list).values("sku").annotate(order_count=Count("track_code",distinct=True), quantity=Sum(quantity))
+    orderitems =  FunmartOrderItem.objects.filter(track_code__in=track_code_list)
+    skus_list = orderitems.values_list("sku",flat=True)
+
+    sku_counts = orderitems.values("sku").annotate(order_count=Count("track_code",distinct=True), quantity=Sum("quantity"))
+    skus = FunmartSKU.objects.filter(SKU__in=skus_list).values("SKU","funmart_spu__sale_type" ,"skuattr")
+
+
+    BatchSKU.objects.delete()
+    batch_sku_list=[]
+    for sku in skus_list:
+        sku_count = sku_counts.get(sku=sku)
+        funmart_sku = skus.get(SKU = sku)
+
+        order_count = sku_count.get("order_count")
+        quantity = sku_count.get("quantity")
+
+        sale_type = funmart_sku.get("funmart_spu__sale_type")
+        sku_attr = funmart_sku.get("skuattr")
+
+        if sale_type == hot:
+            action = "Shelf"
+
+        elif sale_type == "normal":
+
+            if order_count >=3:
+                action = "Shelf"
+            else:
+                action = "Normal_Case"
+        else:
+            if sku_attr.find("One Size") >-1 or sku_attr.find("Free Size") >-1:
+                action = "Drug_No_Size"
+            else:
+                action = "Drug_Size"
+
+        batch_sku = BatchSKU(
+            SKU=sku,
+            sale_type=sale_type,
+            order_count=order_count,
+            quantity=quantity,
+            action=action,
+
+        )
+        batch_sku_list.append(batch_sku)
+
+    BatchSKU.objects.bulk_create(batch_sku_list)
+
+
 
 
 

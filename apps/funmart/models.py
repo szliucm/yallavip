@@ -66,12 +66,14 @@ class BatchSKU(models.Model):
 
 
     SKU = models.CharField(default='', max_length=100, null=True, blank=True, verbose_name="SKU")
+    sale_type = models.CharField(default='', max_length=100, null=True, blank=True, verbose_name="sale_type")
+
     order_count = models.IntegerField(u'batch_count', default=0, blank=True, null=True)
     quantity = models.IntegerField(u'quantity', default=0, blank=True, null=True)
 
     ACTION = (
         ("Shelf", "Shelf"),
-        ("Normal_Shelf", "Normal_Shelf"),
+        #("Normal_Shelf", "Normal_Shelf"),
         ("Normal_Case", "Normal_Case"),
         ("Drug_No_Size", "Drug_No_Size"),
         ("Drug_Size", "Drug_Size"),
