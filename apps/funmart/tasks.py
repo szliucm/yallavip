@@ -19,10 +19,16 @@ def test_funmart_product():
 def download_funmart_orders():
 
 
-    orders = FunmartOrder.objects.filter(downloaded=False)
-    for order in orders:
+    orders = ScanOrder.objects.filter(downloaded=False)
 
+    # 已经有的直接设置为已下载
+    downloaded_orders = list(FunmartOrder.objects.filter(downloaded=True).values_list("track_code",flat=True))
+    orders.filter(track_code__in=downloaded_orders).update(downloaded=True)
+
+    to_download_orders = orders.exclude(track_code__in=downloaded_orders)
+    for order in to_download_orders:
         get_funmart_order.apply_async((order.track_code,), queue='funmart')
+
 
 
 def deal_funmart_orders():
@@ -83,7 +89,9 @@ def download_spus():
 
 @shared_task
 def get_funmart_order(track_code):
-    order = FunmartOrder.objects.get(track_code=track_code)
+    #order = FunmartOrder.objects.get(track_code=track_code)
+
+
     url = " http://47.98.80.172/api/searchOrder"
     param = dict()
     param["track_code"] = track_code
@@ -92,12 +100,15 @@ def get_funmart_order(track_code):
         return_data = json.loads(r.text)
         if return_data.get("code") == '00001':
             data = return_data.get("data")
+            order, created = FunmartSKU.objects.update_or_create(
+                                    track_code=track_code,
+                                    defaults={
+                                        'order_no' : data.get("order_no"),
+                                        'ship_method' : data.get("ship_method"),
+                                        'downloaded': True
+                                    }
+            )
 
-            order.track_code = data.get("track_code")
-            order.order_no = data.get("order_no")
-            order.ship_method = data.get("ship_method")
-            order.downloaded = True
-            order.save()
 
             orderitems = data.get("orderItems")
 

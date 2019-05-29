@@ -4305,7 +4305,7 @@ def adjust_shopify_inventories():
 #把不在lightin_sku 里且库存大于0 的variant的库存都改成0
 def zero_shopify_inventories():
     to_zero_products = ShopifyVariant.objects.filter(inventory_quantity__gt=0).exclude(
-        sku__in=Lightin_SKU.objects.values_list("SKU",flat=True)
+        sku__in=list(Lightin_SKU.objects.values_list("SKU",flat=True))
     )
 
     rows = to_zero_products.values_list("sku","inventory_item_no")
