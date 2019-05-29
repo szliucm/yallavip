@@ -1009,23 +1009,3 @@ class PagePromoteCate(models.Model):
     def __str__(self):
         return self.mypage.page
 
-#page 主推 cate
-class PagePromoteCate(models.Model):
-
-    mypage = models.OneToOneField(MyPage, on_delete=models.CASCADE,  verbose_name="Page")
-
-    cate = models.ManyToManyField(MyCategory, blank=False, verbose_name="Cate",
-                                          related_name="cate_page")
-    cate_active = models.BooleanField(default=False, verbose_name="cate可用")
-
-    promote_cate  = models.ManyToManyField(MyCategory, blank=False, verbose_name="Promote Cate",
-                                 related_name="cate_promote")
-    promote_cate_active = models.BooleanField(default=False, verbose_name="promote_cate可用")
-
-
-    class Meta:
-        verbose_name = "page主推cate"
-        verbose_name_plural = verbose_name
-
-    def __str__(self):
-        return self.mypage.page
