@@ -82,7 +82,8 @@ def download_spus():
 
     # spu没有下载的就下载spu
     funmartspus = FunmartSPU.objects.filter(downloaded=False)
-    for spu in funmartspus:
+    for spu in funmartspus\
+            :
         get_funmart_spu.apply_async((spu.SPU,), queue='funmart')
 
 
@@ -100,7 +101,7 @@ def get_funmart_order(track_code):
         return_data = json.loads(r.text)
         if return_data.get("code") == '00001':
             data = return_data.get("data")
-            order, created = FunmartSKU.objects.update_or_create(
+            order, created = FunmartOrder.objects.update_or_create(
                                     track_code=track_code,
                                     defaults={
                                         'order_no' : data.get("order_no"),
@@ -121,6 +122,9 @@ def get_funmart_order(track_code):
                     sku=item.get("sku"),
                     quantity=item.get("qty"),
                     price=item.get("price"),
+                    category_cn=item.get("category_cn"),
+                    category_en=item.get("category_en"),
+                    name=item.get("name"),
 
                 )
 

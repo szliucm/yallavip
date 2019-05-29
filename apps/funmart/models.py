@@ -63,6 +63,7 @@ class ScanOrder(models.Model):
 class FunmartOrder(models.Model):
     order_no = models.CharField(u'order_no', default='', max_length=50, blank=True)
     track_code = models.CharField(u'track_code', default='', max_length=50, blank=True)
+
     ship_method = models.CharField(u'ship_method', default='', max_length=50, blank=True)
     upload_date = models.DateField(u'upload_date', auto_now=True, null=True, blank=True)
     downloaded =  models.BooleanField(u"downloaded", default=False)
@@ -89,7 +90,9 @@ class FunmartOrderItem(models.Model):
     quantity = models.IntegerField(u'quantity', default=0, blank=True, null=True)
     price = models.CharField(u'Price', default='', max_length=50, blank=True)
 
-
+    category_cn = models.CharField(u'category_cn', default='', max_length=500, blank=True)
+    category_en = models.CharField(u'category_en', default='', max_length=500, blank=True)
+    name = models.CharField(u'name', default='', max_length=500, blank=True)
 
     class Meta:
         verbose_name = "FunmartOrderItem"
