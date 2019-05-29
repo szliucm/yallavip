@@ -33,9 +33,15 @@ def download_funmart_orders():
 
 def deal_funmart_orders():
     #按批次扫描包裹，没有的sku则新增sku
-    skus_to_add = FunmartOrderItem.objects.filter(order__downloaded=True, order__dealed=False).exclude(sku__in=
-                        FunmartSKU.objects.all().values_list(
-                            'SKU',flat=True)).values_list("sku", flat=True).distinct()
+    '''
+    skus_to_add = FunmartOrderItem.objects.filter(order__downloaded=True, order__dealed=False)\
+        .exclude(sku__in=list(FunmartSKU.objects.all().values_list('SKU',flat=True)))\
+        .values_list("sku", flat=True).distinct()
+    '''
+    skus_to_add = FunmartOrderItem.objects.all()\
+        .exclude(sku__in=list(FunmartSKU.objects.all().values_list('SKU',flat=True)))\
+        .values_list("sku", flat=True).distinct()
+    print("有%s个sku需要新增"%skus_to_add.count())
 
     sku_list = []
     for sku_to_add in skus_to_add:
@@ -82,8 +88,7 @@ def download_spus():
 
     # spu没有下载的就下载spu
     funmartspus = FunmartSPU.objects.filter(downloaded=False)
-    for spu in funmartspus\
-            :
+    for spu in funmartspus:
         get_funmart_spu.apply_async((spu.SPU,), queue='funmart')
 
 
@@ -163,6 +168,14 @@ def get_funmart_sku(sku):
             return  funmartsku
 
         else:
+            funmartsku, created = FunmartSKU.objects.update_or_create(
+                                    SKU=data.get("sku"),
+                                    defaults={
+
+                                        'download_error': return_data.get("message")
+                                    }
+                                )
+
             print (return_data.get("message"))
 
     return None

@@ -18,6 +18,7 @@ class FunmartSPU(models.Model):
     sale_price = models.FloatField(verbose_name="sale_price", default=0)
     skuList = models.TextField(default='', null=True, blank=True, verbose_name="skuList")
     downloaded = models.BooleanField(u"downloaded", default=False)
+    download_error = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="download_error")
 
     sale_type = models.CharField(default='', max_length=30, null=True, blank=True, verbose_name="sale_type")
 
@@ -85,6 +86,7 @@ class FunmartOrderItem(models.Model):
                                     related_name="funmartsku_order", on_delete=models.CASCADE)
 
     order_no = models.CharField(u'order_no', default='', max_length=50, blank=True)
+    track_code = models.CharField(u'track_code', default='', max_length=50, blank=True)
     sku = models.CharField(u'sku', default='', max_length=50, blank=True)
 
     quantity = models.IntegerField(u'quantity', default=0, blank=True, null=True)
