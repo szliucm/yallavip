@@ -124,9 +124,25 @@ class FunmartSKUAdmin(object):
 
 @xadmin.sites.register(BatchSKU)
 class BatchSKUAdmin(object):
+    def show_action(self, obj):
+        if obj.action == "Shelf":
+            color_code = 'green'
+        elif obj.action == "Normal_Case":
+            color_code = 'blue'
+        elif obj.action == "Drug_No_Size":
+            color_code = 'yellow'
+        elif obj.action == "Drug_Size":
+            color_code = 'red'
 
+        return format_html(
+            '<span style="color:{};">{}</span>',
+            color_code,
+            obj.action,
+        )
 
-    list_display = ["SKU", "sale_type", "order_count",  "quantity" ,"uploaded", "action",]
+    show_action.short_description = u"action"
+
+    list_display = ["SKU", "sale_type", "order_count",  "quantity" ,"uploaded", "show_action",]
     list_editable = []
 
     search_fields = ["SKU",  ]
