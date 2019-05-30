@@ -432,9 +432,9 @@ def filter_product(cate):
     q_size.connector = 'OR'
 
     #多尺码的cate，要么是均码，要么有最低库存要求，
-    #缺省情况下，已经要求库存大于0了
-    if cate.sellable_gt >0 :
-        q_size.children.append(('sellable__gt', cate.sellable_gt))
+
+
+    q_size.children.append(('sellable__gt', cate.sellable_gt))
 
     q_size.children.append(('one_size',True))
 

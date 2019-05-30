@@ -82,12 +82,12 @@ class BatchSKU(models.Model):
     action = models.CharField(choices=ACTION,default='', max_length=100, null=True, blank=True, verbose_name="Action")
 
     class Meta:
-        verbose_name = "ScanOrder"
+        verbose_name = "BatchSKU"
         verbose_name_plural = verbose_name
 
 
     def __str__(self):
-        return self.track_code
+        return self.SKU
 
 class FunmartOrder(models.Model):
     order_no = models.CharField(u'order_no', default='', max_length=50, blank=True)
