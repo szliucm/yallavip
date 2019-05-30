@@ -73,9 +73,13 @@ class BatchSKU(models.Model):
     quantity = models.IntegerField(u'quantity', default=0, blank=True, null=True)
     uploaded = models.BooleanField(u"uploaded", default=False)  #上传sku信息到wms
 
+    images = models.TextField(default='', null=True, blank=True, verbose_name="images")
+    en_name = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="en_name")
+    skuattr = models.TextField(default='', null=True, blank=True, verbose_name="skuattr")
+
     ACTION = (
-        ("Shelf", "Shelf"),
-        #("Normal_Shelf", "Normal_Shelf"),
+        ("Put Away", "Put Away"),
+
         ("Normal_Case", "Normal_Case"),
         ("Drug_No_Size", "Drug_No_Size"),
         ("Drug_Size", "Drug_Size"),

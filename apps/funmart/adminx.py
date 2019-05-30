@@ -126,7 +126,7 @@ class FunmartSKUAdmin(object):
 @xadmin.sites.register(BatchSKU)
 class BatchSKUAdmin(object):
     def show_action(self, obj):
-        if obj.action == "Shelf":
+        if obj.action == "Put Away":
             color_code = 'green'
         elif obj.action == "Normal_Case":
             color_code = 'blue'
@@ -150,10 +150,19 @@ class BatchSKUAdmin(object):
     list_editable = []
 
     search_fields = ["SKU",  ]
-    list_filter = ( "sale_type","action","uploaded",)
+    list_filter = ( "batch_no","sale_type","action","uploaded",)
     ordering = []
 
-    actions = ["batch_uploaded"]
+    actions = ["start_batch", "batch_uploaded"]
+
+    def start_batch(self, request, queryset):
+
+        batch_no = BatchSKU.objects.all().aggregate(Max('batch_no')).get("batch_no__max") + 1
+        queryset.update(batch_no=batch_no)
+
+    start_batch.short_description = "start batch"
+
+
 
     def batch_uploaded(self, request, queryset):
 
