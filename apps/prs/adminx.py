@@ -1164,17 +1164,18 @@ class ComboItemAdmin(object):
 
 @xadmin.sites.register(YallavipAd)
 class YallavipAdAdmin(object):
-    def photo(self, obj):
+    def show_promote(self, obj):
+
         try:
-            img = '<a><img src="%s" width="384px"></a>' % (obj.image_marked_url)
+            img = mark_safe('<img src="%s" width="100px" />' % (obj.image_marked_url.url,))
         except Exception as e:
-            print(e)
-            img = "获取图片出错 "
+            img = ''
+        return img
 
-        print(img)
-        return mark_safe(img)
+    show_promote.short_description = '广告图片'
+    show_promote.allow_tags = True
 
-    photo.short_description = "广告图片"
+
 
     def page(self, obj):
         return  obj.yallavip_album.page.page
@@ -1194,7 +1195,7 @@ class YallavipAdAdmin(object):
     sellable.short_description = "sellable"
     '''
 
-    list_display = ["spus_name", "yallavip_album", "page", 'sellable', 'like_count', 'photo',"active", "published","engagement_aded", "message_aded",]
+    list_display = ["spus_name", "yallavip_album", "page", 'sellable', 'like_count', 'show_promote',"active", "published","engagement_aded", "message_aded",]
 
     # 'sku_name','img',
     search_fields = ["spus_name","yallavip_album__album__name", ]
