@@ -134,9 +134,12 @@ class BatchSKUAdmin(object):
             color_code = 'yellow'
         elif obj.action == "Drug_Size":
             color_code = 'red'
+        else:
+            color_code = 'white'
 
         return format_html(
-            '<span style="color:{};">{}</span>',
+            '<span style="background-color:{};">{}</span>',
+
             color_code,
             obj.action,
         )
