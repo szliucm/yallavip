@@ -16,7 +16,7 @@ from import_export.widgets import ForeignKeyWidget
 from .models import *
 from django.utils.safestring import mark_safe
 
-from views import testView
+from .views import testView
 xadmin.site.register_view(r'test_view/$', testView, name='for_test')
 
 
