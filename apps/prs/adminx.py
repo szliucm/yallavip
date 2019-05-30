@@ -1176,7 +1176,6 @@ class YallavipAdAdmin(object):
     show_promote.allow_tags = True
 
 
-
     def page(self, obj):
         return  obj.yallavip_album.page.page
 
