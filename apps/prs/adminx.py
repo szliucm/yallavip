@@ -1171,7 +1171,7 @@ class YallavipAdAdmin(object):
             print(e)
             img = "获取图片出错 "
 
-        print(imm)
+        print(img)
         return mark_safe(img)
 
     photo.short_description = "广告图片"
