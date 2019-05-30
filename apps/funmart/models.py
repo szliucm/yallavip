@@ -64,7 +64,7 @@ class ScanOrder(models.Model):
         return self.track_code
 
 class BatchSKU(models.Model):
-
+    batch_no = models.IntegerField(u'batch_no', default=0, blank=True, null=True)
 
     SKU = models.CharField(default='', max_length=100, null=True, blank=True, verbose_name="SKU")
     sale_type = models.CharField(default='', max_length=100, null=True, blank=True, verbose_name="sale_type")

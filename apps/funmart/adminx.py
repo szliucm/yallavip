@@ -16,6 +16,10 @@ from import_export.widgets import ForeignKeyWidget
 from .models import *
 from django.utils.safestring import mark_safe
 
+from views import testView
+xadmin.site.register_view(r'test_view/$', testView, name='for_test')
+
+
 class ScanOrderResource(resources.ModelResource):
 
     class Meta:
@@ -129,4 +133,12 @@ class BatchSKUAdmin(object):
     list_filter = ( "sale_type","action","uploaded",)
     ordering = []
 
-    actions = []
+    actions = ["batch_uploaded"]
+
+    def batch_uploaded(self, request, queryset):
+
+        queryset.update(uploaded=True)
+        skus_list = queryset.values_list("SKU",flat=True)
+        FunmartSKU.objects.filter(SKU__in=skus_list).update(uploaded=True)
+
+    batch_uploaded.short_description = "批量上传到wms"
