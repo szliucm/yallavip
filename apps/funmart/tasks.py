@@ -245,7 +245,7 @@ def batch_sku():
     skus_list = orderitems.values_list("sku",flat=True)
 
     sku_counts = orderitems.values("sku").annotate(order_count=Count("track_code",distinct=True), quantity=Sum("quantity"))
-    skus = FunmartSKU.objects.filter(SKU__in=skus_list).values("SKU","funmart_spu__sale_type" ,"skuattr")
+    skus = FunmartSKU.objects.filter(SKU__in=skus_list).values("SKU","funmart_spu__sale_type" ,"skuattr","uploaded")
 
 
     BatchSKU.objects.all().delete()
@@ -259,6 +259,7 @@ def batch_sku():
 
         sale_type = funmart_sku.get("funmart_spu__sale_type")
         sku_attr = funmart_sku.get("skuattr")
+        uploaded = funmart_sku.get("uploaded")
 
         if sale_type == "hot":
             action = "Shelf"
@@ -280,6 +281,7 @@ def batch_sku():
             sale_type=sale_type,
             order_count=order_count,
             quantity=quantity,
+            uploaded=uploaded,
             action=action,
 
         )

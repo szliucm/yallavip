@@ -113,7 +113,7 @@ class FunmartSKUAdmin(object):
     list_editable = []
 
     search_fields = ["SKU", 'SPU', ]
-    list_filter = ( )
+    list_filter = ("downloaded", "uploaded", )
     ordering = []
 
     actions = []
@@ -122,11 +122,11 @@ class FunmartSKUAdmin(object):
 class BatchSKUAdmin(object):
 
 
-    list_display = ["SKU", "sale_type", "order_count",  "quantity" ,"action",]
+    list_display = ["SKU", "sale_type", "order_count",  "quantity" ,"uploaded", "action",]
     list_editable = []
 
     search_fields = ["SKU",  ]
-    list_filter = ( "sale_type","action",)
+    list_filter = ( "sale_type","action","uploaded",)
     ordering = []
 
     actions = []

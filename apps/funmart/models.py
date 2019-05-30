@@ -39,7 +39,8 @@ class FunmartSKU(models.Model):
 
     images = models.TextField(default='', null=True, blank=True, verbose_name="images")
     sale_price = models.FloatField(verbose_name="sale_price", default=0)
-    downloaded = models.BooleanField(u"downloaded", default=False)
+    downloaded = models.BooleanField(u"downloaded", default=False)  #从erp下载sku信息
+    uploaded = models.BooleanField(u"uploaded", default=False)  #上传sku信息到wms
 
     class Meta:
         verbose_name = "Funmart SKU"
@@ -70,6 +71,7 @@ class BatchSKU(models.Model):
 
     order_count = models.IntegerField(u'batch_count', default=0, blank=True, null=True)
     quantity = models.IntegerField(u'quantity', default=0, blank=True, null=True)
+    uploaded = models.BooleanField(u"uploaded", default=False)  #上传sku信息到wms
 
     ACTION = (
         ("Shelf", "Shelf"),
