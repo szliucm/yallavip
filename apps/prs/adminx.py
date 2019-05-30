@@ -1168,12 +1168,13 @@ class YallavipAdAdmin(object):
         try:
             img = '<a><img src="%s" width="384px"></a>' % (obj.image_marked_url)
         except Exception as e:
+            print(e)
             img = "获取图片出错 "
 
-
+        print(imm)
         return mark_safe(img)
 
-    photo.short_description = "spu图片"
+    photo.short_description = "广告图片"
 
     def page(self, obj):
         return  obj.yallavip_album.page.page
