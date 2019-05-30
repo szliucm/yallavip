@@ -389,10 +389,11 @@ def yallavip_mark_image(ori_image, handle, price1, price2, target_page, free_shi
     logo = target_page.logo
     if free_shipping:
         promote = target_page.promote
-        promote_1 = target_page.promote_1
+
     else:
         promote = None
-        promote_1 = None
+
+    promote_1 = target_page.promote_1
 
     price = target_page.price
 
