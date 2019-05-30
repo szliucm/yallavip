@@ -1167,9 +1167,11 @@ class YallavipAdAdmin(object):
     def show_promote(self, obj):
 
         try:
-            img = mark_safe('<img src="%s" width="100px" />' % (obj.image_marked_url.url,))
+            img = mark_safe('<img src="%s" width="100px" />' % (obj.image_marked_url))
         except Exception as e:
             img = ''
+        print (img)
+
         return img
 
     show_promote.short_description = '广告图片'
