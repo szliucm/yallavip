@@ -36,7 +36,7 @@ def order_item(request):
          },
     ]
     print (order_items)
-    return JsonResponse(order_items)
+    return JsonResponse(order_items,safe=False)
 
 def ajax_list(request):
     a = list(range(100))
