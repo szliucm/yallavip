@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+from django.utils.html import format_html
 
 # Create your views here.
 from xadmin.views import BaseAdminView
