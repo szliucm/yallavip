@@ -19,7 +19,7 @@ from django.conf.urls.static import static
 from django.conf import settings
 import  xadmin
 from prs.views import  SelectView
-from funmart.views import  demo_ajax,demo_add
+from funmart.views import  *
 from . import view
 
 
@@ -31,8 +31,9 @@ urlpatterns = [
     # 二级联动页面请求
     path('select/mypage_myalbum/', SelectView.as_view(), name='mypage_myalbum'),
     path('hello/', view.Hello.as_view()),
-    path('demo_ajax/', demo_ajax),
-    path('demo_add/', demo_add),
+    path('add/', add),
+    path('ajax_list/', ajax_list),
+    path('ajax_dict/', ajax_dict),
 
 
     #path('ueditor/', include('DjangoUeditor.urls')),
