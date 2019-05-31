@@ -4,7 +4,7 @@ from django.http import HttpResponse, JsonResponse
 # Create your views here.
 from xadmin.views import BaseAdminView
 class testView(BaseAdminView):
-	template_name = 'test.html'
+	template_name = 'index.html'
 	def get(self, request, *args, **kwargs):
 		data = 'test'
 		return render(request, self.template_name, {'data': data})
