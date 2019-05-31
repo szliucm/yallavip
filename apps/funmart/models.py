@@ -42,6 +42,7 @@ class FunmartSKU(models.Model):
     images = models.TextField(default='', null=True, blank=True, verbose_name="images")
     sale_price = models.FloatField(verbose_name="sale_price", default=0)
     downloaded = models.BooleanField(u"downloaded", default=False)  # 从erp下载sku信息
+    download_error = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="download_error")
     uploaded = models.BooleanField(u"uploaded", default=False)  # 上传sku信息到wms
 
     class Meta:
