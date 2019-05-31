@@ -6848,7 +6848,7 @@ def auto_message_ads():
 
         page_no = page.page_no
         ad_type = "message"
-        to_create_count = 5
+        to_create_count = 1
         post_ads_v2(page_no, ad_type, to_create_count)
 
 def test_funmart_product():

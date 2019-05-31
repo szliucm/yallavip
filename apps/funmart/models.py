@@ -138,3 +138,12 @@ class FunmartOrderItem(models.Model):
     def __str__(self):
         return self.order_no + '_' + self.sku
 
+
+class Test(models.Model):
+
+    class Meta:
+        verbose_name = u"自定义页面"
+        verbose_name_plural = verbose_name
+
+    def __unicode__(self):
+        return self.Meta.verbose_name

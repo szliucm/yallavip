@@ -256,6 +256,8 @@ def batch_sku():
 
         order_count = sku_count.get("order_count")
         quantity = sku_count.get("quantity")
+        sale_type = funmart_sku.get("funmart_spu__sale_type")
+        skuattr = funmart_sku.get("skuattr")
 
         if sale_type == "hot":
             action = "Put Away"
@@ -274,11 +276,11 @@ def batch_sku():
 
         batch_sku = BatchSKU(
             SKU=sku,
-            sale_type=funmart_sku.get("funmart_spu__sale_type"),
+            sale_type=sale_type,
             order_count=order_count,
             quantity=quantity,
             uploaded=funmart_sku.get("uploaded"),
-            sku_attr = funmart_sku.get("skuattr"),
+            skuattr = skuattr,
             images=funmart_sku.get("images"),
             en_name = funmart_sku.get("funmart_spu__en_name"),
 

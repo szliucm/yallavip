@@ -18,7 +18,7 @@ from django.utils.safestring import mark_safe
 from django.utils.html import format_html
 
 from .views import testView
-xadmin.site.register_view(r'test_view/$', testView, name='for_test')
+
 
 
 class ScanOrderResource(resources.ModelResource):
@@ -171,3 +171,9 @@ class BatchSKUAdmin(object):
         FunmartSKU.objects.filter(SKU__in=skus_list).update(uploaded=True)
 
     batch_uploaded.short_description = "批量上传到wms"
+
+@xadmin.sites.register(Test)
+class TestAdmin(object):
+	list_display = []
+	object_list_template = "test.html"
+
