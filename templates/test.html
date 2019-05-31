@@ -5,7 +5,7 @@
 {% block content %}
 
     <form method="post" action="{{ path }}">
-        % csrf_token %}
+        { csrf_token %}
            <p>{{ queryset }}</p>
 
 
