@@ -10,9 +10,11 @@ class testView(BaseAdminView):
 
 
 def demo_ajax(request):
+    print ("i'm here demo_ajax")
     return render(request, 'demo_ajax.html')
 
 def demo_add(request):
+    print("i'm here, demo_add")
     a=request.GET['a']
     b=request.GET['b']
 
