@@ -26,6 +26,16 @@ def add(request):
 
 import json
 
+def order_item(request):
+    order_items = [
+        {"sku":"123",
+         "quantity":1
+         },
+        {"sku": "456",
+         "quantity": 2
+         },
+    ]
+    return JsonResponse(order_items)
 
 def ajax_list(request):
     a = list(range(100))

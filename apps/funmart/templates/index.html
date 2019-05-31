@@ -12,6 +12,38 @@
         <button type="button" id='sum'>提交</button>
     </form>
 
+    <h4>track_code: <span id='track_code'></span></h4>
+    <table border="1">
+        <tr>
+
+        </tr>
+        {% for item in order_items %}
+            <tr>
+                {% for value in info_dict.items %}
+                    <th>{{ value }}</th>
+                {% endfor %}
+
+            </tr>
+
+        {% endfor %}
+
+    </table>
+
+    <table id="Order" cellpadding="1" cellspacing="0" border="1">
+        <caption align="top">track_code: <span id='track_code'></span></caption>
+        <thead>
+        <tr>
+            <th>sku</th>
+            <th>name</th>
+            <th>quantity</th>
+            <th>barcode</th>
+            <th>real_quantity</th>
+            <th>action</th>
+        </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
     <div id="dict">Ajax 加载字典</div>
     <p id="dict_result"></p>
 
@@ -30,6 +62,30 @@
                     $('#result').html(ret);
                 })
             });
+
+            $(function () {
+                $.ajax({
+                    url: "/order_item/",
+                    type: "get",
+                    success: function (data) {
+                        var obj = eval(data);
+                        var tbody = $('<tbody></tbody>');
+                        $(obj).each(function (index) {
+                            var val = obj[index];
+                            var tr = $('<tr></tr>');
+                            $.each(val, function (key, value) {
+                                // key 为字典的 key，value 为对应的值
+                                tr.append('<td>' + value + '</td>');
+                            });
+
+                            tbody.append(tr);
+                        });
+                        $('#myTable Order').replaceWith(tbody);
+                    }
+                });
+            });
+
+
 
             // 列表 list
             $('#list').click(function () {

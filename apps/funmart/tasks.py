@@ -156,7 +156,7 @@ def get_funmart_sku(sku):
             data = return_data.get("data")
 
             funmartsku, created = FunmartSKU.objects.update_or_create(
-                SKU=data.get("sku"),
+                SKU=sku,
                 defaults={
                     'SPU': data.get("spu"),
                     'skuattr': json.dumps(data.get("skuattr")),
@@ -169,7 +169,7 @@ def get_funmart_sku(sku):
 
         else:
             funmartsku, created = FunmartSKU.objects.update_or_create(
-                SKU=data.get("sku"),
+                SKU=sku,
                 defaults={
 
                     'download_error': return_data.get("message")
