@@ -16,7 +16,7 @@ def index(request):
     return render(request, 'index.html')
 
 
-def add(request):
+def demo_add(request):
     a = request.GET['a']
     b = request.GET['b']
     a = int(a)
