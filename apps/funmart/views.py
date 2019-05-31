@@ -1,10 +1,14 @@
-from django.http import HttpResponse
 from django.shortcuts import render
+from django.http import HttpResponse, JsonResponse
 
-try:
-    from django.http import JsonResponse
-except ImportError:
-    from .tool import JsonResponse
+# Create your views here.
+from xadmin.views import BaseAdminView
+class testView(BaseAdminView):
+	template_name = 'test.html'
+	def get(self, request, *args, **kwargs):
+		data = 'test'
+		return render(request, self.template_name, {'data': data})
+
 
 def index(request):
     return render(request, 'index.html')
@@ -27,3 +31,4 @@ def ajax_list(request):
 def ajax_dict(request):
     name_dict = {'twz': 'Love python and Django', 'zqxt': 'I am teaching Django'}
     return HttpResponse(json.dumps(name_dict), content_type='application/json')
+
