@@ -4,12 +4,10 @@
 
 {% block content %}
 
-    <p>请输入两个数字</p>
-    <form action="/add/" method="get">
-        a: <input type="text" id="a" name="a"> <br>
-        b: <input type="text" id="b" name="b"> <br>
-        <p>结果: <span id='result'></span></p>
-        <button type="button" id='submit'>提交</button>
+    <p>Input track_code or sku_barcode </p>
+    <form id="order_items" action="/order_item/" method="post">
+        order_or_item: <input type="text" id="order_or_item" name="a"> <br>
+        <button type="button" id='query_order_item'>submit</button>
     </form>
 
 
@@ -28,22 +26,28 @@
         <tbody></tbody>
     </table>
 
-    <div id="dict">Ajax 加载字典</div>
-    <p id="dict_result"></p>
 
-    <div id="list">Ajax 加载列表</div>
-    <p id="list_result"></p>
 
+    <script src="http://apps.bdimg.com/libs/jquery/1.11.1/jquery.min.js"></script>
 
     <script>
+        //这里是关键点 .ready 函数好像监听器。
         $(document).ready(function () {
-            // 求和 a + b
-            $("#submit").click(function () {
+
+            //jq的处理函数，当点击提交按钮时执行。
+            $("#query_order_item").click(function () {
+
+                var order_or_item = $("input[name='order_or_item']").val();
+                alert_text = '请稍等,正在查询:' + comname + '信息';
+                alert(alert_text);
 
                 $.ajax({
                     url: "/order_item/",
-                    type: "get",
+                    type: "POST",
+                    data:$("#order_items").serialize(),
+                    dataType:"JSON",
                     success: function (data) {
+                        console.log("26----",data);
                         var obj = eval(data);
                         var tbody = $('<tbody></tbody>');
                         $(obj).each(function (index) {
