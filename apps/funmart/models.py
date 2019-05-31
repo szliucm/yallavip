@@ -101,7 +101,7 @@ class BatchSKU(models.Model):
 class FunmartOrder(models.Model):
     order_no = models.CharField(u'order_no', default='', max_length=50, blank=True)
     track_code = models.CharField(u'track_code', default='', max_length=50, blank=True)
-
+    order_date = models.DateTimeField(auto_now=False, null=True, blank=True,verbose_name="order_date")
     ship_method = models.CharField(u'ship_method', default='', max_length=50, blank=True)
     upload_date = models.DateField(u'upload_date', auto_now=True, null=True, blank=True)
     downloaded = models.BooleanField(u"downloaded", default=False)
