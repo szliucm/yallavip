@@ -19,6 +19,7 @@ from django.conf.urls.static import static
 from django.conf import settings
 import  xadmin
 from prs.views import  SelectView
+from funmart.views import  demo_ajax,demo_add
 from . import view
 
 
