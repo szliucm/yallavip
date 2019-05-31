@@ -35,6 +35,7 @@ def order_item(request):
          "quantity": 2
          },
     ]
+    print (order_items)
     return JsonResponse(order_items)
 
 def ajax_list(request):

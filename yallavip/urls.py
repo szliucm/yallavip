@@ -31,7 +31,7 @@ urlpatterns = [
     # 二级联动页面请求
     path('select/mypage_myalbum/', SelectView.as_view(), name='mypage_myalbum'),
     path('hello/', view.Hello.as_view()),
-    path('add/', add),
+    path('order_item/', order_item),
     path('ajax_list/', ajax_list),
     path('ajax_dict/', ajax_dict),
 
