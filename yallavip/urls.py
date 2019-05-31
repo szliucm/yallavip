@@ -30,6 +30,8 @@ urlpatterns = [
     # 二级联动页面请求
     path('select/mypage_myalbum/', SelectView.as_view(), name='mypage_myalbum'),
     path('hello/', view.Hello.as_view()),
+    path('demo_ajax/', demo_ajax),
+    path('demo_add/', demo_add),
 
 
     #path('ueditor/', include('DjangoUeditor.urls')),
