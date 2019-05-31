@@ -26,7 +26,7 @@ def add(request):
 import json
 
 def ajax_list(request):
-    a = range(100)
+    a = list(range(100))
     return HttpResponse(json.dumps(a), content_type='application/json')
 
 def ajax_dict(request):
