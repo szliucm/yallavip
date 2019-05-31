@@ -19,7 +19,7 @@ from django.conf.urls.static import static
 from django.conf import settings
 import  xadmin
 from prs.views import  SelectView
-from funmart.views import  *
+from funmart.views import  add, ajax_list,ajax_dict
 from . import view
 
 
