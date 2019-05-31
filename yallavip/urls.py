@@ -36,6 +36,7 @@ urlpatterns = [
     path('ajax_dict/', ajax_dict),
 
 
+
     #path('ueditor/', include('DjangoUeditor.urls')),
     #url(r'^media/(?P<path>.*)', serve, {"document_root":MEDIA_ROOT}),
 ]
