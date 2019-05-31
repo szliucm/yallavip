@@ -1,6 +1,5 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from django.utils.html import format_html
 
 # Create your views here.
 from xadmin.views import BaseAdminView
@@ -26,12 +25,5 @@ def demo_add(request):
         ajax_string = 'not ajax request: '
 
     c = int(a) + int(b)
-    #r = HttpResponse(ajax_string + str(c))
-    color_code = 'red',
-    status = ajax_string + str(c)
-    r = format_html(
-            '<span style="background-color:{};">{}</span>',
-            color_code,
-            status,
-        )
+    r = HttpResponse(ajax_string + str(c))
     return r
