@@ -175,5 +175,5 @@ class BatchSKUAdmin(object):
 @xadmin.sites.register(Test)
 class TestAdmin(object):
 	list_display = []
-	object_list_template = "test.html"
+	object_list_template = "demo_ajax.html"
 
