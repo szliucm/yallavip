@@ -27,7 +27,7 @@
         var a = $("#a").val();
         var b = $("#b").val();
 
-        $.get("{% url 'add' %}",{'a':a,'b':b}, function(ret){
+        $.get("/add/",{'a':a,'b':b}, function(ret){
             $('#result').html(ret);
         })
       });
