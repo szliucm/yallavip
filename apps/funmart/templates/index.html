@@ -9,28 +9,12 @@
         a: <input type="text" id="a" name="a"> <br>
         b: <input type="text" id="b" name="b"> <br>
         <p>结果: <span id='result'></span></p>
-        <button type="button" id='sum'>提交</button>
+        <button type="button" id='submit'>提交</button>
     </form>
 
-    <h4>track_code: <span id='track_code'></span></h4>
-    <table border="1">
-        <tr>
 
-        </tr>
-        {% for item in order_items %}
-            <tr>
-                {% for value in info_dict.items %}
-                    <th>{{ value }}</th>
-                {% endfor %}
-
-            </tr>
-
-        {% endfor %}
-
-    </table>
-
-    <table id="Order" cellpadding="1" cellspacing="0" border="1">
-        <caption align="top">track_code: <span id='track_code'></span></caption>
+    <table id="Order" cellpadding="1" cellspacing="0" border="1" class="com_info" border="1px" width="100%">
+        <caption align="top"><h3>track_code: <span id='track_code'></span></h3></caption>
         <thead>
         <tr>
             <th>sku</th>
@@ -54,16 +38,8 @@
     <script>
         $(document).ready(function () {
             // 求和 a + b
-            $("#sum").click(function () {
-                var a = $("#a").val();
-                var b = $("#b").val();
+            $("#submit").click(function () {
 
-                $.get("/add/", {'a': a, 'b': b}, function (ret) {
-                    $('#result').html(ret);
-                })
-            });
-
-            $(function () {
                 $.ajax({
                     url: "/order_item/",
                     type: "get",
@@ -84,6 +60,8 @@
                     }
                 });
             });
+        })
+
 
 
 
