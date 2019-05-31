@@ -14,6 +14,7 @@
 
     <p>Input track_code or sku_barcode </p>
     <form id="order_items" action="/order_item/" method="post">
+        {% csrf_token %}
         code: <input type="text" id="barcode" name="a"> <br>
         <button type="button" id='query_order_item'>submit</button>
     </form>
