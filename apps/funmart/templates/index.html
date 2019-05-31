@@ -101,8 +101,8 @@
                     data:$("#order_items").serialize(),
                     dataType:"JSON",
                     success: function (data) {
-                        alert(data);
-                        console.log("26----",data);
+
+                        console.log("26----");
                         var obj = eval(data);
                         var tbody = $('<tbody></tbody>');
                         $(obj).each(function (index) {
@@ -112,10 +112,10 @@
                                 // key 为字典的 key，value 为对应的值
                                 tr.append('<td>' + value + '</td>');
                             });
-
+                            alert("tr is "+ tr);
                             tbody.append(tr);
                         });
-                        $('#Order').replaceWith(tbody);
+                        $('#Order tbody').replaceWith(tbody);
                     }
                 });
             });
