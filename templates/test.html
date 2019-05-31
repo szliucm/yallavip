@@ -1,21 +1,17 @@
-#{% extends "xadmin/base_site.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
 
+<h1>这是P2页面</h1>
+<form method="post">
+    {% csrf_token %}
+    <input type="text" name="city">
+    <input type="submit" value="提交">
+</form>
 
-
-{% block content %}
-
-    <form method="post" action="{{ path }}">
-        { csrf_token %}
-           <p>{{ queryset }}</p>
-
-
-        <p>
-
-                <input type="submit" name="cancel" value="no" />
-                <input type="submit" value="ok"/>
-
-        </p>
-    </form>
-
-
-{% endblock %}
+</body>
+</html>
