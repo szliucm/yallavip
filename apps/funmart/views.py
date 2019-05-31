@@ -25,5 +25,12 @@ def demo_add(request):
         ajax_string = 'not ajax request: '
 
     c = int(a) + int(b)
-    r = HttpResponse(ajax_string + str(c))
+    #r = HttpResponse(ajax_string + str(c))
+    color_code = 'red',
+    status = ajax_string + str(c)
+    r = format_html(
+            '<span style="background-color:{};">{}</span>',
+            color_code,
+            status,
+        )
     return r
