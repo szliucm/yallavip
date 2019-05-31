@@ -68,6 +68,7 @@
                     data:$("#order_items").serialize(),
                     dataType:"JSON",
                     success: function (data) {
+                        alert(data);
                         console.log("26----",data);
                         var obj = eval(data);
                         var tbody = $('<tbody></tbody>');
@@ -81,7 +82,7 @@
 
                             tbody.append(tr);
                         });
-                        $('#myTable Order').replaceWith(tbody);
+                        $('#Order').replaceWith(tbody);
                     }
                 });
             });
