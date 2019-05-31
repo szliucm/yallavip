@@ -155,6 +155,7 @@ def get_funmart_sku(sku):
         if return_data.get("code") == '00001':
             data = return_data.get("data")
 
+
             funmartsku, created = FunmartSKU.objects.update_or_create(
                 SKU=sku,
                 defaults={
@@ -217,6 +218,41 @@ def get_funmart_spu(spu):
 
     return None
 
+
+@shared_task
+def get_funmart_barcode(barcode):
+    print("get barcode info", barcode)
+    url = "http://47.96.143.109:9527/api/getInfoBySku"
+    param = dict()
+    param["sku"] = barcode
+    r = requests.post(url, data=json.dumps(param))
+
+    if r.status_code == 200:
+        return_data = json.loads(r.text)
+        if return_data.get("code") == '00001':
+            data = return_data.get("data")
+
+            funmartbarcode, created = FunmartBarcode.objects.update_or_create(
+                barcode=barcode,
+                defaults={
+                    'sku': data.get("sku"),
+
+                }
+            )
+            return funmartbarcode
+
+        else:
+            funmartbarcode, created = FunmartBarcode.objects.update_or_create(
+                barcode=barcode,
+                defaults={
+
+                    'download_error': return_data.get("message")
+                }
+            )
+
+            print (return_data.get("message"))
+
+    return None
 
 # 根据订单汇总，给spu打标
 # 订单数>30,hot
