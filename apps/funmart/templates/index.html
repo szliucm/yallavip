@@ -14,26 +14,28 @@
 
     <p>Input track_code or sku_barcode </p>
     <form id="order_items" action="/order_item/" method="post">
-        {% csrf_token %}
+
         code: <input type="text" id="barcode" name="a"> <br>
         <button type="button" id='query_order_item'>submit</button>
+        <table id="Order" cellpadding="1" cellspacing="0" border="1" class="com_info" border="1px" width="100%">
+            <caption align="top"><h3>track_code: <span id='track_code'></span></h3></caption>
+            <thead>
+            <tr>
+                <th>sku</th>
+                <th>name</th>
+                <th>quantity</th>
+                <th>barcode</th>
+                <th>real_quantity</th>
+                <th>action</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+        {% csrf_token %}
     </form>
 
 
-    <table id="Order" cellpadding="1" cellspacing="0" border="1" class="com_info" border="1px" width="100%">
-        <caption align="top"><h3>track_code: <span id='track_code'></span></h3></caption>
-        <thead>
-        <tr>
-            <th>sku</th>
-            <th>name</th>
-            <th>quantity</th>
-            <th>barcode</th>
-            <th>real_quantity</th>
-            <th>action</th>
-        </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
+
 
 
 
