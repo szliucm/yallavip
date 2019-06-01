@@ -5,7 +5,7 @@ from xadmin.views import BaseAdminView
 
 
 class testView(BaseAdminView):
-    template_name = 'index.html'
+    template_name = 'funmart/index.html'
 
     def get(self, request, *args, **kwargs):
         data = 'test'
@@ -13,7 +13,7 @@ class testView(BaseAdminView):
 
 
 def index(request):
-    return render(request, 'index.html')
+    return render(request, 'funmart/index.html')
 
 
 def demo_add(request):
