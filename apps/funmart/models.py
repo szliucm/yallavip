@@ -77,7 +77,8 @@ class ScanOrder(models.Model):
 
 class BatchSKU(models.Model):
     batch_no = models.IntegerField(u'batch_no', default=0, blank=True, null=True)
-
+    funmart_sku = models.ForeignKey(FunmartSKU, null=True, blank=True, verbose_name="funmart_sku",
+                                    related_name="funmartsku_batchorder", on_delete=models.CASCADE)
     SKU = models.CharField(default='', max_length=100, null=True, blank=True, verbose_name="SKU")
     sale_type = models.CharField(default='', max_length=100, null=True, blank=True, verbose_name="sale_type")
 

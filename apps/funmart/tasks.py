@@ -275,12 +275,15 @@ def lable_spus():
     drug_spus = spus_count.filter(order_count__lt=5).values_list("funmart_sku__SPU", flat=True)
     FunmartSPU.objects.filter(SPU__in=list(drug_spus)).update(sale_type="drug")
 
-
+'''
 def batch_sku():
     track_code_list = list(
-        ScanOrder.objects.filter(downloaded=True, shelfed=False).values_list("track_code", flat=True))
+        ScanOrder.objects.filter(downloaded=True, shelfed=False).values_list("track_code", flat=True)
+    )
     orderitems = FunmartOrderItem.objects.filter(track_code__in=track_code_list)
-    skus_list = orderitems.values_list("sku", flat=True)
+    skus_list = list(
+        orderitems.values_list("sku", flat=True)
+    )
 
     sku_counts = orderitems.values("sku").annotate(order_count=Count("track_code", distinct=True),
                                                    quantity=Sum("quantity"))
@@ -290,6 +293,7 @@ def batch_sku():
     BatchSKU.objects.all().delete()
     batch_sku_list = []
     for sku in skus_list:
+        print("sku is ", sku)
         sku_count = sku_counts.get(sku=sku)
         funmart_sku = skus.get(SKU=sku)
 
@@ -325,6 +329,44 @@ def batch_sku():
 
             action=action,
 
+        )
+        batch_sku_list.append(batch_sku)
+
+    BatchSKU.objects.bulk_create(batch_sku_list)
+'''
+
+def batch_sku():
+    track_code_list = list(
+        ScanOrder.objects.filter(downloaded=True, shelfed=False).values_list("track_code", flat=True)
+    )
+    orderitems = FunmartOrderItem.objects.filter(track_code__in=track_code_list)
+
+
+    sku_counts = orderitems.values("funmart_sku").annotate(order_count=Count("track_code", distinct=True),
+                                                   quantity=Sum("quantity"))
+    '''
+    skus_list = list(
+        orderitems.values_list("sku", flat=True)
+    )
+    skus = FunmartSKU.objects.filter(SKU__in=skus_list).values_list("SKU", "funmart_spu__sale_type", "uploaded", "skuattr",
+                                                               "funmart_spu__en_name", "images")
+    '''
+
+    BatchSKU.objects.all().delete()
+    batch_sku_list = []
+    for sku_count in sku_counts:
+        print("sku is ", sku_count)
+
+        funmart_sku = sku_count.get("funmart_sku")
+        order_count = sku_count.get("order_count")
+        quantity = sku_count.get("quantity")
+
+
+        batch_sku = BatchSKU(
+            funmart_sku=funmart_sku,
+
+            order_count=order_count,
+            quantity=quantity,
         )
         batch_sku_list.append(batch_sku)
 
