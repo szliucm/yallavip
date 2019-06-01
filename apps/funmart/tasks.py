@@ -342,7 +342,7 @@ def batch_sku():
     orderitems = FunmartOrderItem.objects.filter(track_code__in=track_code_list)
 
 
-    sku_counts = orderitems.values("funmart_sku").annotate(order_count=Count("track_code", distinct=True),
+    sku_counts = orderitems.values("sku").annotate(order_count=Count("track_code", distinct=True),
                                                    quantity=Sum("quantity"))
     '''
     skus_list = list(
@@ -357,17 +357,19 @@ def batch_sku():
     for sku_count in sku_counts:
         print("sku is ", sku_count)
 
-        funmart_sku = sku_count.get("funmart_sku")
+        SKU = sku_count.get("sku")
+
         order_count = sku_count.get("order_count")
         quantity = sku_count.get("quantity")
 
 
         batch_sku = BatchSKU(
-            funmart_sku=funmart_sku,
-
+            SKU=SKU,
             order_count=order_count,
             quantity=quantity,
         )
         batch_sku_list.append(batch_sku)
 
     BatchSKU.objects.bulk_create(batch_sku_list)
+
+    batchskus = BatchSKU.objects.update(SKU=F(funmart_sku__SKU))
