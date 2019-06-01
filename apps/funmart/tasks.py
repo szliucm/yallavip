@@ -335,6 +335,7 @@ def batch_sku():
     BatchSKU.objects.bulk_create(batch_sku_list)
 '''
 
+#分析批次的上架策略
 def batch_sku():
     track_code_list = list(
         ScanOrder.objects.filter(downloaded=True, shelfed=False).values_list("track_code", flat=True)
@@ -372,4 +373,18 @@ def batch_sku():
 
     BatchSKU.objects.bulk_create(batch_sku_list)
 
-    batchskus = BatchSKU.objects.update(SKU=F(funmart_sku__SKU))
+
+    mysql = "update funmart_batchsku b ,funmart_funmartsku s set b.SKU = s.SKU , b.SPU = s.SPU,b.uploaded = s.uploaded,b.skuattr = s.skuattr, b.images = s.images where b.SKU = s.SKU"
+    my_custom_sql(mysql)
+    mysql = "update funmart_batchsku b ,funmart_funmartspu p set b.sale_type = p.sale_type  where b.SPU = p.SPU"
+    my_custom_sql(mysql)
+
+    BatchSKU.objects.filter(sale_type = "hot").update(action = "Put Away")
+
+    BatchSKU.objects.filter(sale_type="normal", order_count__lt=3).update(action="Normal_Case")
+    BatchSKU.objects.filter(Q(skuattr__icontains="One Size")|Q(skuattr__icontains="Free Size"), sale_type="drug").update(action="Drug_No_Size")
+    BatchSKU.objects.filter(~Q(skuattr__icontains="One Size") ,~Q(skuattr__icontains="Free Size"),
+                            sale_type="drug").update(action="Drug_Size")
+
+    BatchSKU.objects.filter(order_count__gte = 3 ).update(action="Put Away")
+

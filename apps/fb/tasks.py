@@ -100,7 +100,7 @@ def batch_update_photos(limit = None):
             print ("开始获取相册%s图片"%album)
             update_album_photos(album)
 
-    update_photos_handle()
+    #update_photos_handle()
 
 def update_album_photos(album):
     album_no = album.album_no
@@ -722,5 +722,73 @@ def delete_outstock():
 
 
 
+# 批量更新图片
+def batch_download_photos(limit=None):
+    page_no_list = MyPage.objects.filter(active=True, is_published=True, promotable=True).values_list("page_no",
+                                                                                                      flat=True)
+    for page_no in page_no_list:
+        access_token, long_token = get_token(page_no)
 
+        if not access_token:
+            error = "获取token失败"
+            print(error)
+            continue
+        queryset = MyAlbum.objects.filter(active=True, updated=False, page_no=page_no)
+
+
+        for album in queryset:
+            album_no = album.album_no
+            page_no = album.page_no
+
+
+            download_album_photos(access_token,page_no,album_no)
+            album.updated = True
+            album.save()
+
+def download_album_photos(access_token,page_no,album_no):
+    # 删掉原有相册的图片
+    MyPhoto.objects.filter(album_no=album_no).delete()
+
+    adobjects = FacebookAdsApi.init(access_token=access_token, debug=True)
+
+    fields = ["id", "name"
+              ]
+    params = {
+        'limit': 100,
+
+    }
+    try:
+        photos = Album(album_no).get_photos(
+            fields=fields,
+            params=params,
+        )
+    except Exception as e:
+        print("获取Facebook数据出错", fields, e)
+        return
+    myphoto_list = []
+    for photo in photos:
+        name = photo.get("name", ""),
+        try:
+            tmp = re.split(r"\[|\]", name)
+            if (1 < len(tmp)):
+                handle = tmp[1]
+            else:
+                handle = ""
+
+        except:
+            handle = ""
+
+        myphoto = MyPhoto(photo_no=photo["id"],
+                          page_no=page_no,
+                          album_no=album_no,
+
+                          active=True,
+                          name=name,
+                          handle=handle
+
+
+                          )
+        myphoto_list.append(myphoto)
+    MyPhoto.objects.bulk_create(myphoto_list)
+    #update_photos_handle()
 
