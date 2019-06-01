@@ -119,12 +119,13 @@ def get_funmart_order(track_code=None, order_no=None):
 
             orderitems = data.get("orderItems")
 
-            FunmartOrderItem.objects.filter(order_no=data.get("order_no")).delete()
+            FunmartOrderItem.objects.filter(order_no=order_no).delete()
             orderitem_list = []
             for item in orderitems:
                 orderitem = FunmartOrderItem(
                     order=order,
-                    order_no=data.get("order_no"),
+                    order_no=order_no,
+                    track_code=track_code,
                     sku=item.get("sku"),
                     quantity=item.get("qty"),
                     price=item.get("price"),
@@ -307,7 +308,7 @@ def batch_sku():
             else:
                 action = "Normal_Case"
         else:
-            if sku_attr.find("One Size") > -1 or sku_attr.find("Free Size") > -1:
+            if skuattr.find("One Size") > -1 or skuattr.find("Free Size") > -1:
                 action = "Drug_No_Size"
             else:
                 action = "Drug_Size"
