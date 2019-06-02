@@ -11,7 +11,7 @@
         <br>
    -->
         item_code  : <input type="text"   id="item_code" > <br>
-        <button type="button" id='scanpackageitem'>submit</button>
+        <button type="button" id='get_packageitem_info'>submit</button>
         <table id="Package" cellpadding="1" cellspacing="0" border="1" class="item_info" border="1px" width="100%">
             <caption align="top"><h3>Track_code: <span id='Track_code'></span></h3></caption>
             <thead>
@@ -72,7 +72,7 @@
 
     $(document).keyup(function (event) {
         if (event.keyCode === 13) {
-            $("#scanpackageitem").trigger("click");
+            $("#get_packageitem_info").trigger("click");
         }
     });
 
@@ -80,9 +80,9 @@
     //这里是关键点 .ready 函数好像监听器。
     $(document).ready(function () {
 
-        $(".track_code").hide();
 
-        $("#scanpackageitem").click(function () {
+
+        $("#get_packageitem_info").click(function () {
 
             //var track_code = $("#track_code").val();
                 var item_code = $("#item_code").val();
