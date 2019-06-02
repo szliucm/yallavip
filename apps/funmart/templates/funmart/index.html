@@ -42,7 +42,9 @@
         Order_no: <input type="text" id="order_no" > <br>
         <button type="button" id='get_package_info'>submit</button>
         <p>Track_code: <span id='ret_track_code' style="font-size:30px"></span></p>
-        <p>Order_no: <span id='ret_order_no'></span></p>
+        <p>Order_no: <span id='ret_order_no' style="font-size:30px"></span></p>
+        <br />
+        <p style="font-size:30px color:blue">Package_count: <span id='package_count' ></span></p>
         {% csrf_token %}
     </form>
 
@@ -172,6 +174,8 @@
                         $("#ret_order_no").html(data.order_no);
                         $("#track_code").val("");
                         $("#order_no").val("");
+                        package_count = $("#package_count").val();
+                        $("#package_count").val(package_count+1);
                     }
                 });
     });
