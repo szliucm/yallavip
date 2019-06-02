@@ -41,7 +41,7 @@
         Track_code: <input type="text" id="track_code" autofocus> <br>
         Order_no: <input type="text" id="order_no" > <br>
         <button type="button" id='get_package_info'>submit</button>
-        <p>Track_code: <span id='ret_track_code'></span></p>
+        <p>Track_code: <span id='ret_track_code' fontSize=30px></span></p>
         <p>Order_no: <span id='ret_order_no'></span></p>
         {% csrf_token %}
     </form>
@@ -159,15 +159,22 @@
                         csrfmiddlewaretoken: '{{ csrf_token }}'
                     },
                     success: function (data) {
-                         console.log("get order_no",data);
+                        console.log("get order_no", data);
+                        if (data.track_code == "Not Found!"){
+                            $("#ret_track_code").css("backgroundColor", "red");
+                            $("#ret_order_no").css("backgroundColor", "red");
+                        }
+                        else{
+                            $("#ret_track_code").css("backgroundColor", "green");
+                            $("#ret_order_no").css("backgroundColor", "green");
+                        }
                         $("#ret_track_code").html(data.track_code);
                         $("#ret_order_no").html(data.order_no);
-                        $("#ret_track_code").css("color","red");
                         $("#track_code").val("");
                         $("#order_no").val("");
-                }
-            });
-        });
+                    }
+                });
+    });
 
 
 
