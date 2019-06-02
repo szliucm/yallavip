@@ -33,7 +33,7 @@ urlpatterns = [
     path('hello/', view.Hello.as_view()),
     path('demo_add/', demo_add),
     path('order_item/', order_item),
-    path('ajax_list/', ajax_list),
+    path('get_package_info/', get_package_info),
     path('ajax_dict/', ajax_dict),
 
 

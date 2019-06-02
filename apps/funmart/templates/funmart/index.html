@@ -138,7 +138,8 @@
                 alert(alert_text);
                 $.ajax({
                     type: 'POST',
-                    url: "{% url 'funmart:get_package_info' %}",
+                    //url: "{% url 'funmart:get_package_info' %}",
+                    url: "/get_package_info/",
                     data: {
                         track_code: $('#track_code').val(),
                         csrfmiddlewaretoken: '{{ csrf_token }}'
