@@ -71,7 +71,38 @@ def scanpackage(request):
             else:
                 if track_code:
                     item['track_code'] =  'Not Found!'
+                    item['order_no'] = ''
                 else:
+                    item['track_code'] = ''
+                    item['order_no'] = 'Not Found!'
+
+        return JsonResponse(item)
+
+def scanpackageitem(request):
+    from funmart.tasks import get_funmart_sku
+    if request.method == 'GET':
+        pass
+    elif request.method == 'POST':
+        item = {}
+        posts = request.POST
+        print(posts)
+        item_code = posts.get('item_code')
+        if item_code == "":
+            item['item_code'] = 'Please Input Item_no'
+
+        else:
+
+            get_funmart_sku(item_code)
+            if order:
+                item['track_code'] =  "aaa"
+                item['order_no'] = "bbbb"
+
+            else:
+                if track_code:
+                    item['track_code'] =  'Not Found!'
+                    item['order_no'] = ''
+                else:
+                    item['track_code'] = ''
                     item['order_no'] = 'Not Found!'
 
         return JsonResponse(item)

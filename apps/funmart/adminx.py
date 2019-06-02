@@ -38,10 +38,10 @@ class ScanOrderAdmin(object):
 
 
 
-    list_display = ["track_code", "batch_no","downloaded",   ]
+    list_display = ["track_code", "order_no", "batch_no","downloaded", "shelfed",  ]
     list_editable = []
 
-    search_fields = ['track_code', ]
+    search_fields = ['track_code', "order_no",]
     list_filter = ( "batch_no","downloaded",  )
     ordering = []
 
@@ -181,3 +181,9 @@ class TestAdmin(object):
 class ScanPackageAdmin(object):
 	list_display = []
 	object_list_template = "funmart/scanpackage.html"
+
+
+@xadmin.sites.register(ScanPackageItem)
+class ScanPackageItemAdmin(object):
+    list_display = []
+    object_list_template = "funmart/scanpackageitem.html"

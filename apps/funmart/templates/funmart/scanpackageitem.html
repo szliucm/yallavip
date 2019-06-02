@@ -1,0 +1,132 @@
+#{% extends "xadmin/base_site.html" %}
+
+
+
+{% block content %}
+
+    <p>Scan Track_code then item_code </p>
+    <form id="item" action="/get_packageitem_info/" method="post">
+
+        Track_code: <input type="text" id="track_code" autofocus> <br>
+        <br>
+        item_code  : <input type="text"   id="item_code" > <br>
+        <button type="button" id='get_packageitem_info'>submit</button>
+        <table id="Package" cellpadding="1" cellspacing="0" border="1" class="item_info" border="1px" width="100%">
+            <caption align="top"><h3>Track_code: <span id='Track_code'></span></h3></caption>
+            <thead>
+            <tr>
+                <th>sku</th>
+                <th>name</th>
+                <th>quantity</th>
+                <th>barcode</th>
+                <th>real_quantity</th>
+                <th>action</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+        {% csrf_token %}
+    </form>
+
+
+
+
+
+    <script src="/static/js/jquery.min.js">              //src="http://apps.bdimg.com/libs/jquery/1.11.1/jquery.min.js"
+
+    </script>
+
+    <script>
+    // using jQuery
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    var csrftoken = getCookie('csrftoken');
+
+    function csrfSafeMethod(method) {
+        // 这些HTTP方法不要求CSRF包含
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+
+    $.ajaxSetup({
+        beforeSend: function (xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+        }
+    });
+
+    $(document).keyup(function (event) {
+        if (event.keyCode === 13) {
+            $("#get_packageitem_info").trigger("click");
+        }
+    });
+
+
+    //这里是关键点 .ready 函数好像监听器。
+    $(document).ready(function () {
+
+        $(".track_code").hide();
+
+        $("#get_packageitem_info").click(function () {
+
+            var track_code = $("#track_code").val();
+                var item_code = $("#item_code").val();
+
+                alert_text = '请稍等,正在查询:' + track_code + '信息';
+                alert(alert_text);
+                $.ajax({
+                    type: 'POST',
+
+                    url: "/scanpackageitem/",
+                    data: {
+
+
+                        track_code: track_code,
+                        item_code: item_code,
+                        csrfmiddlewaretoken: '{{ csrf_token }}'
+                    },
+                    success: function (data) {
+                        console.log("scanpackageitem", data);
+                        if (data.track_code == "Not Found!"){
+                            $("#ret_track_code").css("backgroundColor", "red");
+                            $("#ret_order_no").css("backgroundColor", "red");
+                        }
+                        else{
+                            $("#ret_track_code").css("backgroundColor", "yellow");
+                            $("#ret_order_no").css("backgroundColor", "yellow");
+                        }
+                        $("#ret_track_code").html(data.track_code);
+                        $("#ret_order_no").html(data.order_no);
+                        $("#track_code").val("");
+                        $("#order_no").val("");
+
+
+
+                    }
+                });
+         });
+
+
+
+
+
+
+        });
+    </script>
+
+
+{% endblock %}
