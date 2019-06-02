@@ -49,18 +49,22 @@ def ajax_dict(request):
 
 def get_package_info(request):
     from funmart.tasks import get_funmart_order
-    posts = request.POST
-    print(posts)
-    track_code = posts.get('track_code')
-    order_no = posts.get('order_no')
-    item ={}
-    order, orderitem_list = get_funmart_order(track_code, order_no)
-    if order:
-        item['track_code'] =  order.track_code
-        item['order_no'] = order.order_no
+    if request.method == 'GET':
+        pass
+    elif request.method == 'POST':
 
-    else:
-        item['track_code'] =  'Not Found!'
-        item['order_no'] = 'Not Found!'
+        posts = request.POST
+        print(posts)
+        track_code = posts.get('track_code')
+        order_no = posts.get('order_no')
+        item ={}
+        order, orderitem_list = get_funmart_order(track_code, order_no)
+        if order:
+            item['track_code'] =  order.track_code
+            item['order_no'] = order.order_no
 
-    return JsonResponse(item)
+        else:
+            item['track_code'] =  'Not Found!'
+            item['order_no'] = 'Not Found!'
+
+        return JsonResponse(item)
