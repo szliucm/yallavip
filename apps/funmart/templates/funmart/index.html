@@ -35,12 +35,22 @@
     </form>
 
 
+    <p>Scan Track_code or Input Order_no </p>
+    <form id="package" action="/get_package_info/" method="post">
+
+        Track_code: <input type="text" id="track_code" value="{{ track_code }}" name="track_code"> <br>
+        Order_no: <input type="text" id="order_no" > <br>
+        <button type="button" id=get_package_info''>submit</button>
+        <p>Package: <span id='package'></span></p>
+        {% csrf_token %}
+    </form>
 
 
 
 
-    <script src="http://apps.bdimg.com/libs/jquery/1.11.1/jquery.min.js"></script>
 
+    // <script src="http://apps.bdimg.com/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="/static/js/jquery.min.js"></script>
     <script>
     // using jQuery
     function getCookie(name) {
@@ -75,54 +85,70 @@
     });
 
 
-        //这里是关键点 .ready 函数好像监听器。
-        $(document).ready(function () {
+    //这里是关键点 .ready 函数好像监听器。
+    $(document).ready(function () {
 
-            $("#sum").click(function () {
-//得到页面中id为a和b两个标签的值
-                var a = $("#a").val();
-                var b = $("#b").val();
-//向服务器发送get请求，请求地址为demo_add
-                $.get("/demo_add/", { 'a': a, 'b': b }, function (ret) {
-//请求结果为ret，将请求结果赋值给id为result的节点
-                    $('#result').html(ret)
-                })
-            });
+        $("#sum").click(function () {
+            //得到页面中id为a和b两个标签的值
+            var a = $("#a").val();
+            var b = $("#b").val();
+            //向服务器发送get请求，请求地址为demo_add
+            $.get("/demo_add/", {'a': a, 'b': b}, function (ret) {
+                //请求结果为ret，将请求结果赋值给id为result的节点
+                $('#result').html(ret)
+            })
+        });
 
-            //jq的处理函数，当点击提交按钮时执行。
-            $("#query_order_item").click(function () {
+        //jq的处理函数，当点击提交按钮时执行。
+        $("#query_order_item").click(function () {
 
-                var barcode = $("input[name='barcode']").val();
-                alert_text = '请稍等,正在查询:' + barcode + '信息';
-                alert(alert_text);
-                console.log("26----",alert_text);
+            var barcode = $("input[name='barcode']").val();
+            alert_text = '请稍等,正在查询:' + barcode + '信息';
+            alert(alert_text);
+            console.log("26----", alert_text);
 
-                $.ajax({
-                    url: "/order_item/",
-                    type: "POST",
-                    data:$("#order_items").serialize(),
-                    dataType:"JSON",
-                    success: function (data) {
+            $.ajax({
+                url: "/order_item/",
+                type: "POST",
+                data: $("#order_items").serialize(),
+                dataType: "JSON",
+                success: function (data) {
 
-                        console.log("26----");
-                        var obj = eval(data);
-                        var tbody = $('<tbody></tbody>');
-                        $(obj).each(function (index) {
-                            var val = obj[index];
-                            var tr = $('<tr></tr>');
-                            $.each(val, function (key, value) {
-                                // key 为字典的 key，value 为对应的值
-                                tr.append('<td>' + value + '</td>');
-                            });
-                            alert("tr is "+ tr);
-                            tbody.append(tr);
+                    console.log("26----");
+                    var obj = eval(data);
+                    var tbody = $('<tbody></tbody>');
+                    $(obj).each(function (index) {
+                        var val = obj[index];
+                        var tr = $('<tr></tr>');
+                        $.each(val, function (key, value) {
+                            // key 为字典的 key，value 为对应的值
+                            tr.append('<td>' + value + '</td>');
                         });
-                        $('#Order tbody').replaceWith(tbody);
-                    }
-                });
+                        alert("tr is " + tr);
+                        tbody.append(tr);
+                    });
+                    $('#Order tbody').replaceWith(tbody);
+                }
             });
+        });
 
-
+        $("#get_package_info").click(function () {
+                var track_code = $("input[name='track_code']").val();
+                alert_text = '请稍等,正在查询:' + track_code + '信息';
+                alert(alert_text);
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'funmart:get_package_info' %}",
+                    data: {
+                        track_code: $('#track_code').val(),
+                        csrfmiddlewaretoken: '{{ csrf_token }}'
+                    },
+                    success: function (data) {
+                         console.log("26----","get order_no");
+                        $('#package').html(data.order_no);
+                }
+            });
+        });
 
 
 

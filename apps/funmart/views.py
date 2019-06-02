@@ -46,3 +46,14 @@ def ajax_list(request):
 def ajax_dict(request):
     name_dict = {'twz': 'Love python and Django', 'zqxt': 'I am teaching Django'}
     return HttpResponse(json.dumps(name_dict), content_type='application/json')
+
+def get_package_info(request):
+    track_code = request.POST['track_code']
+    print(track_code)
+    item ={}
+    if track_code:
+        item["order_no"] ="0123456789"
+        return JsonResponse(item)
+    else:
+        item['data'] = '没有查到此公司!'
+        return JsonResponse(item)
