@@ -48,6 +48,7 @@ def ajax_dict(request):
     return HttpResponse(json.dumps(name_dict), content_type='application/json')
 
 def get_package_info(request):
+    print(request.POST)
     track_code = request.POST['track_code']
     print(track_code)
     item ={}
