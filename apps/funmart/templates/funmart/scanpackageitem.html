@@ -5,13 +5,13 @@
 {% block content %}
 
     <p>Scan Track_code then item_code </p>
-    <form id="item" action="/get_packageitem_info/" method="post">
+    <form id="item" action="/scanpackageitem/" method="post">
 <!--
         Track_code: <input type="text" id="track_code" autofocus> <br>
         <br>
    -->
         item_code  : <input type="text"   id="item_code" > <br>
-        <button type="button" id='get_packageitem_info'>submit</button>
+        <button type="button" id='scanpackageitem'>submit</button>
         <table id="Package" cellpadding="1" cellspacing="0" border="1" class="item_info" border="1px" width="100%">
             <caption align="top"><h3>Track_code: <span id='Track_code'></span></h3></caption>
             <thead>
@@ -72,7 +72,7 @@
 
     $(document).keyup(function (event) {
         if (event.keyCode === 13) {
-            $("#get_packageitem_info").trigger("click");
+            $("#scanpackageitem").trigger("click");
         }
     });
 
@@ -82,7 +82,7 @@
 
         $(".track_code").hide();
 
-        $("#get_packageitem_info").click(function () {
+        $("#scanpackageitem").click(function () {
 
             //var track_code = $("#track_code").val();
                 var item_code = $("#item_code").val();
