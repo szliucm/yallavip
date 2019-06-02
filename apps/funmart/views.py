@@ -48,7 +48,7 @@ def ajax_dict(request):
     return HttpResponse(json.dumps(name_dict), content_type='application/json')
 
 def get_package_info(request):
-
+    from funmart.tasks import get_funmart_order
     posts = request.POST
     print(posts)
     track_code = posts.get('track_code')
