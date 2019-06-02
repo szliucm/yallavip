@@ -6,9 +6,10 @@
 
     <p>Scan Track_code or Input Order_no </p>
     <form id="package" action="/get_package_info/" method="post">
-
+        Batch_no  : <input type="text"   id="batch_no" > <br>
+        <br>
         Track_code: <input type="text" id="track_code" autofocus> <br>
-        Order_no: <input type="text" id="order_no" > <br>
+        Order_no  : <input type="text"   id="order_no" > <br>
         <button type="button" id='get_package_info'>submit</button>
         <p>Track_code: <span id='ret_track_code' style="font-size:30px"></span></p>
         <p>Order_no: <span id='ret_order_no' style="font-size:30px"></span></p>
@@ -71,8 +72,10 @@
 
         $("#get_package_info").click(function () {
                 //var track_code = $("input[name='track_code']").val();
-                var track_code = $("#track_code").val();
+            var batch_no = $("#batch_no").val();
+            var track_code = $("#track_code").val();
                 var order_no = $("#order_no").val();
+
                 alert_text = '请稍等,正在查询:' + track_code + '信息';
                 alert(alert_text);
                 $.ajax({
@@ -81,7 +84,7 @@
                     url: "/scanpackage/",
                     data: {
 
-
+                        batch_no: batch_no,
                         track_code: track_code,
                         order_no: order_no,
                         csrfmiddlewaretoken: '{{ csrf_token }}'

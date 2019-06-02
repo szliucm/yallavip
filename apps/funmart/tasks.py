@@ -88,7 +88,7 @@ def download_spus():
 
 
 @shared_task
-def get_funmart_order(track_code=None, order_no=None):
+def get_funmart_order(track_code=None, order_no=None, batch_no=None):
     # order = FunmartOrder.objects.get(track_code=track_code)
 
     url = " http://47.98.80.172/api/searchOrder"
@@ -139,6 +139,17 @@ def get_funmart_order(track_code=None, order_no=None):
 
             print(orderitem_list)
             FunmartOrderItem.objects.bulk_create(orderitem_list)
+
+            #插入scanorder表
+            order, created = ScanOrder.objects.update_or_create(
+                track_code=track_code,
+                order_no=order_no,
+                batch_no= batch_no,
+                defaults={
+                    'downloaded': True,
+                    'shelfed': False
+                }
+            )
             return  order, orderitem_list
         else:
             print (return_data.get("message"))

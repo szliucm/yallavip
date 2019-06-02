@@ -63,6 +63,7 @@ class FunmartBarcode(models.Model):
 
 class ScanOrder(models.Model):
     track_code = models.CharField(u'track_code', default='', max_length=50, blank=True)
+    order_no = models.CharField(u'order_no', default='', max_length=50, blank=True)
     batch_no = models.IntegerField(u'batch_no', default=0, blank=True, null=True)
     downloaded = models.BooleanField(u"downloaded", default=False)
     shelfed = models.BooleanField(u"shelfed", default=False)
