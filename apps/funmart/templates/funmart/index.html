@@ -41,7 +41,7 @@
         Track_code: <input type="text" id="track_code" autofocus> <br>
         Order_no: <input type="text" id="order_no" > <br>
         <button type="button" id='get_package_info'>submit</button>
-        <p>Track_code: <span id='ret_track_code' fontSize=30px></span></p>
+        <p>Track_code: <span id='ret_track_code' style="font-size:30px"></span></p>
         <p>Order_no: <span id='ret_order_no'></span></p>
         {% csrf_token %}
     </form>
@@ -165,8 +165,8 @@
                             $("#ret_order_no").css("backgroundColor", "red");
                         }
                         else{
-                            $("#ret_track_code").css("backgroundColor", "green");
-                            $("#ret_order_no").css("backgroundColor", "green");
+                            $("#ret_track_code").css("backgroundColor", "yellow");
+                            $("#ret_order_no").css("backgroundColor", "yellow");
                         }
                         $("#ret_track_code").html(data.track_code);
                         $("#ret_order_no").html(data.order_no);
