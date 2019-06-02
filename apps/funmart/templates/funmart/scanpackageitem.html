@@ -6,9 +6,10 @@
 
     <p>Scan Track_code then item_code </p>
     <form id="item" action="/get_packageitem_info/" method="post">
-
+<!--
         Track_code: <input type="text" id="track_code" autofocus> <br>
         <br>
+   -->
         item_code  : <input type="text"   id="item_code" > <br>
         <button type="button" id='get_packageitem_info'>submit</button>
         <table id="Package" cellpadding="1" cellspacing="0" border="1" class="item_info" border="1px" width="100%">
@@ -83,10 +84,10 @@
 
         $("#get_packageitem_info").click(function () {
 
-            var track_code = $("#track_code").val();
+            //var track_code = $("#track_code").val();
                 var item_code = $("#item_code").val();
 
-                alert_text = '请稍等,正在查询:' + track_code + '信息';
+                alert_text = '请稍等,正在查询:' + item_code + '信息';
                 alert(alert_text);
                 $.ajax({
                     type: 'POST',
@@ -95,7 +96,7 @@
                     data: {
 
 
-                        track_code: track_code,
+                        //track_code: track_code,
                         item_code: item_code,
                         csrfmiddlewaretoken: '{{ csrf_token }}'
                     },
@@ -111,8 +112,8 @@
                         }
                         $("#ret_track_code").html(data.track_code);
                         $("#ret_order_no").html(data.order_no);
-                        $("#track_code").val("");
-                        $("#order_no").val("");
+                        //$("#track_code").val("");
+                        $("#item_code").val("");
 
 
 
