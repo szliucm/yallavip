@@ -34,7 +34,7 @@ urlpatterns = [
     path('demo_add/', demo_add),
     path('order_item/', order_item),
     path('get_package_info/', get_package_info),
-    path('ajax_dict/', ajax_dict),
+    path('scanpackage/', scanpackage),
 
 
 

@@ -47,7 +47,7 @@ def ajax_dict(request):
     name_dict = {'twz': 'Love python and Django', 'zqxt': 'I am teaching Django'}
     return HttpResponse(json.dumps(name_dict), content_type='application/json')
 
-def get_package_info(request):
+def scanpackage(request):
     from funmart.tasks import get_funmart_order
     if request.method == 'GET':
         pass

@@ -43,8 +43,7 @@
         <button type="button" id='get_package_info'>submit</button>
         <p>Track_code: <span id='ret_track_code' style="font-size:30px"></span></p>
         <p>Order_no: <span id='ret_order_no' style="font-size:30px"></span></p>
-        <br />
-        <p style="font-size:30px color:blue">Package_count: {{ package_count }}</p>
+
         {% csrf_token %}
     </form>
 
@@ -175,11 +174,7 @@
                         $("#track_code").val("");
                         $("#order_no").val("");
 
-                        if (package_count == ""){
-                            package_count =0
-                        }
-                        package_count += 1;
-                        console.log("package_count _1 ", package_count);
+
 
                     }
                 });
