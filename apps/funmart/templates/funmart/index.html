@@ -145,8 +145,8 @@
                         csrfmiddlewaretoken: '{{ csrf_token }}'
                     },
                     success: function (data) {
-                         console.log("26----","get order_no");
-                        $('#package').html(data.order_no);
+                         console.log("get order_no",data, data.order_no);
+                        $('#package').html();
                 }
             });
         });
