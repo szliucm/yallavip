@@ -44,7 +44,7 @@
         <p>Track_code: <span id='ret_track_code' style="font-size:30px"></span></p>
         <p>Order_no: <span id='ret_order_no' style="font-size:30px"></span></p>
         <br />
-        <p style="font-size:30px color:blue">Package_count: <span id='package_count' ></span></p>
+        <p style="font-size:30px color:blue">Package_count: {{ package_count }}</p>
         {% csrf_token %}
     </form>
 
@@ -175,13 +175,12 @@
                         $("#track_code").val("");
                         $("#order_no").val("");
 
-                        package_count = $("#package_count").val();
-                        console.log("package_count", package_count);
                         if (package_count == ""){
                             package_count =0
                         }
+                        package_count += 1;
                         console.log("package_count _1 ", package_count);
-                        $("#package_count").html(package_count+1);
+
                     }
                 });
     });
