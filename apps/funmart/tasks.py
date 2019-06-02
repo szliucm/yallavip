@@ -98,7 +98,7 @@ def get_funmart_order(track_code=None, order_no=None):
     elif order_no:
         param["order_no"] = order_no
     else:
-        return None
+        return None ,None
     r = requests.post(url, data=json.dumps(param))
     if r.status_code == 200:
         return_data = json.loads(r.text)
@@ -139,8 +139,12 @@ def get_funmart_order(track_code=None, order_no=None):
 
             print(orderitem_list)
             FunmartOrderItem.objects.bulk_create(orderitem_list)
+            return  order, orderitem_list
         else:
             print (return_data.get("message"))
+
+
+    return  None, None
 
 
 @shared_task

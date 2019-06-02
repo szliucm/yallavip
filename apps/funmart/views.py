@@ -48,13 +48,14 @@ def ajax_dict(request):
     return HttpResponse(json.dumps(name_dict), content_type='application/json')
 
 def get_package_info(request):
-    print(request.POST)
+
     track_code = request.POST['track_code']
-    print(track_code)
+    order_no = request.POST['order_no']
     item ={}
-    if track_code:
-        item["order_no"] ="0123456789"
-        return JsonResponse(item)
+    order, orderitem_list = get_funmart_order(track_code, order_no)
+    if order:
+
+        return JsonResponse(json.dumps(order))
     else:
         item['data'] = '没有查到此公司!'
         return JsonResponse(item)
