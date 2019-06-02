@@ -174,10 +174,13 @@
                         $("#ret_order_no").html(data.order_no);
                         $("#track_code").val("");
                         $("#order_no").val("");
+
                         package_count = $("#package_count").val();
+                        console.log("package_count", package_count);
                         if (package_count == ""){
                             package_count =0
                         }
+                        console.log("package_count _1 ", package_count);
                         $("#package_count").val(package_count+1);
                     }
                 });
