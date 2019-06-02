@@ -41,7 +41,8 @@
         Track_code: <input type="text" id="track_code" value="{{ track_code }}" name="track_code"> <br>
         Order_no: <input type="text" id="order_no" > <br>
         <button type="button" id='get_package_info'>submit</button>
-        <p>Package: <span id='package'></span></p>
+        <p>Track_code: <span id='ret_track_code'></span></p>
+        <p>Order_no: <span id='ret_order_no'></span></p>
         {% csrf_token %}
     </form>
 
@@ -92,6 +93,8 @@
             //得到页面中id为a和b两个标签的值
             var a = $("#a").val();
             var b = $("#b").val();
+            alert_text = '请稍等,正在查询:' + a,b + '信息';
+                alert(alert_text);
             //向服务器发送get请求，请求地址为demo_add
             $.get("/demo_add/", {'a': a, 'b': b}, function (ret) {
                 //请求结果为ret，将请求结果赋值给id为result的节点
@@ -133,7 +136,7 @@
         });
 
         $("#get_package_info").click(function () {
-                //var track_code = $("input[name='track_code']").val();
+                var track_code = $("input[name='track_code']").val();
 
                 alert_text = '请稍等,正在查询:' + track_code + '信息';
                 alert(alert_text);
@@ -147,8 +150,9 @@
                         csrfmiddlewaretoken: '{{ csrf_token }}'
                     },
                     success: function (data) {
-                         console.log("get order_no",data, data.order_no);
-                        $('#package').html();
+                         console.log("get order_no",data);
+                        $("#ret_track_code").html(data.track_code);
+                        $("#ret_order_no").html(data.order_no);
                 }
             });
         });

@@ -54,8 +54,11 @@ def get_package_info(request):
     item ={}
     order, orderitem_list = get_funmart_order(track_code, order_no)
     if order:
+        item['track_code'] =  order.track_code
+        item['order_no'] = order.order_no
 
-        return JsonResponse(json.dumps(order))
     else:
-        item['data'] = '没有查到此公司!'
-        return JsonResponse(item)
+        item['track_code'] =  'Not Found!'
+        item['order_no'] = 'Not Found!'
+
+    return JsonResponse(item)
