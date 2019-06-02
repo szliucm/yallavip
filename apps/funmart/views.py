@@ -93,6 +93,9 @@ def scanpackageitem(request):
         else:
 
             get_funmart_sku(item_code)
+            item['track_code'] = "aaa"
+            item['order_no'] = "bbbb"
+            '''
             if order:
                 item['track_code'] =  "aaa"
                 item['order_no'] = "bbbb"
@@ -104,5 +107,6 @@ def scanpackageitem(request):
                 else:
                     item['track_code'] = ''
                     item['order_no'] = 'Not Found!'
+                    '''
 
         return JsonResponse(item)
