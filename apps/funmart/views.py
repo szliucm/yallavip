@@ -49,8 +49,9 @@ def ajax_dict(request):
 
 def get_package_info(request):
 
-    track_code = request.POST['track_code']
-    order_no = request.POST['order_no']
+    post = request.POST
+    track_code = post.get('track_code')
+    order_no = request.get('order_no')
     item ={}
     order, orderitem_list = get_funmart_order(track_code, order_no)
     if order:
