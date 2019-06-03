@@ -134,7 +134,7 @@ def scanpackageitem(request):
 
 
 def scanitem(request):
-    from funmart.tasks import get_funmart_sku
+    from funmart.tasks import get_funmart_barcode
     if request.method == 'GET':
         pass
     elif request.method == 'POST':
@@ -148,9 +148,11 @@ def scanitem(request):
         funmartbarcodes = FunmartBarcode.objects.filter(barcode=item_code)
         if not funmartbarcodes:
             funmart_sku = get_funmart_barcode(item_code)
+            print("get from funmart", funmart_sku)
         else:
             funmart_sku = funmartbarcodes[0].funmart_sku
             sku_name = funmart_sku.name
+            print("get from yallavip", funmart_sku)
 
         if funmart_sku:
             SKU = str(funmart_sku.id).zfill(9)
