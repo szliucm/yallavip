@@ -37,6 +37,14 @@
     </form>
 
 
+<div id="printBtn">
+         <table>
+             <tr>
+                 <td>test</td>
+             </tr>
+         </table>
+    </div>
+    <input type="button" onclick="print()" value="打印" />
 
 
     <script type="text/javascript" src="{% static "js/jquery.min.js" %}"></script>
@@ -181,6 +189,12 @@
 81     }
 
     </script>
+
+    <script language="javascript">
+    function print() {
+         $("#printBtn").jqprint();
+    }
+</script>
 
 
 {% endblock %}
