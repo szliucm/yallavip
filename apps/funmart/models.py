@@ -36,7 +36,7 @@ class FunmartSKU(models.Model):
                                     related_name="funmartspu_sku", on_delete=models.CASCADE)
     SPU = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="SPU")
     SKU = models.CharField(default='', max_length=100, null=True, blank=True, verbose_name="SKU")
-
+    name = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="name")
     skuattr = models.TextField(default='', null=True, blank=True, verbose_name="skuattr")
 
     images = models.TextField(default='', null=True, blank=True, verbose_name="images")
@@ -60,7 +60,7 @@ class FunmartBarcode(models.Model):
 
     barcode = models.CharField(u'barcode', default='', max_length=100, blank=True)
 
-    name = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="name")
+
     download_error = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="download_error")
     class Meta:
         verbose_name = "ScanOrder"

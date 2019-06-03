@@ -178,6 +178,7 @@ def get_funmart_sku(sku):
                 SKU=sku,
                 defaults={
                     'SPU': data.get("spu"),
+                    'name': data.get("en_name"),
                     'skuattr': json.dumps(data.get("skuattr")),
                     'images': json.dumps(data.get("images")),
                     'sale_price': data.get("price"),
@@ -261,6 +262,7 @@ def get_funmart_barcode(barcode):
                     SKU=sku,
                     defaults={
                         'SPU': data.get("spu"),
+                        'name': data.get("en_name"),
                         'skuattr': json.dumps(data.get("skuattr")),
                         'images': json.dumps(data.get("images")),
                         'sale_price': data.get("price"),
@@ -273,7 +275,7 @@ def get_funmart_barcode(barcode):
                 defaults={
                     'funmart_sku': funmart_sku,
                     'SKU': data.get("sku"),
-                    'name': data.get("en_name"),
+
 
                 }
             )
