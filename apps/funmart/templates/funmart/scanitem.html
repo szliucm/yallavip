@@ -5,43 +5,26 @@
 
 {% block content %}
 
-    <h3>Scan Track_code then item_code </h3>
-    <form id="item" action="/scanpackageitem/" method="post">
+    <h3>Scan Item_code </h3>
+    <form id="item" action="/scanitem/" method="post">
 
-        Track_code: <input type="text" id="track_code" > <br>
-        <br>
-        item_code  : <input type="text"   id="item_code" autofocus> <br>
-        <button type="button" id='get_packageitem_info'>submit</button>
-        <p>Track_code: <span id='ret_track_code' style="font-size:30px"></span></p>
+        Item_code  : <input type="text"   id="item_code" autofocus> <br>
+        <button type="button" id='get_item_info'>submit</button>
+        <p>SKU: <span id='sku' style="font-size:30px"></span></p>
+        <p>SKU name: <span id='sku_name' style="font-size:30px"></span></p>
+        <p>Action: <span id='action' style="font-size:30px"></span></p>
         <div id="box">
             <img id="barcode" />
         </div>
-
-        <table id="Package" cellpadding="1" cellspacing="0" border="1" class="item_info" border="1px" width="100%">
-            <caption align="top"><h3>Track_code: <span id='Track_code'></span></h3></caption>
-            <thead>
-            <tr>
-                <th>sku</th>
-                <th>name</th>
-                <th>quantity</th>
-                <th>barcode</th>
-                <th>real_quantity</th>
-                <th>action</th>
-            </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
 
 
         {% csrf_token %}
     </form>
 
+    <input type="button" onclick="print_barcode()" value="打印" />
 
-    <input type="button" onclick="print()" value="打印" />
+    <script type="text/javascript" src="{% static "js/JsBarcode.all.min.js" %}"></script>
 
-    <script type="text/javascript" src="{% static "js/jquery.print.js" %}"></script>
-
-    <script src="https://cdn.bootcss.com/jsbarcode/3.8.0/JsBarcode.all.min.js"></script>
     <script type="text/javascript" src="{% static "js/pazuclient.js" %}"></script>
 
 <script>
@@ -104,7 +87,7 @@
 
     $(document).keyup(function (event) {
         if (event.keyCode === 13) {
-            $("#get_packageitem_info").trigger("click");
+            $("#get_item_info").trigger("click");
         }
     });
 
@@ -114,40 +97,39 @@
 
 
 
-        $("#get_packageitem_info").click(function () {
+        $("#get_item_info").click(function () {
 
-                var track_code = $("#track_code").val();
+
                 var item_code = $("#item_code").val();
 
-                //alert_text = '请稍等,正在查询:' + item_code + '信息';
-                //alert(alert_text);
+
                 $.ajax({
                     type: 'POST',
 
-                    url: "/scanpackageitem/",
+                    url: "/scanitem/",
                     data: {
 
-
-                        track_code: track_code,
                         item_code: item_code,
                         csrfmiddlewaretoken: '{{ csrf_token }}'
                     },
                     success: function (data) {
-                        console.log("scanpackageitem", data);
-                        if (data.track_code == "Not Found!"){
-                            $("#ret_track_code").css("backgroundColor", "red");
-                            $("#ret_order_no").css("backgroundColor", "red");
+                        console.log("scanitem", data);
+                        if (data.sku == "Not Found!"){
+                            $("#sku").css("backgroundColor", "red");
+                            $("#sku_name").css("backgroundColor", "red");
                         }
                         else{
-                            $("#ret_track_code").css("backgroundColor", "yellow");
-                            $("#ret_order_no").css("backgroundColor", "yellow");
+                            $("#sku").css("backgroundColor", "yellow");
+                            $("#sku_name").css("backgroundColor", "yellow");
                         }
-                        $("#ret_track_code").html(data.track_code);
-                        $("#ret_order_no").html(data.order_no);
-                        //$("#track_code").val("");
+
+                        $("#sku").html(data.sku);
+                        $("#sku_name").html(data.sku_name);
+
                         $("#item_code").val("");
-                        test(data.barcode);
-                        console.log("barcode had been generate");
+                        gen_barcode(data.barcode);
+                        print_barcode();
+
 
 
 
@@ -162,9 +144,9 @@
 
 
         });
-      function  test(barcode_toprint){
+      function  gen_barcode(barcode_toprint){
 
-     var barcode = document.getElementById('barcode'),
+     var barcode = document.getElementById('sku'),
 
      options = {
          format:"CODE128",
@@ -173,7 +155,7 @@
          width: 1,//较细处条形码的宽度
          height:40
      };
-     JsBarcode(barcode, barcode_toprint, options);//原生
+     JsBarcode(sku, barcode_toprint, options);//原生
       }
 
 
@@ -184,7 +166,7 @@
     </script>
 
     <script language="javascript">
-    function print() {
+    function print_barcode() {
          PAZU.TPrinter = {
             marginTop: 0,                  //属性 上边距   数据类型：数字   单位：毫米
             marginBottom: 0,               //属性 下边距   数据类型：数字   单位：毫米

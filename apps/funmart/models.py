@@ -64,6 +64,8 @@ class FunmartBarcode(models.Model):
 class ScanOrder(models.Model):
     track_code = models.CharField(u'track_code', default='', max_length=50, blank=True)
     order_no = models.CharField(u'order_no', default='', max_length=50, blank=True)
+    ref_order_no = models.CharField(u'ref_order_no', default='', max_length=50, blank=True)
+
     batch_no = models.IntegerField(u'batch_no', default=0, blank=True, null=True)
     downloaded = models.BooleanField(u"downloaded", default=False)
     shelfed = models.BooleanField(u"shelfed", default=False)
@@ -75,6 +77,22 @@ class ScanOrder(models.Model):
     def __str__(self):
         return self.track_code
 
+class ScanOrderItem(models.Model):
+    track_code = models.CharField(u'track_code', default='', max_length=50, blank=True)
+    order_no = models.CharField(u'order_no', default='', max_length=50, blank=True)
+    ref_order_no = models.CharField(u'ref_order_no', default='', max_length=50, blank=True)
+
+    sku = models.CharField(u'sku', default='', max_length=50, blank=True)
+    quantity = models.IntegerField(u'quantity', default=0, blank=True, null=True)
+    scanned_quantity = models.IntegerField(u'scanned_quantity', default=0, blank=True, null=True)
+    shelfed = models.BooleanField(u"shelfed", default=False)
+
+    class Meta:
+        verbose_name = "ScanOrderItem"
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.track_code
 
 class BatchSKU(models.Model):
     batch_no = models.IntegerField(u'batch_no', default=0, blank=True, null=True)
@@ -112,6 +130,8 @@ class BatchSKU(models.Model):
 class FunmartOrder(models.Model):
     order_no = models.CharField(u'order_no', default='', max_length=50, blank=True)
     track_code = models.CharField(u'track_code', default='', max_length=50, blank=True)
+    ref_order_no = models.CharField(u'ref_order_no', default='', max_length=50, blank=True)
+
     order_date = models.DateTimeField(auto_now=False, null=True, blank=True,verbose_name="order_date")
     ship_method = models.CharField(u'ship_method', default='', max_length=50, blank=True)
     upload_date = models.DateField(u'upload_date', auto_now=True, null=True, blank=True)
@@ -161,6 +181,14 @@ class ScanPackage(models.Model):
 class ScanPackageItem(models.Model):
     class Meta:
         verbose_name = u"ScanPackageItem"
+        verbose_name_plural = verbose_name
+
+    def __unicode__(self):
+        return self.Meta.verbose_name
+
+class ScanItem(models.Model):
+    class Meta:
+        verbose_name = u"ScanItem"
         verbose_name_plural = verbose_name
 
     def __unicode__(self):

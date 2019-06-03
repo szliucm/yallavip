@@ -187,3 +187,8 @@ class ScanPackageAdmin(object):
 class ScanPackageItemAdmin(object):
     list_display = []
     object_list_template = "funmart/scanpackageitem.html"
+
+@xadmin.sites.register(ScanItem)
+class ScanItemAdmin(object):
+    list_display = []
+    object_list_template = "funmart/scanitem.html"

@@ -86,28 +86,55 @@ def scanpackageitem(request):
         item = {}
         posts = request.POST
         print(posts)
+        track_code = posts.get('track_code')
         item_code = posts.get('item_code')
-        if item_code == "":
-            item['item_code'] = 'Please Input Item_no'
+        if track_code == "":
+            item['package'] = 'Please Input track_code'
+            return JsonResponse(item)
 
+
+        #查询包裹信息
+        scanorders = ScanOrder.objects.filter(track_code = track_code)
+        scanorder_items = ScanOrderItem.objects.filter(track_code=track_code)
+        if not (scanorders and scanorder_items):
+            order, orderitem_list = get_funmart_order(track_code, order_no, batch_no)
         else:
+            order = scanorders[0]
+            orderitem_list = scanorder_items
 
-            get_funmart_sku(item_code)
-            item['track_code'] = "aaa"
-            item['order_no'] = "bbbb"
-            item['barcode'] = "01234566789"
-            '''
-            if order:
-                item['track_code'] =  "aaa"
-                item['order_no'] = "bbbb"
+        if item_code:
+            try:
+                sku = FunmartBarcode.objects.get(barcode=item_code).SKU
 
-            else:
-                if track_code:
-                    item['track_code'] =  'Not Found!'
-                    item['order_no'] = ''
-                else:
-                    item['track_code'] = ''
-                    item['order_no'] = 'Not Found!'
-                    '''
+            except:
+                sku = get_funmart_barcode(item_code)
+                if not sku:
+                    item['item_code'] = 'No SKU '
+                    return item
+
+            try:
+                scanorder_item = scanorder_items.get(sku=sku)
+                scanorder_item.scanned_quantity =F("scanned_quantity") +1
+
+            except:
+                item['item_code'] = 'No SKU '
+                return  item
+
+        scanorder_items.refresh_from_db()
+
+        scanorder_items.values_list("sku","name","quantity","scanned_quantity","action")
+
+        item()
+
+        item['package'] = "OK"
+        item['scanorder_items'] = scanorder_items
 
         return JsonResponse(item)
+
+
+
+
+
+
+
+
