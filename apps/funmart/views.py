@@ -150,7 +150,7 @@ def scanitem(request):
             funmart_sku = get_funmart_barcode(item_code)
         else:
             funmart_sku = funmartbarcodes[0].funmart_sku
-            sku_name = funmartbarcodes[0].name
+            sku_name = funmart_sku.name
 
         if funmart_sku:
             SKU = str(funmart_sku.id).zfill(9)
