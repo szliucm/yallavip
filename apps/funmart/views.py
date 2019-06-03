@@ -146,8 +146,8 @@ def scanitem(request):
 
 
         funmartbarcodes = FunmartBarcode.objects.filter(barcode=item_code)
-        if not funmartbarcode:
-            funmartbarcode = get_funmart_barcode(item_code)
+        if not funmartbarcodes:
+            funmart_sku = get_funmart_barcode(item_code)
         else:
             funmart_sku = funmartbarcodes[0].funmart_sku
             sku_name = funmartbarcodes[0].name
