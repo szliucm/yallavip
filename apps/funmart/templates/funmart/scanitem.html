@@ -146,7 +146,7 @@
         });
       function  gen_barcode(barcode_toprint){
 
-     var barcode = document.getElementById('sku'),
+     var barcode = document.getElementById('sku');
 
      options = {
          format:"CODE128",
@@ -155,6 +155,7 @@
          width: 1,//较细处条形码的宽度
          height:40
      };
+    console.log("barcode_toprint", barcode_toprint);
      JsBarcode(barcode, barcode_toprint, options);//原生
       }
 
