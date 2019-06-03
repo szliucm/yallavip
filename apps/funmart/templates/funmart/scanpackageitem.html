@@ -196,7 +196,9 @@
             marginRight: 10,                //属性 右边距   数据类型：数字   单位：毫米
             onlyPrintElementID: "#box",
         };
-        PAZU.print();
+
+            var s = document.getElementById("box").innerHTML;
+            PAZU.print(s, null, null, isPreviewOnly);
 
     }
 </script>
