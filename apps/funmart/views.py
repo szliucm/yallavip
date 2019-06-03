@@ -132,7 +132,33 @@ def scanpackageitem(request):
         return JsonResponse(item)
 
 
+def scanitem(request):
+    from funmart.tasks import get_funmart_sku
+    if request.method == 'GET':
+        pass
+    elif request.method == 'POST':
+        item = {}
+        posts = request.POST
+        print(posts)
 
+        item_code = posts.get('item_code')
+
+
+        funmartbarcodes = FunmartBarcode.objects.filter(barcode=item_code)
+        if not funmartbarcode:
+            funmartbarcode = get_funmart_barcode(item_code)
+        else:
+            funmart_sku = funmartbarcodes[0].funmart_sku
+            sku_name = funmartbarcodes[0].name
+
+        if funmart_sku:
+            SKU = str(funmart_sku.id).zfill(9)
+            item["sku"] = SKU[:5] + '-' + SKU[5:]
+            item["sku_name"] = sku_name
+        else:
+            item["sku"] = "Not Found"
+
+        return JsonResponse(item)
 
 
 

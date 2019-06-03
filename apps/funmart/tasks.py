@@ -250,10 +250,30 @@ def get_funmart_barcode(barcode):
         if return_data.get("code") == '00001':
             data = return_data.get("data")
 
+            sku = data.get("sku")
+
+
+            funmart_skus = FunmartSKU.objects.filter(SKU =sku)
+            if funmart_skus:
+                funmart_sku = funmart_skus[0]
+            else:
+                funmart_sku, created = FunmartSKU.objects.update_or_create(
+                    SKU=sku,
+                    defaults={
+                        'SPU': data.get("spu"),
+                        'skuattr': json.dumps(data.get("skuattr")),
+                        'images': json.dumps(data.get("images")),
+                        'sale_price': data.get("price"),
+                        'downloaded': True
+                    }
+                )
+
             funmartbarcode, created = FunmartBarcode.objects.update_or_create(
                 barcode=barcode,
                 defaults={
+                    'funmart_sku': funmart_sku,
                     'sku': data.get("sku"),
+                    'name': data.get("name"),
 
                 }
             )
