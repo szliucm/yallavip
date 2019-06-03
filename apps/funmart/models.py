@@ -61,6 +61,7 @@ class FunmartBarcode(models.Model):
     barcode = models.CharField(u'barcode', default='', max_length=100, blank=True)
 
     name = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="name")
+    download_error = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="download_error")
     class Meta:
         verbose_name = "ScanOrder"
         verbose_name_plural = verbose_name
