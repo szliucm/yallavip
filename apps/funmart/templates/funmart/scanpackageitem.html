@@ -49,7 +49,27 @@
     <script type="text/javascript" src="{% static "js/jquery.print.js" %}"></script>
 
     <script src="https://cdn.bootcss.com/jsbarcode/3.8.0/JsBarcode.all.min.js"></script>
+    <script type="text/javascript" src="{% static "js/pazuclient.js" %}"></script>
 
+<script>
+    var PAZU_Config = {
+        prot:"http",           //访问你的应用的协议
+        server: 'localhost',   //打印服务器地址，如果你的应用面向Windows平台，则无需更改（每台客户端都自己做打印服务器）
+        port: 6894,            //不要更改端口,并确保打印服务器上
+        license:'53E1021835A1E82099579ECD5DFA75EC|深圳市中仪信息技术有限公司'             //你的PAZU许可码，可以自行在官方申请，不收费，转发微信朋友圈即可申请成功
+    }
+    function chkPAZU(){
+      if(!window.PAZU){
+         alert("PAZU云打印组件加载失败,请下载安装 \r\n :" + PAZU_Config.server + "/可以下载到PAZUCloud_setup.exe的url");
+         //也可以你自己在页面里面构建一个链接提示用户下载
+         return false;
+      }
+      return true;
+   }
+   window.onPAZUReady=function(){
+    //这里表示PAZU肯定已经加载成功了
+    alert("PAZU_Cloud init ok")
+}
 
 
     </script>
@@ -160,25 +180,7 @@
      JsBarcode(barcode, barcode_toprint, options);//原生
       }
 
-    function print(){
-        /*
-71         var img = document.getElementById("barcode"); /// get image element
-72         var canvas  = document.getElementsByTagName("canvas")[0];  /// get canvas element
-73         img.src = canvas.toDataURL();                     /// update image
-74
-75         $("#image").jqprint({
-76             debug:false,
-77             importCSS:true,
-78             printContainer:true,
-79             operaSupport:false
-80         });
-*/
-        $("#box").jqprint({
-	     debug: false, //如果是true则可以显示iframe查看效果（iframe默认高和宽都很小，可以再源码中调大），默认是false
-	     importCSS: true, //true表示引进原来的页面的css，默认是true。（如果是true，先会找$("link[media=print]")，若没有会去找$("link")中的css文件）
-	     printContainer: true, //表示如果原来选择的对象必须被纳入打印（注意：设置为false可能会打破你的CSS规则）。
-	     operaSupport: true//表示如果插件也必须支持歌opera浏览器，在这种情况下，它提供了建立一个临时的打印选项卡。默认是true
-		});
+
 
 
 81     }
@@ -187,7 +189,15 @@
 
     <script language="javascript">
     function print() {
-         $("#printBtn").print();
+         PAZU.TPrinter = {
+            marginTop: 10,                  //属性 上边距   数据类型：数字   单位：毫米
+            marginBottom: 10,               //属性 下边距   数据类型：数字   单位：毫米
+            marginLeft: 10,                 //属性 左边距   数据类型：数字   单位：毫米
+            marginRight: 10,                //属性 右边距   数据类型：数字   单位：毫米
+            onlyPrintElementID: "#box",
+        };
+        PAZU.print();
+
     }
 </script>
 
