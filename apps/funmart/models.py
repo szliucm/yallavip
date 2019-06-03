@@ -61,6 +61,12 @@ class FunmartBarcode(models.Model):
     barcode = models.CharField(u'barcode', default='', max_length=100, blank=True)
 
     name = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="name")
+    class Meta:
+        verbose_name = "ScanOrder"
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.barcode
 
 class ScanOrder(models.Model):
     track_code = models.CharField(u'track_code', default='', max_length=50, blank=True)

@@ -151,13 +151,13 @@ def scanitem(request):
             print("get from funmart", funmart_sku)
         else:
             funmart_sku = funmartbarcodes[0].funmart_sku
-            sku_name = funmart_sku.name
+
             print("get from yallavip", funmart_sku)
 
         if funmart_sku:
             SKU = str(funmart_sku.id).zfill(9)
             item["sku"] = SKU[:5] + '-' + SKU[5:]
-            item["sku_name"] = sku_name
+            item["sku_name"] = funmart_sku.name
         else:
             item["sku"] = "Not Found"
 
