@@ -123,6 +123,7 @@
                         //$("#track_code").val("");
                         $("#item_code").val("");
                         test(data.barcode)
+                        print()
 
 
 
@@ -139,7 +140,7 @@
       function  test(barcode_toprint){
 
      var barcode = document.getElementById('barcode'),
-     barcode_toprint = "ZJ2017110922361108",
+
      options = {
          format:"CODE128",
          displayValue:true,
@@ -149,6 +150,27 @@
      };
      JsBarcode(barcode, barcode_toprint, options);//原生
       }
+
+    function print(){
+        /*
+71         var img = document.getElementById("barcode"); /// get image element
+72         var canvas  = document.getElementsByTagName("canvas")[0];  /// get canvas element
+73         img.src = canvas.toDataURL();                     /// update image
+74
+75         $("#image").jqprint({
+76             debug:false,
+77             importCSS:true,
+78             printContainer:true,
+79             operaSupport:false
+80         });
+*/
+        $("#box").jqprint({
+76             debug:false,
+77             importCSS:true,
+78             printContainer:true,
+79             operaSupport:false
+80         });
+81     }
 
     </script>
 
