@@ -69,6 +69,9 @@
    window.onPAZUReady=function(){
     //这里表示PAZU肯定已经加载成功了
     alert("PAZU_Cloud init ok")
+       PAZU.TPrinter.createPaper(40,30,function(paper){
+       alert('成功创建纸张格式：'+paper);
+    }); //创建20cm*14cm的纸张格式,PAZU用的是毫米
 }
 
 
@@ -191,10 +194,16 @@
     <script language="javascript">
     function print() {
          PAZU.TPrinter = {
-            marginTop: 10,                  //属性 上边距   数据类型：数字   单位：毫米
-            marginBottom: 10,               //属性 下边距   数据类型：数字   单位：毫米
-            marginLeft: 10,                 //属性 左边距   数据类型：数字   单位：毫米
-            marginRight: 10,                //属性 右边距   数据类型：数字   单位：毫米
+            marginTop: 0,                  //属性 上边距   数据类型：数字   单位：毫米
+            marginBottom: 0,               //属性 下边距   数据类型：数字   单位：毫米
+            marginLeft: 0,                 //属性 左边距   数据类型：数字   单位：毫米
+            marginRight: 0,                //属性 右边距   数据类型：数字   单位：毫米
+             footer: "",                      //属性  页脚   数据类型：字符串
+    header: "",                       //属性  页眉   数据类型：字符串
+             fontCSS: "",                        //字符串,设置页面页脚的字体的CSS（2017年增加）注意字体大小要用pt做单位
+    //如果不设置 ，PAZU默认使用 8pt 字体大小，即fontCSS的默认值为"font-size:8pt;color:rgb(0,0,0)"
+    orientation: 2,                     //属性纸张方向  数据类型：整数1或者2 ， 1=纵向  2=横向
+               paperName: "40*30",                   //属性   纸张大小名称  数据类型：字符串
 
         };
 
