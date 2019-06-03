@@ -142,7 +142,7 @@ def scanitem(request):
         posts = request.POST
         print(posts)
 
-        item_code = posts.get('item_code')
+        item_code = posts.get('item_code').replace("－","-")
 
 
         funmartbarcodes = FunmartBarcode.objects.filter(barcode=item_code)
