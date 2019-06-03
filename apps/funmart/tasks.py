@@ -273,7 +273,7 @@ def get_funmart_barcode(barcode):
                 defaults={
                     'funmart_sku': funmart_sku,
                     'SKU': data.get("sku"),
-                    'name': data.get("name"),
+                    'name': data.get("en_name"),
 
                 }
             )
