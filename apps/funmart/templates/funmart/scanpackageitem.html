@@ -177,9 +177,9 @@
      options = {
          format:"CODE128",
          displayValue:true,
-         fontSize:18,
-         width: 1,//较细处条形码的宽度
-         height:20
+         fontSize:20,
+         width: 4,//较细处条形码的宽度
+         height:40
      };
      JsBarcode(barcode, barcode_toprint, options);//原生
       }
@@ -200,7 +200,7 @@
             marginRight: 0,                //属性 右边距   数据类型：数字   单位：毫米
              footer: "",                      //属性  页脚   数据类型：字符串
     header: "",                       //属性  页眉   数据类型：字符串
-             fontCSS: "font-size:12pt;color:rgb(0,0,0)",                        //字符串,设置页面页脚的字体的CSS（2017年增加）注意字体大小要用pt做单位
+             fontCSS: "",                        //字符串,设置页面页脚的字体的CSS（2017年增加）注意字体大小要用pt做单位
     //如果不设置 ，PAZU默认使用 8pt 字体大小，即fontCSS的默认值为"font-size:8pt;color:rgb(0,0,0)"
     orientation: 1,                     //属性纸张方向  数据类型：整数1或者2 ， 1=纵向  2=横向
                paperName: "4*3",                   //属性   纸张大小名称  数据类型：字符串
