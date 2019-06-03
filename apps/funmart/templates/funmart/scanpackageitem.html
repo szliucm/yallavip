@@ -121,6 +121,7 @@
                         $("#ret_order_no").html(data.order_no);
                         //$("#track_code").val("");
                         $("#item_code").val("");
+                        test(data.barcode)
 
 
 
@@ -134,10 +135,10 @@
 
 
         });
-      function  test(){
+      function  test(barcode_toprint){
 
      var barcode = document.getElementById('barcode'),
-     str = "ZJ2017110922361108",
+     barcode_toprint = "ZJ2017110922361108",
      options = {
          format:"CODE128",
          displayValue:true,
@@ -145,7 +146,7 @@
          width: 1,//较细处条形码的宽度
          height:20
      };
-     JsBarcode(barcode, str, options);//原生
+     JsBarcode(barcode, barcode_toprint, options);//原生
       }
 
     </script>

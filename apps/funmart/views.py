@@ -95,6 +95,7 @@ def scanpackageitem(request):
             get_funmart_sku(item_code)
             item['track_code'] = "aaa"
             item['order_no'] = "bbbb"
+            item['barcode'] = "01234566789"
             '''
             if order:
                 item['track_code'] =  "aaa"
