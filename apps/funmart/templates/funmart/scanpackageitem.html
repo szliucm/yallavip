@@ -27,6 +27,11 @@
             </thead>
             <tbody></tbody>
         </table>
+        <h3>js自动生成条形码插件-JsBarcode</h3>
+        <div class="box">
+            <img id="barcode" />
+        </div>
+
         {% csrf_token %}
     </form>
 
@@ -35,6 +40,7 @@
 
 
     <script src="/static/js/jquery.min.js">              //src="http://apps.bdimg.com/libs/jquery/1.11.1/jquery.min.js"
+    <script src="https://cdn.bootcss.com/jsbarcode/3.8.0/JsBarcode.all.min.js"></script>
 
     </script>
 
@@ -128,6 +134,20 @@
 
 
         });
+      function  test(){
+
+     var barcode = document.getElementById('barcode'),
+     str = "ZJ2017110922361108",
+     options = {
+         format:"CODE128",
+         displayValue:true,
+         fontSize:18,
+         width: 1,//较细处条形码的宽度
+         height:20
+     };
+     JsBarcode(barcode, str, options);//原生
+      }
+
     </script>
 
 

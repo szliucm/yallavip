@@ -97,7 +97,9 @@ def get_funmart_order(track_code=None, order_no=None, batch_no=None):
         param["track_code"] = track_code
     elif order_no:
         param["order_no"] = order_no
-    else:
+    elif  order_ref:
+        param["order_ref"] = order_ref
+    else :
         return None ,None
     r = requests.post(url, data=json.dumps(param))
     if r.status_code == 200:
