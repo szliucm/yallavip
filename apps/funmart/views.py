@@ -197,4 +197,5 @@ def scanitem(request):
             else:
                 item['scan_result'] = 'Please Input Item_code'
 
+        print ("response ",item)
         return JsonResponse(item)
