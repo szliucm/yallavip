@@ -166,9 +166,6 @@ def scanitem(request):
         pass
     elif request.method == 'POST':
         item = {}
-        item['scan_result'] = ""
-        item['sku'] = ""
-        item['sku_name'] = ""
 
         posts = request.POST
         print(posts)
@@ -194,9 +191,13 @@ def scanitem(request):
                 try:
                     item["action"] = BatchSKU.objects.get(SKU=funmart_sku.SKU).action
 
+
+                    item["new_barcode"] = funmart_sku.SKU
+
                     SKU = str(funmart_sku.id).zfill(9)
-                    item["sku"] = SKU[:5] + '-' + SKU[5:]
+                    item["new_barcode"] = SKU[:5] + '-' + SKU[5:]
                     item["sku_name"] = funmart_sku.name
+
                     item['scan_result'] = 'Success'
                 except:
                     item['scan_result'] = 'SKU not prepared'

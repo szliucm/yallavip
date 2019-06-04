@@ -161,6 +161,7 @@
                             scan_result.css("backgroundColor", "red");
                             $("#sku").html("");
                             $("#sku_name").html("");
+                            $("#new_barcode").html("");
                             $("#action").html("");
                             $("#barcode").html("");
                         }
@@ -168,7 +169,7 @@
                             scan_result.css("backgroundColor", "yellow");
                             $("#sku").html(data.sku);
                             $("#sku_name").html(data.sku_name);
-
+                            $("#new_barcode").html(data.new_barcode);
                             switch (data.action) {
                                 case "Put Away":
                                     action.css("backgroundColor", "green");
@@ -186,7 +187,7 @@
                             }
 
                             action.html(data.action);
-                            gen_barcode(data.sku);
+                            gen_barcode(data.new_barcode);
                             print_barcode();
                         }
 
