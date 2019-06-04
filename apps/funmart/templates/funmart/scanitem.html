@@ -7,7 +7,7 @@
 
     <h3>Scan Item_code </h3>
     <form id="item" method="post">
-        Track_code : <input type="text" id="track_code" > <br>
+        Track_code : <input type="text" id="track_code" hidden="hidden"> <br>
         <br>
         Item_code  : <input type="text"   id="item_code" autofocus> <br>
         <button type="button" id='get_item_info'>submit</button>
@@ -178,14 +178,17 @@
                                     action.css("backgroundColor", "green");
                                     break;
                                 case "Put Normal_Case":
-                                action.css("backgroundColor", "yellow");
-                                break;
+                                    action.css("backgroundColor", "yellow");
+                                    break;
                                 case "Drug_No_Size Away":
-                                action.css("backgroundColor", "grey");
-                                break;
+                                    action.css("backgroundColor", "grey");
+                                    break;
                                 case "Drug_Size Away":
-                                action.css("backgroundColor", "blue");
-                                break;
+                                    action.css("backgroundColor", "blue");
+                                    break;
+                                default:
+                                    action.css("backgroundColor", "red");
+                                    break;
 
                             }
 
