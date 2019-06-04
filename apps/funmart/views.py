@@ -120,8 +120,8 @@ def scanpackageitem(request):
         if not (scanorders and scanorder_items):
             order, orderitem_list = get_funmart_order(track_code, order_no, batch_no)
         else:
-        order = scanorders[0]
-        orderitem_list = scanorder_items
+            order = scanorders[0]
+            orderitem_list = scanorder_items
 
         if item_code:
             try:
