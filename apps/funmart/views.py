@@ -186,16 +186,22 @@ def scanitem(request):
             else:
                 funmartbarcode = funmartbarcodes[0]
 
-            funmart_sku  = funmartbarcode.funmart_sku
-            print("get from yallavip", funmartbarcode, funmart_sku)
+            if funmartbarcode:
+                funmart_sku  = funmartbarcode.funmart_sku
+                print("get from yallavip", funmartbarcode, funmart_sku)
 
-            if funmart_sku:
-                item['scan_result'] = 'Success'
-                SKU = str(funmart_sku.id).zfill(9)
-                item["sku"] = SKU[:5] + '-' + SKU[5:]
-                item["sku_name"] = funmart_sku.name
+
+                try:
+                    item["action"] = BatchSKU.objects.get(SKU=funmart_sku.SKU).action
+
+                    SKU = str(funmart_sku.id).zfill(9)
+                    item["sku"] = SKU[:5] + '-' + SKU[5:]
+                    item["sku_name"] = funmart_sku.name
+                    item['scan_result'] = 'Success'
+                except:
+                    item['scan_result'] = 'SKU not prepared'
             else:
-                item['scan_result'] = 'Please Input Item_code'
+                item['scan_result'] = 'SKU not Found'
 
         print ("response ",item)
         return JsonResponse(item)

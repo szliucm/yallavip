@@ -141,8 +141,8 @@
                 var track_code = $("#track_code").val();
                 var item_code = $("#item_code").val();
 
-                alert_text = '请稍等,正在查询:' + item_code + '信息';
-                alert(alert_text);
+                //alert_text = '请稍等,正在查询:' + item_code + '信息';
+                //alert(alert_text);
                 $.ajax({
                     type: 'POST',
 
@@ -168,12 +168,23 @@
                         $("#sku").html(data.sku);
                         $("#sku_name").html(data.sku_name);
 
-                        if (data.action === "Put Away"){
-                            action.css("backgroundColor", "green");
-                        }
-                        else{
+                        switch (data.action) {
+                            case "Put Away":
+                                action.css("backgroundColor", "green");
+                                break;
+                            case "Put Normal_Case":
                             action.css("backgroundColor", "yellow");
+                            break;
+                            case "Drug_No_Size Away":
+                            action.css("backgroundColor", "grey");
+                            break;
+                            case "Drug_Size Away":
+                            action.css("backgroundColor", "blue");
+                            break;
+
                         }
+
+
                         action.html(data.action);
 
                         $("#item_code").val("");
