@@ -61,10 +61,10 @@ def scanpackage(request):
         track_code = posts.get('track_code')
         order_ref = posts.get('order_ref')
 
-        if not batch_no :
+        if not batch_no  :
             item['scan_result'] = 'Please Input Batch_no'
 
-        elif not (track_code and order_ref):
+        elif not (track_code or order_ref):
                 item['scan_result'] = 'Please Input code'
         else:
             #从funmart查，并更新本地数据库
