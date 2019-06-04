@@ -55,6 +55,10 @@ def scanpackage(request):
         pass
     elif request.method == 'POST':
         item = {}
+        item['scan_result'] = ""
+        item['track_code'] = ""
+        item['order_no'] = ""
+        item['order_ref'] = ""
         posts = request.POST
         print(posts)
         batch_no = posts.get('batch_no')
