@@ -24,7 +24,7 @@
         {% csrf_token %}
     </form>
 
-    <input type="button" onclick="print_barcode()" value="打印" />
+
 
     <script type="text/javascript" src="{% static "js/JsBarcode.all.min.js" %}"></script>
 
@@ -48,7 +48,7 @@
 
    window.onPAZUReady=function(){
     //这里表示PAZU肯定已经加载成功了
-    alert("PAZU_Cloud init ok")
+    //alert("PAZU_Cloud init ok")
 
 }
 
@@ -105,8 +105,8 @@
 
                 var item_code = $("#item_code").val();
 
-                alert_text = '请稍等,正在查询:' + item_code + '信息';
-                alert(alert_text);
+                //alert_text = '请稍等,正在查询:' + item_code + '信息';
+                //alert(alert_text);
                 $.ajax({
                     type: 'POST',
 
@@ -140,8 +140,8 @@
                         action.html(data.action);
 
                         $("#item_code").val("");
-                        var barcode_toprint = data.sku;
-                        gen_barcode(barcode_toprint);
+
+                        gen_barcode(data.sku);
                         print_barcode();
 
 
