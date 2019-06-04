@@ -60,7 +60,7 @@ def scanpackage(request):
         track_code = posts.get('track_code')
         order_ref = posts.get('order_ref')
 
-        if not batch_no or :
+        if not batch_no :
             item['scan_result'] = 'Please Input Batch_no'
 
         elif not (track_code and order_ref):
