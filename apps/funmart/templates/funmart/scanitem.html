@@ -159,38 +159,42 @@
                         var action = $("#action");
                         if (data.scan_result !== "Success"){
                             scan_result.css("backgroundColor", "red");
+                            $("#sku").html("");
+                            $("#sku_name").html("");
+                            $("#action").html("");
+                            $("#barcode").html("");
                         }
                         else{
                             scan_result.css("backgroundColor", "yellow");
-                        }
-                        scan_result.html(data.scan_result);
-                        $("#ret_item_code").html(item_code);
-                        $("#sku").html(data.sku);
-                        $("#sku_name").html(data.sku_name);
+                            $("#sku").html(data.sku);
+                            $("#sku_name").html(data.sku_name);
 
-                        switch (data.action) {
-                            case "Put Away":
-                                action.css("backgroundColor", "green");
+                            switch (data.action) {
+                                case "Put Away":
+                                    action.css("backgroundColor", "green");
+                                    break;
+                                case "Put Normal_Case":
+                                action.css("backgroundColor", "yellow");
                                 break;
-                            case "Put Normal_Case":
-                            action.css("backgroundColor", "yellow");
-                            break;
-                            case "Drug_No_Size Away":
-                            action.css("backgroundColor", "grey");
-                            break;
-                            case "Drug_Size Away":
-                            action.css("backgroundColor", "blue");
-                            break;
+                                case "Drug_No_Size Away":
+                                action.css("backgroundColor", "grey");
+                                break;
+                                case "Drug_Size Away":
+                                action.css("backgroundColor", "blue");
+                                break;
 
+                            }
+
+                            action.html(data.action);
+                            gen_barcode(data.sku);
+                            print_barcode();
                         }
-
-
-                        action.html(data.action);
 
                         $("#item_code").val("");
 
-                        gen_barcode(data.sku);
-                        print_barcode();
+                        scan_result.html(data.scan_result);
+                        $("#ret_item_code").html(item_code);
+
 
 
 
