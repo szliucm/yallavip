@@ -10,9 +10,12 @@
 
         Item_code  : <input type="text"   id="item_code" autofocus> <br>
         <button type="button" id='get_item_info'>submit</button>
-        <p>SKU: <span id='sku' style="font-size:30px"></span></p>
+        <p>Scan Result: <span id='scan_result' style="font-size:30px"></span></p>
+        <br>
+
+        <p>SKU     : <span id='sku' style="font-size:30px"></span></p>
         <p>SKU name: <span id='sku_name' style="font-size:30px"></span></p>
-        <p>Action: <span id='action' style="font-size:30px"></span></p>
+        <p>Action  : <span id='action' style="font-size:30px"></span></p>
         <div id="box">
             <img id="barcode" />
         </div>
@@ -114,19 +117,29 @@
                     },
                     success: function (data) {
                         console.log("scanitem", data);
-                        if (data.sku == "Not Found"){
-                            $("#sku").css("backgroundColor", "red");
-                            $("#sku_name").css("backgroundColor", "red");
+                        var scan_result = $("#scan_result");
+                        var action = $("#action");
+                        if (data.scan_result !== "Success"){
+                            scan_result.css("backgroundColor", "red");
                         }
                         else{
-                            $("#sku").css("backgroundColor", "yellow");
-                            $("#sku_name").css("backgroundColor", "yellow");
+                            scan_result.css("backgroundColor", "yellow");
                         }
+                        scan_result.html(data.scan_result);
 
                         $("#sku").html(data.sku);
                         $("#sku_name").html(data.sku_name);
 
+                        if (data.action === "Put Away"){
+                            action.css("backgroundColor", "green");
+                        }
+                        else{
+                            action.css("backgroundColor", "yellow");
+                        }
+                        action.html(data.action);
+
                         $("#item_code").val("");
+
                         gen_barcode(data.sku);
                         print_barcode();
 

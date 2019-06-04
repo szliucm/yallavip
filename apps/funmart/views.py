@@ -170,21 +170,27 @@ def scanitem(request):
         print(posts)
 
         item_code = posts.get('item_code').replace("－", "-")
-
-        funmartbarcodes = FunmartBarcode.objects.filter(barcode=item_code)
-        if not funmartbarcodes:
-            funmart_sku = get_funmart_barcode(item_code)
-            print("get from funmart", funmart_sku)
+        if not item_code :
+            item['scan_result'] = 'Please Input Item_code'
         else:
-            funmart_sku = funmartbarcodes[0].funmart_sku
+            item_code = item_code.replace("－", "-")
 
-        print("get from yallavip", funmart_sku)
+            funmartbarcodes = FunmartBarcode.objects.filter(barcode=item_code)
+            if not funmartbarcodes:
+                funmartbarcode = get_funmart_barcode(item_code)
+                print("get from funmart", funmartbarcode)
+            else:
+                funmartbarcode = funmartbarcodes[0]
 
-        if funmart_sku:
-            SKU = str(funmart_sku.id).zfill(9)
-            item["sku"] = SKU[:5] + '-' + SKU[5:]
-            item["sku_name"] = funmart_sku.name
-        else:
-            item["sku"] = "Not Found"
+            funmart_sku  = funmartbarcode.funmart_sku
+            print("get from yallavip", funmartbarcode, funmart_sku)
+
+            if funmart_sku:
+                item['scan_result'] = 'Success'
+                SKU = str(funmart_sku.id).zfill(9)
+                item["sku"] = SKU[:5] + '-' + SKU[5:]
+                item["sku_name"] = funmart_sku.name
+            else:
+                item['scan_result'] = 'Please Input Item_code'
 
         return JsonResponse(item)
