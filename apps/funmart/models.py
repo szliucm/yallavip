@@ -116,7 +116,6 @@ class BatchSKU(models.Model):
     images = models.TextField(default='', null=True, blank=True, verbose_name="images")
     en_name = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="en_name")
     skuattr = models.TextField(default='', null=True, blank=True, verbose_name="skuattr")
-
     ACTION = (
         ("Put Away", "Put Away"),
 
