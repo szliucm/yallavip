@@ -105,52 +105,52 @@ def scanpackageitem(request):
     if request.method == 'GET':
         pass
     elif request.method == 'POST':
-    item = {}
-    posts = request.POST
-    print(posts)
-    track_code = posts.get('track_code')
-    item_code = posts.get('item_code')
-    if track_code == "":
-        item['package'] = 'Please Input track_code'
-        return JsonResponse(item)
+        item = {}
+        posts = request.POST
+        print(posts)
+        track_code = posts.get('track_code')
+        item_code = posts.get('item_code')
+        if track_code == "":
+            item['package'] = 'Please Input track_code'
+            return JsonResponse(item)
 
-    # 查询包裹信息
-    scanorders = ScanOrder.objects.filter(track_code=track_code)
-    scanorder_items = ScanOrderItem.objects.filter(track_code=track_code)
-    if not (scanorders and scanorder_items):
-        order, orderitem_list = get_funmart_order(track_code, order_no, batch_no)
-    else:
-    order = scanorders[0]
-    orderitem_list = scanorder_items
+        # 查询包裹信息
+        scanorders = ScanOrder.objects.filter(track_code=track_code)
+        scanorder_items = ScanOrderItem.objects.filter(track_code=track_code)
+        if not (scanorders and scanorder_items):
+            order, orderitem_list = get_funmart_order(track_code, order_no, batch_no)
+        else:
+        order = scanorders[0]
+        orderitem_list = scanorder_items
 
-    if item_code:
-        try:
-            sku = FunmartBarcode.objects.get(barcode=item_code).SKU
+        if item_code:
+            try:
+                sku = FunmartBarcode.objects.get(barcode=item_code).SKU
 
-        except:
-            sku = get_funmart_barcode(item_code)
-            if not sku:
+            except:
+                sku = get_funmart_barcode(item_code)
+                if not sku:
+                    item['item_code'] = 'No SKU '
+                    return item
+
+            try:
+                scanorder_item = scanorder_items.get(sku=sku)
+                scanorder_item.scanned_quantity = F("scanned_quantity") + 1
+
+            except:
                 item['item_code'] = 'No SKU '
                 return item
 
-        try:
-            scanorder_item = scanorder_items.get(sku=sku)
-            scanorder_item.scanned_quantity = F("scanned_quantity") + 1
+            scanorder_items.refresh_from_db()
 
-        except:
-            item['item_code'] = 'No SKU '
-            return item
+            scanorder_items.values_list("sku", "name", "quantity", "scanned_quantity", "action")
 
-        scanorder_items.refresh_from_db()
+            item()
 
-        scanorder_items.values_list("sku", "name", "quantity", "scanned_quantity", "action")
+            item['package'] = "OK"
+            item['scanorder_items'] = scanorder_items
 
-        item()
-
-        item['package'] = "OK"
-        item['scanorder_items'] = scanorder_items
-
-        return JsonResponse(item)
+            return JsonResponse(item)
 
 
 def scanitem(request):
