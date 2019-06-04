@@ -169,7 +169,7 @@ def scanitem(request):
         posts = request.POST
         print(posts)
 
-        item_code = posts.get('item_code').replace("－", "-")
+        item_code = posts.get('item_code')
         if not item_code :
             item['scan_result'] = 'Please Input Item_code'
         else:

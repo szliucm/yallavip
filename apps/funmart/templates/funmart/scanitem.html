@@ -105,7 +105,8 @@
 
                 var item_code = $("#item_code").val();
 
-
+                alert_text = '请稍等,正在查询:' + item_code + '信息';
+                alert(alert_text);
                 $.ajax({
                     type: 'POST',
 
