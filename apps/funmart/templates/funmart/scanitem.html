@@ -45,13 +45,13 @@
       }
       return true;
    }
-   /*
+
    window.onPAZUReady=function(){
     //这里表示PAZU肯定已经加载成功了
     alert("PAZU_Cloud init ok")
 
 }
-*/
+
 
     </script>
 
@@ -140,8 +140,8 @@
                         action.html(data.action);
 
                         $("#item_code").val("");
-
-                        gen_barcode(data.sku);
+                        var barcode_toprint = data.sku;
+                        gen_barcode(barcode_toprint);
                         print_barcode();
 
 
