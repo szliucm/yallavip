@@ -192,7 +192,7 @@ def scanitem(request):
                     item["action"] = BatchSKU.objects.get(SKU=funmart_sku.SKU).action
 
 
-                    item["new_barcode"] = funmart_sku.SKU
+                    item["sku"] = funmart_sku.SKU
 
                     SKU = str(funmart_sku.id).zfill(9)
                     item["new_barcode"] = SKU[:5] + '-' + SKU[5:]
