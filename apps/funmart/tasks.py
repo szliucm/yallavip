@@ -88,7 +88,8 @@ def download_spus():
 
 
 @shared_task
-def get_funmart_order(track_code=None, order_no=None, batch_no=None):
+# 从funmart获取订单数据，插入订单，订单明细
+def get_funmart_order(track_code=None, order_no=None,order_ref=None, batch_no=None):
     # order = FunmartOrder.objects.get(track_code=track_code)
 
     url = " http://47.98.80.172/api/searchOrder"
@@ -111,7 +112,9 @@ def get_funmart_order(track_code=None, order_no=None, batch_no=None):
             order, created = FunmartOrder.objects.update_or_create(
                 track_code=track_code,
                 order_no=order_no,
+
                 defaults={
+                    'ref_order_no': data.get("ref_order_no"),
                     'order_date': data.get("order_date"),
                     'ship_method': data.get("ship_method"),
 
@@ -120,7 +123,7 @@ def get_funmart_order(track_code=None, order_no=None, batch_no=None):
             )
 
             orderitems = data.get("orderItems")
-
+            #先删除对应的订单明细
             FunmartOrderItem.objects.filter(order_no=order_no).delete()
             orderitem_list = []
             for item in orderitems:
@@ -143,6 +146,7 @@ def get_funmart_order(track_code=None, order_no=None, batch_no=None):
             FunmartOrderItem.objects.bulk_create(orderitem_list)
 
             #插入scanorder表
+            '''
             order, created = ScanOrder.objects.update_or_create(
                 track_code=track_code,
                 order_no=order_no,
@@ -152,6 +156,7 @@ def get_funmart_order(track_code=None, order_no=None, batch_no=None):
                     'shelfed': False
                 }
             )
+            '''
             return  order, orderitem_list
         else:
             print (return_data.get("message"))

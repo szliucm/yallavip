@@ -57,25 +57,26 @@ def scanpackage(request):
         posts = request.POST
         print(posts)
         batch_no = posts.get('batch_no')
-        if batch_no == "":
-            item['track_code'] = 'Please Input Batch_no'
+        track_code = posts.get('track_code')
+        order_ref = posts.get('order_ref')
 
+        if not batch_no or :
+            item['scan_result'] = 'Please Input Batch_no'
+
+        elif not (track_code and order_ref):
+                item['scan_result'] = 'Please Input code'
         else:
-            track_code = posts.get('track_code')
-            order_no = posts.get('order_no')
-
-            order, orderitem_list = get_funmart_order(track_code, order_no,batch_no)
+            order, orderitem_list = get_funmart_order(track_code=track_code, order_ref=order_ref,batch_no=batch_no)
             if order:
                 item['track_code'] =  order.track_code
                 item['order_no'] = order.order_no
-
+                item['order_ref'] = order.order_ref
             else:
                 if track_code:
-                    item['track_code'] =  'Not Found!'
-                    item['order_no'] = ''
+                    item['scan_result'] = 'track_code not found'
                 else:
-                    item['track_code'] = ''
-                    item['order_no'] = 'Not Found!'
+                    item['scan_result'] = 'order_ref not found'
+
 
         return JsonResponse(item)
 
