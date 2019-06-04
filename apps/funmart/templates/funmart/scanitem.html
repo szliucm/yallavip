@@ -6,7 +6,7 @@
 {% block content %}
 
     <h3>Scan Item_code </h3>
-    <form id="item" action="/scanitem/" method="post">
+    <form id="item" action="/get_item_info/" method="post">
 
         Item_code  : <input type="text"   id="item_code" autofocus> <br>
         <button type="button" id='get_item_info'>submit</button>
@@ -25,7 +25,7 @@
     </form>
 
 
-    <script src="/static/js/jquery.min.js">  </script>            //src="http://apps.bdimg.com/libs/jquery/1.11.1/jquery.min.js"
+
     <script type="text/javascript" src="{% static "js/JsBarcode.all.min.js" %}"></script>
 
     <script type="text/javascript" src="{% static "js/pazuclient.js" %}"></script>
