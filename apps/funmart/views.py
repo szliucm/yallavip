@@ -166,6 +166,10 @@ def scanitem(request):
         pass
     elif request.method == 'POST':
         item = {}
+        item['scan_result'] = ""
+        item['sku'] = ""
+        item['sku_name'] = ""
+
         posts = request.POST
         print(posts)
 
