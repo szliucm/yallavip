@@ -83,7 +83,7 @@ def scanpackage(request):
                         'shelfed': False
                     }
                 )
-
+                item['scan_result'] = 'Success'
                 item['track_code'] =  order.track_code
                 item['order_no'] = order.order_no
                 item['order_ref'] = order.order_ref
