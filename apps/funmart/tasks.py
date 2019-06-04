@@ -107,6 +107,7 @@ def get_funmart_order(track_code=None, order_no=None,order_ref=None, batch_no=No
         return_data = json.loads(r.text)
         if return_data.get("code") == '00001':
             data = return_data.get("data")
+            print(data)
             track_code = data.get("track_code")
             order_no = data.get("order_no")
             order, created = FunmartOrder.objects.update_or_create(
@@ -114,7 +115,7 @@ def get_funmart_order(track_code=None, order_no=None,order_ref=None, batch_no=No
                 order_no=order_no,
 
                 defaults={
-                    'ref_order_no': data.get("ref_order_no"),
+                    'order_ref': data.get("order_ref",""),
                     'order_date': data.get("order_date"),
                     'ship_method': data.get("ship_method"),
 

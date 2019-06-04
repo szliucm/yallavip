@@ -137,7 +137,7 @@ class BatchSKU(models.Model):
 class FunmartOrder(models.Model):
     order_no = models.CharField(u'order_no', default='', max_length=50, blank=True)
     track_code = models.CharField(u'track_code', default='', max_length=50, blank=True)
-    ref_order_no = models.CharField(u'ref_order_no', default='', max_length=50, blank=True)
+    order_ref = models.CharField(u'order_ref', default='', max_length=50, blank=True)
 
     order_date = models.DateTimeField(auto_now=False, null=True, blank=True,verbose_name="order_date")
     ship_method = models.CharField(u'ship_method', default='', max_length=50, blank=True)
