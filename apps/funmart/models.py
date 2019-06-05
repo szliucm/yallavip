@@ -78,6 +78,9 @@ class ScanOrder(models.Model):
     downloaded = models.BooleanField(u"downloaded", default=False)
     shelfed = models.BooleanField(u"shelfed", default=False)
 
+    quantity = models.IntegerField(u'quantity', default=0, blank=True, null=True)
+    scanned_quantity = models.IntegerField(u'scanned_quantity', default=0, blank=True, null=True)
+
     class Meta:
         verbose_name = "ScanOrder"
         verbose_name_plural = verbose_name
@@ -92,6 +95,7 @@ class ScanOrderItem(models.Model):
 
     sku = models.CharField(u'sku', default='', max_length=50, blank=True)
     quantity = models.IntegerField(u'quantity', default=0, blank=True, null=True)
+
     scanned_quantity = models.IntegerField(u'scanned_quantity', default=0, blank=True, null=True)
     shelfed = models.BooleanField(u"shelfed", default=False)
 

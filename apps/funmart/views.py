@@ -68,51 +68,50 @@ def scanpackage(request):
 
         if not batch_no  :
             item['scan_result'] = 'Please Input Batch_no'
-        elif not track_code :
-            item['scan_result'] = 'Please Input track_code'
-        else:
-            #从funmart查，并更新本地数据库
-            #暂时没有考虑效率问题
-            if order_ref:
-                scanorders = ScanOrder.objects.filter(order_ref=order_ref)
-            else:
-                scanorders = ScanOrder.objects.filter(track_code=track_code)
-
-            #print ("ScanOrder 查询结果",scanorders )
-
-            if not scanorders:
-
-                order, orderitem_list = get_funmart_order(track_code=track_code, order_ref=order_ref,batch_no=batch_no)
-                if order:
-                    #更新批次扫描记录
-                    scan_order, created = ScanOrder.objects.update_or_create(
-                        track_code=order.track_code,
-                        order_no=order.order_no,
-                        order_ref=order.order_ref,
-                        batch_no= batch_no,
-                        defaults={
-                            'downloaded': True,
-                            'shelfed': False
-                        }
-                    )
-                    item['scan_result'] = 'Success'
-                    item['track_code'] =  order.track_code
-                    item['order_no'] = order.order_no
-                    item['order_ref'] = order.order_ref
-
-
-                else:
-                    if order_ref:
-                        item['scan_result'] = 'order_ref not found'
-                    else:
-                        item['scan_result'] = 'track_code not found'
-            else:
-                item['scan_result'] = 'Package has been Scanned'
-
-        if batch_no:
-            item['batch_package_count'] = ScanOrder.objects.filter(batch_no=batch_no).count()
-        else:
             item['batch_package_count'] = ""
+        else:
+            item['batch_package_count'] = ScanOrder.objects.filter(batch_no=batch_no).count()
+            if not track_code :
+                item['scan_result'] = 'Please Input track_code'
+            else:
+                #从funmart查，并更新本地数据库
+                #暂时没有考虑效率问题
+                if order_ref:
+                    scanorders = ScanOrder.objects.filter(order_ref=order_ref)
+                else:
+                    scanorders = ScanOrder.objects.filter(track_code=track_code)
+
+                #print ("ScanOrder 查询结果",scanorders )
+
+                if not scanorders:
+
+                    order, orderitem_list = get_funmart_order(track_code=track_code, order_ref=order_ref,batch_no=batch_no)
+                    if order:
+                        #更新批次扫描记录
+                        scan_order, created = ScanOrder.objects.update_or_create(
+                            track_code=order.track_code,
+                            order_no=order.order_no,
+                            order_ref=order.order_ref,
+                            batch_no= batch_no,
+                            defaults={
+                                'downloaded': True,
+                                'shelfed': False
+                            }
+                        )
+                        item['scan_result'] = 'Success'
+                        item['track_code'] =  order.track_code
+                        item['order_no'] = order.order_no
+                        item['order_ref'] = order.order_ref
+
+
+                    else:
+                        if order_ref:
+                            item['scan_result'] = 'order_ref not found'
+                        else:
+                            item['scan_result'] = 'track_code not found'
+                else:
+                    item['scan_result'] = 'Package has been Scanned'
+
 
         #print ("准备返回结果", item)
         return JsonResponse(item)
@@ -166,7 +165,7 @@ def scanpackageitem(request):
 
             scanorder_items.values_list("sku", "name", "quantity", "scanned_quantity", "action")
 
-            item()
+
 
             item['package'] = "OK"
             item['scanorder_items'] = scanorder_items
@@ -186,39 +185,58 @@ def scanitem(request):
 
         posts = request.POST
         print(posts)
+        track_code = posts.get('track_code')
 
         item_code = posts.get('item_code')
-        if not item_code :
-            item['scan_result'] = 'Please Input Item_code'
+        if not track_code  :
+            item['scan_result'] = 'Please Input Track_code'
         else:
-            item_code = item_code.replace("－", "-")
+            try:
+                scanorder = ScanOrder.objects.get(track_code=track_code)
 
-            funmartbarcodes = FunmartBarcode.objects.filter(barcode=item_code)
-            if not funmartbarcodes:
-                funmartbarcode = get_funmart_barcode(item_code)
-                print("get from funmart", funmartbarcode)
+
+            except:
+                item['scan_result'] = 'Cannot find package with the track_code'
+                return JsonResponse(item)
+
+
+            if not item_code :
+                item['scan_result'] = 'Please Input Item_code'
             else:
-                funmartbarcode = funmartbarcodes[0]
+                item_code = item_code.replace("－", "-")
 
-            if funmartbarcode:
-                funmart_sku  = funmartbarcode.funmart_sku
-                print("get from yallavip", funmartbarcode, funmart_sku)
+                funmartbarcodes = FunmartBarcode.objects.filter(barcode=item_code)
+                if not funmartbarcodes:
+                    funmartbarcode = get_funmart_barcode(item_code)
+                    print("get from funmart", funmartbarcode)
+                else:
+                    funmartbarcode = funmartbarcodes[0]
+
+                if funmartbarcode:
+                    funmart_sku  = funmartbarcode.funmart_sku
+                    print("get from yallavip", funmartbarcode, funmart_sku)
 
 
-                try:
-                    item["action"] = BatchSKU.objects.get(SKU=funmart_sku.SKU).action
-                except:
-                    item['action'] = 'SKU not prepared'
+                    try:
+                        item["action"] = BatchSKU.objects.get(SKU=funmart_sku.SKU).action
+                    except:
+                        item['action'] = 'SKU not prepared'
 
-                item["sku"] = funmart_sku.SKU
+                    item["sku"] = funmart_sku.SKU
 
-                SKU = str(funmart_sku.id).zfill(9)
-                item["new_barcode"] = SKU[:5] + '-' + SKU[5:]
-                item["sku_name"] = funmart_sku.name
-                item['scan_result'] = 'Success'
+                    SKU = str(funmart_sku.id).zfill(9)
+                    item["new_barcode"] = SKU[:5] + '-' + SKU[5:]
+                    item["sku_name"] = funmart_sku.name
+                    item['scan_result'] = 'Success'
 
-            else:
-                item['scan_result'] = 'SKU not Found'
 
+                    item['package_scannned_count'] = scanorder.scanned_quantity + 1
+                    scanorder.scanned_quantity = F("scanned_quantity") + 1
+                    scanorder.save()
+
+                else:
+                    item['scan_result'] = 'SKU not Found'
+
+        item['package_items_count'] = scanorder.quantity
         print ("response ",item)
         return JsonResponse(item)
