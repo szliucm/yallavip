@@ -4,6 +4,7 @@ from django.shortcuts import render
 from xadmin.views import BaseAdminView
 
 from .models import *
+from django.db.models import Count, Sum, Q,F
 
 
 class testView(BaseAdminView):
