@@ -162,7 +162,7 @@ $('#item_code').bind('keyup',function(event){
 
                      url: "/scanitem/",
                     data: {
-
+                        track_code: track_code,
                         item_code: item_code,
                         csrfmiddlewaretoken: '{{ csrf_token }}'
                     },
