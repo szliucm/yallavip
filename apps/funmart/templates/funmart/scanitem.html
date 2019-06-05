@@ -140,8 +140,8 @@
         //输入框的enter事件
 $('#item_code').bind('keyup',function(event){
     if(event.keyCode == "13") {
-        alert(1111);
-        $("#get_package_info").trigger("click");
+
+        $("#get_item_info").trigger("click");
     }
 });
 
@@ -167,10 +167,10 @@ $('#item_code').bind('keyup',function(event){
                     },
                     success: function (data) {
                         console.log("scanitem", data);
-                        var scan_result = $("#scan_result");
+                        var scan_result = $("#s$('#chatAudio')[0].play();can_result");
                         var action = $("#action");
 
-                        $('#chatAudio')[0].play();
+
 
                         if (data.scan_result !== "Success"){
                             scan_result.css("backgroundColor", "red");
