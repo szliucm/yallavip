@@ -73,30 +73,39 @@ def scanpackage(request):
         else:
             #从funmart查，并更新本地数据库
             #暂时没有考虑效率问题
-            order, orderitem_list = get_funmart_order(track_code=track_code, order_ref=order_ref,batch_no=batch_no)
-            if order:
-                #更新批次扫描记录
-                scan_order, created = ScanOrder.objects.update_or_create(
-                    track_code=order.track_code,
-                    order_no=order.order_no,
-                    order_ref=order.order_ref,
-                    batch_no= batch_no,
-                    defaults={
-                        'downloaded': True,
-                        'shelfed': False
-                    }
-                )
-                item['scan_result'] = 'Success'
-                item['track_code'] =  order.track_code
-                item['order_no'] = order.order_no
-                item['order_ref'] = order.order_ref
-
-
+            if order_ref:
+                scanorders = ScanOrder.objects.filter(order_ref=order_ref)
             else:
-                if track_code:
-                    item['scan_result'] = 'track_code not found'
+                scanorders = ScanOrder.objects.filter(track_code=track_code)
+
+            if not scanorders:
+
+                order, orderitem_list = get_funmart_order(track_code=track_code, order_ref=order_ref,batch_no=batch_no)
+                if order:
+                    #更新批次扫描记录
+                    scan_order, created = ScanOrder.objects.update_or_create(
+                        track_code=order.track_code,
+                        order_no=order.order_no,
+                        order_ref=order.order_ref,
+                        batch_no= batch_no,
+                        defaults={
+                            'downloaded': True,
+                            'shelfed': False
+                        }
+                    )
+                    item['scan_result'] = 'Success'
+                    item['track_code'] =  order.track_code
+                    item['order_no'] = order.order_no
+                    item['order_ref'] = order.order_ref
+
+
                 else:
-                    item['scan_result'] = 'order_ref not found'
+                    if order_ref:
+                        item['scan_result'] = 'order_ref not found'
+                    else:
+                        item['scan_result'] = 'track_code not found'
+            else:
+                item['scan_result'] = 'Package has been Scanned'
 
         if batch_no:
             item['batch_package_count'] = ScanOrder.objects.filter(batch_no=batch_no).count()
