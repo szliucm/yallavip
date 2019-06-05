@@ -78,6 +78,8 @@ def scanpackage(request):
             else:
                 scanorders = ScanOrder.objects.filter(track_code=track_code)
 
+            #print ("ScanOrder 查询结果",scanorders )
+
             if not scanorders:
 
                 order, orderitem_list = get_funmart_order(track_code=track_code, order_ref=order_ref,batch_no=batch_no)
@@ -112,6 +114,7 @@ def scanpackage(request):
         else:
             item['batch_package_count'] = ""
 
+        #print ("准备返回结果", item)
         return JsonResponse(item)
 
 

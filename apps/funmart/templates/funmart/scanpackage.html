@@ -13,7 +13,7 @@
         Order_ref  : <input type="text" id="order_ref" > <br>
         <button type="button" id='get_package_info'>submit</button>
         <p>Batch Package Count: <span id='batch_package_count' style="font-size:30px"></span></p>
-        <p>Track_code : <span id='ret_track_code' style="font-size:20px"></span></p>
+        <p>Scan Result : <span id='scan_result' style="font-size:20px"></span></p>
 
         <br>
         <p>Track_code : <span id='ret_track_code' style="font-size:20px"></span></p>
@@ -68,7 +68,7 @@
     //输入框的enter事件
 $('#track_code').bind('keyup',function(event){
     if(event.keyCode == "13") {
-        alert(1111);
+
         $("#get_package_info").trigger("click");
     }
 });
