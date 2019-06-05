@@ -6,7 +6,8 @@
 {% block content %}
 
     <h3>Scan Item_code </h3>
-    <audio id="chatAudio"><source src="/media/resource/music.ogg" type="audio/ogg"><source src="/media/resource/music.mp3" type="audio/mpeg"></audio>
+    <audio id="successAudio"><source src="/media/audio/success.mp3" type="audio/mpeg"></audio>
+    <audio id="errorAudio"><source src="/media/audio/error.mp3" type="audio/mpeg"></audio>
     <form id="item" method="post">
         Track_code : <input type="text" id="track_code" hidden="hidden"> <br>
         <br>
@@ -153,8 +154,8 @@ $('#item_code').bind('keyup',function(event){
                 var track_code = $("#track_code").val();
                 var item_code = $("#item_code").val();
 
-                alert_text = '请稍等,正在查询:' + item_code + '信息';
-                alert(alert_text);
+                //alert_text = '请稍等,正在查询:' + item_code + '信息';
+                //alert(alert_text);
                 $.ajax({
                     type: 'POST',
 
@@ -170,11 +171,13 @@ $('#item_code').bind('keyup',function(event){
                         var scan_result = $("#scan_result");
                         var action = $("#action");
 
-                        $('#chatAudio')[0].play();
+
 
 
 
                         if (data.scan_result !== "Success"){
+                                  $('#errorAudio')[0].play();
+
                             scan_result.css("backgroundColor", "red");
                             $("#sku").html("");
                             $("#sku_name").html("");
@@ -183,6 +186,7 @@ $('#item_code').bind('keyup',function(event){
                             $("#barcode").html("");
                         }
                         else{
+                                  $('#successAudio')[0].play();
                             scan_result.css("backgroundColor", "yellow");
                             $("#sku").html(data.sku);
                             $("#sku_name").html(data.sku_name);
