@@ -15,6 +15,9 @@
         <button type="button" id='get_item_info'>submit</button>
         <p>Scan Result: <span id='scan_result' style="font-size:30px"></span></p>
         <br>
+        <p>Package Items Count: <span id='package_items_count' style="color:red ; font-size:30px"></span></p>
+        <p>Scanned Items Count: <span id='scannned_items__count' style="color:red ; font-size:30px"></span></p>
+        <br>
         <p>Item_code     : <span id='ret_item_code' style="font-size:30px"></span></p>
         <p>SKU           : <span id='sku' style="font-size:30px"></span></p>
         <p>SKU name      : <span id='sku_name' style="font-size:30px"></span></p>
@@ -184,6 +187,9 @@ $('#item_code').bind('keyup',function(event){
                         else{
                                   $('#successAudio')[0].play();
                             scan_result.css("backgroundColor", "yellow");
+                            $("#package_items_count").html(data.package_items_count);
+                            $("#scannned_items__count").html(data.scannned_items__count);
+
                             $("#sku").html(data.sku);
                             $("#sku_name").html(data.sku_name);
                             $("#new_barcode").html(data.new_barcode);

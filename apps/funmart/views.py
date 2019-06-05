@@ -231,7 +231,7 @@ def scanitem(request):
                     item['scan_result'] = 'Success'
 
 
-                    item['package_scannned_count'] = scanorder.scanned_quantity + 1
+                    item['scannned_items__count'] = scanorder.scanned_quantity + 1
                     scanorder.scanned_quantity = F("scanned_quantity") + 1
                     scanorder.save()
 
