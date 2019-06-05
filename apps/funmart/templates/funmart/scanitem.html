@@ -124,7 +124,7 @@
     if ( borswer.indexOf( "ie" ) >= 0 )
     {
         //IE内核浏览器
-        var strEmbed = '<embed name="embedPlay" src="/media/audio/voice.mp3" autostart="true" hidden="true" loop="false"></embed>';
+        var strEmbed = '<embed name="embedPlay" src="/media/material/success.wav" autostart="true" hidden="true" loop="false"></embed>';
         if ( $( "body" ).find( "embed" ).length <= 0 )
             $( "body" ).append( strEmbed );
         var embed = document.embedPlay;
@@ -135,7 +135,7 @@
     } else
     {
         //非IE内核浏览器
-        var strAudio = "<audio id='audioPlay' src='/medai/audio/voice.mp3' hidden='true'>";
+        var strAudio = "<audio id='audioPlay' src='/media/material/success.wav' hidden='true'>";
 
         if($("#audioPlay").length<=0){
             $( "body" ).append( strAudio );
