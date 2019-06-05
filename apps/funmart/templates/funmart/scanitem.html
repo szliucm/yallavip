@@ -148,15 +148,13 @@ $('#item_code').bind('keyup',function(event){
     //这里是关键点 .ready 函数好像监听器。
     $(document).ready(function () {
 
-
-
         $("#get_item_info").click(function () {
 
                 var track_code = $("#track_code").val();
                 var item_code = $("#item_code").val();
 
-                //alert_text = '请稍等,正在查询:' + item_code + '信息';
-                //alert(alert_text);
+                alert_text = '请稍等,正在查询:' + item_code + '信息';
+                alert(alert_text);
                 $.ajax({
                     type: 'POST',
 

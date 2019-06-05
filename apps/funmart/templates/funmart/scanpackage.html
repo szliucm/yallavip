@@ -4,7 +4,8 @@
 
 {% block content %}
 
-    <p>Scan Track_code or Input Order_no </p>
+    <h3>Scan Track_code or Input Order_no </h3>
+    <audio id="chatAudio"><source src="/media/resource/music.ogg" type="audio/ogg"><source src="/media/resource/music.mp3" type="audio/mpeg"></audio>
     <form id="package"  method="post">
         Batch_no   : <input type="text"   id="batch_no" > <br>
         <br>
@@ -105,7 +106,9 @@ $('#track_code').bind('keyup',function(event){
                     success: function (data) {
                         console.log("get order_no", data);
                         var scan_result = $("#scan_result");
+                        $('#chatAudio')[0].play();
                         if (data.scan_result !== "Success"){
+
                             scan_result.css("backgroundColor", "red");
                         }
                         else{
