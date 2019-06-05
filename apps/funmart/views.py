@@ -199,7 +199,7 @@ def scanitem(request):
                 item['scan_result'] = 'Cannot find package with the track_code'
                 return JsonResponse(item)
 
-
+            item['package_items_count'] = scanorder.quantity
             if not item_code :
                 item['scan_result'] = 'Please Input Item_code'
             else:
@@ -237,6 +237,6 @@ def scanitem(request):
                 else:
                     item['scan_result'] = 'SKU not Found'
 
-        item['package_items_count'] = scanorder.quantity
+
         print ("response ",item)
         return JsonResponse(item)
