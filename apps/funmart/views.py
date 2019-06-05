@@ -201,7 +201,7 @@ def scanitem(request):
                 return JsonResponse(item)
 
             item['package_items_count'] = scanorder.quantity
-            if not item_code :
+            if item_code :
                 item['scan_result'] = 'Please Input Item_code'
             else:
                 item_code = item_code.replace("－", "-")
