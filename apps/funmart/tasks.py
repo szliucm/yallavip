@@ -94,28 +94,34 @@ def get_funmart_order(track_code=None, order_no=None,order_ref=None, batch_no=No
 
     url = " http://47.98.80.172/api/searchOrder"
     param = dict()
-    if track_code:
+    # 如果输入了order_ref，就忽略track_code
+    if order_ref:
+        param["order_ref"] = order_ref
+    elif track_code:
         param["track_code"] = track_code
     elif order_no:
         param["order_no"] = order_no
-    elif  order_ref:
-        param["order_ref"] = order_ref
     else :
         return None ,None
+
     r = requests.post(url, data=json.dumps(param))
     if r.status_code == 200:
         return_data = json.loads(r.text)
         if return_data.get("code") == '00001':
             data = return_data.get("data")
             print(data)
-            track_code = data.get("track_code")
+            #如果输入了track_code，就以track_code为准
+            if not track_code:
+                track_code = data.get("track_code")
+
             order_no = data.get("order_no")
             order, created = FunmartOrder.objects.update_or_create(
                 track_code=track_code,
                 order_no=order_no,
+                order_ref =  data.get("order_ref", ""),
 
                 defaults={
-                    'order_ref': data.get("order_ref",""),
+
                     'order_date': data.get("order_date"),
                     'ship_method': data.get("ship_method"),
 
@@ -358,9 +364,9 @@ def batch_sku():
                 action = "Normal_Case"
         else:
             if skuattr.find("One Size") > -1 or skuattr.find("Free Size") > -1:
-                action = "Drug_No_Size"
+                action = "Dead_No_Size"
             else:
-                action = "Drug_Size"
+                action = "Dead_Size"
 
         batch_sku = BatchSKU(
             SKU=sku,
@@ -427,9 +433,9 @@ def batch_sku():
     BatchSKU.objects.filter(sale_type = "hot").update(action = "Put Away")
 
     BatchSKU.objects.filter(sale_type="normal", order_count__lt=3).update(action="Normal_Case")
-    BatchSKU.objects.filter(Q(skuattr__icontains="One Size")|Q(skuattr__icontains="Free Size"), sale_type="drug").update(action="Drug_No_Size")
+    BatchSKU.objects.filter(Q(skuattr__icontains="One Size")|Q(skuattr__icontains="Free Size"), sale_type="drug").update(action="Dead_No_Size")
     BatchSKU.objects.filter(~Q(skuattr__icontains="One Size") ,~Q(skuattr__icontains="Free Size"),
-                            sale_type="drug").update(action="Drug_Size")
+                            sale_type="drug").update(action="Dead_Size")
 
     BatchSKU.objects.filter(order_count__gte = 3 ).update(action="Put Away")
 

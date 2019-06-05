@@ -72,7 +72,7 @@ class FunmartBarcode(models.Model):
 class ScanOrder(models.Model):
     track_code = models.CharField(u'track_code', default='', max_length=50, blank=True)
     order_no = models.CharField(u'order_no', default='', max_length=50, blank=True)
-    ref_order_no = models.CharField(u'ref_order_no', default='', max_length=50, blank=True)
+    order_ref = models.CharField(u'order_ref', default='', max_length=50, blank=True)
 
     batch_no = models.IntegerField(u'batch_no', default=0, blank=True, null=True)
     downloaded = models.BooleanField(u"downloaded", default=False)
@@ -120,8 +120,8 @@ class BatchSKU(models.Model):
         ("Put Away", "Put Away"),
 
         ("Normal_Case", "Normal_Case"),
-        ("Drug_No_Size", "Drug_No_Size"),
-        ("Drug_Size", "Drug_Size"),
+        ("Dead_No_Size", "Deda_No_Size"),
+        ("Dead_Size", "Deda_Size"),
 
     )
     action = models.CharField(choices=ACTION, default='', max_length=100, null=True, blank=True, verbose_name="Action")

@@ -130,9 +130,9 @@ class BatchSKUAdmin(object):
             color_code = 'green'
         elif obj.action == "Normal_Case":
             color_code = 'blue'
-        elif obj.action == "Drug_No_Size":
+        elif obj.action == "Dead_No_Size":
             color_code = 'yellow'
-        elif obj.action == "Drug_Size":
+        elif obj.action == "Dead_Size":
             color_code = 'red'
         else:
             color_code = 'white'

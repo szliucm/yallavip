@@ -171,10 +171,6 @@ $('#item_code').bind('keyup',function(event){
                         var scan_result = $("#scan_result");
                         var action = $("#action");
 
-
-
-
-
                         if (data.scan_result !== "Success"){
                                   $('#errorAudio')[0].play();
 
@@ -198,10 +194,10 @@ $('#item_code').bind('keyup',function(event){
                                 case "Put Normal_Case":
                                     action.css("backgroundColor", "yellow");
                                     break;
-                                case "Drug_No_Size Away":
+                                case "Dead_No_Size Away":
                                     action.css("backgroundColor", "grey");
                                     break;
-                                case "Drug_Size Away":
+                                case "Dead_Size Away":
                                     action.css("backgroundColor", "blue");
                                     break;
                                 default:

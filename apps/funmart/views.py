@@ -59,6 +59,7 @@ def scanpackage(request):
         item['track_code'] = ""
         item['order_no'] = ""
         item['order_ref'] = ""
+
         posts = request.POST
         print(posts)
         batch_no = posts.get('batch_no')
@@ -67,20 +68,18 @@ def scanpackage(request):
 
         if not batch_no  :
             item['scan_result'] = 'Please Input Batch_no'
-
-        elif not (track_code or order_ref):
-                item['scan_result'] = 'Please Input code'
+        elif not track_code :
+            item['scan_result'] = 'Please Input track_code'
         else:
             #从funmart查，并更新本地数据库
             #暂时没有考虑效率问题
-
             order, orderitem_list = get_funmart_order(track_code=track_code, order_ref=order_ref,batch_no=batch_no)
             if order:
                 #更新批次扫描记录
-
                 scan_order, created = ScanOrder.objects.update_or_create(
                     track_code=order.track_code,
                     order_no=order.order_no,
+                    order_ref=order.order_ref,
                     batch_no= batch_no,
                     defaults={
                         'downloaded': True,
@@ -91,12 +90,18 @@ def scanpackage(request):
                 item['track_code'] =  order.track_code
                 item['order_no'] = order.order_no
                 item['order_ref'] = order.order_ref
+
+
             else:
                 if track_code:
                     item['scan_result'] = 'track_code not found'
                 else:
                     item['scan_result'] = 'order_ref not found'
 
+        if batch_no:
+            item['batch_package_count'] = ScanOrder.objects.filter(batch_no=batch_no).count()
+        else:
+            item['batch_package_count'] = ""
 
         return JsonResponse(item)
 
