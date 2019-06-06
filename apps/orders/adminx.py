@@ -1346,7 +1346,7 @@ class VerifyAdmin(object):
     ordering = ['-order__order_time']
     list_editable = ['phone_1', 'phone_2','verify_comments','city',"sms_code","conversation_link",]
     search_fields = ['order__order_no','order__logistic_no','verify_comments','cs_reply',"phone_1", "order__receiver_city",]
-    list_filter = ('order__status','order__financial_status','order__fulfillment_status',"order__wms_status", 'verify_status', 'sms_status', 'error_contact',"city",'order__time',)
+    list_filter = ('order__status','order__financial_status','order__fulfillment_status',"order__wms_status", 'verify_status', 'sms_status', 'error_contact',"city",'order__order_time',)
 
     model_icon = 'fa fa-address-book-o'
 
