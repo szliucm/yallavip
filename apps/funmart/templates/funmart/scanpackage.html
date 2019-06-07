@@ -111,7 +111,7 @@ $('#track_code').bind('keyup',function(event){
                     success: function (data) {
                         console.log("get order_no", data);
                         var scan_result = $("#scan_result");
-                        $('#chatAudio')[0].play();
+
                         if (data.scan_result !== "Success"){
                             $('#errorAudio')[0].play();
 
