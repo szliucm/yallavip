@@ -324,7 +324,6 @@ def preparebatch(request):
         #汇总包裹信息
         item['scanned_packages_counts'] = FunmartOrder.objects.filter(batch_no=batch_no).count()
 
-
         #汇总sku信息
         batch_sku(batch_no)
         batchskus = BatchSKU.objects.filter(batch_no=batch_no)

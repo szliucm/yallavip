@@ -20,7 +20,7 @@ from django.utils.html import format_html
 from .views import testView
 
 
-
+'''
 class ScanOrderResource(resources.ModelResource):
 
     class Meta:
@@ -57,11 +57,21 @@ class ScanOrderItemAdmin(object):
     ordering = []
 
     actions = [ ]
+'''
 
+class FunmartOrderResource(resources.ModelResource):
+
+    class Meta:
+        model = FunmartOrder
+        skip_unchanged = True
+        report_skipped = True
+        import_id_fields = ('track_code',)
+        fields = ('track_code','batch_no',)
+        # exclude = ()
 
 @xadmin.sites.register(FunmartOrder)
 class FunmartOrderAdmin(object):
-
+    import_export_args = {'import_resource_class': FunmartOrderResource, 'export_resource_class': FunmartOrderResource}
 
     def item_count(self, obj):
 
@@ -181,21 +191,24 @@ class BatchSKUAdmin(object):
 
     batch_uploaded.short_description = "批量上传到wms"
 
+'''
 @xadmin.sites.register(Test)
 class TestAdmin(object):
 	list_display = []
 	object_list_template = "funmart/index.html"
+	
+@xadmin.sites.register(ScanPackageItem)
+class ScanPackageItemAdmin(object):
+    list_display = []
+    object_list_template = "funmart/scanpackageitem.html"
+    	
+'''
 
 @xadmin.sites.register(ScanPackage)
 class ScanPackageAdmin(object):
 	list_display = []
 	object_list_template = "funmart/scanpackage.html"
 
-
-@xadmin.sites.register(ScanPackageItem)
-class ScanPackageItemAdmin(object):
-    list_display = []
-    object_list_template = "funmart/scanpackageitem.html"
 
 @xadmin.sites.register(ScanItem)
 class ScanItemAdmin(object):
