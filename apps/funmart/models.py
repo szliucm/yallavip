@@ -118,6 +118,12 @@ class FunmartOrderItem(models.Model):
     category_en = models.CharField(u'category_en', default='', max_length=500, blank=True)
     name = models.CharField(u'name', default='', max_length=500, blank=True)
 
+    item_code = models.CharField(u'item_code', default='', max_length=50, blank=True)
+    barcode = models.CharField(u'barcode', default='', max_length=50, blank=True)
+    action = models.CharField(u'action', default='', max_length=50, blank=True)
+
+
+
     class Meta:
         verbose_name = "FunmartOrderItem"
         verbose_name_plural = verbose_name

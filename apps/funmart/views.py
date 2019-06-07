@@ -254,7 +254,8 @@ def scanitem(request):
             return JsonResponse(item)
 
         try:
-            item["action"] = BatchSKU.objects.get(batch_no = batch_no, SKU=funmart_sku.SKU).action
+            action = BatchSKU.objects.get(batch_no = batch_no, SKU=funmart_sku.SKU).action
+            item["action"] = action
         except:
             item['scan_result'] = 'SKU not prepared'
             return JsonResponse(item)
@@ -262,8 +263,8 @@ def scanitem(request):
         item["sku"] = funmart_sku.SKU
 
         SKU = str(funmart_sku.id).zfill(9)
-        sku = SKU[:5] + '-' + SKU[5:]
-        item["new_barcode"] = sku
+        barcode = SKU[:5] + '-' + SKU[5:]
+        item["new_barcode"] = barcode
         item["sku_name"] = funmart_sku.name
         item['scan_result'] = 'Success'
 
@@ -272,11 +273,32 @@ def scanitem(request):
         funmartorder.scanned_quantity = F("scanned_quantity") + 1
         funmartorder.save()
 
+        fummartorder_item.item_code = item_code
+        fummartorder_item.barcode = barcode
         fummartorder_item.scanned_quantity = F("scanned_quantity") + 1
+        fummartorder_item.action = action
+
         fummartorder_item.save()
 
+        #拼接订单明细
+        items_list=[]
+        funmart_items = FunmartOrderItem.objects.get(track_code=track_code)
+        for funmart_item in funmart_items:
+            item_info = {
+                "item_code" : item_code,
+                "SKU": funmart_item.sku,
+                "name": funmart_item.name,
+                "barcode": funmart_item.barcode,
+                "quantity": funmart_item.quantity,
+                "scanned_quantity": funmart_item.scanned_quantity,
+                "action": funmart_item.action,
 
 
+            }
+            items_list.append(item_info)
+
+
+        item["items_info"] = items_list
 
         print ("response ",item)
         return JsonResponse(item)

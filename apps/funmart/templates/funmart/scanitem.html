@@ -30,6 +30,23 @@
             <img id="barcode" />
         </div>
 
+        <table id="myTable" cellpadding="1" cellspacing="0" border="1">
+        <caption align="top">Package Items</caption>
+        <thead>
+        <tr>
+            <th>Item_code</th>
+            <th>SKU</th>
+            <th>Name</th>
+            <th>Barcode</th>
+            <th>Quantity</th>
+            <th>Scanned Quantity</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody></tbody>
+
+        </table>
+
 
         {% csrf_token %}
     </form>
@@ -220,10 +237,29 @@ $('#item_code').bind('keyup',function(event){
 
                             }
 
+
+
                             action.html(data.action);
                             gen_barcode(data.new_barcode);
                             print_barcode();
                         }
+
+                        var tbody=$('<tbody></tbody>');
+                        var obj=data.items_info;
+                        $(obj).each(function (index){
+                            var val=obj[index];
+                            var tr=$('<tr></tr>');
+                            tr.append('<td>'+ val.item_code + '</td>'
+                                + '<td>'+ val.SKU + '</td>'
+                                +'<td>'+ val.name + '</td>'
+                                +'<td>'+ val.barcode + '</td>'
+                                +'<td>'+ val.quantity + '</td>'
+                                +'<td>'+ val.scanned_quantity + '</td>'
+                                +'<td>'+ val.action + '</td>' );
+                            tbody.append(tr);
+                        });
+                        $('#myTable tbody').replaceWith(tbody);
+
 
 
 
