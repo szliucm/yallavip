@@ -268,8 +268,8 @@ def scanitem(request):
         item['scan_result'] = 'Success'
 
 
-        item['scannned_items__count'] = scanorder.scanned_quantity + 1
-        FunmartOrder.scanned_quantity = F("scanned_quantity") + 1
+        item['scannned_items__count'] = funmartorder.scanned_quantity + 1
+        funmartorder.scanned_quantity = F("scanned_quantity") + 1
         scanorder.save()
 
         fummartorder_item.scanned_quantity = F("scanned_quantity") + 1
