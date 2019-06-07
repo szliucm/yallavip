@@ -30,7 +30,7 @@
             <img id="barcode" />
         </div>
 
-        <table id="myTable" cellpadding="1" cellspacing="0" border="1">
+        <table id="myTable" cellpadding="1" cellspacing="0" border="1" width="100%" style="font-size:18px;font-family:serif;">
         <caption align="top">Package Items</caption>
         <thead>
         <tr>
@@ -254,7 +254,7 @@ $('#item_code').bind('keyup',function(event){
                                 +'<td>'+ val.name + '</td>'
                                 +'<td>'+ val.barcode + '</td>'
                                 +'<td>'+ val.quantity + '</td>'
-                                +'<td>'+ val.scanned_quantity + '</td>'
+                                +'<td>< span style="color:red ; font-size:30px">'+ val.scanned_quantity + '</span></td>'
                                 +'<td>'+ val.action + '</td>' );
                             tbody.append(tr);
                         });
