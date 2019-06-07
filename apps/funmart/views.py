@@ -1,10 +1,10 @@
+from django.db.models import Count, Sum, Q, F
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 # Create your views here.
 from xadmin.views import BaseAdminView
 
 from .models import *
-from django.db.models import Count, Sum, Q,F
 
 
 class testView(BaseAdminView):
@@ -83,9 +83,9 @@ def scanpackage(request):
         #从funmart查，并更新本地数据库
         #暂时没有考虑效率问题
         if order_ref:
-            scanorders = ScanOrder.objects.filter(order_ref=order_ref)
+            scanorders = ScanOrder.objects.filter(batch_no=batch_no,order_ref=order_ref)
         else:
-            scanorders = ScanOrder.objects.filter(track_code=track_code)
+            scanorders = ScanOrder.objects.filter(batch_no=batch_no, track_code=track_code)
 
         #print ("ScanOrder 查询结果",scanorders )
 
@@ -98,12 +98,13 @@ def scanpackage(request):
         if order:
             #更新批次扫描记录
             scan_order, created = ScanOrder.objects.update_or_create(
-                track_code=order.track_code,
-                order_no=order.order_no,
-                order_ref=order.order_ref,
-                batch_no= batch_no,
-                defaults={
+                order = order,
 
+                defaults={
+                    "track_code": order.track_code,
+                    "order_no": order.order_no,
+                    "order_ref": order.order_ref,
+                    "batch_no": batch_no,
                     'shelfed': False
                 }
             )
