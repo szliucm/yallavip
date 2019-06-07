@@ -166,7 +166,7 @@ class BatchSKU(models.Model):
         return self.SKU
 
 class ScanOrder(models.Model):
-    order = models.OneToOneField(FunmartOrder, on_delete=models.CASCADE, verbose_name="订单", null=True)
+    order = models.OneToOneField(FunmartOrder, on_delete=models.CASCADE, verbose_name="订单", default="")
     track_code = models.CharField(u'track_code', default='', max_length=50, blank=True)
     order_no = models.CharField(u'order_no', default='', max_length=50, blank=True)
     order_ref = models.CharField(u'order_ref', default='', max_length=50, blank=True)
