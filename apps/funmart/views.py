@@ -191,7 +191,7 @@ def scanitem(request):
         item = {}
         item['scan_result'] = ""
         item['track_code'] = ""
-        item['order_no'] = ""
+
         item['order_ref'] = ""
 
 
