@@ -222,9 +222,16 @@ def get_funmart_sku(sku):
                 defaults={
                     'SPU': data.get("spu"),
                     'name': data.get("en_name"),
+                    'cn_name': data.get("cn_name"),
                     'skuattr': json.dumps(data.get("skuattr")),
                     'images': json.dumps(data.get("images")),
                     'sale_price': data.get("price"),
+                    'pack_height': data.get("pack_height"),
+                    'pack_length': data.get("pack_length"),
+                    'pack_weight': data.get("price"),
+                    'pack_width': data.get("pack_width"),
+
+
                     'downloaded': True
                 }
             )
