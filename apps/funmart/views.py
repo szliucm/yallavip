@@ -282,10 +282,10 @@ def scanitem(request):
 
         #拼接订单明细
         items_list=[]
-        funmart_items = FunmartOrderItem.objects.get(track_code=track_code)
+        funmart_items = FunmartOrderItem.objects.filter(track_code=track_code)
         for funmart_item in funmart_items:
             item_info = {
-                "item_code" : item_code,
+                "item_code" : funmart_item.item_code,
                 "SKU": funmart_item.sku,
                 "name": funmart_item.name,
                 "barcode": funmart_item.barcode,
