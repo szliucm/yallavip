@@ -71,8 +71,8 @@ class FunmartBarcode(models.Model):
         return self.barcode
 
 class FunmartOrder(models.Model):
+    track_code = models.CharField(u'track_code', default='', max_length=50, blank=True, unique=True)
     order_no = models.CharField(u'order_no', default='', max_length=50, blank=True)
-    track_code = models.CharField(u'track_code', default='', max_length=50, blank=True)
     order_ref = models.CharField(u'order_ref', default='', max_length=50, blank=True)
     ret_track_code = models.CharField(u'track_code', default='', max_length=50, blank=True)
 

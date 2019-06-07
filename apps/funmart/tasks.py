@@ -403,9 +403,9 @@ def batch_sku():
 '''
 
 #分析批次的上架策略
-def batch_sku():
+def batch_sku(batch_no):
     track_code_list = list(
-        ScanOrder.objects.filter(downloaded=True, shelfed=False).values_list("track_code", flat=True)
+        FunmartOrder.objects.filter(batch_no=batch_no).values_list("track_code", flat=True)
     )
     orderitems = FunmartOrderItem.objects.filter(track_code__in=track_code_list)
 
@@ -420,7 +420,7 @@ def batch_sku():
                                                                "funmart_spu__en_name", "images")
     '''
 
-    BatchSKU.objects.all().delete()
+    BatchSKU.objects.filter(batch_no=batch_no).delete()
     batch_sku_list = []
     for sku_count in sku_counts:
         print("sku is ", sku_count)
@@ -432,6 +432,7 @@ def batch_sku():
 
 
         batch_sku = BatchSKU(
+            batch_no=batch_no,
             SKU=SKU,
             order_count=order_count,
             quantity=quantity,
