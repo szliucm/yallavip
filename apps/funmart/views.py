@@ -334,9 +334,9 @@ def preparebatch(request):
         action_counts = batchskus.values("action").annotate(skus=Count("SKU"), pcs=Sum("quantity"))
         for action_count in action_counts:
             item_info = {
-                "action": action_count.action,
-                "skus": action_count.skus,
-                "pcs": action_count.pcs,
+                "action": action_count.get("action"),
+                "skus": action_count.get("skus"),
+                "pcs": action_count.get("pcs"),
 
 
             }
