@@ -123,7 +123,6 @@ def download_funmart_order(track_code=None, update=True,order_no=None, order_ref
             data = return_data.get("data")
             print(data)
 
-
             order_no = data.get("order_no")
             order, created = FunmartOrder.objects.update_or_create(
                 track_code =  track_code,
