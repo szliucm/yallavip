@@ -72,7 +72,7 @@ def scanpackage(request):
             item['batch_package_count'] = ""
             return JsonResponse(item)
 
-        batch_package_count = ScanOrder.objects.filter(batch_no=batch_no).count()
+        batch_package_count = FunmartOrder.objects.filter(batch_no=batch_no, scanned=True).count()
         item['batch_package_count'] = batch_package_count
 
         if not track_code :

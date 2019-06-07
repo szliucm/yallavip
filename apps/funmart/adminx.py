@@ -73,7 +73,7 @@ class FunmartOrderAdmin(object):
     list_editable = []
 
     search_fields = ["order_no",'track_code', ]
-    list_filter = ( "ship_method","upload_date", )
+    list_filter = ( "ship_method","upload_date","batch_no",  "scanned", )
     ordering = []
 
     actions = [ ]
