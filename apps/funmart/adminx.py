@@ -73,17 +73,13 @@ class FunmartOrderResource(resources.ModelResource):
 class FunmartOrderAdmin(object):
     import_export_args = {'import_resource_class': FunmartOrderResource, 'export_resource_class': FunmartOrderResource}
 
-    def item_count(self, obj):
 
-        return  obj.funmartorder_orderitem.aggregate(Sum("quantity"))["quantity__sum"]
 
-    item_count.short_description = "item_count"
-
-    list_display = ["track_code", "order_no","item_count",  "ship_method", "upload_date", ]
+    list_display = ["track_code", "order_no","quantity",  "ship_method", "upload_date", ]
     list_editable = []
 
     search_fields = ["order_no",'track_code', ]
-    list_filter = ( "ship_method","upload_date","batch_no",  "scanned", )
+    list_filter = ( "ship_method","upload_date","batch_no",   )
     ordering = []
 
     actions = [ ]

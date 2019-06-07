@@ -89,7 +89,7 @@ def get_funmart_order(track_code=None, order_no=None,order_ref=None, batch_no=No
     if order_ref:
         orders = FunmartOrder.objects.filter( order_ref=order_ref)
     elif track_code:
-        orders = FunmartOrder.objects.filter(track_code=track_code)
+        orders = FunmartOrder.objects.filter(Q(track_code=track_code)|Q(ret_track_code=track_code))
     else:
         return  None
 
