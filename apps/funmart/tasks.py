@@ -128,9 +128,10 @@ def get_funmart_order(track_code=None, order_no=None,order_ref=None, batch_no=No
 
             order_no = data.get("order_no")
             order, created = FunmartOrder.objects.update_or_create(
-                order_no=order_no,
+                track_code =  track_code,
+
                 defaults={
-                    'track_code' : track_code,
+                    'order_no' : order_no,
                     'ret_track_code': data.get("track_code"),
                      'order_ref': data.get("order_ref"),
                      'order_date': data.get("order_date"),
