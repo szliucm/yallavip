@@ -270,7 +270,7 @@ def scanitem(request):
 
         item['scannned_items__count'] = funmartorder.scanned_quantity + 1
         funmartorder.scanned_quantity = F("scanned_quantity") + 1
-        scanorder.save()
+        funmartorder.save()
 
         fummartorder_item.scanned_quantity = F("scanned_quantity") + 1
         fummartorder_item.save()
