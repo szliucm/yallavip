@@ -58,7 +58,7 @@
 
    window.onPAZUReady=function(){
     //这里表示PAZU肯定已经加载成功了
-    //alert("PAZU_Cloud init ok")
+    alert("PAZU_Cloud init ok")
 
 }
 
@@ -177,6 +177,11 @@ $('#item_code').bind('keyup',function(event){
                         var scan_result = $("#scan_result");
                         var action = $("#action");
 
+                        $("#item_code").val("");
+
+                        scan_result.html(data.scan_result);
+                        $("#ret_item_code").html(item_code);
+
                         if (data.scan_result !== "Success"){
                             $('#errorAudio')[0].play();
 
@@ -188,7 +193,7 @@ $('#item_code').bind('keyup',function(event){
                             $("#barcode").html("");
                         }
                         else{
-                                  $('#successAudio')[0].play();
+                            $('#successAudio')[0].play();
                             scan_result.css("backgroundColor", "yellow");
                             $("#package_items_count").html(data.package_items_count);
                             $("#scannned_items__count").html(data.scannned_items__count);
@@ -220,10 +225,6 @@ $('#item_code').bind('keyup',function(event){
                             print_barcode();
                         }
 
-                        $("#item_code").val("");
-
-                        scan_result.html(data.scan_result);
-                        $("#ret_item_code").html(item_code);
 
 
 
