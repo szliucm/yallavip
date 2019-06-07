@@ -287,7 +287,7 @@ def scanitem(request):
             item_info = {
                 "item_code" : funmart_item.item_code,
                 "SKU": funmart_item.sku,
-                "name": funmart_item.name,
+                "name": funmart_item.category_en,
                 "barcode": funmart_item.barcode,
                 "quantity": funmart_item.quantity,
                 "scanned_quantity": funmart_item.scanned_quantity,

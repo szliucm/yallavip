@@ -141,9 +141,9 @@ def download_funmart_order(track_code=None, update=True,order_no=None, order_ref
 
             orderitems = data.get("orderItems")
             if update:
-                quantity = update_order_item(orderitems)
+                quantity = update_order_item(order, orderitems)
             else:
-                quantity = create_order_item(orderitems)
+                quantity = create_order_item(order, orderitems)
 
             order.quantity = quantity
             order.save()
@@ -156,7 +156,7 @@ def download_funmart_order(track_code=None, update=True,order_no=None, order_ref
 
     return  None
 
-def update_order_item(orderitems):
+def update_order_item(order, orderitems):
     quantity = 0
     for item in orderitems:
         quantity += item.get("qty")
@@ -165,10 +165,8 @@ def update_order_item(orderitems):
 
             defaults={
                 'order': order,
-                'order_no': order_no,
                 'sku': item.get("sku"),
                 'quantity': item.get("qty"),
-                'scanned_quantity': 0,
                 'price': item.get("price"),
                 'category_cn': item.get("category_cn"),
                 'category_en': item.get("category_en"),
@@ -179,9 +177,9 @@ def update_order_item(orderitems):
     return quantity
 
 
-def create_order_item(orderitems):
+def create_order_item(order, orderitems):
     # 先删除对应的订单明细
-    FunmartOrderItem.objects.filter(order_no=order_no).delete()
+    FunmartOrderItem.objects.filter(order_no=order.order_no).delete()
     orderitem_list = []
     quantity = 0
     for item in orderitems:
@@ -189,11 +187,8 @@ def create_order_item(orderitems):
 
         orderitem = FunmartOrderItem(
             order=order,
-            order_no=order_no,
-            track_code=track_code,
             sku=item.get("sku"),
             quantity=item.get("qty"),
-            scanned_quantity=0,
             price=item.get("price"),
             category_cn=item.get("category_cn"),
             category_en=item.get("category_en"),

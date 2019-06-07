@@ -22,7 +22,7 @@
         <br>
         <p>Item_code     : <span id='ret_item_code' style="font-size:30px"></span></p>
         <p>SKU           : <span id='sku' style="font-size:30px"></span></p>
-        <p hidden="hidden">SKU name      : <span id='sku_name' style="font-size:30px"></span></p>
+
         <p hidden="hidden">New Barcode   : <span id='new_barcode' style="font-size:30px"></span></p>
         <p>Action        : <span id='action' style="font-size:30px"></span></p>
 
@@ -36,7 +36,7 @@
         <tr>
             <th>Item_code</th>
             <th>SKU</th>
-            <th>Name</th>
+            <th>Category</th>
             <th>Barcode</th>
             <th>Quantity</th>
             <th>Scanned Quantity</th>
@@ -204,7 +204,7 @@ $('#item_code').bind('keyup',function(event){
 
                             scan_result.css("backgroundColor", "red");
                             $("#sku").html("");
-                            $("#sku_name").html("");
+
                             $("#new_barcode").html("");
                             $("#action").html("");
                             $("#barcode").html("");
@@ -216,7 +216,7 @@ $('#item_code').bind('keyup',function(event){
                             $("#scannned_items__count").html(data.scannned_items__count);
 
                             $("#sku").html(data.sku);
-                            $("#sku_name").html(data.sku_name);
+
                             $("#new_barcode").html(data.new_barcode);
                             switch (data.action) {
                                 case "Put Away":
@@ -251,7 +251,7 @@ $('#item_code').bind('keyup',function(event){
                             var tr=$('<tr></tr>');
                             tr.append('<td>'+ val.item_code + '</td>'
                                 + '<td>'+ val.SKU + '</td>'
-                                +'<td>'+ val.name + '</td>'
+                                +'<td>'+ val.category + '</td>'
                                 +'<td>'+ val.barcode + '</td>'
                                 +'<td>'+ val.quantity + '</td>'
                                 +'<td><span style="color:red ; font-size:30px">'+ val.scanned_quantity + '</span></td>'
