@@ -303,7 +303,7 @@ def scanitem(request):
         print ("response ",item)
         return JsonResponse(item)
 
-def preparebatch():
+def preparebatch(request):
     from funmart.tasks import batch_sku
 
     if request.method == 'GET':
