@@ -134,7 +134,7 @@ class FunmartOrderItem(models.Model):
 
 class BatchSKU(models.Model):
     batch_no = models.IntegerField(u'batch_no', default=0, blank=True, null=True)
-    funmart_sku = models.ForeignKey(FunmartSKU, related_name='funmartsku_batchsku', null=False, on_delete=models.CASCADE,
+    funmart_sku = models.ForeignKey(FunmartSKU, related_name='funmartsku_batchsku', null=True, on_delete=models.CASCADE,
                               verbose_name="Order")
 
     SPU = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="SPU")
