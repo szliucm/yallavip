@@ -186,7 +186,7 @@ class ScanOrder(models.Model):
         return self.track_code
 
 class ScanOrderItem(models.Model):
-    order = models.ForeignKey(ScanOrder, related_name='scanorder_orderitem', null=False, on_delete=models.CASCADE,
+    order = models.ForeignKey(ScanOrder, related_name='scanorder_orderitem', null=True, on_delete=models.CASCADE,
                               verbose_name="Order")
 
     track_code = models.CharField(u'track_code', default='', max_length=50, blank=True)
