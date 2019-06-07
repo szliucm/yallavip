@@ -3,46 +3,6 @@ from django.db import models
 
 
 # Create your models here.
-class ScanOrder(models.Model):
-    order = models.OneToOneField(FunmartOrder, on_delete=models.CASCADE, verbose_name="订单")
-    track_code = models.CharField(u'track_code', default='', max_length=50, blank=True)
-    order_no = models.CharField(u'order_no', default='', max_length=50, blank=True)
-    order_ref = models.CharField(u'order_ref', default='', max_length=50, blank=True)
-
-    batch_no = models.IntegerField(u'batch_no', default=0, blank=True, null=True)
-
-    shelfed = models.BooleanField(u"shelfed", default=False)
-
-    quantity = models.IntegerField(u'quantity', default=0, blank=True, null=True)
-    scanned_quantity = models.IntegerField(u'scanned_quantity', default=0, blank=True, null=True)
-
-    class Meta:
-        verbose_name = "ScanOrder"
-        verbose_name_plural = verbose_name
-
-    def __str__(self):
-        return self.track_code
-
-class ScanOrderItem(models.Model):
-    order = models.OneToOneField(FunmartOrderItem, on_delete=models.CASCADE, verbose_name="订单")
-
-    track_code = models.CharField(u'track_code', default='', max_length=50, blank=True)
-    order_no = models.CharField(u'order_no', default='', max_length=50, blank=True)
-    ref_order_no = models.CharField(u'ref_order_no', default='', max_length=50, blank=True)
-
-    sku = models.CharField(u'sku', default='', max_length=50, blank=True)
-    quantity = models.IntegerField(u'quantity', default=0, blank=True, null=True)
-
-    scanned_quantity = models.IntegerField(u'scanned_quantity', default=0, blank=True, null=True)
-    shelfed = models.BooleanField(u"shelfed", default=False)
-
-    class Meta:
-        verbose_name = "ScanOrderItem"
-        verbose_name_plural = verbose_name
-
-    def __str__(self):
-        return self.track_code
-
 class FunmartOrder(models.Model):
     order_no = models.CharField(u'order_no', default='', max_length=50, blank=True)
     track_code = models.CharField(u'track_code', default='', max_length=50, blank=True)
@@ -92,6 +52,10 @@ class FunmartOrderItem(models.Model):
 
     def __str__(self):
         return self.order_no + '_' + self.sku
+
+
+
+
 
 
 
@@ -196,7 +160,45 @@ class BatchSKU(models.Model):
     def __str__(self):
         return self.SKU
 
+class ScanOrder(models.Model):
+    order = models.OneToOneField(FunmartOrder, on_delete=models.CASCADE, verbose_name="订单")
+    track_code = models.CharField(u'track_code', default='', max_length=50, blank=True)
+    order_no = models.CharField(u'order_no', default='', max_length=50, blank=True)
+    order_ref = models.CharField(u'order_ref', default='', max_length=50, blank=True)
 
+    batch_no = models.IntegerField(u'batch_no', default=0, blank=True, null=True)
+
+    shelfed = models.BooleanField(u"shelfed", default=False)
+
+    quantity = models.IntegerField(u'quantity', default=0, blank=True, null=True)
+    scanned_quantity = models.IntegerField(u'scanned_quantity', default=0, blank=True, null=True)
+
+    class Meta:
+        verbose_name = "ScanOrder"
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.track_code
+
+class ScanOrderItem(models.Model):
+    order = models.OneToOneField(FunmartOrderItem, on_delete=models.CASCADE, verbose_name="订单")
+
+    track_code = models.CharField(u'track_code', default='', max_length=50, blank=True)
+    order_no = models.CharField(u'order_no', default='', max_length=50, blank=True)
+    ref_order_no = models.CharField(u'ref_order_no', default='', max_length=50, blank=True)
+
+    sku = models.CharField(u'sku', default='', max_length=50, blank=True)
+    quantity = models.IntegerField(u'quantity', default=0, blank=True, null=True)
+
+    scanned_quantity = models.IntegerField(u'scanned_quantity', default=0, blank=True, null=True)
+    shelfed = models.BooleanField(u"shelfed", default=False)
+
+    class Meta:
+        verbose_name = "ScanOrderItem"
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.track_code
 
 
 class ScanPackage(models.Model):
