@@ -19,13 +19,7 @@ def test_funmart_product():
 
 
 def download_funmart_orders():
-    orders = ScanOrder.objects.filter(downloaded=False)
-
-    # 已经有的直接设置为已下载
-    downloaded_orders = list(FunmartOrder.objects.filter(downloaded=True).values_list("track_code", flat=True))
-    orders.filter(track_code__in=downloaded_orders).update(downloaded=True)
-
-    to_download_orders = orders.exclude(track_code__in=downloaded_orders)
+    to_download_orders = list(FunmartOrder.objects.filter(downloaded=False).values_list("track_code", flat=True))
     for order in to_download_orders:
         get_funmart_order.apply_async((order.track_code,), queue='funmart')
 
@@ -104,7 +98,7 @@ def get_funmart_order(track_code=None, order_no=None,order_ref=None, batch_no=No
 
     download_funmart_order(track_code, order_no, order_ref, batch_no)
 
-def download_funmart_order(track_code=None, order_no=None, order_ref=None, batch_no=None):
+def download_funmart_order(track_code=None, order_no=None, order_ref=None, update=True):
     url = " http://47.98.80.172/api/searchOrder"
     param = dict()
     # 如果输入了order_ref，就忽略track_code
@@ -143,7 +137,10 @@ def download_funmart_order(track_code=None, order_no=None, order_ref=None, batch
             )
 
             orderitems = data.get("orderItems")
-            quantity = update_order_item(orderitems)
+            if update:
+                quantity = update_order_item(orderitems)
+            else:
+                quantity = create_order_item(orderitems)
 
             order.quantity = quantity
             order.save()
@@ -476,4 +473,5 @@ def batch_sku(batch_no):
                             sale_type="drug").update(action="Dead_Size")
 
     BatchSKU.objects.filter(order_count__gte = 3 ).update(action="Put Away")
+
 
