@@ -176,12 +176,12 @@ def get_funmart_order(track_code=None, order_no=None,order_ref=None, batch_no=No
                 }
             )
             '''
-            return  order, orderitem_list
+            return  order
         else:
             print (return_data.get("message"))
 
 
-    return  None, None
+    return  None
 
 
 @shared_task
