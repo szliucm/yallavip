@@ -3,6 +3,98 @@ from django.db import models
 
 
 # Create your models here.
+class ScanOrder(models.Model):
+    order = models.OneToOneField(FunmartOrder, on_delete=models.CASCADE, verbose_name="订单")
+    track_code = models.CharField(u'track_code', default='', max_length=50, blank=True)
+    order_no = models.CharField(u'order_no', default='', max_length=50, blank=True)
+    order_ref = models.CharField(u'order_ref', default='', max_length=50, blank=True)
+
+    batch_no = models.IntegerField(u'batch_no', default=0, blank=True, null=True)
+
+    shelfed = models.BooleanField(u"shelfed", default=False)
+
+    quantity = models.IntegerField(u'quantity', default=0, blank=True, null=True)
+    scanned_quantity = models.IntegerField(u'scanned_quantity', default=0, blank=True, null=True)
+
+    class Meta:
+        verbose_name = "ScanOrder"
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.track_code
+
+class ScanOrderItem(models.Model):
+    order = models.OneToOneField(FunmartOrderItem, on_delete=models.CASCADE, verbose_name="订单")
+
+    track_code = models.CharField(u'track_code', default='', max_length=50, blank=True)
+    order_no = models.CharField(u'order_no', default='', max_length=50, blank=True)
+    ref_order_no = models.CharField(u'ref_order_no', default='', max_length=50, blank=True)
+
+    sku = models.CharField(u'sku', default='', max_length=50, blank=True)
+    quantity = models.IntegerField(u'quantity', default=0, blank=True, null=True)
+
+    scanned_quantity = models.IntegerField(u'scanned_quantity', default=0, blank=True, null=True)
+    shelfed = models.BooleanField(u"shelfed", default=False)
+
+    class Meta:
+        verbose_name = "ScanOrderItem"
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.track_code
+
+class FunmartOrder(models.Model):
+    order_no = models.CharField(u'order_no', default='', max_length=50, blank=True)
+    track_code = models.CharField(u'track_code', default='', max_length=50, blank=True)
+    order_ref = models.CharField(u'order_ref', default='', max_length=50, blank=True)
+    ret_track_code = models.CharField(u'track_code', default='', max_length=50, blank=True)
+
+
+    order_date = models.DateTimeField(auto_now=False, null=True, blank=True,verbose_name="order_date")
+    ship_method = models.CharField(u'ship_method', default='', max_length=50, blank=True)
+
+    quantity = models.IntegerField(u'quantity', default=0, blank=True, null=True)
+
+    upload_date = models.DateField(u'upload_date', auto_now=True, null=True, blank=True)
+    downloaded = models.BooleanField(u"downloaded", default=False)
+    dealed = models.BooleanField(u"dealed", default=False)
+
+    class Meta:
+        verbose_name = "FunmartOrder"
+        verbose_name_plural = verbose_name
+
+        unique_together = (('track_code', 'order_ref', 'ret_track_code'),)
+
+    def __str__(self):
+        return self.order_no
+
+
+class FunmartOrderItem(models.Model):
+    order = models.ForeignKey(FunmartOrder, related_name='funmartorder_orderitem', null=False, on_delete=models.CASCADE,
+                              verbose_name="Order")
+    funmart_sku = models.ForeignKey(FunmartSKU, null=True, blank=True, verbose_name="funmart_sku",
+                                    related_name="funmartsku_order", on_delete=models.CASCADE)
+
+    order_no = models.CharField(u'order_no', default='', max_length=50, blank=True)
+    track_code = models.CharField(u'track_code', default='', max_length=50, blank=True)
+    sku = models.CharField(u'sku', default='', max_length=50, blank=True)
+
+    quantity = models.IntegerField(u'quantity', default=0, blank=True, null=True)
+    price = models.CharField(u'Price', default='', max_length=50, blank=True)
+
+    category_cn = models.CharField(u'category_cn', default='', max_length=500, blank=True)
+    category_en = models.CharField(u'category_en', default='', max_length=500, blank=True)
+    name = models.CharField(u'name', default='', max_length=500, blank=True)
+
+    class Meta:
+        verbose_name = "FunmartOrderItem"
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.order_no + '_' + self.sku
+
+
+
 class FunmartSPU(models.Model):
     SPU = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="SPU")
 
@@ -69,45 +161,12 @@ class FunmartBarcode(models.Model):
     def __str__(self):
         return self.barcode
 
-class ScanOrder(models.Model):
-    track_code = models.CharField(u'track_code', default='', max_length=50, blank=True)
-    order_no = models.CharField(u'order_no', default='', max_length=50, blank=True)
-    order_ref = models.CharField(u'order_ref', default='', max_length=50, blank=True)
 
-    batch_no = models.IntegerField(u'batch_no', default=0, blank=True, null=True)
-    downloaded = models.BooleanField(u"downloaded", default=False)
-    shelfed = models.BooleanField(u"shelfed", default=False)
-
-    quantity = models.IntegerField(u'quantity', default=0, blank=True, null=True)
-    scanned_quantity = models.IntegerField(u'scanned_quantity', default=0, blank=True, null=True)
-
-    class Meta:
-        verbose_name = "ScanOrder"
-        verbose_name_plural = verbose_name
-
-    def __str__(self):
-        return self.track_code
-
-class ScanOrderItem(models.Model):
-    track_code = models.CharField(u'track_code', default='', max_length=50, blank=True)
-    order_no = models.CharField(u'order_no', default='', max_length=50, blank=True)
-    ref_order_no = models.CharField(u'ref_order_no', default='', max_length=50, blank=True)
-
-    sku = models.CharField(u'sku', default='', max_length=50, blank=True)
-    quantity = models.IntegerField(u'quantity', default=0, blank=True, null=True)
-
-    scanned_quantity = models.IntegerField(u'scanned_quantity', default=0, blank=True, null=True)
-    shelfed = models.BooleanField(u"shelfed", default=False)
-
-    class Meta:
-        verbose_name = "ScanOrderItem"
-        verbose_name_plural = verbose_name
-
-    def __str__(self):
-        return self.track_code
 
 class BatchSKU(models.Model):
     batch_no = models.IntegerField(u'batch_no', default=0, blank=True, null=True)
+    funmart_sku = models.ForeignKey(FunmartSKU, related_name='funmartsku_batchsku', null=False, on_delete=models.CASCADE,
+                              verbose_name="Order")
 
     SPU = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="SPU")
     SKU = models.CharField(default='', max_length=100, null=True, blank=True, verbose_name="SKU")
@@ -138,53 +197,7 @@ class BatchSKU(models.Model):
         return self.SKU
 
 
-class FunmartOrder(models.Model):
-    order_no = models.CharField(u'order_no', default='', max_length=50, blank=True)
-    track_code = models.CharField(u'track_code', default='', max_length=50, blank=True)
-    order_ref = models.CharField(u'order_ref', default='', max_length=50, blank=True)
 
-
-
-    order_date = models.DateTimeField(auto_now=False, null=True, blank=True,verbose_name="order_date")
-    ship_method = models.CharField(u'ship_method', default='', max_length=50, blank=True)
-
-    quantity = models.IntegerField(u'quantity', default=0, blank=True, null=True)
-
-    upload_date = models.DateField(u'upload_date', auto_now=True, null=True, blank=True)
-    downloaded = models.BooleanField(u"downloaded", default=False)
-    dealed = models.BooleanField(u"dealed", default=False)
-
-    class Meta:
-        verbose_name = "FunmartOrder"
-        verbose_name_plural = verbose_name
-
-    def __str__(self):
-        return self.order_no
-
-
-class FunmartOrderItem(models.Model):
-    order = models.ForeignKey(FunmartOrder, related_name='funmartorder_orderitem', null=False, on_delete=models.CASCADE,
-                              verbose_name="Order")
-    funmart_sku = models.ForeignKey(FunmartSKU, null=True, blank=True, verbose_name="funmart_sku",
-                                    related_name="funmartsku_order", on_delete=models.CASCADE)
-
-    order_no = models.CharField(u'order_no', default='', max_length=50, blank=True)
-    track_code = models.CharField(u'track_code', default='', max_length=50, blank=True)
-    sku = models.CharField(u'sku', default='', max_length=50, blank=True)
-
-    quantity = models.IntegerField(u'quantity', default=0, blank=True, null=True)
-    price = models.CharField(u'Price', default='', max_length=50, blank=True)
-
-    category_cn = models.CharField(u'category_cn', default='', max_length=500, blank=True)
-    category_en = models.CharField(u'category_en', default='', max_length=500, blank=True)
-    name = models.CharField(u'name', default='', max_length=500, blank=True)
-
-    class Meta:
-        verbose_name = "FunmartOrderItem"
-        verbose_name_plural = verbose_name
-
-    def __str__(self):
-        return self.order_no + '_' + self.sku
 
 class ScanPackage(models.Model):
     class Meta:

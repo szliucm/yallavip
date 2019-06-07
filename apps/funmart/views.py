@@ -70,51 +70,55 @@ def scanpackage(request):
         if not batch_no  :
             item['scan_result'] = 'Please Input Batch_no'
             item['batch_package_count'] = ""
+            return JsonResponse(item)
+
+
+        item['batch_package_count'] = ScanOrder.objects.filter(batch_no=batch_no).count()
+
+        if not track_code :
+            item['scan_result'] = 'Please Input track_code'
+            return JsonResponse(item)
+
+
+        #从funmart查，并更新本地数据库
+        #暂时没有考虑效率问题
+        if order_ref:
+            scanorders = ScanOrder.objects.filter(order_ref=order_ref)
         else:
-            item['batch_package_count'] = ScanOrder.objects.filter(batch_no=batch_no).count()
-            if not track_code :
-                item['scan_result'] = 'Please Input track_code'
+            scanorders = ScanOrder.objects.filter(track_code=track_code)
+
+        #print ("ScanOrder 查询结果",scanorders )
+
+        if scanorders:
+
+            item['scan_result'] = 'Package has been Scanned'
+            return JsonResponse(item)
+
+        order, orderitem_list = get_funmart_order(track_code=track_code, order_ref=order_ref,batch_no=batch_no)
+        if order:
+            #更新批次扫描记录
+            scan_order, created = ScanOrder.objects.update_or_create(
+                track_code=order.track_code,
+                order_no=order.order_no,
+                order_ref=order.order_ref,
+                batch_no= batch_no,
+                defaults={
+
+                    'shelfed': False
+                }
+            )
+            item['scan_result'] = 'Success'
+            item['track_code'] =  order.track_code
+            item['order_no'] = order.order_no
+            item['order_ref'] = order.order_ref
+
+
+        else:
+            if order_ref:
+                item['scan_result'] = 'order_ref not found'
             else:
-                #从funmart查，并更新本地数据库
-                #暂时没有考虑效率问题
-                if order_ref:
-                    scanorders = ScanOrder.objects.filter(order_ref=order_ref)
-                else:
-                    scanorders = ScanOrder.objects.filter(track_code=track_code)
+                item['scan_result'] = 'Not Found. Input order_ref Search Again'
 
-                #print ("ScanOrder 查询结果",scanorders )
-
-                if not scanorders:
-
-                    order, orderitem_list = get_funmart_order(track_code=track_code, order_ref=order_ref,batch_no=batch_no)
-                    if order:
-                        #更新批次扫描记录
-                        scan_order, created = ScanOrder.objects.update_or_create(
-                            track_code=order.track_code,
-                            order_no=order.order_no,
-                            order_ref=order.order_ref,
-                            batch_no= batch_no,
-                            defaults={
-                                'downloaded': True,
-                                'shelfed': False
-                            }
-                        )
-                        item['scan_result'] = 'Success'
-                        item['track_code'] =  order.track_code
-                        item['order_no'] = order.order_no
-                        item['order_ref'] = order.order_ref
-
-
-                    else:
-                        if order_ref:
-                            item['scan_result'] = 'order_ref not found'
-                        else:
-                            item['scan_result'] = 'track_code not found'
-                else:
-                    item['scan_result'] = 'Package has been Scanned'
-
-
-        #print ("准备返回结果", item)
         return JsonResponse(item)
 
 
