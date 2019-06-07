@@ -112,6 +112,7 @@ def scanpackage(request):
             item['track_code'] =  order.track_code
             item['order_no'] = order.order_no
             item['order_ref'] = order.order_ref
+            item['batch_package_count'] = ScanOrder.objects.filter(batch_no=batch_no).count() +1
 
 
         else:
