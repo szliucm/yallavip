@@ -100,7 +100,7 @@ def scanpackage(request):
         order = get_funmart_order(track_code=track_code, order_ref=order_ref,batch_no=batch_no)
         if order:
 
-            if order.scanned == True:
+            if order.scanned :
                 item['scan_result'] = 'Package has been Scanned'
                 return JsonResponse(item)
             else:

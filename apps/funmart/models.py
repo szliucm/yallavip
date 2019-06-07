@@ -84,7 +84,7 @@ class FunmartOrder(models.Model):
     scanned_quantity = models.IntegerField(u'scanned_quantity', default=0, blank=True, null=True)
 
     batch_no = models.IntegerField(u'batch_no', default=0, blank=True, null=True)
-    scanned = models.BooleanField(u"shelfed", default=False)
+    scanned = models.BooleanField(u"scanned", default=False)
     upload_date = models.DateField(u'upload_date', auto_now=True, null=True, blank=True)
     downloaded = models.BooleanField(u"downloaded", default=False)
     dealed = models.BooleanField(u"dealed", default=False)
