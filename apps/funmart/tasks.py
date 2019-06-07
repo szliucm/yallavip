@@ -144,7 +144,9 @@ def get_funmart_order(track_code=None, order_no=None,order_ref=None, batch_no=No
             #先删除对应的订单明细
             FunmartOrderItem.objects.filter(order_no=order_no).delete()
             orderitem_list = []
+            quantity = 0
             for item in orderitems:
+                quantity += item.get("qty")
                 orderitem = FunmartOrderItem(
                     order=order,
                     order_no=order_no,
@@ -161,8 +163,10 @@ def get_funmart_order(track_code=None, order_no=None,order_ref=None, batch_no=No
 
                 orderitem_list.append(orderitem)
 
+
             print(orderitem_list)
             FunmartOrderItem.objects.bulk_create(orderitem_list)
+            order.quantity = quantity
 
             #插入scanorder表
             '''
