@@ -190,8 +190,6 @@ class ScanOrderItem(models.Model):
                               verbose_name="Order")
 
     track_code = models.CharField(u'track_code', default='', max_length=50, blank=True)
-    order_no = models.CharField(u'order_no', default='', max_length=50, blank=True)
-    ref_order_no = models.CharField(u'ref_order_no', default='', max_length=50, blank=True)
 
     sku = models.CharField(u'sku', default='', max_length=50, blank=True)
     quantity = models.IntegerField(u'quantity', default=0, blank=True, null=True)

@@ -38,7 +38,7 @@ class ScanOrderAdmin(object):
 
 
 
-    list_display = ["track_code", "order_no", "batch_no","downloaded", "shelfed",  ]
+    list_display = ["track_code", "order_no", "batch_no", "shelfed",  "quantity", "scanned_quantity",]
     list_editable = []
 
     search_fields = ['track_code', "order_no",]
@@ -47,7 +47,16 @@ class ScanOrderAdmin(object):
 
     actions = [ ]
 
+@xadmin.sites.register(ScanOrderItem)
+class ScanOrderItemAdmin(object):
+    list_display = ["track_code", "shelfed",  "quantity", "scanned_quantity",]
+    list_editable = []
 
+    search_fields = ['track_code', ]
+    list_filter = ( "shelfed", )
+    ordering = []
+
+    actions = [ ]
 
 
 @xadmin.sites.register(FunmartOrder)
