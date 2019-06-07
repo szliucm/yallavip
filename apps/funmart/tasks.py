@@ -20,8 +20,8 @@ def test_funmart_product():
 
 def download_funmart_orders():
     to_download_orders = list(FunmartOrder.objects.filter(downloaded=False).values_list("track_code", flat=True))
-    for order in to_download_orders:
-        download_funmart_order.apply_async((order.track_code,False), queue='funmart')
+    for track_code in to_download_orders:
+        download_funmart_order.apply_async((track_code,False), queue='funmart')
 
 
 def deal_funmart_orders():
@@ -100,7 +100,7 @@ def get_funmart_order(track_code=None, order_no=None,order_ref=None, batch_no=No
 
 
 
-
+@shared_task
 def download_funmart_order(track_code=None, update=True,order_no=None, order_ref=None, ):
     url = " http://47.98.80.172/api/searchOrder"
     param = dict()
