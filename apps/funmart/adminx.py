@@ -201,3 +201,8 @@ class ScanPackageItemAdmin(object):
 class ScanItemAdmin(object):
     list_display = []
     object_list_template = "funmart/scanitem.html"
+
+@xadmin.sites.register(PrepareBatch)
+class PrepareBatchAdmin(object):
+    list_display = []
+    object_list_template = "funmart/preparebatch.html"

@@ -302,3 +302,46 @@ def scanitem(request):
 
         print ("response ",item)
         return JsonResponse(item)
+
+def preparebatch():
+    from funmart.tasks import batch_sku
+
+    if request.method == 'GET':
+        pass
+    elif request.method == 'POST':
+        item = {}
+
+
+        posts = request.POST
+        print(posts)
+        batch_no = posts.get('batch_no')
+
+        if not batch_no  :
+            item['scan_result'] = 'Please Input Batch_no'
+            item['batch_package_count'] = ""
+            return JsonResponse(item)
+
+        #汇总包裹信息
+        item['scanned_packages_counts'] = FunmartOrder.objects.filter(batch_no=batch_no).count()
+
+
+        #汇总sku信息
+        batch_sku(batch_no)
+        batchskus = BatchSKU.objects.filter(batch_no=batch_no)
+
+        # 拼接
+        items_list = []
+        action_counts = batchskus.values("action").annotate(skus=Count("SKU"), pcs=Sum("quantity"))
+        for action_count in action_counts:
+            item_info = {
+                "action": action_count.action,
+                "skus": action_count.skus,
+                "pcs": action_count.pcs,
+
+
+            }
+            items_list.append(item_info)
+
+        item["items_info"] = items_list
+        print ("response ",item)
+        return JsonResponse(item)

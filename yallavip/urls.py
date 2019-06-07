@@ -38,6 +38,7 @@ urlpatterns = [
     path('scanpackage/', scanpackage),
     path('scanpackageitem/', scanpackageitem),
     path('scanitem/', scanitem),
+    path('preparebatch/', preparebatch),
 
 
 

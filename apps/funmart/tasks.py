@@ -102,8 +102,9 @@ def get_funmart_order(track_code=None, order_no=None,order_ref=None, batch_no=No
     if orders:
         return  orders[0]
 
+    download_funmart_order(track_code, order_no, order_ref, batch_no)
 
-
+def download_funmart_order(track_code=None, order_no=None, order_ref=None, batch_no=None):
     url = " http://47.98.80.172/api/searchOrder"
     param = dict()
     # 如果输入了order_ref，就忽略track_code
@@ -142,51 +143,70 @@ def get_funmart_order(track_code=None, order_no=None,order_ref=None, batch_no=No
             )
 
             orderitems = data.get("orderItems")
-            #先删除对应的订单明细
-            FunmartOrderItem.objects.filter(order_no=order_no).delete()
-            orderitem_list = []
-            quantity = 0
-            for item in orderitems:
-                quantity += item.get("qty")
-                orderitem = FunmartOrderItem(
-                    order=order,
-                    order_no=order_no,
-                    track_code=track_code,
-                    sku=item.get("sku"),
-                    quantity=item.get("qty"),
-                    scanned_quantity=0,
-                    price=item.get("price"),
-                    category_cn=item.get("category_cn"),
-                    category_en=item.get("category_en"),
-                    name=item.get("name"),
+            quantity = update_order_item(orderitems)
 
-                )
-
-                orderitem_list.append(orderitem)
-
-
-            print(orderitem_list)
-            FunmartOrderItem.objects.bulk_create(orderitem_list)
             order.quantity = quantity
+            order.save()
 
-            #插入scanorder表
-            '''
-            order, created = ScanOrder.objects.update_or_create(
-                track_code=track_code,
-                order_no=order_no,
-                batch_no= batch_no,
-                defaults={
-                    'downloaded': True,
-                    'shelfed': False
-                }
-            )
-            '''
+
             return  order
         else:
             print (return_data.get("message"))
 
 
     return  None
+
+def update_order_item(orderitems):
+    quantity = 0
+    for item in orderitems:
+        quantity += item.get("qty")
+        FunmartOrderItem.objects.update_or_create(
+            track_code=track_code,
+
+            defaults={
+                'order': order,
+                'order_no': order_no,
+                'sku': item.get("sku"),
+                'quantity': item.get("qty"),
+                'scanned_quantity': 0,
+                'price': item.get("price"),
+                'category_cn': item.get("category_cn"),
+                'category_en': item.get("category_en"),
+                'name': item.get("name"),
+            }
+        )
+
+    return quantity
+
+
+def create_order_item(orderitems):
+    # 先删除对应的订单明细
+    FunmartOrderItem.objects.filter(order_no=order_no).delete()
+    orderitem_list = []
+    quantity = 0
+    for item in orderitems:
+        quantity += item.get("qty")
+
+        orderitem = FunmartOrderItem(
+            order=order,
+            order_no=order_no,
+            track_code=track_code,
+            sku=item.get("sku"),
+            quantity=item.get("qty"),
+            scanned_quantity=0,
+            price=item.get("price"),
+            category_cn=item.get("category_cn"),
+            category_en=item.get("category_en"),
+            name=item.get("name"),
+
+        )
+
+        orderitem_list.append(orderitem)
+
+    print(orderitem_list)
+    FunmartOrderItem.objects.bulk_create(orderitem_list)
+
+    return quantity
 
 
 @shared_task
