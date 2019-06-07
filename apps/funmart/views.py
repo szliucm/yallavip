@@ -82,6 +82,7 @@ def scanpackage(request):
 
         #从funmart查，并更新本地数据库
         #暂时没有考虑效率问题
+        '''
         if order_ref:
             scanorders = ScanOrder.objects.filter(batch_no=batch_no,order_ref=order_ref)
         else:
@@ -93,27 +94,26 @@ def scanpackage(request):
 
             item['scan_result'] = 'Package has been Scanned'
             return JsonResponse(item)
+        '''
 
-        order, orderitem_list = get_funmart_order(track_code=track_code, order_ref=order_ref,batch_no=batch_no)
+
+        order = get_funmart_order(track_code=track_code, order_ref=order_ref,batch_no=batch_no)
         if order:
-            #更新批次扫描记录
-            scan_order, created = ScanOrder.objects.update_or_create(
-                order = order,
 
-                defaults={
-                    "track_code": order.track_code,
-                    "order_no": order.order_no,
-                    "order_ref": order.order_ref,
-                    "batch_no": batch_no,
-                    'shelfed': False
-                }
-            )
-            item['scan_result'] = 'Success'
-            item['track_code'] =  order.track_code
-            item['order_no'] = order.order_no
-            item['order_ref'] = order.order_ref
-            item['batch_package_count'] = batch_package_count +1
+            if order.scanned == True:
+                item['scan_result'] = 'Package has been Scanned'
+                return JsonResponse(item)
+            else:
 
+                item['scan_result'] = 'Success'
+                item['track_code'] =  order.track_code
+                item['order_no'] = order.order_no
+                item['order_ref'] = order.order_ref
+                item['batch_package_count'] = batch_package_count +1
+
+                order.scanned =True
+                order.batch_no = batch_no
+                order.save()
 
         else:
             if order_ref:
@@ -208,7 +208,7 @@ def scanitem(request):
             item['batch_package_count'] = ""
             return JsonResponse(item)
 
-        batch_package_count = ScanOrder.objects.filter(batch_no=batch_no).count()
+        batch_package_count = FunmartOrder.objects.filter(batch_no=batch_no).count()
         item['batch_package_count'] = batch_package_count
 
         if not track_code  :
@@ -217,12 +217,12 @@ def scanitem(request):
 
 
         try:
-            scanorder = ScanOrder.objects.get(track_code=track_code)
+            funmartorder = FunmartOrder.objects.get(track_code=track_code)
         except:
             item['scan_result'] = 'Cannot find package with the track_code'
             return JsonResponse(item)
 
-        item['package_items_count'] = scanorder.quantity
+        item['package_items_count'] = funmartorder.quantity
 
         if not item_code :
             item['scan_result'] = 'Please Input Item_code'
@@ -248,15 +248,13 @@ def scanitem(request):
 
 
         try:
-            fummartorder_item = FunmartOrderItem.objects.get(track_code=track_code,funmartbarcode.SKU)
+            fummartorder_item = FunmartOrderItem.objects.get(track_code=track_code,sku = funmartbarcode.SKU)
         except:
             item['scan_result'] = 'Item not belong to the package'
             return JsonResponse(item)
 
-
-
         try:
-            item["action"] = BatchSKU.objects.get(SKU=funmart_sku.SKU).action
+            item["action"] = BatchSKU.objects.get(batch_no = batch_no, SKU=funmart_sku.SKU).action
         except:
             item['scan_result'] = 'SKU not prepared'
             return JsonResponse(item)
@@ -264,17 +262,19 @@ def scanitem(request):
         item["sku"] = funmart_sku.SKU
 
         SKU = str(funmart_sku.id).zfill(9)
-        item["new_barcode"] = SKU[:5] + '-' + SKU[5:]
+        sku = SKU[:5] + '-' + SKU[5:]
+        item["new_barcode"] = sku
         item["sku_name"] = funmart_sku.name
         item['scan_result'] = 'Success'
 
 
         item['scannned_items__count'] = scanorder.scanned_quantity + 1
-        scanorder.scanned_quantity = F("scanned_quantity") + 1
+        FunmartOrder.scanned_quantity = F("scanned_quantity") + 1
         scanorder.save()
 
-        fummartorder_item.scanned_quantity = F("scanned_quantity") +1
+        fummartorder_item.scanned_quantity = F("scanned_quantity") + 1
         fummartorder_item.save()
+
 
 
 

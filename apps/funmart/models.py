@@ -81,7 +81,10 @@ class FunmartOrder(models.Model):
     ship_method = models.CharField(u'ship_method', default='', max_length=50, blank=True)
 
     quantity = models.IntegerField(u'quantity', default=0, blank=True, null=True)
+    scanned_quantity = models.IntegerField(u'scanned_quantity', default=0, blank=True, null=True)
 
+    batch_no = models.IntegerField(u'batch_no', default=0, blank=True, null=True)
+    scanned = models.BooleanField(u"shelfed", default=False)
     upload_date = models.DateField(u'upload_date', auto_now=True, null=True, blank=True)
     downloaded = models.BooleanField(u"downloaded", default=False)
     dealed = models.BooleanField(u"dealed", default=False)
@@ -107,6 +110,8 @@ class FunmartOrderItem(models.Model):
     sku = models.CharField(u'sku', default='', max_length=50, blank=True)
 
     quantity = models.IntegerField(u'quantity', default=0, blank=True, null=True)
+    scanned_quantity = models.IntegerField(u'scanned_quantity', default=0, blank=True, null=True)
+
     price = models.CharField(u'Price', default='', max_length=50, blank=True)
 
     category_cn = models.CharField(u'category_cn', default='', max_length=500, blank=True)
@@ -186,7 +191,7 @@ class ScanOrder(models.Model):
         return self.track_code
 
 class ScanOrderItem(models.Model):
-    order = models.ForeignKey(ScanOrder, related_name='scanorder_orderitem', null=True, on_delete=models.CASCADE,
+    scanorder = models.ForeignKey(ScanOrder, related_name='scanorder_orderitem', null=True, on_delete=models.CASCADE,
                               verbose_name="Order")
 
     track_code = models.CharField(u'track_code', default='', max_length=50, blank=True)

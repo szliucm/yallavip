@@ -90,19 +90,33 @@ def download_spus():
 @shared_task
 # 从funmart获取订单数据，插入订单，订单明细
 def get_funmart_order(track_code=None, order_no=None,order_ref=None, batch_no=None):
-    # order = FunmartOrder.objects.get(track_code=track_code)
+
+
+    if order_ref:
+        orders = FunmartOrder.objects.get( order_ref=order_ref)
+    elif track_code:
+        orders = ScanOrder.objects.get(track_code=track_code)
+    else:
+        return  None
+
+    if orders:
+        return  orders[0]
+
+
 
     url = " http://47.98.80.172/api/searchOrder"
     param = dict()
     # 如果输入了order_ref，就忽略track_code
     if order_ref:
+        if not track_code:
+            return None
         param["order_ref"] = order_ref
     elif track_code:
         param["track_code"] = track_code
     elif order_no:
         param["order_no"] = order_no
     else :
-        return None ,None
+        return None
 
     r = requests.post(url, data=json.dumps(param))
     if r.status_code == 200:
@@ -110,21 +124,18 @@ def get_funmart_order(track_code=None, order_no=None,order_ref=None, batch_no=No
         if return_data.get("code") == '00001':
             data = return_data.get("data")
             print(data)
-            #如果输入了track_code，就以track_code为准
-            if not track_code:
-                track_code = data.get("track_code")
+
 
             order_no = data.get("order_no")
             order, created = FunmartOrder.objects.update_or_create(
-                track_code=track_code,
                 order_no=order_no,
-                order_ref =  data.get("order_ref", ""),
-
                 defaults={
-
-                    'order_date': data.get("order_date"),
+                    'track_code' : track_code,
+                    'ret_track_code': data.get("track_code"),
+                     'order_ref': data.get("order_ref"),
+                     'order_date': data.get("order_date"),
                     'ship_method': data.get("ship_method"),
-
+                    'scanned': False,
                     'downloaded': True
                 }
             )
@@ -140,6 +151,7 @@ def get_funmart_order(track_code=None, order_no=None,order_ref=None, batch_no=No
                     track_code=track_code,
                     sku=item.get("sku"),
                     quantity=item.get("qty"),
+                    scanned_quantity=0,
                     price=item.get("price"),
                     category_cn=item.get("category_cn"),
                     category_en=item.get("category_en"),
