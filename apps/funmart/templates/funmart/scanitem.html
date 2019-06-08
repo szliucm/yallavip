@@ -5,6 +5,9 @@
 
 {% block content %}
 
+    <script type="text/javascript">
+
+    </script>
     <h3>Scan Item_code </h3>
     <audio id="successAudio"><source src="/media/audio/success.mp3" type="audio/mpeg"></audio>
     <audio id="errorAudio"><source src="/media/audio/error.mp3" type="audio/mpeg"></audio>
@@ -15,10 +18,10 @@
         <br>
         Item_code  : <input type="text"   id="item_code" autofocus> <br>
         <button type="button" id='get_item_info'>submit</button>
-        <input id="nopreview" type="checkbox" onclick="isPreviewOnly=!this.checked" />Print without preview<br/>
+        <input id="nopreview" type="checkbox" onclick="isPreviewOnly=!this.checked" />Print without preview<br>
 
+        <button type="button" id='get_printer_status'>Printer Status</button>
 
-        <button onclick="printer_status();" style="width:400px;">Get Printer Status</button>
 
         <p>Scan Result: <span id='scan_result' style="font-size:30px"></span></p>
         <br>
@@ -114,17 +117,7 @@
         return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
     }
 
-    function printer_status(){
-            PAZU.TPrinter.getPrinters2(function(a){
-                //a为打印机列表数组
-                //alert(JSON.stringify(a));
-                PAZU.TPrinter.getPrinterStatus(a,function(A){
-                //获得是一个对象数组
-                alert(JSON.stringify(A).split(",{").join(",\r\n{"));
-            });
-            })
 
-        }
 
      function  gen_barcode(barcode_toprint){
 
@@ -188,6 +181,19 @@ $('#item_code').bind('keyup',function(event){
 
     //这里是关键点 .ready 函数好像监听器。
     $(document).ready(function () {
+         $("#get_printer_status").click(function () {
+
+            PAZU.TPrinter.getPrinters2(function(a){
+                //a为打印机列表数组
+                //alert(JSON.stringify(a));
+                PAZU.TPrinter.getPrinterStatus(a,function(A){
+                //获得是一个对象数组
+                alert(JSON.stringify(A).split(",{").join(",\r\n{"));
+            });
+            })
+
+        }
+         }
 
         $("#get_item_info").click(function () {
                 var batch_no = $("#batch_no").val();
