@@ -426,10 +426,14 @@ def batch_sku():
 
 #分析批次的上架策略
 def batch_sku(batch_no):
+    '''
     track_code_list = list(
         FunmartOrder.objects.filter(batch_no=batch_no).values_list("track_code", flat=True)
     )
     orderitems = FunmartOrderItem.objects.filter(track_code__in=track_code_list)
+    '''
+
+    orderitems = FunmartOrderItem.objects.filter(order__batch_no =batch_no)
 
 
     sku_counts = orderitems.values("sku").annotate(order_count=Count("track_code", distinct=True),
