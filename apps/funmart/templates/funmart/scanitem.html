@@ -15,6 +15,8 @@
         <br>
         Item_code  : <input type="text"   id="item_code" autofocus> <br>
         <button type="button" id='get_item_info'>submit</button>
+        <input id="nopreview" type="checkbox" onclick="isPreviewOnly=!this.checked" />Print without preview<br/>
+
         <p>Scan Result: <span id='scan_result' style="font-size:30px"></span></p>
         <br>
         <p>Package Items Count: <span id='package_items_count' style="color:red ; font-size:30px"></span></p>
@@ -47,7 +49,7 @@
 
         </table>
 
-        <input id="nopreview" type="checkbox" onclick="isPreviewOnly=!this.checked" />Print without preview<br/>
+
 
 
         {% csrf_token %}
@@ -109,6 +111,17 @@
         return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
     }
 
+    function printer_status(){
+            PAZU.TPrinter.getPrinters2(function(a){
+                //a为打印机列表数组
+                //alert(JSON.stringify(a));
+                PAZU.TPrinter.getPrinterStatus(a,function(A){
+                //获得是一个对象数组
+                alert(JSON.stringify(A).split(",{").join(",\r\n{"));
+            });
+            })
+
+        }
 
      function  gen_barcode(barcode_toprint){
 
@@ -141,7 +154,7 @@
         };
 
             var s = document.getElementById("box").innerHTML;
-            PAZU.print(s, null, null, 1);
+            PAZU.print(s, null, null, isPreviewOnly);
 
     }
 
@@ -243,6 +256,7 @@ $('#item_code').bind('keyup',function(event){
 
                             action.html(data.action);
                             gen_barcode(data.new_barcode);
+                            printer_status()}
                             print_barcode();
                         }
 
