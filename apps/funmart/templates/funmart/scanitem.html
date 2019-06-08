@@ -181,19 +181,7 @@ $('#item_code').bind('keyup',function(event){
 
     //这里是关键点 .ready 函数好像监听器。
     $(document).ready(function () {
-         $("#get_printer_status").click(function () {
 
-            PAZU.TPrinter.getPrinters2(function(a){
-                //a为打印机列表数组
-                //alert(JSON.stringify(a));
-                PAZU.TPrinter.getPrinterStatus(a,function(A){
-                //获得是一个对象数组
-                alert(JSON.stringify(A).split(",{").join(",\r\n{"));
-            });
-            })
-
-        }
-         }
 
         $("#get_item_info").click(function () {
                 var batch_no = $("#batch_no").val();
@@ -297,6 +285,18 @@ $('#item_code').bind('keyup',function(event){
                 });
          });
 
+         $("#get_printer_status").click(function () {
+
+            PAZU.TPrinter.getPrinters2(function(a){
+                //a为打印机列表数组
+                //alert(JSON.stringify(a));
+                PAZU.TPrinter.getPrinterStatus(a,function(A){
+                //获得是一个对象数组
+                alert(JSON.stringify(A).split(",{").join(",\r\n{"));
+            });
+            })
+
+        });
 
 
 
