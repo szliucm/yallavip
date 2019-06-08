@@ -64,7 +64,7 @@
 
 
     <script type="text/javascript" src="{% static "js/JsBarcode.all.min.js" %}"></script>
-
+    <script type="text/javascript" src="{% static "js/jquery.jqprint-0.3.js" %}"></script>
     <script type="text/javascript" src="{% static "js/pazuclient.js" %}"></script>
 
 <script>
@@ -151,7 +151,9 @@
         };
 
             var s = document.getElementById("box").innerHTML;
-            PAZU.print(s, null, null, isPreviewOnly);
+            #PAZU.print(s, null, null, isPreviewOnly);
+            $("#box").jqprint();
+
 
     }
 
