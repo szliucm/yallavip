@@ -164,6 +164,8 @@ def update_order_item(order, orderitems):
 
             defaults={
                 'order': order,
+                'order_no' : item.get("order_no"),
+                'track_code' : item.get("track_code"),
                 'sku': item.get("sku"),
                 'quantity': item.get("qty"),
                 'price': item.get("price"),
@@ -186,6 +188,9 @@ def create_order_item(order, orderitems):
 
         orderitem = FunmartOrderItem(
             order=order,
+            order_no=item.get("order_no"),
+            track_code=item.get("track_code"),
+
             sku=item.get("sku"),
             quantity=item.get("qty"),
             price=item.get("price"),
@@ -353,7 +358,7 @@ def lable_spus():
     my_custom_sql(mysql)
 
     spus_count = FunmartOrderItem.objects.filter(~Q(funmart_sku__SPU="")).values("funmart_sku__SPU").annotate(
-        order_count=Count("order_no", distinct=True))
+        order_count=Count("order", distinct=True))
 
     hot_spus = spus_count.filter(order_count__gte=30).values_list("funmart_sku__SPU", flat=True)
     FunmartSPU.objects.filter(SPU__in=list(hot_spus)).update(sale_type="hot")
