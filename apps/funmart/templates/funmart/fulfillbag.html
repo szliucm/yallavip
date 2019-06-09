@@ -95,7 +95,7 @@
         //输入框的enter事件
 $('#batch_no').bind('keyup',function(event){
     if(event.keyCode == "13") {
-
+        alert("get_bag_info");
         $("#get_bag_info").trigger("click");
     }
 });
@@ -149,7 +149,7 @@ $('#batch_no').bind('keyup',function(event){
                             var tr=$('<tr></tr>');
                             tr.append('<td>'+ val.action + '</td>'
                                 +'<td>'+ val.unbaged_pcs + '</td>'
-                                +'<td>'+ '<button type="button" id="bag_them"'+index+'>submit</button>' + '</td>' );
+                                +'<td>'+ '<button type="button" id="bag_them'+index+'">submit</button>' + '</td>' );
                             tbody.append(tr);
                         });
                         console.log("tbody", tbody);

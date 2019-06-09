@@ -372,7 +372,7 @@ def fulfillbag(request):
 
             item_info = {
                 "action": funmart_item.get("action"),
-                "pcs": funmart_item.get("pcs"),
+                "unbaged_pcs": funmart_item.get("pcs"),
 
 
 
