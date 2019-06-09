@@ -38,6 +38,24 @@
         {% csrf_token %}
     </form>
 
+    <!-- jqGrid组件基础样式包-必要 -->
+		<link rel="stylesheet" href="jqgrid/css/ui.jqgrid.css" />
+
+		<!-- jqGrid主题包-非必要 -->
+		<!-- 在jqgrid/css/css这个目录下还有其他的主题包，可以尝试更换看效果 -->
+		<link rel="stylesheet" href="jqgrid/css/css/redmond/jquery-ui-1.8.16.custom.css" />
+
+
+
+		<!-- jqGrid插件包-必要 -->
+		<script type="text/javascript" src="jqgrid/js/jquery.jqGrid.src.js"></script>
+
+		<!-- jqGrid插件的多语言包-非必要 -->
+		<!-- 在jqgrid/js/i18n下还有其他的多语言包，可以尝试更换看效果 -->
+		<script type="text/javascript" src="jqgrid/js/i18n/grid.locale-cn.js"></script>
+
+
+
 
     <script>
     // using jQuery

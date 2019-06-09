@@ -388,3 +388,6 @@ def fulfillbag(request):
         print ("response ",item)
         return JsonResponse(item)
 
+define myview(request):
+    grid = MyGrid()
+    return render(request, 'my_template.html', { grid: grid })

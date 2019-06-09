@@ -275,3 +275,10 @@ class Test(models.Model):
 
     def __unicode__(self):
         return self.Meta.verbose_name
+
+
+class MyModel(models.Model):
+    name = models.CharField(max_length=40)
+    desc = models.CharField(max_length=100)
+    url = models.URLField()
+    height = models.IntField()
