@@ -185,19 +185,27 @@
 
     }
 
+        $(document).on('click', '#bag_them_Put_Away', function()  {
+                var batch_no = $("#batch_no").val();
+                bag_them( "Put_Away")
+
+
+         });
         $(document).on('click', '#bag_them_Normal_Case', function()  {
                 var batch_no = $("#batch_no").val();
                 bag_them( "Normal_Case")
 
-                alert_text = '请稍等,正在查询:bag_them_Normal_Case' ;
-                alert(alert_text);
 
          });
+        $(document).on('click', '#Dead_No_Size', function()  {
+                var batch_no = $("#batch_no").val();
+                bag_them( "Dead_No_Size")
 
 
-
-        $("#bag_them_Put Away").click(function () {
-                bag_them("Put Away")
+         });
+        $(document).on('click', '#bag_them_Dead_Size', function()  {
+                var batch_no = $("#batch_no").val();
+                bag_them( "Dead_Size")
 
 
          });

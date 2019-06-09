@@ -170,11 +170,11 @@ class BatchSKU(models.Model):
     en_name = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="en_name")
     skuattr = models.TextField(default='', null=True, blank=True, verbose_name="skuattr")
     ACTION = (
-        ("Put Away", "Put Away"),
+        ("Put_Away", "Put_Away"),
 
         ("Normal_Case", "Normal_Case"),
-        ("Dead_No_Size", "Deda_No_Size"),
-        ("Dead_Size", "Deda_Size"),
+        ("Dead_No_Size", "Dead_No_Size"),
+        ("Dead_Size", "Dead_Size"),
 
     )
     action = models.CharField(choices=ACTION, default='', max_length=100, null=True, blank=True, verbose_name="Action")
