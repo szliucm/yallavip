@@ -11,7 +11,7 @@
     <audio id="errorAudio"><source src="/media/audio/error.mp3" type="audio/mpeg"></audio>
     <form id="item" method="post">
         Batch_no   : <input type="text"   id="batch_no" autofocus> <br>
-        Track_code : <input type="text" id="track_code" hidden="hidden"> <br>
+        <input type="text" id="test" hidden="hidden"> <br>
         <button type="button" id='get_info'>Calculate</button>
 
 
@@ -83,7 +83,7 @@
 
     $('#batch_no').bind('keyup',function(event){
     if(event.keyCode == "13") {
-        alert("get_bag_info");
+        //alert("get_bag_info");
         $("#get_info").trigger("click");
     }
 });
@@ -98,8 +98,8 @@
                 var batch_no = $("#batch_no").val();
 
 
-                alert_text = '请稍等,正在查询:' + batch_no + '信息';
-                alert(alert_text);
+                //alert_text = '请稍等,正在查询:' + batch_no + '信息';
+                //alert(alert_text);
                 $.ajax({
                     type: 'POST',
 
@@ -156,9 +156,59 @@
          });
 
 
+        $("#bag_them_Normal_Case").click(function () {
+
+                alert_text = '请稍等,正在查询:bag_them_Normal_Case' ;
+                alert(alert_text);
+                $.ajax({
+                    type: 'POST',
+
+                     url: "/fulfillbag/",
+                    data: {
+                        batch_no: batch_no,
+
+                        csrfmiddlewaretoken: '{{ csrf_token }}'
+                    },
+                    success: function (data) {
+                        console.log("bag_them_Put Away", data);
 
 
 
+
+
+
+
+
+                    }
+                });
+         });
+
+        $("#bag_them_Put Away").click(function () {
+
+                alert_text = '请稍等,正在查询:bag_them_Put Away' ;
+                alert(alert_text);
+                $.ajax({
+                    type: 'POST',
+
+                     url: "/fulfillbag/",
+                    data: {
+                        batch_no: batch_no,
+
+                        csrfmiddlewaretoken: '{{ csrf_token }}'
+                    },
+                    success: function (data) {
+                        console.log("bag_them_Put Away", data);
+
+
+
+
+
+
+
+
+                    }
+                });
+         });
 
 
         });
