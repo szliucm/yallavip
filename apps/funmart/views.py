@@ -388,7 +388,7 @@ def fulfillbag(request):
         print ("response ",item)
         return JsonResponse(item)
 
-import  Grid
+import djqgrid
 class MyGrid(Grid):
     model = MyModel
 
