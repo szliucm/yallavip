@@ -187,20 +187,7 @@ $('#item_code').bind('keyup',function(event){
         $("#get_item_info").trigger("click");
     }
 });
- //处理兼容
-var bowhidden="hidden" in document?"hidden": "webkithidden" in document?"webkithidden": "mozhidden" in document ?"mozhidden": null;
-var vibchage="visibilitychange" || "webkitvisibilitychange" || "mozvisibilitychange";
-document.addEventListener(vibchage,function (){
-        /*ie10+  moz  webkit  默认*/
-        if(!document[bowhidden]) /*false*/
-        {
-            console.log("激活");
-        }
-        else{
-            /*true*/
-            console.log("隐藏");
-        }
-});
+
 
 
     //这里是关键点 .ready 函数好像监听器。

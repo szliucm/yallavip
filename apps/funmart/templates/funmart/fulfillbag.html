@@ -12,7 +12,7 @@
     <form id="item" method="post">
         Batch_no   : <input type="text"   id="batch_no" > <br>
 
-        <button type="button" id='get_bag_info'>Calculate</button>
+        <button type="button" id='get_info'>Calculate</button>
 
 
         <p>Scan Result: <span id='scan_result' style="font-size:30px"></span></p>
@@ -96,7 +96,7 @@
 $('#batch_no').bind('keyup',function(event){
     if(event.keyCode == "13") {
         alert("get_bag_info");
-        $("#get_bag_info").trigger("click");
+        $("#get_info").trigger("click");
     }
 });
 
@@ -104,12 +104,12 @@ $('#batch_no').bind('keyup',function(event){
     $(document).ready(function () {
 
 
-        $("#get_bag_info").click(function () {
+        $("#get_info").click(function () {
 
                 var batch_no = $("#batch_no").val();
 
 
-                alert_text = '请稍等,正在查询:' + item_code + '信息';
+                alert_text = '请稍等,正在查询:' + batch_no + '信息';
                 alert(alert_text);
                 $.ajax({
                     type: 'POST',
