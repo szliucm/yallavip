@@ -157,36 +157,7 @@
                     }
                 });
          });
-
-
-        $(document).on('click', '#bag_them_Normal_Case', function()  {
-                var batch_no = $("#batch_no").val();
-                alert_text = '请稍等,正在查询:bag_them_Normal_Case' ;
-                alert(alert_text);
-                $.ajax({
-                    type: 'POST',
-
-                     url: "/fulfillbag/",
-                    data: {
-                        batch_no: batch_no,
-
-                        csrfmiddlewaretoken: '{{ csrf_token }}'
-                    },
-                    success: function (data) {
-                        console.log("bag_them_Put Away", data);
-
-
-
-
-
-
-
-
-                    }
-                });
-         });
-
-        function bag_them(action) {
+        function bag_them( action) {
             alert_text = '请稍等,正在查询'+ action ;
 
                 alert(alert_text);
@@ -213,6 +184,17 @@
                 });
 
     }
+
+        $(document).on('click', '#bag_them_Normal_Case', function()  {
+                var batch_no = $("#batch_no").val();
+                bag_them( "Normal_Case")
+
+                alert_text = '请稍等,正在查询:bag_them_Normal_Case' ;
+                alert(alert_text);
+
+         });
+
+
 
         $("#bag_them_Put Away").click(function () {
                 bag_them("Put Away")
