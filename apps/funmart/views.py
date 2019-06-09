@@ -378,7 +378,7 @@ def fulfillbag(request):
 
             }
             items_list.append(item_info)
-
+        item['scan_result'] = 'Success'
         item["items_info"] = items_list
 
 
