@@ -367,12 +367,12 @@ def fulfillbag(request):
 
         # 拼接订单明细
         items_list = []
-        funmart_items = FunmartOrderItem.objects.filter(batch_no=batch_no,bag_no=0).values("action",).annotate(pcs=Sum("scanned_quantity"))
+        funmart_items = FunmartOrderItem.objects.filter(batch_no=batch_no,bag_no=0).values("action").annotate(pcs=Sum("scanned_quantity"))
         for funmart_item in funmart_items:
 
             item_info = {
-                "action": funmart_item.action,
-                "pcs": funmart_item.pcs,
+                "action": funmart_item.get("action"),
+                "pcs": funmart_item.get("pcs"),
 
 
 
