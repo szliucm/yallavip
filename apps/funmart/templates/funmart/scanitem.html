@@ -187,7 +187,7 @@ $('#item_code').bind('keyup',function(event){
 
     //这里是关键点 .ready 函数好像监听器。
     $(document).ready(function () {
-
+        $("#item_code").focus();
 
         $("#get_item_info").click(function () {
                 var batch_no = $("#batch_no").val();
@@ -213,7 +213,7 @@ $('#item_code').bind('keyup',function(event){
                         var action = $("#action");
 
                         $("#item_code").val("");
-                        $("#item_code").focus("");
+
 
 
                         scan_result.html(data.scan_result);
