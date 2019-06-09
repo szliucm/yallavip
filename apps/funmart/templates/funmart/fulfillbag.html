@@ -10,7 +10,7 @@
     <audio id="successAudio"><source src="/media/audio/success.mp3" type="audio/mpeg"></audio>
     <audio id="errorAudio"><source src="/media/audio/error.mp3" type="audio/mpeg"></audio>
     <form id="item" method="post">
-        Batch_no   : <input type="text"   id="batch_no" > <br>
+        Batch_no   : <input type="text"   id="batch_no" autofocus> <br>
 
         <button type="button" id='get_info'>Calculate</button>
 
@@ -37,13 +37,6 @@
 
         {% csrf_token %}
     </form>
-
-
-
-    <script type="text/javascript" src="{% static "js/JsBarcode.all.min.js" %}"></script>
-    <script type="text/javascript" src="{% static "js/jQuery.print.js" %}"></script>
-
-
 
 
     <script>
@@ -93,7 +86,7 @@
     });
     */
         //输入框的enter事件
-$('#batch_no').bind('keyup',function(event){
+    $('#batch_no').bind('keyup',function(event){
     if(event.keyCode == "13") {
         alert("get_bag_info");
         $("#get_info").trigger("click");
@@ -113,7 +106,6 @@ $('#batch_no').bind('keyup',function(event){
                 alert(alert_text);
                 $.ajax({
                     type: 'POST',
-
 
                      url: "/fulfillbag/",
                     data: {
