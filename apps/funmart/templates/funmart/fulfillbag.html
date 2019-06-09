@@ -158,6 +158,7 @@
                 });
          });
         function bag_them( action) {
+            var batch_no = $("#batch_no").val();
             alert_text = '请稍等,正在查询'+ action ;
 
                 alert(alert_text);
@@ -167,6 +168,7 @@
                      url: "/fulfillbag/",
                     data: {
                         batch_no: batch_no,
+                        action: action,
 
                         csrfmiddlewaretoken: '{{ csrf_token }}'
                     },
@@ -186,25 +188,25 @@
     }
 
         $(document).on('click', '#bag_them_Put_Away', function()  {
-                var batch_no = $("#batch_no").val();
+
                 bag_them( "Put_Away")
 
 
          });
         $(document).on('click', '#bag_them_Normal_Case', function()  {
-                var batch_no = $("#batch_no").val();
+
                 bag_them( "Normal_Case")
 
 
          });
         $(document).on('click', '#Dead_No_Size', function()  {
-                var batch_no = $("#batch_no").val();
+
                 bag_them( "Dead_No_Size")
 
 
          });
         $(document).on('click', '#bag_them_Dead_Size', function()  {
-                var batch_no = $("#batch_no").val();
+
                 bag_them( "Dead_Size")
 
 

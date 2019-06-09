@@ -347,7 +347,6 @@ def scanitem(request):
 
 def fulfillbag(request):
 
-    from funmart.tasks import get_funmart_barcode
 
     if request.method == 'GET':
         pass
@@ -388,4 +387,46 @@ def fulfillbag(request):
         print ("response ",item)
         return JsonResponse(item)
 
+def packlbag(request):
 
+
+    if request.method == 'GET':
+        pass
+    elif request.method == 'POST':
+        item = {}
+
+        posts = request.POST
+        print(posts)
+        batch_no = posts.get('batch_no')
+
+        if not batch_no  :
+            item['scan_result'] = 'Please Input Batch_no'
+
+            return JsonResponse(item)
+
+
+
+
+
+        # 拼接订单明细
+        items_list = []
+        funmart_items = FunmartOrderItem.objects.filter(batch_no=batch_no,bag_no=0).values("action").annotate(pcs=Sum("scanned_quantity"))
+        for funmart_item in funmart_items:
+
+            item_info = {
+                "action": funmart_item.get("action"),
+                "unbaged_pcs": funmart_item.get("pcs"),
+
+
+
+            }
+            items_list.append(item_info)
+        item['scan_result'] = 'Success'
+        item["items_info"] = items_list
+
+
+
+
+
+        print ("response ",item)
+        return JsonResponse(item)
