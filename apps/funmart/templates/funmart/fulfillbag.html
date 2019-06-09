@@ -12,7 +12,7 @@
     <form id="item" method="post">
         Batch_no   : <input type="text"   id="batch_no" > <br>
 
-        <button type="button" id='get_bag_info'>submit</button>
+        <button type="button" id='get_bag_info'>Calculate</button>
 
 
         <p>Scan Result: <span id='scan_result' style="font-size:30px"></span></p>
@@ -105,11 +105,12 @@ $('#batch_no').bind('keyup',function(event){
 
 
         $("#get_bag_info").click(function () {
+
                 var batch_no = $("#batch_no").val();
 
 
-                //alert_text = '请稍等,正在查询:' + item_code + '信息';
-                //alert(alert_text);
+                alert_text = '请稍等,正在查询:' + item_code + '信息';
+                alert(alert_text);
                 $.ajax({
                     type: 'POST',
 
@@ -149,7 +150,7 @@ $('#batch_no').bind('keyup',function(event){
                             var tr=$('<tr></tr>');
                             tr.append('<td>'+ val.action + '</td>'
                                 +'<td>'+ val.unbaged_pcs + '</td>'
-                                +'<td>'+ '<button type="button" id="bag_them'+index+'">submit</button>' + '</td>' );
+                                +'<td>'+ '<button type="button" id="bag_them_'+val.action+'">submit</button>' + '</td>' );
                             tbody.append(tr);
                         });
                         console.log("tbody", tbody);
