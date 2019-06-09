@@ -186,12 +186,12 @@ $('#item_code').bind('keyup',function(event){
 });
 
     window.onfocus = function(){
-        alert("window is on focus")
+        $("#item_code").focus();
     }
 
     //这里是关键点 .ready 函数好像监听器。
     $(document).ready(function () {
-        $("#item_code").focus();
+
 
         $("#get_item_info").click(function () {
                 var batch_no = $("#batch_no").val();
