@@ -130,7 +130,8 @@ class FunmartOrderItem(models.Model):
     item_code = models.CharField(u'item_code', default='', max_length=50, blank=True)
     barcode = models.CharField(u'barcode', default='', max_length=50, blank=True)
     action = models.CharField(u'action', default='', max_length=50, blank=True)
-
+    batch_no = models.IntegerField(u'batch_no', default=0, blank=True, null=True)
+    bag_no = models.IntegerField(u'bag_no', default=0, blank=True, null=True)
 
 
     class Meta:
@@ -241,6 +242,14 @@ class ScanPackageItem(models.Model):
     def __unicode__(self):
         return self.Meta.verbose_name
 
+class PrepareBatch(models.Model):
+    class Meta:
+        verbose_name = u"PrepareBatch"
+        verbose_name_plural = verbose_name
+
+    def __unicode__(self):
+        return self.Meta.verbose_name
+
 class ScanItem(models.Model):
     class Meta:
         verbose_name = u"ScanItem"
@@ -249,13 +258,15 @@ class ScanItem(models.Model):
     def __unicode__(self):
         return self.Meta.verbose_name
 
-class PrepareBatch(models.Model):
+class FulfillBag(models.Model):
     class Meta:
-        verbose_name = u"PrepareBatch"
+        verbose_name = u"FulfillBag"
         verbose_name_plural = verbose_name
 
     def __unicode__(self):
         return self.Meta.verbose_name
+
+
 
 class Test(models.Model):
     class Meta:
