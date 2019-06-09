@@ -170,13 +170,15 @@
             }
         }
     });
-    /*
+
     $(document).keyup(function (event) {
-        if (event.keyCode === 13) {
-            $("#get_item_info").trigger("click");
+        if (document.activeElement.id ==""){
+            $("#item_code").focus();
+            $("#item_code").select();
         }
+
     });
-    */
+
         //输入框的enter事件
 $('#item_code').bind('keyup',function(event){
     if(event.keyCode == "13") {
