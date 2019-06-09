@@ -12,35 +12,21 @@
     <form id="item" method="post">
         Batch_no   : <input type="text"   id="batch_no" > <br>
 
-        <button type="button" id='get_item_info'>submit</button>
+        <button type="button" id='get_bag_info'>submit</button>
 
 
         <p>Scan Result: <span id='scan_result' style="font-size:30px"></span></p>
         <br>
-        <p>Package Items Count: <span id='package_items_count' style="color:red ; font-size:30px"></span></p>
-        <p>Scanned Items Count: <span id='scannned_items__count' style="color:green ; font-size:30px"></span></p>
-        <br>
-        <p>Item_code     : <span id='ret_item_code' style="font-size:30px"></span></p>
-        <p>SKU           : <span id='sku' style="font-size:30px"></span></p>
 
-        <p hidden="hidden">New Barcode   : <span id='new_barcode' style="font-size:30px"></span></p>
-        <p>Action        : <span id='action' style="font-size:30px"></span></p>
-
-        <div id="box">
-            <img id="barcode" />
-        </div>
 
         <table id="myTable" cellpadding="1" cellspacing="0" border="1" width="100%" style="font-size:18px;font-family:serif;">
         <caption align="top">Package Items</caption>
         <thead>
         <tr>
-            <th>Item_code</th>
-            <th>SKU</th>
-            <th>Category</th>
-            <th>Barcode</th>
-            <th>Quantity</th>
-            <th>Scanned Quantity</th>
             <th>Action</th>
+
+            <th>unbaged_pcs</th>
+            <th>Bag Them</th>
         </tr>
         </thead>
         <tbody></tbody>
@@ -60,32 +46,6 @@
 
 
 
-
-<script>
-    var PAZU_Config = {
-        prot:"http",           //访问你的应用的协议
-        server: '127.0.0.1',   //打印服务器地址，如果你的应用面向Windows平台，则无需更改（每台客户端都自己做打印服务器）
-        port: 6894,            //不要更改端口,并确保打印服务器上
-        license:'53E1021835A1E82099579ECD5DFA75EC|深圳市中仪信息技术有限公司',             //你的PAZU许可码，可以自行在官方申请，不收费，转发微信朋友圈即可申请成功
-        debug:1
-    }
-    function chkPAZU(){
-      if(!window.PAZU){
-         alert("PAZU云打印组件加载失败,请下载安装 \r\n :" + PAZU_Config.server + "/可以下载到PAZUCloud_setup.exe的url");
-         //也可以你自己在页面里面构建一个链接提示用户下载
-         return false;
-      }
-      return true;
-   }
-
-   window.onPAZUReady=function(){
-    //这里表示PAZU肯定已经加载成功了
-    alert("PAZU_Cloud init ok")
-
-}
-
-
-    </script>
 
     <script>
     // using jQuery
@@ -114,46 +74,7 @@
 
 
 
-     function  gen_barcode(barcode_toprint){
 
-     var barcode = document.getElementById('barcode');
-
-     options = {
-         format:"CODE128",
-         displayValue:true,
-         fontSize:30,
-            fontOptions:"bold",
-         width: 3,//较细处条形码的宽度
-         height:120,
-            margin:50
-          };
-    console.log("barcode_toprint", barcode_toprint);
-     JsBarcode(barcode, barcode_toprint, options);//原生
-      }
-
-    function print_barcode() {
-        /*
-         PAZU.TPrinter = {
-            marginTop: 0,                  //属性 上边距   数据类型：数字   单位：毫米
-            marginBottom: 0,               //属性 下边距   数据类型：数字   单位：毫米
-            marginLeft: 0,                 //属性 左边距   数据类型：数字   单位：毫米
-            marginRight: 0,                //属性 右边距   数据类型：数字   单位：毫米
-             footer: "",                      //属性  页脚   数据类型：字符串
-    header: "",                       //属性  页眉   数据类型：字符串
-             fontCSS: "",                        //字符串,设置页面页脚的字体的CSS（2017年增加）注意字体大小要用pt做单位
-    //如果不设置 ，PAZU默认使用 8pt 字体大小，即fontCSS的默认值为"font-size:8pt;color:rgb(0,0,0)"
-    orientation: 1,                     //属性纸张方向  数据类型：整数1或者2 ， 1=纵向  2=横向
-               paperName: "4*3",                   //属性   纸张大小名称  数据类型：字符串
-
-        };
-
-            var s = document.getElementById("box").innerHTML;
-            PAZU.print(s, null, null, isPreviewOnly);
-            */
-            $("#box").print();
-
-
-    }
 
 
 
@@ -173,10 +94,10 @@
     });
     */
         //输入框的enter事件
-$('#item_code').bind('keyup',function(event){
+$('#batch_no').bind('keyup',function(event){
     if(event.keyCode == "13") {
 
-        $("#get_item_info").trigger("click");
+        $("#get_bag_info").trigger("click");
     }
 });
 
@@ -184,10 +105,9 @@ $('#item_code').bind('keyup',function(event){
     $(document).ready(function () {
 
 
-        $("#get_item_info").click(function () {
+        $("#get_bag_info").click(function () {
                 var batch_no = $("#batch_no").val();
-                var track_code = $("#track_code").val();
-                var item_code = $("#item_code").val();
+
 
                 //alert_text = '请稍等,正在查询:' + item_code + '信息';
                 //alert(alert_text);
@@ -195,81 +115,42 @@ $('#item_code').bind('keyup',function(event){
                     type: 'POST',
 
 
-                     url: "/scanitem/",
+                     url: "/fulfillbag/",
                     data: {
                         batch_no: batch_no,
-                        track_code: track_code,
-                        item_code: item_code,
+
                         csrfmiddlewaretoken: '{{ csrf_token }}'
                     },
                     success: function (data) {
-                        console.log("scanitem", data);
+                        console.log("fulfillbag", data);
                         var scan_result = $("#scan_result");
-                        var action = $("#action");
 
-                        $("#item_code").val("");
+
+                        $("#batch_no").val("");
 
                         scan_result.html(data.scan_result);
-                        $("#ret_item_code").html(item_code);
+
 
                         if (data.scan_result !== "Success"){
                             $('#errorAudio')[0].play();
 
                             scan_result.css("backgroundColor", "red");
-                            $("#sku").html("");
 
-                            $("#new_barcode").html("");
-                            $("#action").html("");
-                            $("#barcode").html("");
                         }
                         else{
                             $('#successAudio')[0].play();
                             scan_result.css("backgroundColor", "yellow");
-                            $("#package_items_count").html(data.package_items_count);
-                            $("#scannned_items__count").html(data.scannned_items__count);
 
-                            $("#sku").html(data.sku);
-
-                            $("#new_barcode").html(data.new_barcode);
-                            switch (data.action) {
-                                case "Put Away":
-                                    action.css("backgroundColor", "green");
-                                    break;
-                                case "Put Normal_Case":
-                                    action.css("backgroundColor", "yellow");
-                                    break;
-                                case "Dead_No_Size Away":
-                                    action.css("backgroundColor", "grey");
-                                    break;
-                                case "Dead_Size Away":
-                                    action.css("backgroundColor", "blue");
-                                    break;
-                                default:
-                                    action.css("backgroundColor", "red");
-                                    break;
-
-                            }
-
-
-
-                            action.html(data.action);
-                            gen_barcode(data.new_barcode);
-
-                            print_barcode();
                         }
 
                         var tbody=$('<tbody></tbody>');
-                        var obj=data.items_info;
+                        var obj=data.bags_info;
                         $(obj).each(function (index){
                             var val=obj[index];
                             var tr=$('<tr></tr>');
-                            tr.append('<td>'+ val.item_code + '</td>'
-                                + '<td>'+ val.SKU + '</td>'
-                                +'<td>'+ val.category + '</td>'
-                                +'<td>'+ val.barcode + '</td>'
-                                +'<td>'+ val.quantity + '</td>'
-                                +'<td><span style="color:red ; font-size:30px">'+ val.scanned_quantity + '</span></td>'
-                                +'<td>'+ val.action + '</td>' );
+                            tr.append('<td>'+ val.action + '</td>'
+                                +'<td>'+ val.unbaged_pcs + '</td>'
+                                +'<td>'+ '<button type="button" id="bag_them"'+index+'>submit</button>' + '</td>' );
                             tbody.append(tr);
                         });
                         console.log("tbody", tbody);
