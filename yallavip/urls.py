@@ -40,6 +40,7 @@ urlpatterns = [
     path('scanpackageitem/', scanpackageitem),
     path('scanitem/', scanitem),
     path('fulfillbag/', fulfillbag),
+    path('grid_json/', djqgrid.urls),
 
 
 
