@@ -282,3 +282,4 @@ class MyModel(models.Model):
     desc = models.CharField(max_length=100)
     url = models.URLField()
     height = models.IntegerField()
+

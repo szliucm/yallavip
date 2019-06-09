@@ -220,9 +220,3 @@ class FulfillBagAdmin(object):
     list_display = []
     object_list_template = "funmart/fulfillbag.html"
 
-class MyGrid(Grid):
-    model = MyModel
-
-    name = TextColumn(title='Name', model_path='name')
-    height = TextColumn(title='Height', model_path='height', align='right')
-    desc = LinkColumn(title='Description', model_path='desc', url_builder=lambda m: m.url)
