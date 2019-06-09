@@ -186,9 +186,9 @@
                 });
          });
 
-        $("#bag_them_Put Away").click(function () {
+        function bag_them(action) {
+            alert_text = '请稍等,正在查询'+ action ;
 
-                alert_text = '请稍等,正在查询:bag_them_Put Away' ;
                 alert(alert_text);
                 $.ajax({
                     type: 'POST',
@@ -211,6 +211,13 @@
 
                     }
                 });
+
+    }
+
+        $("#bag_them_Put Away").click(function () {
+                bag_them("Put Away")
+
+
          });
 
 
