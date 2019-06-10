@@ -204,7 +204,11 @@ def scanpackageitem(request):
             return JsonResponse(item)
 
 
-
+        try:
+            funmartorder = FunmartOrder.objects.get(track_code=track_code)
+        except:
+            item['scan_result'] = 'Cannot find package with the track_code'
+            return JsonResponse(item)
 
 
         if not barcode  :
@@ -278,11 +282,7 @@ def scanpackageitem(request):
             )
 
         # 统计包裹摘要
-        try:
-            funmartorder = FunmartOrder.objects.get(track_code=track_code)
-        except:
-            item['scan_result'] = 'Cannot find package with the track_code'
-            return JsonResponse(item)
+
 
         item['package_items_count'] = funmartorder.quantity
 
