@@ -160,13 +160,14 @@ def update_order_item(order, orderitems):
     for item in orderitems:
         quantity += item.get("qty")
         FunmartOrderItem.objects.update_or_create(
-            track_code=track_code,
+            order = order,
+            sku = item.get("sku"),
 
             defaults={
-                'order': order,
-                'order_no' : item.get("order_no"),
-                'track_code' : item.get("track_code"),
-                'sku': item.get("sku"),
+
+                'order_no' : order.order_no,
+                'track_code' : order.track_code,
+
                 'quantity': item.get("qty"),
                 'price': item.get("price"),
                 'category_cn': item.get("category_cn"),
@@ -188,8 +189,8 @@ def create_order_item(order, orderitems):
 
         orderitem = FunmartOrderItem(
             order=order,
-            order_no=item.get("order_no"),
-            track_code=item.get("track_code"),
+            order_no=order.order_no,
+            track_code=order.track_code,
 
             sku=item.get("sku"),
             quantity=item.get("qty"),

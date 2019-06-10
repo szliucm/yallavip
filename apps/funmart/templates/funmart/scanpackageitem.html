@@ -45,6 +45,7 @@
             <th>Quantity</th>
             <th>Scanned Quantity</th>
             <th>Action</th>
+            <th>AutoScan</th>
             <th>Thumbnail</th>
         </tr>
         </thead>
@@ -138,6 +139,9 @@ $('#track_code').bind('keyup',function(event){
 
     //这里是关键点 .ready 函数好像监听器。
     $(document).ready(function () {
+        function autoscan(item_code){
+            alert("button clicked")
+        }
 
 
         $("#get_item_info").click(function () {
@@ -230,11 +234,11 @@ $('#track_code').bind('keyup',function(event){
                                 +'<td>'+ val.quantity + '</td>'
                                 +'<td><span style="color:red ; font-size:30px">'+ val.scanned_quantity + '</span></td>'
                                 +'<td>'+ val.action + '</td>'
+                                +'<td>'+'<button type="button"  onclick ="autoscan('+ val.SKU +')>autoscan</button></td>' ;
                             if (document.getElementById("show_thumbnail").checked){
 
                                 td = td +'<td><img src="'+ val.sku_image + '"  width="100"></td>'
                             }
-
 
 
                             tr.append(td);
