@@ -294,7 +294,7 @@ def scanpackageitem(request):
         items_list = []
         funmart_items = FunmartOrderItem.objects.filter(track_code=track_code)
         for funmart_item in funmart_items:
-            sku_image = json.loads(funmart_sku.images)[0]
+            sku_image = json.loads(funmart_item.funmart_sku.images)[0]
             print(sku_image)
 
             item_info = {
