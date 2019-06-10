@@ -5,72 +5,72 @@
 
 {% block content %}
 
-    <h3>Scan Track_code then item_code </h3>
-    <form id="item" action="/scanpackageitem/" method="post">
-
-        Track_code: <input type="text" id="track_code" > <br>
+    <script type="text/javascript">
+        var isPreviewOnly = true;
+    </script>
+    <h3>Scan Item_code </h3>
+    <audio id="successAudio"><source src="/media/audio/success.mp3" type="audio/mpeg"></audio>
+    <audio id="errorAudio"><source src="/media/audio/error.mp3" type="audio/mpeg"></audio>
+    <form id="item" method="post">
+        Batch_no   : <input type="text"   id="batch_no" > <br>
         <br>
-        item_code  : <input type="text"   id="item_code" autofocus> <br>
-        <button type="button" id='get_packageitem_info'>submit</button>
-        <p>Track_code: <span id='ret_track_code' style="font-size:30px"></span></p>
-        <div id="box">
-            <img id="barcode" />
-        </div>
 
-        <table id="Package" cellpadding="1" cellspacing="0" border="1" class="item_info" border="1px" width="100%">
-            <caption align="top"><h3>Track_code: <span id='Track_code'></span></h3></caption>
-            <thead>
-            <tr>
-                <th>sku</th>
-                <th>name</th>
-                <th>quantity</th>
-                <th>barcode</th>
-                <th>real_quantity</th>
-                <th>action</th>
-            </tr>
-            </thead>
-            <tbody></tbody>
+        Track_code : <input type="text" id="track_code" > <br>
+        <br>
+        Barcode  : <input type="text"   id="barcode" style="color:red ; font-size:30px"> <br>
+        <br>
+        Item_code  : <input type="text"   id="item_code" autofocus> <br>
+        <button type="button" id='get_item_info'>submit</button>
+
+
+        <p>Scan Result: <span id='scan_result' style="font-size:30px"></span></p>
+        <br>
+        <p>Package Items Count: <span id='package_items_count' style="color:red ; font-size:30px"></span></p>
+        <p>Scanned Items Count: <span id='scannned_items__count' style="color:green ; font-size:30px"></span></p>
+        <br>
+        <p>Item_code     : <span id='ret_item_code' style="font-size:30px"></span></p>
+        <p>SKU           : <span id='sku' style="font-size:30px"></span></p>
+        <p>Barcode           : <span id='new_barcode' style="font-size:30px"></span></p>
+        <p>Action        : <span id='action' style="font-size:30px"></span></p>
+
+        <table id="myTable" cellpadding="1" cellspacing="0" border="1" width="100%" style="font-size:18px;font-family:serif;">
+        <caption align="top">Package Items</caption>
+        <thead>
+        <tr>
+            <th>Item_code</th>
+            <th>SKU</th>
+            <th>Category</th>
+            <th>Barcode</th>
+            <th>Quantity</th>
+            <th>Scanned Quantity</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody></tbody>
+
         </table>
+
+
 
 
         {% csrf_token %}
     </form>
 
 
-    <input type="button" onclick="print()" value="打印" />
-
-    <script type="text/javascript" src="{% static "js/jquery.print.js" %}"></script>
-
-    <script src="https://cdn.bootcss.com/jsbarcode/3.8.0/JsBarcode.all.min.js"></script>
-    <script type="text/javascript" src="{% static "js/pazuclient.js" %}"></script>
-
-<script>
-    var PAZU_Config = {
-        prot:"http",           //访问你的应用的协议
-        server: 'localhost',   //打印服务器地址，如果你的应用面向Windows平台，则无需更改（每台客户端都自己做打印服务器）
-        port: 6894,            //不要更改端口,并确保打印服务器上
-        license:'53E1021835A1E82099579ECD5DFA75EC|深圳市中仪信息技术有限公司'             //你的PAZU许可码，可以自行在官方申请，不收费，转发微信朋友圈即可申请成功
-    }
-    function chkPAZU(){
-      if(!window.PAZU){
-         alert("PAZU云打印组件加载失败,请下载安装 \r\n :" + PAZU_Config.server + "/可以下载到PAZUCloud_setup.exe的url");
-         //也可以你自己在页面里面构建一个链接提示用户下载
-         return false;
-      }
-      return true;
-   }
-   /*
-   window.onPAZUReady=function(){
-    //这里表示PAZU肯定已经加载成功了
-    alert("PAZU_Cloud init ok")
-
-}
-*/
-
-    </script>
-
     <script>
-    // using jQuery
+    // barcode 字符串去掉"-"变数字加一后再变成字符串加上"-"
+    //增加条码的可读性
+    function barcode_add(barcode){
+        a = barcode.replace("-","");
+        b = Number(a)+1;
+        c = String(b);
+        d = c.substr(0,5) + '-' + c.substr(-4,4);
+
+        return d;
+
+
+    }
+
     function getCookie(name) {
         var cookieValue = null;
         if (document.cookie && document.cookie !== '') {
@@ -94,6 +94,7 @@
         return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
     }
 
+
     $.ajaxSetup({
         beforeSend: function (xhr, settings) {
             if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
@@ -102,52 +103,126 @@
         }
     });
 
-    $(document).keyup(function (event) {
-        if (event.keyCode === 13) {
-            $("#get_packageitem_info").trigger("click");
+    $(document).keydown(function (event) {
+        //alert("document keydown")
+        if (document.activeElement.id ==""){
+            $("#item_code").focus();
+            $("#item_code").select();
         }
+
     });
+
+        //输入框的enter事件
+$('#item_code').bind('keyup',function(event){
+    if(event.keyCode == "13") {
+
+        $("#get_item_info").trigger("click");
+    }
+});
+
 
 
     //这里是关键点 .ready 函数好像监听器。
     $(document).ready(function () {
 
 
-
-        $("#get_packageitem_info").click(function () {
-
+        $("#get_item_info").click(function () {
+                var batch_no = $("#batch_no").val();
                 var track_code = $("#track_code").val();
+                var barcode = $("#barcode").val();
                 var item_code = $("#item_code").val();
 
                 //alert_text = '请稍等,正在查询:' + item_code + '信息';
                 //alert(alert_text);
                 $.ajax({
                     type: 'POST',
-
-                    url: "/scanpackageitem/",
+                     url: "/scanitem/",
                     data: {
-
-
+                        batch_no: batch_no,
                         track_code: track_code,
+                        barcode: barcode,
                         item_code: item_code,
                         csrfmiddlewaretoken: '{{ csrf_token }}'
                     },
                     success: function (data) {
-                        console.log("scanpackageitem", data);
-                        if (data.track_code == "Not Found!"){
-                            $("#ret_track_code").css("backgroundColor", "red");
-                            $("#ret_order_no").css("backgroundColor", "red");
+                        console.log("scanitem", data);
+                        var scan_result = $("#scan_result");
+                        var action = $("#action");
+
+                        $("#item_code").val("");
+
+                        scan_result.html(data.scan_result);
+                        $("#ret_item_code").html(item_code);
+
+                        if (data.scan_result !== "Success"){
+                            $('#errorAudio')[0].play();
+
+                            scan_result.css("backgroundColor", "red");
+                            $("#sku").html("");
+
+                            $("#new_barcode").html("");
+                            $("#action").html("");
+                            //$("#barcode").html(barcode);
                         }
                         else{
-                            $("#ret_track_code").css("backgroundColor", "yellow");
-                            $("#ret_order_no").css("backgroundColor", "yellow");
+                            $('#successAudio')[0].play();
+                            scan_result.css("backgroundColor", "yellow");
+                            $("#package_items_count").html(data.package_items_count);
+                            $("#scannned_items__count").html(data.scannned_items__count);
+
+                            $("#sku").html(data.sku);
+                            $("#new_barcode").html(barcode);
+
+                             $("#barcode").val(barcode_add(barcode));
+
+                            switch (data.action) {
+                                case "Put Away":
+                                    action.css("backgroundColor", "green");
+                                    break;
+                                case "Put Normal_Case":
+                                    action.css("backgroundColor", "yellow");
+                                    break;
+                                case "Dead_No_Size Away":
+                                    action.css("backgroundColor", "grey");
+                                    break;
+                                case "Dead_Size Away":
+                                    action.css("backgroundColor", "blue");
+                                    break;
+                                default:
+                                    action.css("backgroundColor", "red");
+                                    break;
+
+                            }
+
+
+
+                            action.html(data.action);
+
                         }
-                        $("#ret_track_code").html(data.track_code);
-                        $("#ret_order_no").html(data.order_no);
-                        //$("#track_code").val("");
-                        $("#item_code").val("");
-                        test(data.barcode);
-                        console.log("barcode had been generate");
+
+                        $("#item_code").focus();
+                        $("#item_code").select();
+
+                        var tbody=$('<tbody></tbody>');
+                        var obj=data.items_info;
+                        $(obj).each(function (index){
+                            var val=obj[index];
+                            var tr=$('<tr></tr>');
+                            tr.append('<td>'+ val.item_code + '</td>'
+                                + '<td>'+ val.SKU + '</td>'
+                                +'<td>'+ val.name + '</td>'
+                                +'<td>'+ val.barcode + '</td>'
+                                +'<td>'+ val.quantity + '</td>'
+                                +'<td><span style="color:red ; font-size:30px">'+ val.scanned_quantity + '</span></td>'
+                                +'<td>'+ val.action + '</td>' );
+                            tbody.append(tr);
+                        });
+                        console.log("tbody", tbody);
+                        $('#myTable tbody').replaceWith(tbody);
+
+
+
+
 
 
 
@@ -161,49 +236,13 @@
 
 
 
+
         });
-      function  test(barcode_toprint){
-
-     var barcode = document.getElementById('barcode'),
-
-     options = {
-         format:"CODE128",
-         displayValue:true,
-         fontSize:20,
-         width: 1,//较细处条形码的宽度
-         height:40
-     };
-     JsBarcode(barcode, barcode_toprint, options);//原生
-      }
-
-
-
-
 
 
     </script>
 
-    <script language="javascript">
-    function print() {
-         PAZU.TPrinter = {
-            marginTop: 0,                  //属性 上边距   数据类型：数字   单位：毫米
-            marginBottom: 0,               //属性 下边距   数据类型：数字   单位：毫米
-            marginLeft: 0,                 //属性 左边距   数据类型：数字   单位：毫米
-            marginRight: 0,                //属性 右边距   数据类型：数字   单位：毫米
-             footer: "",                      //属性  页脚   数据类型：字符串
-    header: "",                       //属性  页眉   数据类型：字符串
-             fontCSS: "",                        //字符串,设置页面页脚的字体的CSS（2017年增加）注意字体大小要用pt做单位
-    //如果不设置 ，PAZU默认使用 8pt 字体大小，即fontCSS的默认值为"font-size:8pt;color:rgb(0,0,0)"
-    orientation: 1,                     //属性纸张方向  数据类型：整数1或者2 ， 1=纵向  2=横向
-               paperName: "4*3",                   //属性   纸张大小名称  数据类型：字符串
 
-        };
-
-            var s = document.getElementById("box").innerHTML;
-            PAZU.print(s, null, null, 1);
-
-    }
-</script>
 
 
 {% endblock %}

@@ -193,10 +193,7 @@ class TestAdmin(object):
 	list_display = []
 	object_list_template = "funmart/index.html"
 	
-@xadmin.sites.register(ScanPackageItem)
-class ScanPackageItemAdmin(object):
-    list_display = []
-    object_list_template = "funmart/scanpackageitem.html"
+
     	
 '''
 
@@ -209,6 +206,11 @@ class ScanPackageAdmin(object):
 class PrepareBatchAdmin(object):
     list_display = []
     object_list_template = "funmart/preparebatch.html"
+
+@xadmin.sites.register(ScanPackageItem)
+class ScanPackageItemAdmin(object):
+    list_display = []
+    object_list_template = "funmart/scanpackageitem.html"
 
 @xadmin.sites.register(ScanItem)
 class ScanItemAdmin(object):

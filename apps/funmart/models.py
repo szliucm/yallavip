@@ -73,11 +73,25 @@ class FunmartBarcode(models.Model):
 
     download_error = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="download_error")
     class Meta:
-        verbose_name = "ScanOrder"
+        verbose_name = "FunmartBarcode"
         verbose_name_plural = verbose_name
 
     def __str__(self):
         return self.barcode
+
+class YallavipBarcode(models.Model):
+    funmart_sku = models.ForeignKey(FunmartSKU, null=True, blank=True, verbose_name="SKU",
+                                    related_name="funmartsku_barcode", on_delete=models.CASCADE)
+    SKU = models.CharField(default='',max_length=300, null=True, blank=True, verbose_name="SKU")
+    barcode = models.CharField(u'barcode', default='', max_length=100, blank=True)
+
+    class Meta:
+        verbose_name = "YallavipBarcode"
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.barcode
+
 
 class FunmartOrder(models.Model):
     track_code = models.CharField(u'track_code', default='', max_length=50, blank=True, unique=True)
