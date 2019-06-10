@@ -113,12 +113,21 @@
     });
 
         //输入框的enter事件
-$('#item_code').bind('keyup',function(event){
+$('#batch_no').bind('keyup',function(event){
     if(event.keyCode == "13") {
 
         $("#get_item_info").trigger("click");
     }
 });
+
+    $('#item_code').bind('keyup',function(event){
+    if(event.keyCode == "13") {
+
+        $("#get_item_info").trigger("click");
+    }
+});
+
+
 
 
 
