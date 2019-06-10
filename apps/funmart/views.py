@@ -1,6 +1,7 @@
 from django.db.models import Count, Sum, Q, F
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
+import  json
 # Create your views here.
 from xadmin.views import BaseAdminView
 
@@ -256,10 +257,13 @@ def scanpackageitem(request):
 
             item["new_barcode"] = barcode
             item["sku_name"] = funmart_sku.name
+
+            item["sku_image"] = json.loads(funmart_sku.images)[0]
             item['scan_result'] = 'Success'
-
-
             item['scannned_items__count'] = funmartorder.scanned_quantity + 1
+
+
+
             funmartorder.scanned_quantity = F("scanned_quantity") + 1
             funmartorder.save()
 

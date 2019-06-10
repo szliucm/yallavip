@@ -19,7 +19,8 @@
         <br>
         Barcode  : <input type="text"   id="barcode" style="color:red ; font-size:30px"> <br>
         <br>
-        Item_code  : <input type="text"   id="item_code" autofocus> <br>
+        Item_code  : <input type="text"   id="item_code" style="color:red ; font-size:30px" autofocus> <br>
+        <input type="checkbox" id="show_thumbnail" value="0" data-age="18" /> Show Thumbnail
         <button type="button" id='get_item_info'>submit</button>
 
 
@@ -217,13 +218,19 @@ $('#track_code').bind('keyup',function(event){
                         $(obj).each(function (index){
                             var val=obj[index];
                             var tr=$('<tr></tr>');
-                            tr.append('<td>'+ val.item_code + '</td>'
+                            var td = "";
+                            td = '<td>'+ val.item_code + '</td>'
                                 + '<td>'+ val.SKU + '</td>'
                                 +'<td>'+ val.name + '</td>'
                                 +'<td>'+ val.barcode + '</td>'
                                 +'<td>'+ val.quantity + '</td>'
                                 +'<td><span style="color:red ; font-size:30px">'+ val.scanned_quantity + '</span></td>'
-                                +'<td>'+ val.action + '</td>' );
+                                +'<td>'+ val.action + '</td>'
+                            if $("#item_code").val() == 1:
+                                td = td +'<td><img src="'+ val.sku_image + '" /img></td>'
+
+
+                            tr.append(td);
                             tbody.append(tr);
                         });
                         console.log("tbody", tbody);
