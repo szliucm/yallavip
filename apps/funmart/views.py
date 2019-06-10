@@ -205,7 +205,79 @@ def scanpackageitem(request):
 
 
 
-        #统计包裹摘要
+
+
+        if not barcode  :
+            item['scan_result'] = 'Please Input Barcode'
+
+
+        elif not item_code :
+            item['scan_result'] = 'Please Input Item_code'
+
+        else:
+
+
+            item_code = item_code.replace("－", "-")
+
+            funmartbarcodes = FunmartBarcode.objects.filter(barcode=item_code)
+            if not funmartbarcodes:
+                funmartbarcode = get_funmart_barcode(item_code)
+                print("get from funmart", funmartbarcode)
+            else:
+                funmartbarcode = funmartbarcodes[0]
+
+            if not funmartbarcode :
+                item['scan_result'] = 'SKU not Found'
+                return JsonResponse(item)
+
+
+            funmart_sku  = funmartbarcode.funmart_sku
+            print("get from yallavip", funmartbarcode, funmart_sku)
+
+
+            try:
+                fummartorder_item = FunmartOrderItem.objects.get(track_code=track_code,sku = funmartbarcode.SKU)
+            except:
+                item['scan_result'] = 'Item not belong to the package'
+                return JsonResponse(item)
+
+            try:
+                action = BatchSKU.objects.get(batch_no = batch_no, SKU=funmart_sku.SKU).action
+                item["action"] = action
+            except:
+                item['scan_result'] = 'SKU not prepared'
+                return JsonResponse(item)
+
+            item["sku"] = funmart_sku.SKU
+
+            item["new_barcode"] = barcode
+            item["sku_name"] = funmart_sku.name
+            item['scan_result'] = 'Success'
+
+
+            item['scannned_items__count'] = funmartorder.scanned_quantity + 1
+            funmartorder.scanned_quantity = F("scanned_quantity") + 1
+            funmartorder.save()
+
+            fummartorder_item.item_code = item_code
+            fummartorder_item.barcode = barcode
+            fummartorder_item.scanned_quantity = F("scanned_quantity") + 1
+            fummartorder_item.action = action
+            fummartorder_item.batch_no = batch_no
+
+            fummartorder_item.save()
+
+
+            yallavip_barcode, created = YallavipBarcode.objects.update_or_create(
+                barcode=barcode,
+                defaults={
+                    'funmart_sku': funmart_sku,
+                    'SKU': funmart_sku.SKU,
+
+                }
+            )
+
+        # 统计包裹摘要
         try:
             funmartorder = FunmartOrder.objects.get(track_code=track_code)
         except:
@@ -231,77 +303,6 @@ def scanpackageitem(request):
             items_list.append(item_info)
 
         item["items_info"] = items_list
-
-        if not barcode  :
-            item['scan_result'] = 'Please Input Barcode'
-            return JsonResponse(item)
-
-        if not item_code :
-            item['scan_result'] = 'Please Input Item_code'
-            return JsonResponse(item)
-
-
-        item_code = item_code.replace("－", "-")
-
-        funmartbarcodes = FunmartBarcode.objects.filter(barcode=item_code)
-        if not funmartbarcodes:
-            funmartbarcode = get_funmart_barcode(item_code)
-            print("get from funmart", funmartbarcode)
-        else:
-            funmartbarcode = funmartbarcodes[0]
-
-        if not funmartbarcode :
-            item['scan_result'] = 'SKU not Found'
-            return JsonResponse(item)
-
-
-        funmart_sku  = funmartbarcode.funmart_sku
-        print("get from yallavip", funmartbarcode, funmart_sku)
-
-
-        try:
-            fummartorder_item = FunmartOrderItem.objects.get(track_code=track_code,sku = funmartbarcode.SKU)
-        except:
-            item['scan_result'] = 'Item not belong to the package'
-            return JsonResponse(item)
-
-        try:
-            action = BatchSKU.objects.get(batch_no = batch_no, SKU=funmart_sku.SKU).action
-            item["action"] = action
-        except:
-            item['scan_result'] = 'SKU not prepared'
-            return JsonResponse(item)
-
-        item["sku"] = funmart_sku.SKU
-
-        item["new_barcode"] = barcode
-        item["sku_name"] = funmart_sku.name
-        item['scan_result'] = 'Success'
-
-
-        item['scannned_items__count'] = funmartorder.scanned_quantity + 1
-        funmartorder.scanned_quantity = F("scanned_quantity") + 1
-        funmartorder.save()
-
-        fummartorder_item.item_code = item_code
-        fummartorder_item.barcode = barcode
-        fummartorder_item.scanned_quantity = F("scanned_quantity") + 1
-        fummartorder_item.action = action
-        fummartorder_item.batch_no = batch_no
-
-        fummartorder_item.save()
-
-
-        yallavip_barcode, created = YallavipBarcode.objects.update_or_create(
-            barcode=barcode,
-            defaults={
-                'funmart_sku': funmart_sku,
-                'SKU': funmart_sku.SKU,
-
-            }
-        )
-
-
 
         print ("response ",item)
         return JsonResponse(item)

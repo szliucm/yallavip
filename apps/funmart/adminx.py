@@ -94,7 +94,7 @@ class FunmartOrderAdmin(object):
 
 @xadmin.sites.register(FunmartOrderItem)
 class FunmartOrderItemAdmin(object):
-    list_display = ["track_code", "item_code","barcode", "quantity", "scanned_quantity", "price", "action","batch_no",]
+    list_display = ["sku", "item_code","barcode", "quantity", "scanned_quantity", "price", "action","track_code","batch_no",]
     list_editable = []
 
     search_fields = ["track_code", 'sku', ]
