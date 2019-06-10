@@ -62,13 +62,16 @@
     <script>
     // barcode 字符串去掉"-"变数字加一后再变成字符串加上"-"
     //增加条码的可读性
+    //仓库说不需要，那就算了
     function barcode_add(barcode){
+        /*
         a = barcode.replace("-","");
         b = Number(a)+1;
         c = String(b);
         d = c.substr(0,5) + '-' + c.substr(-4,4);
+           */
+        return String(Number(barcode)+1)
 
-        return d;
 
 
     }
