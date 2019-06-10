@@ -258,7 +258,7 @@ def scanpackageitem(request):
             item["new_barcode"] = barcode
             item["sku_name"] = funmart_sku.name
 
-            item["sku_image"] = json.loads(funmart_sku.images)[0]
+
             item['scan_result'] = 'Success'
             item['scannned_items__count'] = funmartorder.scanned_quantity + 1
 
@@ -294,6 +294,9 @@ def scanpackageitem(request):
         items_list = []
         funmart_items = FunmartOrderItem.objects.filter(track_code=track_code)
         for funmart_item in funmart_items:
+            sku_image = json.loads(funmart_sku.images)[0]
+            print(sku_image)
+
             item_info = {
                 "item_code": funmart_item.item_code,
                 "SKU": funmart_item.sku,
@@ -302,6 +305,7 @@ def scanpackageitem(request):
                 "quantity": funmart_item.quantity,
                 "scanned_quantity": funmart_item.scanned_quantity,
                 "action": funmart_item.action,
+                "sku_image": sku_image,
 
             }
             items_list.append(item_info)
