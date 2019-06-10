@@ -81,7 +81,7 @@ class FunmartBarcode(models.Model):
 
 class YallavipBarcode(models.Model):
     funmart_sku = models.ForeignKey(FunmartSKU, null=True, blank=True, verbose_name="SKU",
-                                    related_name="funmartsku_barcode", on_delete=models.CASCADE)
+                                    related_name="funmartsku_yallavipbarcode", on_delete=models.CASCADE)
     SKU = models.CharField(default='',max_length=300, null=True, blank=True, verbose_name="SKU")
     barcode = models.CharField(u'barcode', default='', max_length=100, blank=True)
 
