@@ -20,7 +20,7 @@
         Barcode  : <input type="text"   id="barcode" style="color:red ; font-size:30px"> <br>
         <br>
         Item_code  : <input type="text"   id="item_code" style="color:red ; font-size:30px" autofocus> <br>
-        Show Thumbnail: <input type="checkbox" id="show_thumbnail" value="0" data-age="18" >  <br>
+        Show Thumbnail: <input type="checkbox" id="show_thumbnail"  >  <br>
         <button type="button" id='get_item_info'>submit</button>
 
 
@@ -227,7 +227,7 @@ $('#track_code').bind('keyup',function(event){
                                 +'<td>'+ val.quantity + '</td>'
                                 +'<td><span style="color:red ; font-size:30px">'+ val.scanned_quantity + '</span></td>'
                                 +'<td>'+ val.action + '</td>'
-                            if ($("#item_code").val() == 1){
+                            if ($("#show_thumbnail").val() == 1){
                                 td = td +'<td><img src="'+ val.sku_image + '" /img></td>'
                             }
 
