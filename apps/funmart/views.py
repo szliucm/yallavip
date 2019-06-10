@@ -192,6 +192,8 @@ def scanpackageitem(request):
         track_code = posts.get('track_code')
         barcode = posts.get('barcode')
         item_code = posts.get('item_code')
+        SKU = posts.get('SKU')
+
         if not batch_no  :
             item['scan_result'] = 'Please Input Batch_no'
             item['batch_package_count'] = ""
@@ -215,45 +217,52 @@ def scanpackageitem(request):
         if not barcode  :
             item['scan_result'] = 'Please Input Barcode'
 
-
-        elif not item_code :
+        elif not item_code and not SKU:
             item['scan_result'] = 'Please Input Item_code'
 
+
         else:
+            #如果有SKU，就用SKU查，否则就用原来的item_code查
+            if SKU:
+                try:
+                    funmart_sku = FunmartSKU.objects.get(SKU=SKU)
+                except:
+                    item['scan_result'] = 'SKU not Found'
 
-
-            item_code = item_code.replace("－", "-")
-
-            funmartbarcodes = FunmartBarcode.objects.filter(barcode=item_code)
-            if not funmartbarcodes:
-                funmartbarcode = get_funmart_barcode(item_code)
-                print("get from funmart", funmartbarcode)
             else:
-                funmartbarcode = funmartbarcodes[0]
+                item_code = item_code.replace("－", "-")
 
-            if not funmartbarcode :
-                item['scan_result'] = 'SKU not Found'
-                return JsonResponse(item)
+                funmartbarcodes = FunmartBarcode.objects.filter(barcode=item_code)
+                if not funmartbarcodes:
+                    funmartbarcode = get_funmart_barcode(item_code)
+                    print("get from funmart", funmartbarcode)
+                else:
+                    funmartbarcode = funmartbarcodes[0]
+
+                if not funmartbarcode :
+                    item['scan_result'] = 'SKU not Found'
+                    return JsonResponse(item)
 
 
-            funmart_sku  = funmartbarcode.funmart_sku
-            print("get from yallavip", funmartbarcode, funmart_sku)
+                funmart_sku  = funmartbarcode.funmart_sku
+                print("get from yallavip", funmartbarcode, funmart_sku)
+                SKU = funmart_sku.SKU
 
-
+            #找到SKU后拼接相应的信息
             try:
-                fummartorder_item = FunmartOrderItem.objects.get(track_code=track_code,sku = funmartbarcode.SKU)
+                fummartorder_item = FunmartOrderItem.objects.get(track_code=track_code,sku = SKU)
             except:
                 item['scan_result'] = 'Item not belong to the package'
                 return JsonResponse(item)
 
             try:
-                action = BatchSKU.objects.get(batch_no = batch_no, SKU=funmart_sku.SKU).action
+                action = BatchSKU.objects.get(batch_no = batch_no, SKU=SKU).action
                 item["action"] = action
             except:
                 item['scan_result'] = 'SKU not prepared'
                 return JsonResponse(item)
 
-            item["sku"] = funmart_sku.SKU
+            item["sku"] = SKU
 
             item["new_barcode"] = barcode
             item["sku_name"] = funmart_sku.name
@@ -280,7 +289,7 @@ def scanpackageitem(request):
                 barcode=barcode,
                 defaults={
                     'funmart_sku': funmart_sku,
-                    'SKU': funmart_sku.SKU,
+                    'SKU': SKU,
 
                 }
             )

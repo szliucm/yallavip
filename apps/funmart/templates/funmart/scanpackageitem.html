@@ -20,6 +20,7 @@
         Barcode  : <input type="text"   id="barcode" style="color:red ; font-size:30px"> <br>
         <br>
         Item_code  : <input type="text"   id="item_code" style="color:red ; font-size:30px" autofocus> <br>
+        <input type="text" id="SKU" hidden="hidden" > <br>
         Show Thumbnail: <input type="checkbox" id="show_thumbnail"  >  <br>
         <button type="button" id='get_item_info'>submit</button>
 
@@ -76,6 +77,11 @@
 
 
     }
+    function autoscan(SKU){
+        $("#SKU").val(SKU);
+        $("#get_item_info").trigger("click");
+
+        }
 
     function getCookie(name) {
         var cookieValue = null;
@@ -139,9 +145,8 @@ $('#track_code').bind('keyup',function(event){
 
     //这里是关键点 .ready 函数好像监听器。
     $(document).ready(function () {
-        function autoscan(item_code){
-            alert("button clicked")
-        }
+
+
 
 
         $("#get_item_info").click(function () {
@@ -149,6 +154,7 @@ $('#track_code').bind('keyup',function(event){
                 var track_code = $("#track_code").val();
                 var barcode = $("#barcode").val();
                 var item_code = $("#item_code").val();
+                var SKU = $("#SKU").val();
 
                 //alert_text = '请稍等,正在查询:' + item_code + '信息';
                 //alert(alert_text);
@@ -160,6 +166,7 @@ $('#track_code').bind('keyup',function(event){
                         track_code: track_code,
                         barcode: barcode,
                         item_code: item_code,
+                        SKU: SKU,
                         csrfmiddlewaretoken: '{{ csrf_token }}'
                     },
                     success: function (data) {
@@ -168,6 +175,7 @@ $('#track_code').bind('keyup',function(event){
                         var action = $("#action");
 
                         $("#item_code").val("");
+                        $("#SKU").val("");
 
                         scan_result.html(data.scan_result);
                         $("#ret_item_code").html(item_code);
@@ -234,7 +242,8 @@ $('#track_code').bind('keyup',function(event){
                                 +'<td>'+ val.quantity + '</td>'
                                 +'<td><span style="color:red ; font-size:30px">'+ val.scanned_quantity + '</span></td>'
                                 +'<td>'+ val.action + '</td>'
-                                +'<td>'+'<button type="button"  onclick ="autoscan('+ val.SKU +')>autoscan</button></td>' ;
+                                +'<td>'+'<button type="button"  onclick ="autoscan('+ "'" + val.SKU + "'" + ')">autoscan</button></td>' ;
+
                             if (document.getElementById("show_thumbnail").checked){
 
                                 td = td +'<td><img src="'+ val.sku_image + '"  width="100"></td>'
