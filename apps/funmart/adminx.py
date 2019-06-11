@@ -138,6 +138,17 @@ class FunmartSKUAdmin(object):
 
     actions = []
 
+@xadmin.sites.register(YallavipBarcode)
+class YallavipBarcodeAdmin(object):
+    list_display = ["barcode", "SKU", "funmart_sku",  ]
+    list_editable = []
+
+    search_fields = ["barcode","SKU", ]
+    list_filter = ()
+    ordering = []
+
+    actions = []
+
 @xadmin.sites.register(BatchSKU)
 class BatchSKUAdmin(object):
     def show_action(self, obj):
