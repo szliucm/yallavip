@@ -186,7 +186,8 @@ STATICFILES_FINDERS = (
 DATA_UPLOAD_MAX_NUMBER_FIELDS = None
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'static/media/')
+#MEDIA_ROOT = os.path.join(BASE_DIR, 'static/media/')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 #MATERIAL_ROOT = os.path.join(BASE_DIR, 'static/media/material/')
 

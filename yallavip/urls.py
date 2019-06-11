@@ -42,6 +42,14 @@ urlpatterns = [
     path('fulfillbag/', fulfillbag),
     #path('packbag/', packbag),
 
+    path('allPage/', all_page),
+    path('addPage/', add_page),
+    path('addStudent/', add_student),
+    path('search/', search_student),
+
+    path('demo/', demo),
+    path('data/', response_data),
+
 
 
 
