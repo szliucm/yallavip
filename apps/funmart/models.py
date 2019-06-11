@@ -106,6 +106,9 @@ class FunmartOrder(models.Model):
     quantity = models.IntegerField(u'quantity', default=0, blank=True, null=True)
     scanned_quantity = models.IntegerField(u'scanned_quantity', default=0, blank=True, null=True)
 
+    scanner = models.CharField(u'scanner', default='', max_length=50, blank=True)
+    scan_time = models.DateTimeField(u'scan_time', auto_now=False, null=True, blank=True)
+
     batch_no = models.IntegerField(u'batch_no', default=0, blank=True, null=True)
     scanned = models.BooleanField(u"scanned", default=False)
     upload_date = models.DateField(u'upload_date', auto_now=True, null=True, blank=True)
@@ -134,6 +137,8 @@ class FunmartOrderItem(models.Model):
 
     quantity = models.IntegerField(u'quantity', default=0, blank=True, null=True)
     scanned_quantity = models.IntegerField(u'scanned_quantity', default=0, blank=True, null=True)
+    scanner = models.CharField(u'scanner', default='', max_length=50, blank=True)
+    scan_time = models.DateTimeField(u'scan_time', auto_now=False, null=True, blank=True)
 
     price = models.CharField(u'Price', default='', max_length=50, blank=True)
 

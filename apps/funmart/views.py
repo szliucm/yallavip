@@ -7,6 +7,7 @@ from xadmin.views import BaseAdminView
 from django.views.decorators.csrf import csrf_exempt,csrf_protect
 from django.conf import settings    # 获取 settings.py 里边配置的信息
 import os
+from django.utils import timezone as dt
 
 from .models import *
 
@@ -285,7 +286,10 @@ def scanpackageitem(request):
             fummartorder_item.action = action
             fummartorder_item.batch_no = batch_no
 
+            fummartorder_item.scanner = str(request.user)
+            fummartorder_item.scan_time = dt.now()
             fummartorder_item.save()
+
 
 
             yallavip_barcode, created = YallavipBarcode.objects.update_or_create(
@@ -335,6 +339,9 @@ def scanitem(request):
     if request.method == 'GET':
         pass
     elif request.method == 'POST':
+
+        print (request.user)
+
         item = {}
         item['scan_result'] = ""
         item['track_code'] = ""
@@ -443,6 +450,10 @@ def scanitem(request):
         fummartorder_item.scanned_quantity = F("scanned_quantity") + 1
         fummartorder_item.action = action
         fummartorder_item.batch_no = batch_no
+
+        fummartorder_item.scanner = request.user
+        fummartorder_item.scan_time = dt.now()
+
 
         fummartorder_item.save()
 
