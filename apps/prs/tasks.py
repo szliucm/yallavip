@@ -2526,13 +2526,15 @@ def get_wms_product():
                         "product_status": data.get("product_status"),
                         "product_title": data.get("product_title"),
                         "product_weight": data.get("product_weight"),
+                        "product_add_time": data.get("product_add_time"),
+                        "product_modify_time": data.get("product_modify_time"),
 
                     },
                 )
             if pages == 0:
                 pages = int(int(result.get("count")) / 100)
         else:
-            print("获取wms库存出错", result.get("message"))
+            print("获取wms产品出错", result.get("message"))
             break
 
         if result.get("nextPage") == "false":

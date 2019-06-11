@@ -763,6 +763,8 @@ class Lightin_barcode(models.Model):
     product_status = models.CharField(u'product_status', default='', max_length=100, blank=True)
     product_title = models.CharField(u'product_title', default='', max_length=100, blank=True)
     product_weight = models.CharField(u'product_weight', default='', max_length=100, blank=True)
+    product_add_time = models.DateTimeField(null=True, blank=True, verbose_name="product_add_time")
+    product_modify_time = models.DateTimeField(null=True, blank=True, verbose_name="product_modify_time")
 
     warehouse = models.CharField(u'warehouse', default='', max_length=100, blank=True)
     warehouse_code = models.CharField(u'warehouse_code', default='', max_length=100, blank=True)
