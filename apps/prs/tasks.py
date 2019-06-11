@@ -5988,7 +5988,7 @@ def post_ads_v2(page_no, ad_type, to_create_count=1, keyword=None):
                 ad.active=False
 
             ad.save()
-            time.sleep(30)
+            time.sleep(60)
 
 
 def post_ad(page_no,adaccount_no, adset_no, serial, ad):
