@@ -269,13 +269,7 @@ class PrepareBatch(models.Model):
     def __unicode__(self):
         return self.Meta.verbose_name
 
-class ScanItem(models.Model):
-    class Meta:
-        verbose_name = u"ScanItem"
-        verbose_name_plural = verbose_name
 
-    def __unicode__(self):
-        return self.Meta.verbose_name
 
 class FulfillBag(models.Model):
     class Meta:
