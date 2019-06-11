@@ -144,7 +144,7 @@ class YallavipBarcodeAdmin(object):
     list_editable = []
 
     search_fields = ["barcode","SKU", ]
-    list_filter = ("id",)
+    list_filter = ("funmart_sku__funmart_spu__sale_type",)
     ordering = []
 
     actions = []

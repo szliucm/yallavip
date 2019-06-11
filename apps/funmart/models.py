@@ -22,7 +22,14 @@ class FunmartSPU(models.Model):
     downloaded = models.BooleanField(u"downloaded", default=False)
     download_error = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="download_error")
 
-    sale_type = models.CharField(default='', max_length=30, null=True, blank=True, verbose_name="sale_type")
+    SALE_TYPE = (
+        ("hot", "hot"),
+        ("normal", "normal"),
+        ("drug", "drug"),
+
+    )
+
+    sale_type = models.CharField(choices=SALE_TYPE, default='', max_length=30, null=True, blank=True, verbose_name="sale_type")
 
     class Meta:
         verbose_name = "Funmart SPU"
