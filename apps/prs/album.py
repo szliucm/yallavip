@@ -447,12 +447,15 @@ def filter_product(cate):
 
 def get_promote_ads(page_no):
     from prs.models import YallavipAd
+    from  prs.tasks import  delete_outstock_yallavipad
+
     # 取page对应的主推品类
     cates = PagePromoteCate.objects.filter(mypage__page_no=page_no).values_list("promote_cate__tags", flat=True)
     if cates:
         cates = list(cates)
     else:
         return None, None
+    delete_outstock_yallavipad()
     ads = YallavipAd.objects.filter(page_no=page_no, active=True,  cate__in=cates)
 
     return ads, cates

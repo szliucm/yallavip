@@ -6868,3 +6868,24 @@ def test_funmart_order():
 
     r = requests.post(url, data=json.dumps(param))
     print(r.status_code, r.text)
+
+def delete_outstock_yallavipad():
+
+    import time
+
+    ads = YallavipAd.objects.filter(active=True)
+    ads_todelete = []
+
+    for ad in ads:
+
+        handles = ad.spus_name.split(",")
+        spus_all = Lightin_SPU.objects.filter(handle__in=handles)
+        spus_outstock = spus_all.filter(sellable__lte=0)
+        if spus_outstock.count() > 0:
+            print("有spu无库存了", spus_outstock, ad )
+            spus_all.update(aded=False)
+            ads_todelete.append(ad.pk)
+
+    print("有 %s 条广告待删除" % len(ads_todelete))
+
+    YallavipAd.objects.filter(pk__in=ads_todelete).delete()
