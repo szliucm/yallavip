@@ -184,8 +184,8 @@ class YallavipAlbum(models.Model):
 
     cate = models.ForeignKey(MyCategory, null=True, blank=True, verbose_name="MyCategory",
                                  related_name="cate_album", on_delete=models.CASCADE)
-    catesize = models.ForeignKey(MyCategorySize, null=True, blank=True, verbose_name="MyCategorySize",
-                                    related_name="catesize_album", on_delete=models.CASCADE)
+    #catesize = models.ForeignKey(MyCategorySize, null=True, blank=True, verbose_name="MyCategorySize",
+     #                               related_name="catesize_album", on_delete=models.CASCADE)
 
     rule = models.ForeignKey(SelectionRule, null=True, blank=True, verbose_name="SelectionRule",
                                     related_name="rule_album", on_delete=models.CASCADE)
