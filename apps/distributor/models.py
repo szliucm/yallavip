@@ -23,7 +23,7 @@ class Yallavip_SKU(Lightin_SKU):
 
     def __str__(self):
         return self.SKU
-'''
+
 class Cart(models.Model):
     distributor = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="分销商")
     create_time = models.DateTimeField(u'创建时间', auto_now=False, null=True, blank=True)
@@ -65,3 +65,4 @@ class CartDetail(models.Model):
 
     def __str__(self):
         return self.sku.SKU
+'''

@@ -468,12 +468,13 @@ def batch_sku(batch_no):
     my_custom_sql(mysql)
 
     BatchSKU.objects.filter(sale_type = "hot").update(action = "Put Away")
+    BatchSKU.objects.filter(order_count__gte=3).update(action="Put Away")
 
     BatchSKU.objects.filter(sale_type="normal", order_count__lt=3).update(action="Normal_Case")
     BatchSKU.objects.filter(Q(skuattr__icontains="One Size")|Q(skuattr__icontains="Free Size"), sale_type="drug").update(action="Dead_No_Size")
     BatchSKU.objects.filter(~Q(skuattr__icontains="One Size") ,~Q(skuattr__icontains="Free Size"),
                             sale_type="drug").update(action="Dead_Size")
 
-    BatchSKU.objects.filter(order_count__gte = 3 ).update(action="Put Away")
+
 
 

@@ -37,7 +37,7 @@ class Yallavip_SPUAdmin(object):
         qs = super().queryset()
         return qs.filter( vendor = "gw")
 
-'''
+
 
 
 
@@ -179,3 +179,4 @@ class CartDetailAdmin(object):
         qs = super().queryset()
         distributor = str(self.request.user)
         return qs.filter(cart__distributor=distributor)
+'''

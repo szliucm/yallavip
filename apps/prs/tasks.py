@@ -2500,6 +2500,7 @@ def sync_Shipped_order_shopify():
 def get_wms_product():
     page = 1
     pages = 0
+    update_start_time = Lightin_barcode.objects.aggregate(last_update_time=Max("product_modify_time")).get('last_update_time').strftime("%Y-%m-%d")
 
     while 1:
         print("一共 %s页 正在处理第 %s 页" % (pages, page))
@@ -2509,8 +2510,9 @@ def get_wms_product():
             "page": page,
             "product_sku": "",
             "product_sku_arr": [],
-            "start_time": "2018-02-08 10:00:00",
-            # "end_time":"",
+            #"start_time": "2018-02-08 10:00:00",
+            "update_start_time": update_start_time,
+
         }
 
         service = "getProductList"
@@ -6473,13 +6475,19 @@ def prepare_promote_image_album_v2(yallavip_album_pk, lightinalbums_all):
     if not image_marked_url:
         print("没有生成广告图片")
         return
+    '''
     message = "💋💋Flash Sale ！！！💋💋" \
               "90% off！Lowest Price Online ！！！" \
               "🥳🥳🥳 10:00-22:00 Everyday ,Update 100 New items Every Hour !! The quantity is limited !!😇😇" \
               "All goods are in Riyadh stock,It will be delivered to you in 3-5 days! ❣️❣️" \
               "How to order?Pls choice the product that you like it , then send us the picture, we will order it for you!🤩🤩"
-    message = message + "\n[" + handles_name+ "]"
-
+    
+    '''
+    message = "[Buy 3 get 1 free]+[free Shipping]+[all spot goods] \n" \
+              "Special Promotion big sale: “Buy 3 get 1 free”!!! \n" \
+              "It means now if you buy 3 items, you can choose any 1 item of equal price or lower price for free, and the shipping fee is free too!!!! \nAll hot sale goods, limited quantity , all Riyadh warehouse spot, 3-5day deliver to your house!!!!\n" \
+              "Don't wait, do it!!!!!"
+    message = message + "\n[" + handles_name + "]"
     obj, created = YallavipAd.objects.update_or_create(yallavip_album=yallavip_album_instance,
                                                        spus_name=handles_name,
                                                        defaults={'image_marked_url': image_marked_url,
