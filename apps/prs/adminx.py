@@ -42,6 +42,54 @@ class MyCategoryResource(resources.ModelResource):
         fields = ('code',)
         # exclude = ()
 
+@xadmin.sites.register(MyCategory)
+class MyCategoryAdmin(object):
+    def spu_count(self, obj):
+
+        return  Lightin_SPU.objects.filter(sellable__gt=0, breadcrumb__contains=obj.tags).count()
+
+    spu_count.short_description = "SPU数量"
+
+    def spu_onesize(self, obj):
+
+        return  Lightin_SPU.objects.filter(one_size=True, sellable__gt=0,breadcrumb__icontains=obj.tags).count()
+
+    spu_onesize.short_description = "均码的SPU数量"
+
+
+    def spu_count_5(self, obj):
+
+        return  Lightin_SPU.objects.filter(sellable__gt=5, breadcrumb__icontains=obj.tags).count()
+
+    spu_count_5.short_description = ">5的SPU数量"
+
+    def spu_count_10(self, obj):
+
+        return  Lightin_SPU.objects.filter(sellable__gt=10, breadcrumb__icontains=obj.tags).count()
+
+    spu_count_10.short_description = ">10的SPU数量"
+
+    def longaded_count(self, obj):
+
+        return  Lightin_SPU.objects.filter(longaded=True, breadcrumb__icontains=obj.tags).count()
+
+    longaded_count.short_description = "longaded_count"
+
+    def size(self, obj):
+        size_count = obj.cate_size.values("size","sku_quantity")
+        return  str(size_count)
+
+    size.short_description = "尺码汇总"
+
+
+    list_display = ["super_cate", "super_name", "name", "level","tags","spu_count","spu_onesize","spu_count_5","spu_count_10", "longaded_count","size", "active","published" ,]
+
+
+    search_fields = ["name", ]
+    list_filter = ["super_name","level","active","published", ]
+    list_editable = []
+    readonly_fields = ()
+    actions = []
 
 
 
