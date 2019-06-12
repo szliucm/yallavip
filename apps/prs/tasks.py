@@ -6924,3 +6924,50 @@ def delete_outstock_yallavipad():
     print("有 %s 条广告待删除" % len(ads_todelete))
 
     YallavipAd.objects.filter(pk__in=ads_todelete).delete()
+
+
+#把价格大于40的，全部设置成单件包邮
+def set_spu_free_delivery_price():
+
+
+    spus = Lightin_SPU.objects.all()
+    for spu in spus:
+      cal_promote_price(spu)
+
+#计算某个spu的促销价，修改sku，spu的促销价
+#原价大于40的，都设成单件包邮
+def cal_promote_price(spu):
+
+
+
+    #供货价的5倍 0.25*3.75*5
+    multiple_price = spu.vendor_supply_price * 5
+    #供应商售价的6折 3.75*0.6
+    discount_price = spu.vendor_sale_price * 2.25
+    if multiple_price < discount_price:
+        promote_price = round(discount_price)
+    else:
+        promote_price = round(multiple_price)
+
+    if promote_price >= 40:
+        fee = 25
+        promote_price += fee
+        spu.free_shipping = True
+        spu.free_shipping_price = promote_price
+        spu.spu_sku.update(free_shipping_price=promote_price, sku_price = promote_price)
+    else:
+
+        spu.free_shipping = False
+        spu.spu_sku.update(sku_price=promote_price)
+
+
+    #修改spu价格
+    spu.yallavip_price = promote_price
+
+    spu.promoted = True
+    spu.save()
+
+
+
+
+    return  True
