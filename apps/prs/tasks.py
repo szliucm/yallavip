@@ -2591,7 +2591,7 @@ def get_wms_quantity(barcodes=[]):
 
         page += 1
 
-
+@shared_task
 def get_wms_quantity_page(page, barcodes):
 
     param = {
