@@ -1198,7 +1198,17 @@ class VerificationAdmin(object):
     ordering = ['-verify_time']
 
 
+class VerifyResource(resources.ModelResource):
 
+    class Meta:
+        model = Verify
+        skip_unchanged = True
+        report_skipped = True
+        import_id_fields = ('order_no',)
+        fields = ('order_no', 'order_status', 'buyer_name',  'order_amount','real_amount', 'order_comment',
+                  'warhouse_comment', 'cs_comment', 'receiver_name', 'receiver_addr1', 'receiver_addr2',
+                  'receiver_city', 'receiver_country', 'receiver_phone', 'package_no','logistic_no','logistic_type',
+                  'order_time','send_time')
 
 
 class VerifyAdmin(object):
