@@ -2587,7 +2587,8 @@ def get_wms_quantity(barcodes=[]):
     while page < pages and result:
 
         print("正在处理第 %s 页" % page)
-        pages, result = get_wms_quantity_page(page, barcodes)
+        get_wms_quantity_page.apply_async((page, barcodes), queue='wms')
+
         page += 1
 
 
