@@ -11,7 +11,7 @@ import requests
 import time
 
 from celery import shared_task, task
-from django.db.models import Q, Count
+from django.db.models import Q, Count, Max
 from django.utils import timezone as datetime
 from django.utils import timezone as dt
 from fb.models import MyPage, MyAlbum
