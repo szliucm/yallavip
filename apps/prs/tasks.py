@@ -2497,7 +2497,7 @@ def sync_Shipped_order_shopify():
         order.save()
 
 
-def get_wms_products():
+def get_wms_product():
     page = 1
     #pages = 0
     last_update_time = Lightin_barcode.objects.aggregate(last_update_time=Max("product_modify_time")).get('last_update_time')
@@ -2513,12 +2513,12 @@ def get_wms_products():
     while page < pages and result:
 
         print("正在处理第 %s 页" % page)
-        get_wms_product.apply_async((page,update_start_time), queue='wms')
+        get_wms_product_page.apply_async((page,update_start_time), queue='wms')
 
         page += 1
 
 @shared_task
-def get_wms_product(page,update_start_time):
+def get_wms_product_page(page,update_start_time):
     param = {
         "pageSize": "100",
         "page": page,
@@ -2581,56 +2581,62 @@ def sync_wms_quantity():
 
 def get_wms_quantity(barcodes=[]):
     page = 1
+    pages, result = get_wms_quantity_page(page, barcodes)
 
-    pages = 0
+    print("一共 %s页" % pages)
+    while page < pages and result:
 
-    while 1:
+        print("正在处理第 %s 页" % page)
+        pages, result = get_wms_quantity_page(page, barcodes)
+        page += 1
 
 
-        param = {
-            "pageSize": "100",
-            "page": page,
-            "product_sku": "",
-            "product_sku_arr": barcodes,
-            "warehouse_code": warehouse_code,
-            "warehouse_code_arr": []
-        }
+def get_wms_quantity_page(page, barcodes):
 
-        service = "getProductInventory"
+    param = {
+        "pageSize": "100",
+        "page": page,
+        "product_sku": "",
+        "product_sku_arr": barcodes,
+        "warehouse_code": warehouse_code,
+        "warehouse_code_arr": []
+    }
 
-        result = yunwms(service, param)
+    service = "getProductInventory"
 
-        # print(result)
-        if result.get("ask") == "Success":
-            for data in result.get("data"):
-                Lightin_barcode.objects.update_or_create(
-                    barcode=data.get("product_sku"),
-                    defaults={
-                        "warehouse_code": data.get("warehouse_code"),
-                        "y_onway": data.get("y_onway"),
-                        "y_pending": data.get("y_pending"),
-                        "y_sellable": data.get("sellable"),
-                        "y_unsellable": data.get("y_unsellable"),
-                        "y_reserved": data.get("reserved"),
-                        "y_shipped": data.get("shipped"),
-                        "updated_time": dt.now(),
-                        'synced': True,
-                        # "quantity":  int(data.get("sellable")) + int(data.get("reserved"))
+    result = yunwms(service, param)
 
-                    },
-                )
-            if pages == 0:
-                pages = int(int(result.get("count")) / 100)
+    # print(result)
+    if result.get("ask") == "Success":
+        for data in result.get("data"):
+            Lightin_barcode.objects.update_or_create(
+                barcode=data.get("product_sku"),
+                defaults={
+                    "warehouse_code": data.get("warehouse_code"),
+                    "y_onway": data.get("y_onway"),
+                    "y_pending": data.get("y_pending"),
+                    "y_sellable": data.get("sellable"),
+                    "y_unsellable": data.get("y_unsellable"),
+                    "y_reserved": data.get("reserved"),
+                    "y_shipped": data.get("shipped"),
+                    "updated_time": dt.now(),
+                    'synced': True,
+                    # "quantity":  int(data.get("sellable")) + int(data.get("reserved"))
 
-            print("一共 %s页 正在处理第 %s 页" % (pages, page))
-        else:
-            print("获取wms库存出错", result.get("message"))
-            break
+                },
+            )
 
-        if result.get("nextPage") == "false":
-            break
-        else:
-            page += 1;
+        pages = int(int(result.get("count")) / 100)
+    else:
+        print("获取wms库存出错", result.get("message"))
+        return 0, False
+
+
+    if result.get("nextPage") == "false":
+        print("No more page")
+        return  pages, False
+    else:
+        return  pages, True
 
 
 
