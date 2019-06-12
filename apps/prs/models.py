@@ -331,8 +331,10 @@ class Lightin_barcode(models.Model):
 
     def cal_sellable(self):
 
-
-        return  self.o_sellable - self.occupied
+        if self.o_sellable and  self.occupied:
+            return  self.o_sellable - self.occupied
+        else:
+            return  0
 
 
     cal_sellable.short_description = "可售库存"
