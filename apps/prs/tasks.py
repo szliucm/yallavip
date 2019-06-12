@@ -2628,6 +2628,7 @@ def get_wms_quantity_page(page, barcodes):
             )
 
         pages = int(int(result.get("count")) / 100)
+        print("page %s got"%page)
     else:
         print("获取wms库存出错", result.get("message"))
         return 0, False
