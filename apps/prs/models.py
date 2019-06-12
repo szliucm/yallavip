@@ -89,8 +89,8 @@ class Lightin_SPU(models.Model):
     publish_error = models.CharField(default='无', max_length=100, null=True, blank=True, verbose_name="发布错误")
     published_time = models.DateTimeField(null=True, blank=True, verbose_name="发布时间")
 
-    shopify_product = models.ForeignKey(ShopifyProduct, null=True, blank=True, verbose_name="shopify产品",
-                                    related_name="shopify_spu", on_delete=models.CASCADE)
+    #shopify_product = models.ForeignKey(ShopifyProduct, null=True, blank=True, verbose_name="shopify产品",
+     #                               related_name="shopify_spu", on_delete=models.CASCADE)
 
     product_no = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="shopify product_no")
     handle = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="handle")
@@ -187,8 +187,8 @@ class YallavipAlbum(models.Model):
     #catesize = models.ForeignKey(MyCategorySize, null=True, blank=True, verbose_name="MyCategorySize",
      #                               related_name="catesize_album", on_delete=models.CASCADE)
 
-    rule = models.ForeignKey(SelectionRule, null=True, blank=True, verbose_name="SelectionRule",
-                                    related_name="rule_album", on_delete=models.CASCADE)
+    #rule = models.ForeignKey(SelectionRule, null=True, blank=True, verbose_name="SelectionRule",
+     #                               related_name="rule_album", on_delete=models.CASCADE)
 
     album = models.ForeignKey(MyAlbum, null=True, blank=True, verbose_name="fb相册",
                                   related_name="myalbum_album", on_delete=models.SET_NULL)
@@ -224,8 +224,8 @@ class LightinAlbum(models.Model):
     lightin_sku = models.ForeignKey(Lightin_SKU, null=True, blank=True, verbose_name="SKU",
                                     related_name="myfb_sku", on_delete=models.CASCADE)
 
-    myalbum = models.ForeignKey('fb.MyAlbum', null=True, blank=True, verbose_name="相册",
-                                  related_name="lightin_myalbum", on_delete=models.SET_NULL)
+    #myalbum = models.ForeignKey('fb.MyAlbum', null=True, blank=True, verbose_name="相册",
+     #                             related_name="lightin_myalbum", on_delete=models.SET_NULL)
 
     yallavip_album = models.ForeignKey(YallavipAlbum, null=True, blank=True, verbose_name="yallavip相册",
                                 related_name="yallavip_album", on_delete=models.SET_NULL)
