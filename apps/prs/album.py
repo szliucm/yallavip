@@ -367,7 +367,7 @@ def prepare_promote_v2(page_no):
         return
 
     # 取库存大、单价高、已经发布到相册 且还未打广告，单件包邮的商品
-    spus_all = Lightin_SPU.objects.filter(~Q(handle=""),handle__isnull=False,vendor="lightin", aded=False,sellable__gt=5, free_shipping=True)
+    spus_all = Lightin_SPU.objects.filter(~Q(handle=""),handle__isnull=False,vendor="lightin", aded=False,sellable__gt=3, free_shipping=True)
     # 把主推品类的所有适合的产品都拿出来打广告
 
     for cate in cates:
@@ -383,7 +383,7 @@ def prepare_promote_v2(page_no):
         for i in range(int(count)):
 
             spu_pks = [cate_spus[i*2].pk, cate_spus[i*2+1].pk]
-            print("当前处理 ", i, cate.tags, page_no, spu_pks)
+            print("当前处理 ", i, cate.tags, page_no, cate_spus[i*2].handle,cate_spus[i*2+1].handle)
             prepare_promote_image_album_v3(cate.tags, page_no, spu_pks)
 
 def init_cate_sellable():
