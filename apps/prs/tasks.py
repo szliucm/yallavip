@@ -6972,3 +6972,68 @@ def cal_promote_price(spu):
 
 
     return  True
+
+
+
+#根据面包屑更新品类表
+#从spu表取出所有distinct面包屑
+#遍历所有面包屑
+#分解成3级品类
+#把品类更新到数据库
+def breadcrumb_cates_v1():
+    breadcrumbs = Lightin_SPU.objects.values_list("breadcrumb",flat=True).distinct()
+    catelist = []
+
+    for breadcrumb in breadcrumbs:
+        if not breadcrumb:
+            continue
+        cates = json.loads(breadcrumb)
+        print(cates)
+
+        if len(cates)>0:
+            cate_1 = ("", cates[0].strip() , 1)
+            if cate_1 not in catelist:
+                catelist.append(cate_1)
+        if len(cates) > 1:
+            cate_2 = (cates[0].strip(), cates[1].strip() , 2)
+            if cate_2 not in catelist:
+                catelist.append(cate_2)
+
+        if len(cates) > 2:
+            cate_3 = (cates[1].strip(), cates[2].strip() , 3)
+            if cate_3 not in catelist:
+                catelist.append(cate_3)
+
+    for cate in catelist:
+        obj, created = MyCategory.objects.update_or_create(
+
+                            name=cate[1],
+                            level=cate[2],
+                            super_name = cate[0],
+                                                       defaults={
+
+
+                                                                 }
+                                                       )
+
+def spu_cates_v1():
+    spus = Lightin_SPU.objects.all()
+
+    for spu in spus:
+        if spu.breadcrumb :
+            cates = json.loads(spu.breadcrumb)
+        else:
+            continue
+
+        print(cates)
+
+        if len(cates)>0:
+            spu.cate_1 = cates[0].strip()
+
+        if len(cates)>1:
+            spu.cate_2 = cates[1].strip()
+        if len(cates)>2:
+            spu.cate_3 = cates[2].strip()
+
+        spu.save()
+

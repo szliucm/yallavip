@@ -422,8 +422,13 @@ def filter_product(cate):
     q_cate = Q()
     q_cate.connector = 'OR'
 
+    if cate.level == 1:
+        q_cate.children.append(('cate_1', cate.name))
+    elif cate.level == 2:
+        q_cate.children.append(('cate_2', cate.name))
+    elif cate.level == 3:
+        q_cate.children.append(('cate_3', cate.name))
 
-    q_cate.children.append(('breadcrumb__contains', cate.tags))
 
     #如果没尺码，就全上
     # 如果有尺码，均码的全上（one-size, free-size）
@@ -437,7 +442,6 @@ def filter_product(cate):
     q_size.children.append(('sellable__gt', cate.sellable_gt))
 
     q_size.children.append(('one_size',True))
-
 
     con = Q()
     con.add(q_cate, 'AND')
