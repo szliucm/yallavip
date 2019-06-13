@@ -5286,21 +5286,21 @@ def breadcrumb_cates():
 
 
 
-        #tag =  breadcrumb.split(',')
-        tag = json.loads(breadcrumb)
+        tag =  breadcrumb.split(',')
+        cates = json.loads(breadcrumb)
         print(tag)
 
         if len(tag)>0:
-            cate_1 = ("", tag[0].strip() , 1, tag[0].strip())
+            cate_1 = ("", cates[0].strip() , 1, tag[0].strip())
             if cate_1 not in catelist:
                 catelist.append(cate_1)
         if len(tag) > 1:
-            cate_2 = (tag[0].strip(), tag[1].strip() , 2, tag[0].strip() + ','+ tag[1].strip())
+            cate_2 = (cates[0].strip(), cates[1].strip() , 2, tag[0].strip() + ','+ tag[1].strip())
             if cate_2 not in catelist:
                 catelist.append(cate_2)
 
         if len(tag) > 2:
-            cate_3 = (tag[1].strip(), tag[2].strip() , 3, tag[0].strip() + ','+ tag[1].strip()+','+ tag[2].strip())
+            cate_3 = (cates[1].strip(), cates[2].strip() , 3, tag[0].strip() + ','+ tag[1].strip()+','+ tag[2].strip())
             if cate_3 not in catelist:
                 catelist.append(cate_3)
 
