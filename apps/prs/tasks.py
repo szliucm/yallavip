@@ -6592,7 +6592,7 @@ def prepare_promote_image_album_v3(cate, page_no, lightin_spus):
             else:
                 return  False
         else:
-            return  Falsen
+            return  False
 
     # 把spus的图拼成一张
 
