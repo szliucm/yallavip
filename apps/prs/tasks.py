@@ -5276,7 +5276,7 @@ def sync_ads():
 #遍历所有面包屑
 #分解成3级品类
 #把品类更新到数据库
-def breadcrumb__cates():
+def breadcrumb_cates():
     breadcrumbs = Lightin_SPU.objects.values_list("breadcrumb",flat=True).distinct()
     catelist = []
 
@@ -5284,9 +5284,12 @@ def breadcrumb__cates():
         if not breadcrumb:
             continue
 
-        print(breadcrumb)
 
-        tag =  breadcrumb.split(',')
+
+        #tag =  breadcrumb.split(',')
+        tag = json.loads(breadcrumb)
+        print(tag)
+
         if len(tag)>0:
             cate_1 = ("", tag[0].strip() , 1, tag[0].strip())
             if cate_1 not in catelist:

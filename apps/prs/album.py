@@ -367,7 +367,7 @@ def prepare_promote_v2(page_no):
         return
 
     # 取库存大、单价高、已经发布到相册 且还未打广告，单件包邮的商品
-    spus_all = Lightin_SPU.objects.filter(~Q(handle=""),handle__isnull=False,vendor="lightin", aded=False,sellable__gt=0, free_shipping=True)
+    spus_all = Lightin_SPU.objects.filter(~Q(handle=""),handle__isnull=False,vendor="lightin", aded=False,sellable__gt=5, free_shipping=True)
     # 把主推品类的所有适合的产品都拿出来打广告
 
     for cate in cates:
