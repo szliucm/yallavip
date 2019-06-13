@@ -5284,9 +5284,7 @@ def breadcrumb_cates():
         if not breadcrumb:
             continue
 
-
-
-        tag =  breadcrumb.split(',')
+        tag =  breadcrumb.replace("[","").replace("]","").split(',')
         cates = json.loads(breadcrumb)
         print(tag)
 
@@ -5306,8 +5304,7 @@ def breadcrumb_cates():
 
     for cate in catelist:
         obj, created = MyCategory.objects.update_or_create(
-                                                           tags = cate[3],
-
+                                                        tags = cate[3],
                                                        defaults={
                                                            'super_name':cate[0],
                                                            'name':cate[1],
