@@ -6570,17 +6570,17 @@ def make_spu_pure_image(target_page, spu):
 
 
 
-def prepare_promote_image_album_v3(cate, page_no, lightin_spu_pks):
+def prepare_promote_image_album_v3(cate, page_no, lightin_spus):
     from prs.fb_action import combo_ad_image_v3
 
 
-    print ("正在处理page ", cate, page_no, lightin_spu_pks)
+    print ("正在处理page ", cate, page_no, lightin_spus)
     target_page= MyPage.objects.get(page_no=page_no)
     spus=[]
     spu_ims = []
     handles = []
-    for spu_pk in lightin_spu_pks:
-        spu = Lightin_SPU.objects.get(pk=spu_pk)
+    for spu in lightin_spus:
+        #spu = Lightin_SPU.objects.get(pk=spu_pk)
         print("正在处理 handle ",spu.handle)
         spu_im = make_spu_pure_image(target_page, spu)
         #spu_im = LightinAlbum.objects.get(yallavip_album__page=target_page, lightin_spu=spu).image_pure
