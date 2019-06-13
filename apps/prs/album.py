@@ -373,12 +373,14 @@ def prepare_promote_v2(page_no):
     for cate in cates:
         con = filter_product(cate)
         cate_spus = spus_all.filter(con).distinct().order_by("?")
+
         # 每次最多20个
         if cate_spus.count() > 20:
             count = 10
         else:
             count = int(cate_spus.count() / 2)
         print (cate, "一共有%s个广告可以准备" % (count))
+        cate_spus = list(cate_spus[:count*2])
 
         for i in range(int(count)):
 
