@@ -279,7 +279,7 @@ class YallavipAlbumAdmin(object):
 
     sellable.short_description = "sellable"
 
-    list_display = ["page","rule",  "album","free_shipping_count","published","published_count","readypublish_count", "topublish_count", "deleted", "active",]
+    list_display = ["page", "album","free_shipping_count","published","published_count","readypublish_count", "topublish_count", "deleted", "active",]
     # 'sku_name','img',
 
     search_fields = ["album__name",]
