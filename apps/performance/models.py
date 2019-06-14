@@ -120,6 +120,7 @@ class PageTrack(models.Model):
 
 class ScanPackage(models.Model):
     scan_date = models.DateField(u'scan_date', auto_now=False, null=True, blank=True)
+    scan_hour = models.TimeField(u'scan_hour', auto_now=False, null=True, blank=True)
     scanner = models.CharField(u'scanner', default='', max_length=200, blank=True)
     packages = models.IntegerField(u'packages', default=0, blank=True, null=True)
 

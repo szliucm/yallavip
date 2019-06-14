@@ -144,7 +144,7 @@ def preparebatch(request):
 
 
         posts = request.POST
-        print(posts)
+        #print(posts)
         batch_no = posts.get('batch_no')
 
         if not batch_no  :
@@ -173,7 +173,7 @@ def preparebatch(request):
             items_list.append(item_info)
 
         item["items_info"] = items_list
-        print ("response ",item)
+        #print ("response ",item)
         return JsonResponse(item)
 
 def scanpackageitem(request):
@@ -194,7 +194,7 @@ def scanpackageitem(request):
 
 
         posts = request.POST
-        print(posts)
+        #print(posts)
         batch_no = posts.get('batch_no')
         track_code = posts.get('track_code')
         barcode = posts.get('barcode')
@@ -242,7 +242,7 @@ def scanpackageitem(request):
                 funmartbarcodes = FunmartBarcode.objects.filter(barcode=item_code)
                 if not funmartbarcodes:
                     funmartbarcode = get_funmart_barcode(item_code)
-                    print("get from funmart", funmartbarcode)
+                    #print("get from funmart", funmartbarcode)
                 else:
                     funmartbarcode = funmartbarcodes[0]
 
@@ -252,7 +252,8 @@ def scanpackageitem(request):
 
 
                 funmart_sku  = funmartbarcode.funmart_sku
-                print("get from yallavip", funmartbarcode, funmart_sku)
+
+                #print("get from yallavip", funmartbarcode, funmart_sku)
                 SKU = funmart_sku.SKU
 
             #找到SKU后拼接相应的信息
@@ -314,7 +315,7 @@ def scanpackageitem(request):
         funmart_items = FunmartOrderItem.objects.filter(track_code=track_code)
         for funmart_item in funmart_items:
             sku_image = json.loads(funmart_item.funmart_sku.images)[0]
-            print(sku_image)
+            #print(sku_image)
 
             item_info = {
                 "item_code": funmart_item.item_code,
@@ -331,7 +332,7 @@ def scanpackageitem(request):
 
         item["items_info"] = items_list
 
-        print ("response ",item)
+        #print ("response ",item)
         return JsonResponse(item)
 
 
@@ -345,7 +346,7 @@ def fulfillbag(request):
         item = {}
 
         posts = request.POST
-        print(posts)
+        #print(posts)
         batch_no = posts.get('batch_no')
 
         if not batch_no  :
