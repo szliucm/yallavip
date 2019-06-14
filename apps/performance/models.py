@@ -117,3 +117,16 @@ class PageTrack(models.Model):
 
     def __str__(self):
         return self.order_date
+
+class ScanItem(models.Model):
+    scan_date = models.DateField(u'scan_date', auto_now=False, null=True, blank=True)
+    scanner = models.CharField(u'scanner', default='', max_length=200, blank=True)
+    packages = models.IntegerField(u'packages', default=0, blank=True, null=True)
+    items = models.IntegerField(u'items', default=0, blank=True, null=True)
+
+    class Meta:
+        verbose_name = "ScanItem"
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.scan_date
