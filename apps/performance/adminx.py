@@ -181,7 +181,7 @@ class PageTrackTrackAdmin(object):
 
 @xadmin.sites.register(ScanPackage)
 class ScanPackageAdmin(object):
-    list_display = ["scan_date", "scanner", "packages", ]
+    list_display = ["scan_date", "scan_hour", "scanner", "packages", ]
 
     search_fields = [ ]
     list_filter = [ "scan_date",'scanner', ]
@@ -192,7 +192,7 @@ class ScanPackageAdmin(object):
 
 @xadmin.sites.register(ScanItem)
 class ScanItemAdmin(object):
-    list_display = ["scan_date", "scanner", "packages","items", ]
+    list_display = ["scan_date", "scan_hour", "scanner", "packages","items", ]
 
     search_fields = [ ]
     list_filter = [ "scan_date",'scanner', ]

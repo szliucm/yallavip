@@ -67,7 +67,7 @@ def update_scan_performance(days=3):
     for items_count in items_counts:
 
         obj, created = ScanItem.objects.update_or_create(scan_date=items_count.get("date"),
-                                                         scan_hour=package_count.get("hour"),
+                                                         scan_hour=items_count.get("hour"),
                                                       scanner=items_count.get("scanner"),
                                                       defaults={
                                                           "packages": items_count.get("package_count"),
