@@ -21,9 +21,6 @@ from funmart.models import *
 from .models import *
 
 
-
-
-
 # 更新ali产品数据，把vendor和产品信息连接起来
 @shared_task
 def update_scan_performance(days=3):
