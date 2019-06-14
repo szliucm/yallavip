@@ -2713,6 +2713,7 @@ def cal_reserved(overtime=24):
     sku_list = []
     # 计算组合商品， lock库存
     sku_locked_quantity = {}
+    '''
     combo_skus = ComboItem.objects.filter(combo__locked=True).values_list('SKU').annotate(Sum('combo__o_quantity'))
 
     for combo_sku in combo_skus:
@@ -2723,7 +2724,7 @@ def cal_reserved(overtime=24):
             sku_list.append(combo_sku[0])
 
     print("组合商品 有%s个sku 锁定库存 需要更新" % (len(sku_locked_quantity)))
-
+    '''
     # 计算订单 reserved库存
     sku_reserved_quantity = {}
     order_skus = OrderDetail.objects.filter(order__status="open",

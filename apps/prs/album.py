@@ -458,7 +458,7 @@ def get_promote_ads(page_no):
     from  prs.tasks import  delete_outstock_yallavipad
 
     # 取page对应的主推品类
-    cates = PagePromoteCate.objects.filter(mypage__page_no=page_no).values_list("promote_cate__tags", flat=True)
+    cates = PagePromoteCate.objects.filter(mypage__page_no=page_no).values_list("promote_cate", flat=True)
     if cates:
         cates = list(cates)
     else:
