@@ -179,6 +179,17 @@ class PageTrackTrackAdmin(object):
     actions = [ ]
     ordering = ['-order_date',"page_no",]
 
+@xadmin.sites.register(ScanPackage)
+class ScanPackageAdmin(object):
+    list_display = ["scan_date", "scanner", "packages", ]
+
+    search_fields = [ ]
+    list_filter = [ "scan_date",'scanner', ]
+    list_editable = []
+    readonly_fields = ()
+    actions = [ ]
+    ordering = ['-scan_date',"scanner",]
+
 @xadmin.sites.register(ScanItem)
 class ScanItemAdmin(object):
     list_display = ["scan_date", "scanner", "packages","items", ]

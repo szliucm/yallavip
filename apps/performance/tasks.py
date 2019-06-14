@@ -34,6 +34,27 @@ def update_scan_performance(days=3):
     now = datetime.now(riyadh)
     today = datetime(now.year, now.month, now.day, tzinfo=riyadh)
 
+    #扫描包裹统计
+    package_counts = FunmartOrder.objects.filter(scan_time__isnull=False,
+                                                   scan_time__gt=(today - timedelta(days=days))). \
+        annotate(date=TruncDate("scan_time", tzinfo=riyadh)). \
+        values("scanner", 'date'). \
+        annotate(package_count=Count("track_code", distinct=True))
+
+    # 把相应的记录先删掉
+    ScanPackage.objects.filter(scan_date__gt=(today - timedelta(days=days))).delete()
+
+    for package_count in package_counts:
+        obj, created = ScanPackage.objects.update_or_create(scan_date=package_count.get("date"),
+                                                         scanner=package_count.get("scanner"),
+                                                         defaults={
+                                                             "packages": package_count.get("package_count"),
+
+
+                                                         }
+                                                         )
+
+    #扫描明细统计
     items_counts = FunmartOrderItem.objects.filter(scan_time__isnull=False,scan_time__gt=(today - timedelta(days=days))).\
         annotate(date=TruncDate("scan_time", tzinfo=riyadh)).\
         values("scanner", 'date').\
@@ -52,3 +73,5 @@ def update_scan_performance(days=3):
 
                                                                 }
                                                       )
+
+
