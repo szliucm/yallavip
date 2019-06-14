@@ -117,14 +117,14 @@ def download_funmart_order(track_code=None, order_no=None, order_ref=None,update
     else :
         return None
 
-    print("查询条件", param)
+    #print("查询条件", param)
 
     r = requests.post(url, data=json.dumps(param))
     if r.status_code == 200:
         return_data = json.loads(r.text)
         if return_data.get("code") == '00001':
             data = return_data.get("data")
-            print(data)
+            #print(data)
 
             order_no = data.get("order_no")
             order, created = FunmartOrder.objects.update_or_create(

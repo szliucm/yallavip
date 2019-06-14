@@ -103,7 +103,7 @@ def scanpackage(request):
 
 
         order = get_funmart_order(track_code=track_code, order_ref=order_ref,batch_no=batch_no)
-        print("result of get_funmart_order", order)
+        #print("result of get_funmart_order", order)
         if order:
 
             if order.scanned :
