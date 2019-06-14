@@ -96,7 +96,8 @@ def get_funmart_order(track_code=None, order_no=None,order_ref=None, batch_no=No
     if orders:
         return  orders[0]
 
-    download_funmart_order(track_code, order_no, order_ref, batch_no)
+    order =  download_funmart_order(track_code, order_no, order_ref, batch_no)
+    return order
 
 
 
