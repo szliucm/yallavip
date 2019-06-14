@@ -116,6 +116,8 @@ def scanpackage(request):
                 item['order_ref'] = order.order_ref
                 item['batch_package_count'] = batch_package_count +1
 
+                order.scanner = str(request.user)
+                order.scan_time = dt.now()
                 order.scanned =True
                 order.batch_no = batch_no
                 order.save()

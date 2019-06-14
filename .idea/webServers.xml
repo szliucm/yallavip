@@ -18,8 +18,8 @@
           <option name="port" value="22" />
         </fileTransfer>
       </webServer>
-      <webServer id="11805123-c4e9-45cc-900d-10389cc6cef9" name="sec_server" url="http://66.42.79.171">
-        <fileTransfer host="66.42.79.171" port="22" rootFolder="/data/wwwroot/yallaivp" accessType="SFTP">
+      <webServer id="11805123-c4e9-45cc-900d-10389cc6cef9" name="sec_server" url="http://45.77.165.91">
+        <fileTransfer host="45.77.165.91" port="22" rootFolder="/data/wwwroot/yallavip" accessType="SFTP">
           <advancedOptions>
             <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
           </advancedOptions>
