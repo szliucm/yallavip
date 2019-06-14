@@ -426,7 +426,9 @@ class YallavipAd(models.Model):
                                                 verbose_name="message_ad_publish_error")
 
     long_ad = models.BooleanField(default=False, verbose_name="long_ad")
-    cate = models.CharField(default='无', max_length=500, null=True, blank=True, verbose_name="cate_tags")
+    #cate = models.CharField(default='无', max_length=500, null=True, blank=True, verbose_name="cate_tags")
+    cate = models.ForeignKey(MyCategory, null=True, blank=True, verbose_name="Category",
+                                       related_name="mycate_ad", on_delete=models.CASCADE)
 
     def cal_sellable(self):
         handle_list = self.spus_name.split(",")
