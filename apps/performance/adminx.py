@@ -179,8 +179,8 @@ class PageTrackTrackAdmin(object):
     actions = [ ]
     ordering = ['-order_date',"page_no",]
 
-@xadmin.sites.register(PageTrack)
-class PageTrackTrackAdmin(object):
+@xadmin.sites.register(ScanItem)
+class ScanItemAdmin(object):
     list_display = ["scan_date", "scanner", "packages","items", ]
 
     search_fields = [ ]
