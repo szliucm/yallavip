@@ -10,7 +10,7 @@ from django.db.models import Count, Q, Sum
 from django.conf import settings
 
 from prs.tasks import my_custom_sql
-
+from shop.photo_mark import  get_remote_image
 from .models import *
 
 
