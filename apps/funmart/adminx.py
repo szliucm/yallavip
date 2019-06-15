@@ -144,10 +144,14 @@ class YallavipBarcodeAdmin(object):
     list_editable = []
 
     search_fields = ["barcode","SKU", ]
-    list_filter = ("funmart_sku__funmart_spu__sale_type","funmart_sku__funmart_spu__sale_type")
+    list_filter = ("funmart_sku__funmart_spu__sale_type",)
     ordering = ["-barcode"]
 
     actions = []
+
+    def queryset(self):
+        qs = super().queryset()
+        return qs.filter(funmart_sku__funmart_spu__sale_type__in=["hot","normal"])
 
 @xadmin.sites.register(BatchSKU)
 class BatchSKUAdmin(object):
