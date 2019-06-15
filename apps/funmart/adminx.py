@@ -140,7 +140,21 @@ class FunmartSKUAdmin(object):
 
 @xadmin.sites.register(YallavipBarcode)
 class YallavipBarcodeAdmin(object):
-    list_display = ["barcode", "SKU", "funmart_sku__funmart_spu__cate_2","funmart_sku__funmart_spu__cate_3",]
+
+    def show_cate(self, obj):
+        if obj.funmart_sku.funmart_spu.cate_3 :
+            cate = obj.funmart_sku.funmart_spu.cate_3
+        elif obj.funmart_sku.funmart_spu.cate_2 :
+            cate = obj.funmart_sku.funmart_spu.cate_2
+        elif obj.funmart_sku.funmart_spu.cate_1:
+            cate = obj.funmart_sku.funmart_spu.cate_1
+        else:
+            cate = ""
+        return  cate
+
+    show_cate.short_description = "Category"
+
+    list_display = ["barcode", "SKU", "show_cate",]
     list_editable = []
 
     search_fields = ["barcode","SKU", ]
