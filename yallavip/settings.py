@@ -190,7 +190,7 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 
-PRODUCT_URL = '/prodcut/'
+PRODUCT_URL = '/product/'
 #MEDIA_ROOT = os.path.join(BASE_DIR, 'static/media/')
 PRODUCT_ROOT = os.path.join(BASE_DIR, 'product/')
 

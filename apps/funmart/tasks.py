@@ -485,8 +485,10 @@ def batch_sku(batch_no):
 def download_spus_images():
     spu_pks = FunmartSPU.objects.filter(image_downloaded=False).values_list("pk",flat=True)
     for spu_pk in spu_pks:
-        download_spu_images(spu_pk)
+        #download_spu_images(spu_pk)
+        download_spu_images.apply_async((spu_pk, ), queue="funmart_image")
 
+@shared_task
 def download_spu_images(spu_pk):
     spu = FunmartSPU.objects.get(pk=spu_pk)
 
@@ -505,7 +507,7 @@ def download_spu_images(spu_pk):
         # 然后再判断文件是否存在，如果不存在，则从远程获取并保存
         if not os.path.exists(filename):
             image = get_remote_image(remote_image)
-            image.save(destination, 'JPEG', quality=95)
+            image.save(filename, 'JPEG', quality=95)
 
         i += 1
 
