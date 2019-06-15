@@ -145,7 +145,7 @@ class YallavipBarcodeAdmin(object):
 
     search_fields = ["barcode","SKU", ]
     list_filter = ("funmart_sku__funmart_spu__sale_type","funmart_sku__funmart_spu__sale_type")
-    ordering = []
+    ordering = ["-barcode"]
 
     actions = []
 
