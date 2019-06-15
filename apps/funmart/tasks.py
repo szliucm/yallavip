@@ -3,8 +3,12 @@ from __future__ import absolute_import, unicode_literals
 
 import json
 import requests
+import os
+
 from celery import shared_task, task
 from django.db.models import Count, Q, Sum
+from django.conf import settings
+
 from prs.tasks import my_custom_sql
 
 from .models import *
@@ -478,6 +482,34 @@ def batch_sku(batch_no):
     BatchSKU.objects.filter(~Q(skuattr__icontains="One Size") ,~Q(skuattr__icontains="Free Size"),
                             sale_type="drug").update(action="Dead_Size")
 
+def download_spus_images():
+    spu_pks = FunmartSPU.objects.filter(image_downloaded=False).values_list("pk",flat=True)
+    for spu_pk in spu_pks:
+        download_spu_images(spu_pk)
 
+def download_spu_images(spu_pk):
+    spu = FunmartSPU.objects.get(pk=spu_pk)
+
+    images = json.loads(spu.images)
+    yallavip_images = json.loads(spu.yallavip_images)
+
+    i = 0
+    for remote_image in images:
+        filename = os.path.join(settings.PRODUCT_ROOT, yallavip_images[i])
+
+        # 将文件路径分割出来
+        file_dir = os.path.split(filename)[0]
+        # 判断文件路径是否存在，如果不存在，则创建，此处是创建多级目录
+        if not os.path.isdir(file_dir):
+            os.makedirs(file_dir)
+        # 然后再判断文件是否存在，如果不存在，则从远程获取并保存
+        if not os.path.exists(filename):
+            image = get_remote_image(remote_image)
+            image.save(destination, 'JPEG', quality=95)
+
+        i += 1
+
+    spu.image_downloaded=True
+    spu.save()
 
 

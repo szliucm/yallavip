@@ -23,7 +23,7 @@ class FunmartSPU(models.Model):
     download_error = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="download_error")
 
     yallavip_images = models.TextField(default='', null=True, blank=True, verbose_name="images")
-
+    image_downloaded = models.BooleanField(u"image_downloaded", default=False)
     SALE_TYPE = (
         ("hot", "hot"),
         ("normal", "normal"),
