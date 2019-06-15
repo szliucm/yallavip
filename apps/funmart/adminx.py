@@ -140,7 +140,7 @@ class FunmartSKUAdmin(object):
 
 @xadmin.sites.register(YallavipBarcode)
 class YallavipBarcodeAdmin(object):
-    list_display = ["barcode", "SKU", ]
+    list_display = ["barcode", "SKU", "funmart_sku__funmart_spu__cate_2","funmart_sku__funmart_spu__cate_3",]
     list_editable = []
 
     search_fields = ["barcode","SKU", ]
