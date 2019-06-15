@@ -22,6 +22,8 @@ class FunmartSPU(models.Model):
     downloaded = models.BooleanField(u"downloaded", default=False)
     download_error = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="download_error")
 
+    images = models.TextField(default='', null=True, blank=True, verbose_name="images")
+
     SALE_TYPE = (
         ("hot", "hot"),
         ("normal", "normal"),

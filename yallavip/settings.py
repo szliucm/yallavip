@@ -189,6 +189,11 @@ MEDIA_URL = '/media/'
 #MEDIA_ROOT = os.path.join(BASE_DIR, 'static/media/')
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
+
+PRODUCT_URL = '/prodcut/'
+#MEDIA_ROOT = os.path.join(BASE_DIR, 'static/media/')
+PRODUCT_ROOT = os.path.join(BASE_DIR, 'product/')
+
 #MATERIAL_ROOT = os.path.join(BASE_DIR, 'static/media/material/')
 
 DATETIME_FORMAT = 'Y-m-d H:i:s'
