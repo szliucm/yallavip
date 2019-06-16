@@ -54,7 +54,7 @@ def deal_funmart_orders():
 
 def download_skus():
     # 没有下载的sku就下载sku；
-    skus = FunmartSKU.objects.filter(downloaded=False)
+    skus = FunmartSKU.objects.filter(download_error="",downloaded=False )
     for sku in skus:
         get_funmart_sku.apply_async((sku.SKU,), queue='funmart')
 
@@ -80,7 +80,7 @@ def download_spus():
     my_custom_sql(mysql)
 
     # spu没有下载的就下载spu
-    funmartspus = FunmartSPU.objects.filter(downloaded=False)
+    funmartspus = FunmartSPU.objects.filter(download_error="", downloaded=False)
     for spu in funmartspus:
         get_funmart_spu.apply_async((spu.SPU,), queue='funmart')
 
@@ -507,6 +507,8 @@ def download_spu_images(spu_pk):
         # 然后再判断文件是否存在，如果不存在，则从远程获取并保存
         if not os.path.exists(filename):
             image = get_remote_image(remote_image)
+            if image.mode != "RGB" :
+                image = image.convert('RGB')
             image.save(filename, 'JPEG', quality=95)
 
         i += 1
