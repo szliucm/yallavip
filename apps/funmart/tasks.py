@@ -605,7 +605,6 @@ def deal_funmart_skus():
             image = sku_to_add.images,
 
 
-
         )
 
         sku_list.append(sku)
