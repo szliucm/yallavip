@@ -400,14 +400,14 @@ class PromoteTemplate(models.Model):
 
     size = models.CharField(verbose_name='尺寸',choices=SIZES,  default='', max_length=100,  null=False,blank=False)
 
-    promote_template = models.ImageField(verbose_name='促销模版', upload_to='promote_template/', default="",  null=False,blank=False)
+    promote_template = models.ImageField(verbose_name='模版', upload_to='promote_template/', default="",  null=False,blank=False)
     main_image_count = models.IntegerField(  null=False,blank=False ,verbose_name="主图数量")
     sub_image_count = models.IntegerField( null=False,blank=False, verbose_name="辅图数量")
 
     update_time = models.DateTimeField(verbose_name='更新时间', auto_now=True, null=True, blank=True)
 
     class Meta:
-        verbose_name = "广告模版"
+        verbose_name = "促销模版"
         verbose_name_plural = verbose_name
 
     def __str__(self):
