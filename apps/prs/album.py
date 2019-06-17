@@ -6,6 +6,7 @@ from celery import shared_task
 
 from django.utils import timezone as dt
 from django.db.models import Q
+import  json
 
 from fb.models import MyPage, MyAlbum
 from prs.models import YallavipAlbum,PagePromoteCate,Lightin_SPU,LightinAlbum
