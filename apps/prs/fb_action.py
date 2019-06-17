@@ -2287,9 +2287,10 @@ def combo_ad_image_template_single(spu_ims, spus_name,spus, page_no):
         font = ImageFont.truetype(FONT, int(45 ))
         draw1 = ImageDraw.Draw(layer)
         # 简单打货号
-        draw1.rectangle((int(bw / 2 - 80), int(bh - 65 ), int(bw / 2 + 80 ),
-                         int(bh - 8 )), fill='yellow')
-        draw1.text((int(bw / 2 - 75 ), int(bh - 65 )), handle, font=font,
+        w, h = draw.textsize(handle, font=font)
+        draw1.rectangle((int((bw - w)/2 -5 ), int(bh - h -10), int( (bw +w)/ 2 + 5 ),
+                         int(bh - 5 )), fill='yellow')
+        draw1.text((int((bw -w)/2), int(bh - h -5)), handle, font=font,
                    fill='black')  # 设置文字位置/内容/颜色/字体
         draw1 = ImageDraw.Draw(layer)
 
