@@ -12,6 +12,7 @@ from django.conf import settings
 from prs.tasks import my_custom_sql
 from shop.photo_mark import  get_remote_image
 from .models import *
+from  prs.models import  Lightin_SPU, Lightin_SKU
 
 
 def test_funmart_product():
@@ -548,6 +549,7 @@ def download_spu_images(spu_pk):
         i += 1
 
     spu.image_downloaded=True
+    spu.download_error = ""
     spu.save()
 
 #把spu插入到系统spu
