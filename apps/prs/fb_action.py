@@ -2268,7 +2268,7 @@ def combo_ad_image_template_single(spu_ims, spus_name,spus, page_no):
         price2 = int(price1 * random.uniform(5, 6))
 
         # 设置所使用的字体
-        font = ImageFont.truetype(FONT, int(50))
+        font = ImageFont.truetype(FONT, int(60))
         draw = ImageDraw.Draw(layer)
         price_postion = MyPage.objects.get(page_no=page_no).promote_template.get(size="1:1").price_postion.split(",")
         draw.text((int(price_postion[0]),int(price_postion[1])), str(price1), (255, 255, 255), font=font)  # 设置文字位置/内容/颜色/字体
