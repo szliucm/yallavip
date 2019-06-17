@@ -1971,7 +1971,7 @@ class PromoteTemplateAdmin(object):
     show_promote_template.short_description = 'Promote_Template'
     show_promote_template.allow_tags = True
 
-    list_display = ('batch_name', 'size', 'show_promote_template','main_image_count','sub_image_count','update_time',)
+    list_display = ('batch_name', 'size', 'show_promote_template','main_image_count','sub_image_count','price_postion','oriprice_postion','update_time',)
     list_editable = ['batch_name', 'size', 'main_image_count','sub_image_count',]
     search_fields = []
     list_filter = ('batch_name', 'batch_name',)

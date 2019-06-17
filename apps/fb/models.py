@@ -19,6 +19,8 @@ class PromoteTemplate(models.Model):
     promote_template = models.ImageField(verbose_name='模版', upload_to='promote_template/', default="",  null=False,blank=False)
     main_image_count = models.IntegerField(  null=False,blank=False ,verbose_name="主图数量")
     sub_image_count = models.IntegerField( null=False,blank=False, verbose_name="辅图数量")
+    price_postion = models.CharField(verbose_name='价格坐标', default='', max_length=100, null=False, blank=False)
+    oriprice_postion = models.CharField(verbose_name='原价坐标', default='', max_length=100,  null=False,blank=False)
 
     update_time = models.DateTimeField(verbose_name='更新时间', auto_now=True, null=True, blank=True)
 
