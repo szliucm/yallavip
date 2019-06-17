@@ -5983,7 +5983,8 @@ def post_ads_v2(page_no, ad_type, to_create_count=1, keyword=None):
         # ads = YallavipAd.objects.filter(~Q(object_story_id="" ),  object_story_id__isnull = False,active=True, published=True,engagement_aded=False, yallavip_album__page__page_no=page_no )
         ads_all = ads_all.filter( engagement_aded=False).order_by("-fb_feed__like_count")
     elif ad_type == "message":
-        ads_all = ads_all.filter( engagement_aded=True, message_aded=False).order_by("-fb_feed__like_count")
+        #ads_all = ads_all.filter( engagement_aded=True, message_aded=False).order_by("-fb_feed__like_count")
+        ads_all = ads_all.filter( message_aded=False).order_by("-fb_feed__like_count")
     else:
         return False
 
@@ -6064,8 +6065,8 @@ def post_ad(page_no,adaccount_no, adset_no, serial, ad):
             'name': name,
             'adset_id': adset_no,
             'creative': {'creative_id': creative_id},
-            #'status': 'PAUSED',ACTIVE
-            'status': 'ACTIVE',
+            'status': 'PAUSED',
+            #'status': 'ACTIVE',
         }
 
         fb_ad = AdAccount(adaccount_no).create_ad(
