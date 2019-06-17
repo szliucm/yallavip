@@ -85,25 +85,20 @@ class MyPageAdmin(object):
     show_promote_1.short_description = '促销标签'
     show_promote_1.allow_tags = True
 
-    def show_promote_template(self, obj):
 
-        try:
-            img = mark_safe('<img src="%s" width="100px" />' % (obj.promote_1.url,))
-        except Exception as e:
-            img = ''
-        return img
-
-    show_promote_template.short_description = '促销模板'
-    show_promote_template.allow_tags = True
 
     #actions = ["batch_updatepage", ]
-    list_display = ('page', 'page_no','is_published','active','link','message',  'show_logo','show_price','show_promote','show_promote_1','show_promote_template', 'promotable',
+    list_display = ('page', 'page_no','is_published','active','link','message',  'show_logo','show_price','show_promote','show_promote_1','promote_template', 'promotable',
                    )
 
     list_editable = ['active','promotable',]
     #search_fields = ['logistic_no', ]
     list_filter = ('is_published','active',)
     actions = ["batch_update_accounts","batch_update_feed", ConnectPageCategory,"batch_update_albums","batch_update_ads",]
+
+    filter_horizontal = ('promote_template',)
+    style_fields = {'promote_template': 'm2m_transfer',
+                    }
 
     def batch_update_accounts(self, request, queryset):
 

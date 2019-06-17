@@ -50,8 +50,8 @@ class MyPage(models.Model):
     promote = models.ImageField(u'促销标签', upload_to='material/',default="",null=True, blank=True)
     promote_1 = models.ImageField(u'促销标签_1', upload_to='material/', default="", null=True, blank=True)
 
-    promote_template = models.ForeignKey(PromoteTemplate, related_name='template_page', null=True, blank=True,
-                                     verbose_name="促销模版", on_delete=models.CASCADE)
+    promote_template = models.ManyToManyField(PromoteTemplate, blank=False, verbose_name="促销模版",
+                                          related_name="template_page")
 
     active = models.BooleanField(u"page状态",default=False)
     promotable = models.BooleanField(u"推广状态", default=False)
