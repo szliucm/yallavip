@@ -613,7 +613,7 @@ def deal_funmart_skus():
 
             link = sku_to_add.link,
 
-            title = sku_to_add.en_name,
+            title = sku_to_add.name,
             images = sku_to_add.images,
 
         )
