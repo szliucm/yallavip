@@ -524,7 +524,7 @@ def prepare_promote_single(page_no):
 
 
 def prepare_promote_image_album_single(cate, page_no, lightin_spus):
-    from prs.fb_action import combo_ad_image_v3
+    from prs.fb_action import combo_ad_image_template_single
 
 
     print ("正在处理page ", cate, page_no, lightin_spus)
