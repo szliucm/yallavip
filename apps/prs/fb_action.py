@@ -2122,10 +2122,12 @@ def ad_update_status(ad_id, status):
 
     return  None, True
 
-def combo_ad_image_template(spu_ims, spus_name,page_no):
+def combo_ad_image_template_single(spu_ims, spus_name,spus, page_no):
     from shop.photo_mark import clipResizeImg_new, get_remote_image,clipResizeImg_box
     import os
     from django.conf import settings
+    FONT = os.path.join(settings.BASE_DIR, "static/font/ARIAL.TTF")
+
     domain = "http://admin.yallavip.com"
 
     try:
@@ -2152,6 +2154,7 @@ def combo_ad_image_template(spu_ims, spus_name,page_no):
         # 一张图
         # 先做个800x800的画布
         layer = Image.new("RGB", (800, 800), "white")
+        bw, bh = layer.size
 
         layer.paste(clipResizeImg_new(ims[0], 800, 800), (0, 0))
 
@@ -2252,16 +2255,41 @@ def combo_ad_image_template(spu_ims, spus_name,page_no):
         layer_template.paste(im_promote_template, (0, 0))
         layer = Image.composite(im_promote_template, layer, im_promote_template)
 
+
+        #写价格
+
+
+        spu = spus[0]
+        if spu.free_shipping:
+            price1 = int(spu.free_shipping_price)
+        else:
+            price1 = int(spu.yallavip_price)
+
+        price2 = int(price1 * random.uniform(5, 6))
+
         # 设置所使用的字体
         font = ImageFont.truetype(FONT, int(50))
-        draw = ImageDraw.Draw(mark)
-        draw.text((10 + int(10 * (3 - len(price1))), 15), price1, (255, 255, 255), font=font)  # 设置文字位置/内容/颜色/字体
-        draw = ImageDraw.Draw(mark)  # Just draw it!
+        draw = ImageDraw.Draw(layer)
+        price_postion = MyPage.objects.get(page_no=page_no).promote_template.get(size="1:1").price_postion.split(",")
+        draw.text((int(price_postion[0]),int(price_postion[1])), str(price1), (255, 255, 255), font=font)  # 设置文字位置/内容/颜色/字体
+        draw = ImageDraw.Draw(layer)  # Just draw it!
 
         font = ImageFont.truetype(FONT, int(20))
-        draw.text((20 + int(10 * (3 - len(price2))), 70), price2, (255, 182, 193), font=font)  # 设置文字位置/内容/颜色/字体
-        draw = ImageDraw.Draw(mark)
-        lw, lh = mark.size
+        draw = ImageDraw.Draw(layer)
+        price_postion_2 = MyPage.objects.get(page_no=page_no).promote_template.get(size="1:1").oriprice_postion.split(",")
+        draw.text(( int(price_postion_2[0]),int(price_postion_2[1])), str(price2), (255, 182, 193), font=font)  # 设置文字位置/内容/颜色/字体
+        draw = ImageDraw.Draw(layer)
+
+        #货号
+        handle = spu.handle
+        font = ImageFont.truetype(FONT, int(45 ))
+        draw1 = ImageDraw.Draw(layer)
+        # 简单打货号
+        draw1.rectangle((int(bw / 2 - 80), int(bh - 65 ), int(bw / 2 + 80 ),
+                         int(bh - 8 )), fill='yellow')
+        draw1.text((int(bw / 2 - 75 ), int(bh - 65 )), handle, font=font,
+                   fill='black')  # 设置文字位置/内容/颜色/字体
+        draw1 = ImageDraw.Draw(layer)
 
     if layer:
         out = layer.convert('RGB')

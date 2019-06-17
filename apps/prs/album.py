@@ -560,7 +560,7 @@ def prepare_promote_image_album_single(cate, page_no, lightin_spus):
 
     handles_name = ','.join(handles)
 
-    image_marked_url = combo_ad_image_v3(spu_ims, handles_name, page_no)
+    image_marked_url = combo_ad_image_v3(spu_ims, handles_name, lightin_spus,page_no)
     #print( image_marked_url )
 
     if not image_marked_url:
