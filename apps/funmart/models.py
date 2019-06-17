@@ -299,6 +299,20 @@ class Test(models.Model):
         return self.Meta.verbose_name
 
 
+class FunmartImage(models.Model):
+    SPU = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="SPU")
+    image = models.TextField(default='', null=True, blank=True, verbose_name="image")
+
+    downloaded = models.BooleanField(u"downloaded", default=False)
+    download_error = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="download_error")
+
+    class Meta:
+        verbose_name = u"FunmartImage"
+        verbose_name_plural = verbose_name
+
+    def __unicode__(self):
+        return self.Meta.verbose_name
+
 
 
 

@@ -492,7 +492,16 @@ def download_spus_images():
 def download_spu_images(spu_pk):
     spu = FunmartSPU.objects.get(pk=spu_pk)
 
+    if not spu.images:
+        print ("no images")
+        spu.download_error = "no images"
+        spu.save()
+
+
+        return False
+
     images = json.loads(spu.images)
+
     yallavip_images = json.loads(spu.yallavip_images)
 
     i = 0
@@ -507,13 +516,101 @@ def download_spu_images(spu_pk):
         # 然后再判断文件是否存在，如果不存在，则从远程获取并保存
         if not os.path.exists(filename):
             image = get_remote_image(remote_image)
+            if not image:
+                print ("cannot get remote images", remote_image)
+                obj, created = FunmartImage.objects.update_or_create(SPU=spu.SPU,
+                                                                     image=remote_image,
+                                                                    defaults = {'downloaded': False,
+                                                                                'download_error': "cannot get remote images",
+                                                                                }
+                )
+                return False
+
             if image.mode != "RGB" :
                 image = image.convert('RGB')
-            image.save(filename, 'JPEG', quality=95)
+            try:
+                image.save(filename, 'JPEG', quality=95)
+            except:
+                obj, created = FunmartImage.objects.update_or_create(SPU=spu.SPU,
+                                                                     image=remote_image,
+                                                                     defaults={'downloaded': False,
+                                                                               'download_error': "cannot save remote images",
+                                                                               }
+                                                                     )
+
 
         i += 1
 
     spu.image_downloaded=True
     spu.save()
 
+#把spu插入到系统spu
+def deal_funmart_spus():
 
+    spus_to_add = FunmartSPU.objects.all() \
+        .exclude(SPU__in=list(Lightin_SPU.objects.filter(vendor="funmart").values_list('SPU', flat=True))) \
+
+    print("有%s个spu需要新增" % spus_to_add.count())
+
+    spu_list = []
+    for spu_to_add in spus_to_add:
+        spu = Lightin_SPU(
+            SPU=spu_to_add.SPU,
+            vendor = 'funmart',
+            en_name = spu_to_add.en_name,
+
+
+            cate_1 = spu_to_add.cate_1,
+            cate_2 = spu_to_add.cate_2,
+            cate_3 = spu_to_add.cate_3,
+
+            vendor_sale_price = spu_to_add.sale_price,
+            vendor_supply_price = spu_to_add.sale_price * 0.1,
+            link = spu_to_add.link,
+
+            title = spu_to_add.en_name,
+            images = spu_to_add.images,
+
+        )
+
+        spu_list.append(spu)
+
+    print(spu_list)
+    Lightin_SPU.objects.bulk_create(spu_list)
+    
+#把sku插入到系统sku
+def deal_funmart_skus():
+
+    skus_to_add = FunmartSKU.objects.all() \
+        .exclude(SKU__in=list(Lightin_SKU.objects.filter(funmart_spu__vendor="funmart").values_list('SKU', flat=True))) \
+
+    print("有%s个sku需要新增" % skus_to_add.count())
+
+    sku_list = []
+    for sku_to_add in skus_to_add:
+        sku = Lightin_SKU(
+            SPU=sku_to_add.SPU,
+            SKU=sku_to_add.SKU,
+            vendor_sale_price=sku_to_add.sale_price,
+            vendor_supply_price=sku_to_add.sale_price * 0.1,
+
+            skuattr = 'funmart',
+            size = sku_to_add.en_name,
+
+
+            cate_1 = sku_to_add.cate_1,
+            cate_2 = sku_to_add.cate_2,
+            cate_3 = sku_to_add.cate_3,
+
+
+            link = sku_to_add.link,
+
+            title = sku_to_add.en_name,
+            images = sku_to_add.images,
+
+        )
+
+        sku_list.append(sku)
+
+    print(sku_list)
+    Lightin_SKU.objects.bulk_create(sku_list)
