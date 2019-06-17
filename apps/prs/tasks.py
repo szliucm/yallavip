@@ -5867,6 +5867,14 @@ def page_post_v2(page_no, to_create_count):
                     ad.published = True
                 else:
                     ad.publish_error = info
+            else:
+                info, posted = page_post(page_no, access_token, ad)
+                if posted:
+                    ad.object_story_id = info
+                    ad.published = True
+                else:
+                    ad.publish_error = info
+
             ad.save()
 
 def get_serial():
@@ -6676,6 +6684,47 @@ def link_page_post(page_no,access_token, ad):
         error = e.api_error_message()
         return error, False
 
+def page_post(page_no,access_token, ad):
+    import time
+
+
+    adobjects = FacebookAdsApi.init(access_token=access_token, debug=True)
+
+        # 创建page photo
+    try:
+        fields = [
+        ]
+        params = {
+            'url': ad.image_marked_url,
+            'published': 'false',
+        }
+        photo_to_be_post = Page(page_id).create_photo(
+            fields=fields,
+            params=params,
+        )
+        photo_to_be_post_id = photo_to_be_post.get_id()
+
+        # 创建post
+        fields = [
+            'object_id',
+        ]
+
+        params = {
+            'message': ad.message,
+            # 'attached_media': [{'media_fbid': photo_to_be_post_id}],
+            'attached_media': [{'media_fbid': photo_to_be_post_id}],
+            "call_to_action": {"type": "MESSAGE_PAGE",
+                               "value": {"app_destination": "MESSENGER"}},
+        }
+        feed_post = Page(page_no).create_feed(
+            fields=fields,
+            params=params,
+        )
+        return  feed_post.get_id(),True
+    except Exception as e:
+        print(e)
+        error = e.api_error_message()
+        return error, False
 
 
 
