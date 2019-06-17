@@ -590,7 +590,7 @@ def deal_funmart_spus():
 def deal_funmart_skus():
 
     skus_to_add = FunmartSKU.objects.all() \
-        .exclude(SKU__in=list(Lightin_SKU.objects.filter(funmart_spu__vendor="funmart").values_list('SKU', flat=True))) \
+        .exclude(SKU__in=list(Lightin_SKU.objects.filter(lightin_spu__vendor="funmart").values_list('SKU', flat=True))) \
 
     print("有%s个sku需要新增" % skus_to_add.count())
 
