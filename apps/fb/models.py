@@ -385,7 +385,7 @@ class PageSync(models.Model):
         return self.page_no
 
 
-class ImageTemplate(models.Model):
+class PromoteTemplate(models.Model):
     SIZES = (
         ("1:1", "1:1"),
         ("1.91:1", "1.91:1"),
