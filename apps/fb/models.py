@@ -25,6 +25,7 @@ class PromoteTemplate(models.Model):
     class Meta:
         verbose_name = "促销模版"
         verbose_name_plural = verbose_name
+        ordering = ['batch_name']
 
     def __str__(self):
         return self.batch_name + "-" +self.size
