@@ -603,7 +603,7 @@ def deal_funmart_skus():
             vendor_supply_price=sku_to_add.sale_price * 0.1,
 
             skuattr = 'funmart',
-            size = sku_to_add.en_name,
+            #size = sku_to_add.en_name,
 
 
             cate_1 = sku_to_add.cate_1,
