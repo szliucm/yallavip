@@ -9,7 +9,7 @@ from django.db.models import Q
 import  json
 
 from fb.models import MyPage, MyAlbum
-from prs.models import YallavipAlbum,PagePromoteCate,Lightin_SPU,LightinAlbum
+from prs.models import *
 
 from shop.photo_mark import yallavip_mark_image
 
