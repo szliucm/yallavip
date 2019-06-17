@@ -583,7 +583,7 @@ def deal_funmart_spus():
 
         spu_list.append(spu)
 
-    print(spu_list)
+    #print(spu_list)
     Lightin_SPU.objects.bulk_create(spu_list)
     
 #把sku插入到系统sku
@@ -609,5 +609,5 @@ def deal_funmart_skus():
 
         sku_list.append(sku)
 
-    print(sku_list)
+    #print(sku_list)
     Lightin_SKU.objects.bulk_create(sku_list)

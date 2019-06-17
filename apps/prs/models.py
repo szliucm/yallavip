@@ -145,7 +145,7 @@ class Lightin_SKU(models.Model):
     size = models.CharField(default='', max_length=100, null=True, blank=True, verbose_name="size")
 
     # image = models.ImageField(u'组合图', upload_to='combo/', default="", null=True, blank=True)
-    image = models.CharField(default='', max_length=200, null=True, blank=True, verbose_name="sku图")
+    image = models.TextField(default='', null=True, blank=True, verbose_name="sku图")
     image_marked = models.CharField(default='', max_length=100, null=True, blank=True, verbose_name="组合水印图")
 
     comboed = models.BooleanField(u'是否组合商品', default=False, null=True)
