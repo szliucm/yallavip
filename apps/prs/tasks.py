@@ -5868,7 +5868,7 @@ def page_post_v2(page_no, to_create_count):
                 else:
                     ad.publish_error = info
             else:
-                info, posted = page_post(page_no, access_token, ad)
+                info, posted = photo_page_post(page_no, access_token, ad)
                 if posted:
                     ad.object_story_id = info
                     ad.published = True
@@ -6684,7 +6684,7 @@ def link_page_post(page_no,access_token, ad):
         error = e.api_error_message()
         return error, False
 
-def page_post(page_no,access_token, ad):
+def photo_page_post(page_no,access_token, ad):
     import time
 
 
@@ -6698,7 +6698,7 @@ def page_post(page_no,access_token, ad):
             'url': ad.image_marked_url,
             'published': 'false',
         }
-        photo_to_be_post = Page(page_id).create_photo(
+        photo_to_be_post = Page(page_no).create_photo(
             fields=fields,
             params=params,
         )
