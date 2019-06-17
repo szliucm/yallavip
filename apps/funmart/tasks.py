@@ -502,7 +502,12 @@ def download_spu_images(spu_pk):
 
     images = json.loads(spu.images)
 
-    yallavip_images = json.loads(spu.yallavip_images)
+    try:
+        yallavip_images = json.loads(spu.yallavip_images)
+    except Exception as e:
+        spu.download_error = e
+        spu.save()
+
 
     i = 0
     for remote_image in images:
@@ -530,11 +535,11 @@ def download_spu_images(spu_pk):
                 image = image.convert('RGB')
             try:
                 image.save(filename, 'JPEG', quality=95)
-            except:
+            except Exception as e
                 obj, created = FunmartImage.objects.update_or_create(SPU=spu.SPU,
                                                                      image=remote_image,
                                                                      defaults={'downloaded': False,
-                                                                               'download_error': "cannot save remote images",
+                                                                               'download_error': e,
                                                                                }
                                                                      )
 
