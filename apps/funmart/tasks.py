@@ -535,7 +535,7 @@ def download_spu_images(spu_pk):
                 image = image.convert('RGB')
             try:
                 image.save(filename, 'JPEG', quality=95)
-            except Exception as e
+            except Exception as e:
                 obj, created = FunmartImage.objects.update_or_create(SPU=spu.SPU,
                                                                      image=remote_image,
                                                                      defaults={'downloaded': False,
