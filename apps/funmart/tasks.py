@@ -601,20 +601,10 @@ def deal_funmart_skus():
             SKU=sku_to_add.SKU,
             vendor_sale_price=sku_to_add.sale_price,
             vendor_supply_price=sku_to_add.sale_price * 0.1,
-
-            skuattr = 'funmart',
-            #size = sku_to_add.en_name,
-
-
-            cate_1 = sku_to_add.cate_1,
-            cate_2 = sku_to_add.cate_2,
-            cate_3 = sku_to_add.cate_3,
+            skuattr = sku_to_add.skuattr,
+            image = sku_to_add.images,
 
 
-            link = sku_to_add.link,
-
-            title = sku_to_add.name,
-            images = sku_to_add.images,
 
         )
 
