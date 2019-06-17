@@ -1972,7 +1972,7 @@ class PromoteTemplateAdmin(object):
     show_promote_template.allow_tags = True
 
     list_display = ('batch_name', 'size', 'show_promote_template','main_image_count','sub_image_count','price_postion','oriprice_postion','update_time',)
-    list_editable = ['batch_name', 'size', 'main_image_count','sub_image_count',]
+    list_editable = ['batch_name', 'size', 'main_image_count','sub_image_count','price_postion','oriprice_postion',]
     search_fields = []
     list_filter = ('batch_name', 'batch_name',)
     #model_icon = '<i class="fa fa-camera-retro fa-5x"></i> fa-5x'
