@@ -507,6 +507,7 @@ def download_spu_images(spu_pk):
     except Exception as e:
         spu.download_error = e
         spu.save()
+        return  False
 
 
     i = 0
