@@ -2270,14 +2270,16 @@ def combo_ad_image_template_single(spu_ims, spus_name,spus, page_no):
         # 设置所使用的字体
         font = ImageFont.truetype(FONT, int(60))
         draw = ImageDraw.Draw(layer)
+        w, h = draw.textsize(str(price1), font=font)
         price_postion = MyPage.objects.get(page_no=page_no).promote_template.get(size="1:1").price_postion.split(",")
-        draw.text((int(price_postion[0]),int(price_postion[1])), str(price1), (255, 255, 255), font=font)  # 设置文字位置/内容/颜色/字体
+        draw.text((int(price_postion[0])-w,int(price_postion[1])), str(price1), (255, 255, 255), font=font)  # 设置文字位置/内容/颜色/字体
         draw = ImageDraw.Draw(layer)  # Just draw it!
 
         font = ImageFont.truetype(FONT, int(20))
         draw = ImageDraw.Draw(layer)
+        w, h = draw.textsize(str(price2), font=font)
         price_postion_2 = MyPage.objects.get(page_no=page_no).promote_template.get(size="1:1").oriprice_postion.split(",")
-        draw.text(( int(price_postion_2[0]),int(price_postion_2[1])), str(price2), (255, 182, 193), font=font)  # 设置文字位置/内容/颜色/字体
+        draw.text(( int(price_postion_2[0])-w,int(price_postion_2[1])), str(price2), (255, 182, 193), font=font)  # 设置文字位置/内容/颜色/字体
         draw = ImageDraw.Draw(layer)
 
         #货号
