@@ -30,7 +30,7 @@ class PromoteTemplate(models.Model):
         ordering = ['batch_name']
 
     def __str__(self):
-        name = self.batch_name + "-" + self.size + "-"
+        name = self.batch_name + "-" + self.size
         if self.freeshipping:
             name += "-freeshipping"
 
