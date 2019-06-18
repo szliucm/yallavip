@@ -353,7 +353,7 @@ def prepare_yallavip_album_material(page_no=None):
 #为促销做准备商品
 #相册和主推品类结合选品，打广告
 
-def prepare_promote_v2(page_no):
+def prepare_promote_v2(page_no, free_shipping=True):
     import random
 
     from django.db.models import Count
@@ -368,7 +368,7 @@ def prepare_promote_v2(page_no):
         return
 
     # 取库存大、单价高、已经发布到相册 且还未打广告，单件包邮的商品
-    spus_all = Lightin_SPU.objects.filter(~Q(handle=""),handle__isnull=False,vendor="lightin", aded=False,sellable__gt=3, free_shipping=True)
+    spus_all = Lightin_SPU.objects.filter(~Q(handle=""),handle__isnull=False,vendor="lightin", aded=False,sellable__gt=3, free_shipping=free_shipping)
     # 把主推品类的所有适合的产品都拿出来打广告
 
     for cate in cates:
@@ -389,7 +389,7 @@ def prepare_promote_v2(page_no):
             spus = [cate_spus[i * 2], cate_spus[i * 2 + 1]]
             print("当前处理 ", i, cate.tags, page_no, cate_spus[i*2].handle,cate_spus[i*2+1].handle)
             #prepare_promote_image_album_v3(cate.tags, page_no, spu_pks)
-            prepare_promote_image_album_v4(cate, page_no, spus)
+            prepare_promote_image_album_v4(cate, page_no, spus,free_shipping)
 
 def init_cate_sellable():
 
@@ -601,7 +601,7 @@ def prepare_promote_image_album_single(cate, page_no, lightin_spus):
 
 
 
-def prepare_promote_image_album_v4(cate, page_no, lightin_spus):
+def prepare_promote_image_album_v4(cate, page_no, lightin_spus,prepare_promote_image_album_v4):
     from prs.fb_action import combo_ad_image_v4
 
 
