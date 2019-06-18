@@ -357,7 +357,7 @@ def prepare_promote_v2(page_no):
     import random
 
     from django.db.models import Count
-    from prs.tasks import  prepare_promote_image_album_v3
+
 
     # 取page对应的主推品类
     try:
@@ -389,7 +389,7 @@ def prepare_promote_v2(page_no):
             spus = [cate_spus[i * 2], cate_spus[i * 2 + 1]]
             print("当前处理 ", i, cate.tags, page_no, cate_spus[i*2].handle,cate_spus[i*2+1].handle)
             #prepare_promote_image_album_v3(cate.tags, page_no, spu_pks)
-            prepare_promote_image_album_v3(cate, page_no, spus)
+            prepare_promote_image_album_v4(cate, page_no, spus)
 
 def init_cate_sellable():
 
