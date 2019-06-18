@@ -5860,13 +5860,14 @@ def page_post_v2(page_no, to_create_count):
                 i += 1
             spus_count = len(ad.spus_name.split(","))
 
-            if spus_count == 2:
-                info, posted = link_page_post(page_no, access_token, ad)
-                if posted:
-                    ad.object_story_id = info
-                    ad.published = True
-                else:
-                    ad.publish_error = info
+            #if spus_count == 2:
+            info, posted = link_page_post(page_no, access_token, ad)
+            if posted:
+                ad.object_story_id = info
+                ad.published = True
+            else:
+                ad.publish_error = info
+            '''
             else:
                 info, posted = photo_page_post(page_no, access_token, ad)
                 if posted:
@@ -5874,7 +5875,7 @@ def page_post_v2(page_no, to_create_count):
                     ad.published = True
                 else:
                     ad.publish_error = info
-
+            '''
             ad.save()
 
 def get_serial():
@@ -6923,7 +6924,7 @@ def auto_engagement_ads():
 
         page_no = page.page_no
         ad_type = "engagement"
-        to_create_count = 5
+        to_create_count = 3
         post_ads_v2(page_no, ad_type, to_create_count)
 
 @shared_task
@@ -6936,7 +6937,7 @@ def auto_message_ads():
 
         page_no = page.page_no
         ad_type = "message"
-        to_create_count = 5
+        to_create_count = 3
         post_ads_v2(page_no, ad_type, to_create_count)
 
 def test_funmart_product():
