@@ -30,7 +30,7 @@ class PromoteTemplate(models.Model):
         ordering = ['batch_name']
 
     def __str__(self):
-        return self.batch_name + "-" +self.size
+        return self.batch_name + "-" +self.size + "-" +self.freeshipping
 
 class MyPage(models.Model):
     page_no = models.CharField(u'主页ID', default='', max_length=100, blank=True)
