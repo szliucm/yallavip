@@ -1689,7 +1689,7 @@ def combo_ad_image_v2(spu_ims, spus_name,yallavip_album_instance):
 
     return  destination_url
 
-def combo_ad_image_v3(spu_ims, spus_name,page_no):
+def combo_ad_image_v4(spu_ims, spus_name,page_no):
     from shop.photo_mark import clipResizeImg_new, get_remote_image,clipResizeImg_box
     import os
     from django.conf import settings
@@ -1715,91 +1715,15 @@ def combo_ad_image_v3(spu_ims, spus_name,page_no):
 
     item_count = len(spu_ims)
     print("图片数量", item_count)
-    if item_count == 4:
-        # 四张图
-        # 先做个1080x1080的画布
-        layer = Image.new("RGB", (1080, 1080), "white")
-
-        layer.paste(clipResizeImg_new(ims[0], 540, 540), (0, 0))
-        layer.paste(clipResizeImg_new(ims[1], 540, 540), (540, 0))
-        layer.paste(clipResizeImg_new(ims[2], 540, 540), (0, 540))
-        layer.paste(clipResizeImg_new(ims[3], 540, 540), (540, 540))
-
-    elif item_count == 2:
+    if item_count == 2:
         # 两张图
-        # 先做个1200*628的画布
-        layer = Image.new("RGB", (1200, 628), "white")
+        # 1600*838的画布
+        layer = Image.new("RGB", (1600, 838), "white")
 
-        layer.paste(clipResizeImg_new(ims[0], 600, 600), (0, 14))
-        layer.paste(clipResizeImg_new(ims[1], 600, 600), (600, 14))
 
-    elif item_count == 5:
-        # 五张图
-        # 先做个900x1000的画布
-        layer = Image.new("RGB", (900, 1180), "red")
-        layer.paste(clipResizeImg_new(ims[0], 540, 540), (0, 0))
-        layer.paste(clipResizeImg_new(ims[1], 540, 540), (0, 540))
-        layer.paste(clipResizeImg_new(ims[2], 360, 360), (540, 0))
-        layer.paste(clipResizeImg_new(ims[3], 360, 360), (540, 360))
-        layer.paste(clipResizeImg_new(ims[4], 360, 360), (540, 720))
+        layer.paste(clipResizeImg_new(ims[0], 800, 800), (0, 0))
+        layer.paste(clipResizeImg_new(ims[1], 800, 800), (800, 0))
 
-    elif item_count == 6:
-        # 六张图
-        # 先做个900x900的画布
-        layer = Image.new("RGB", (900, 1000), "red")
-
-        layer.paste(clipResizeImg_new(ims[0], 600, 600), (0, 0))
-        layer.paste(clipResizeImg_new(ims[1], 300, 300), (0, 600))
-        layer.paste(clipResizeImg_new(ims[2], 300, 300), (300, 600))
-        layer.paste(clipResizeImg_new(ims[3], 300, 300), (600, 0))
-        layer.paste(clipResizeImg_new(ims[4], 300, 300), (600, 300))
-        layer.paste(clipResizeImg_new(ims[5], 300, 300), (600, 600))
-    elif item_count == 7:
-        # 先做个900x130的画布
-        layer = Image.new("RGB", (900, 1300), "red")
-        layer.paste(clipResizeImg_new(ims[0], 450, 450), (0, 0))
-        layer.paste(clipResizeImg_new(ims[1], 450, 450), (450, 0))
-        layer.paste(clipResizeImg_new(ims[2], 450, 450), (0, 450))
-        layer.paste(clipResizeImg_new(ims[3], 450, 450), (450, 450))
-        layer.paste(clipResizeImg_new(ims[4], 300, 300), (0, 900))
-        layer.paste(clipResizeImg_new(ims[5], 300, 300), (300, 900))
-        layer.paste(clipResizeImg_new(ims[6], 300, 300), (600, 900))
-    elif item_count == 8:
-        # 先做个900x1150的画布
-        layer = Image.new("RGB", (900, 1150), "red")
-        layer.paste(clipResizeImg_new(ims[0], 450, 450), (0, 0))
-        layer.paste(clipResizeImg_new(ims[1], 450, 450), (450, 0))
-        layer.paste(clipResizeImg_new(ims[2], 300, 300), (0, 450))
-        layer.paste(clipResizeImg_new(ims[3], 300, 300), (0, 750))
-        layer.paste(clipResizeImg_new(ims[4], 300, 300), (300, 450))
-        layer.paste(clipResizeImg_new(ims[5], 300, 300), (300, 750))
-        layer.paste(clipResizeImg_new(ims[6], 300, 300), (600, 450))
-        layer.paste(clipResizeImg_new(ims[7], 300, 300), (600, 750))
-    elif item_count == 9:
-        # 先做个900x1000的画布
-        layer = Image.new("RGB", (900, 1000), "red")
-        layer.paste(clipResizeImg_new(ims[0], 300, 300), (0, 0))
-        layer.paste(clipResizeImg_new(ims[1], 300, 300), (0, 300))
-        layer.paste(clipResizeImg_new(ims[2], 300, 300), (0, 600))
-        layer.paste(clipResizeImg_new(ims[3], 300, 300), (300, 0))
-        layer.paste(clipResizeImg_new(ims[4], 300, 300), (300, 300))
-        layer.paste(clipResizeImg_new(ims[5], 300, 300), (300, 600))
-        layer.paste(clipResizeImg_new(ims[6], 300, 300), (600, 0))
-        layer.paste(clipResizeImg_new(ims[7], 300, 300), (600, 300))
-        layer.paste(clipResizeImg_new(ims[8], 300, 300), (600, 600))
-    elif item_count == 10:
-        # 先做个900x130的画布
-        layer = Image.new("RGB", (900, 925), "red")
-        layer.paste(clipResizeImg_new(ims[0], 300, 300), (0, 0))
-        layer.paste(clipResizeImg_new(ims[1], 300, 300), (0, 300))
-        layer.paste(clipResizeImg_new(ims[2], 300, 300), (300, 0))
-        layer.paste(clipResizeImg_new(ims[3], 300, 300), (300, 300))
-        layer.paste(clipResizeImg_new(ims[4], 300, 300), (600, 0))
-        layer.paste(clipResizeImg_new(ims[5], 300, 300), (600, 300))
-        layer.paste(clipResizeImg_new(ims[6], 225, 225), (0, 600))
-        layer.paste(clipResizeImg_new(ims[7], 225, 225), (225, 600))
-        layer.paste(clipResizeImg_new(ims[8], 225, 225), (450, 600))
-        layer.paste(clipResizeImg_new(ims[9], 225, 225), (675, 600))
     else:
         layer = None
 
@@ -1808,49 +1732,63 @@ def combo_ad_image_v3(spu_ims, spus_name,page_no):
     if page_no:
         domain = "http://admin.yallavip.com"
         #logo
-        logo = MyPage.objects.get(page_no=page_no).logo
-        destination_url = domain + os.path.join(logo.url)
-        im_logo = get_remote_image(destination_url)
-        if not im_logo:
+        promote = MyPage.objects.get(page_no=page_no).promote_template.get(size="1.91:1")
+        promote_template = promote.promote_template
+
+        destination_url = domain + os.path.join(promote_template.url)
+        im_promote_template = get_remote_image(destination_url)
+        if not im_promote_template:
             print ("logo image打不开")
             return None
-        ims.append(im_logo)
+        ims.append(im_promote_template)
 
-        # 把水印文件加到新的图层上，然后把新旧图层融合
-        layer_logo = Image.new('RGBA', layer.size, (0, 0, 0, 0))
-        layer_logo.paste(im_logo, (0, 0))
-        layer = Image.composite(layer_logo, layer, layer_logo)
+        # 把文件加到新的图层上，然后把新旧图层融合
+        layer_template = Image.new('RGBA', layer.size, (0, 0, 0, 0))
+        layer_template.paste(im_promote_template, (0, 0))
+        layer = Image.composite(im_promote_template, layer, im_promote_template)
+        price_postion= promote.price_postion.split(";")
+        oriprice_postion = promote.oriprice_postion.split(";")
+        i=0
 
-        #买增
-        promote_1 = MyPage.objects.get(page_no=page_no).promote_1
-        destination_url = domain + os.path.join(promote_1.url)
-        im_promote_1 = get_remote_image(destination_url)
-        if not im_promote_1:
-            print ("promote_1 image打不开")
-            return None
-        bw, bh = im_promote_1.size
-        ims.append(im_promote_1)
+        for spu in spus:
+            if spu.free_shipping:
+                price1 = int(spu.free_shipping_price)
+            else:
+                price1 = int(spu.yallavip_price)
 
-        # 把水印文件加到新的图层上，然后把新旧图层融合
-        layer_promote_1 = Image.new('RGBA', layer.size, (0, 0, 0, 0))
-        layer_promote_1.paste(im_promote_1, (600-int(bw/2), 0))
-        layer = Image.composite(layer_promote_1, layer, layer_promote_1)
+            price2 = int(price1 * random.uniform(5, 6))
 
+            # 设置所使用的字体
+            font = ImageFont.truetype(FONT, int(60))
+            draw = ImageDraw.Draw(layer)
+            w, h = draw.textsize(str(price1), font=font)
+            price_postion_1 = price_postion[i].split(",")
+            draw.text((int(price_postion_1[0]) - w, int(price_postion_1[1])), str(price1), (255, 255, 255),
+                      font=font)  # 设置文字位置/内容/颜色/字体
+            draw = ImageDraw.Draw(layer)  # Just draw it!
 
-        #包邮
-        promote = MyPage.objects.get(page_no=page_no).promote
-        destination_url = domain + os.path.join(promote.url)
-        im_promote = get_remote_image(destination_url)
-        if not im_promote:
-            print ("promote image打不开")
-            return None
-        bw, bh = im_promote.size
-        ims.append(im_promote)
+            font = ImageFont.truetype(FONT, int(20))
+            draw = ImageDraw.Draw(layer)
 
-        # 把水印文件加到新的图层上，然后把新旧图层融合
-        layer_promote = Image.new('RGBA', layer.size, (0, 0, 0, 0))
-        layer_promote.paste(im_promote, (1200-bw, 0))
-        layer = Image.composite(layer_promote, layer, layer_promote)
+            w, h = draw.textsize(str(price2), font=font)
+            price_postion_2 = oriprice_postion[i].split(",")
+            draw.text((int(price_postion_2[0]) - w, int(price_postion_2[1])), str(price2), (255, 182, 193),
+                      font=font)  # 设置文字位置/内容/颜色/字体
+            draw = ImageDraw.Draw(layer)
+
+            # 货号
+            handle = spu.handle
+            font = ImageFont.truetype(FONT, int(45))
+            draw1 = ImageDraw.Draw(layer)
+            # 简单打货号
+            bw, bh = layer.size
+            w, h = draw.textsize(handle, font=font)
+            x_position = bw * (2*i+1) /2
+            draw1.rectangle((int(x_position - 5), int(bh - h - 15), int(x_position + 5),
+                             int(bh - 5)), fill='yellow')
+            draw1.text((int(x_position), int(bh - h - 10)), handle, font=font,
+                       fill='black')  # 设置文字位置/内容/颜色/字体
+            draw1 = ImageDraw.Draw(layer)
 
 
 

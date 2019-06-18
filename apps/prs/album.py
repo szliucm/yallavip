@@ -518,7 +518,7 @@ def prepare_promote_single(page_no):
 
 
             spus = [cate_spus[i]]
-            print("当前处理 ", i, cate.tags, page_no, cate_spus[i*2].handle,cate_spus[i*2+1].handle)
+            print("当前处理 ", i, cate.tags, page_no, cate_spus[i].handle)
             #prepare_promote_image_album_v3(cate.tags, page_no, spu_pks)
             prepare_promote_image_album_single(cate, page_no, spus)
 
