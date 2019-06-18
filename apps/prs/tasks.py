@@ -44,7 +44,7 @@ if DEBUG:
     appToken = "85413bb8f6a270e1ff4558af80f2bef5"
     appKey = "9dca0be4c02bed9e37c1c4189bc1f41b"
 else:
-    warehouse_code = "W07"
+    warehouse_code = "W08"
     shipping_methods = ["ARAMEX_KSA","FETCHR_SAUDI_DOM"]
     #shipping_method = "FETCHR_SAUDI_DOM"
     #shipping_method = "ARAMEX_KSA"
@@ -6073,8 +6073,8 @@ def post_ad(page_no,adaccount_no, adset_no, serial, ad):
             'name': name,
             'adset_id': adset_no,
             'creative': {'creative_id': creative_id},
-            'status': 'PAUSED',
-            #'status': 'ACTIVE',
+            #'status': 'PAUSED',
+            'status': 'ACTIVE',
         }
 
         fb_ad = AdAccount(adaccount_no).create_ad(
