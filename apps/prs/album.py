@@ -533,27 +533,24 @@ def prepare_promote_image_album_single(cate, page_no, lightin_spus):
     spu_ims = []
     handles = []
     for spu in lightin_spus:
-
-        print("正在处理 handle ",spu.handle)
-        image = json.loads(spu.images)
-        if image and len(image) > 0:
-            a = "/"
-            image_split = list(image)[0].split(a)
-
-            image_split[4] = '800x800'
-            spu_im = a.join(image_split)
+        if spu.handle:
+            handles.append(spu.handle)
         else:
-            spu_im = None
+            return False
+        print("正在处理 handle ",spu.handle)
+        images = json.loads(spu.images)
 
+        if images and len(images) >= 5:
+            for image in image:
+                a = "/"
+                image_split = list(image)[0].split(a)
 
+                image_split[4] = '800x800'
+                spu_im = a.join(image_split)
 
-        if spu_im:
-            spus.append(spu)
-            spu_ims.append(spu_im)
-            if spu.handle:
-                handles.append(spu.handle)
-            else:
-                return  False
+                spus.append(spu)
+                spu_ims.append(spu_im)
+
         else:
             return  False
 
