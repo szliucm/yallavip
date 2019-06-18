@@ -32,7 +32,7 @@ import json
 
 from django.conf import settings
 
-
+FONT = os.path.join(settings.BASE_DIR, "static/font/ARIAL.TTF")
 APP_SCOPED_SYSTEM_USER_ID=100029952330435
 #aaron's
 #my_access_token = "EAAcGAyHVbOEBAHRE4PAz3IGPW7O06aeccuYQSFrSo5KfVSKqWZAp1rj32pV7WNO42k2ppK480iExbH92DeIYodpHU38ZBwwRZAV1qYjCGdYa9pDNmdQOxm4q31n2XKVdjxKmOLDh7brq0tqVJZAk6kx9R4MJph0ZAxiD7CGuZCkMV3xFthPlim"
@@ -2064,7 +2064,7 @@ def combo_ad_image_template_single(spu_ims, spus_name,spus, page_no):
     from shop.photo_mark import clipResizeImg_new, get_remote_image,clipResizeImg_box
     import os
     from django.conf import settings
-    FONT = os.path.join(settings.BASE_DIR, "static/font/ARIAL.TTF")
+
 
     domain = "http://admin.yallavip.com"
 
