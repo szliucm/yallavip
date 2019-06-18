@@ -601,7 +601,70 @@ def prepare_promote_image_album_single(cate, page_no, lightin_spus):
 
 
 
+def prepare_promote_image_album_v4(cate, page_no, lightin_spus):
+    from prs.fb_action import combo_ad_image_v4
 
+
+    print ("正在处理page ", cate, page_no, lightin_spus)
+    target_page= MyPage.objects.get(page_no=page_no)
+    spus=[]
+    spu_ims = []
+    handles = []
+    for spu in lightin_spus:
+        #spu = Lightin_SPU.objects.get(pk=spu_pk)
+        print("正在处理 handle ",spu.handle)
+        image = json.loads(spu.images)
+        if image and len(image) > 0:
+            a = "/"
+            image_split = list(image)[0].split(a)
+
+            image_split[4] = '800x800'
+            spu_im = a.join(image_split)
+        else:
+            spu_im = None
+
+        if spu_im:
+            spus.append(spu)
+            spu_ims.append(spu_im)
+            if spu.handle:
+                handles.append(spu.handle)
+            else:
+                return  False
+        else:
+            return  False
+
+    # 把spus的图拼成一张
+
+    handles_name = ','.join(handles)
+
+    image_marked_url = combo_ad_image_v4(spu_ims, handles_name, lightin_spus, page_no)
+    #print( image_marked_url )
+
+    if not image_marked_url:
+        print("没有生成广告图片")
+        return
+    message = "💋💋Flash Sale ！！！💋💋" \
+              "90% off！Lowest Price Online ！！！" \
+              "🥳🥳🥳 10:00-22:00 Everyday ,Update 100 New items Every Hour !! The quantity is limited !!😇😇" \
+              "All goods are in Riyadh stock,It will be delivered to you in 3-5 days! ❣️❣️" \
+              "How to order?Pls choice the product that you like it , then send us the picture, we will order it for you!🤩🤩"
+    message = message + "\n[" + handles_name+ "]"
+
+    obj, created = YallavipAd.objects.update_or_create(page_no=page_no,
+                                                       spus_name=handles_name,
+                                                       defaults={'image_marked_url': image_marked_url,
+                                                                 'message': message,
+                                                                 'active': True,
+                                                                 'long_ad':True,
+                                                                 'cate':cate,
+
+                                                                 }
+                                                       )
+    #把spu标示为已经打过广告了
+    for spu in spus:
+
+        spu.longaded = True
+        spu.save()
 
 
 

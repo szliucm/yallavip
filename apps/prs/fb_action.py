@@ -1790,6 +1790,8 @@ def combo_ad_image_v4(spu_ims, spus_name,spus, page_no):
                        fill='black')  # 设置文字位置/内容/颜色/字体
             draw1 = ImageDraw.Draw(layer)
 
+            i+=1
+
 
 
 
