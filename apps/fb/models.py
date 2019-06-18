@@ -21,7 +21,7 @@ class PromoteTemplate(models.Model):
     sub_image_count = models.IntegerField( null=False,blank=False, verbose_name="辅图数量")
     price_postion = models.CharField(verbose_name='价格坐标', default='', max_length=100, null=False, blank=False)
     oriprice_postion = models.CharField(verbose_name='原价坐标', default='', max_length=100,  null=False,blank=False)
-
+    freeshipping = models.BooleanField(u"包邮",default=False)
     update_time = models.DateTimeField(verbose_name='更新时间', auto_now=True, null=True, blank=True)
 
     class Meta:
