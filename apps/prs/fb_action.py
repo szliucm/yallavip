@@ -1759,7 +1759,7 @@ def combo_ad_image_v4(spu_ims, spus_name,spus, page_no):
             price2 = int(price1 * random.uniform(5, 6))
 
             # 设置所使用的字体
-            font = ImageFont.truetype(FONT, int(60))
+            font = ImageFont.truetype(FONT, int(50))
             draw = ImageDraw.Draw(layer)
             w, h = draw.textsize(str(price1), font=font)
             price_postion_1 = price_postion[i].split(",")
@@ -1783,10 +1783,10 @@ def combo_ad_image_v4(spu_ims, spus_name,spus, page_no):
             # 简单打货号
             bw, bh = layer.size
             w, h = draw.textsize(handle, font=font)
-            x_position = bw * (2*i+1) /2
-            draw1.rectangle((int(x_position - 5), int(bh - h - 15), int(x_position + 5),
+            x_position = bw * (2*i+1) /4
+            draw1.rectangle((int(x_position - w/2 - 5), int(bh - h - 15), int(x_position + w/2+ 5),
                              int(bh - 5)), fill='yellow')
-            draw1.text((int(x_position), int(bh - h - 10)), handle, font=font,
+            draw1.text((int(x_position -w / 2), int(bh - h - 10)), handle, font=font,
                        fill='black')  # 设置文字位置/内容/颜色/字体
             draw1 = ImageDraw.Draw(layer)
 
