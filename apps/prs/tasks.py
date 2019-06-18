@@ -6983,7 +6983,7 @@ def delete_outstock_yallavipad():
 def set_spu_free_delivery_price():
 
 
-    spus = Lightin_SPU.objects.all()
+    spus = Lightin_SPU.objects.filter(vendor="lightin")
     for spu in spus:
       cal_promote_price(spu)
 
@@ -6994,23 +6994,27 @@ def cal_promote_price(spu):
 
 
     #供货价的5倍 0.25*3.75*5
-    multiple_price = spu.vendor_supply_price * 5
+    # 供货价的3倍 0.25*3.75*3
+    multiple_price = spu.vendor_supply_price * 2.8
     #供应商售价的6折 3.75*0.6
-    discount_price = spu.vendor_sale_price * 2.25
+    # 供应商售价的4折 3.75*0.4
+    discount_price = spu.vendor_sale_price * 1.5
     if multiple_price < discount_price:
         promote_price = round(discount_price)
     else:
         promote_price = round(multiple_price)
 
-    if promote_price >= 40:
+    if promote_price >= 60:
         fee = 25
-        promote_price += fee
+
+        free_shipping_price = promote_price + fee
         spu.free_shipping = True
-        spu.free_shipping_price = promote_price
-        spu.spu_sku.update(free_shipping_price=promote_price, sku_price = promote_price)
+        spu.free_shipping_price = free_shipping_price
+        spu.spu_sku.update(free_shipping_price=free_shipping_price, sku_price = promote_price)
     else:
 
         spu.free_shipping = False
+
         spu.spu_sku.update(sku_price=promote_price)
 
 
