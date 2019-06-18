@@ -512,7 +512,7 @@ def prepare_promote_single(page_no,free_shipping=True):
         else:
             count = cate_spus.count()
         print (cate, "一共有%s个广告可以准备" % (count))
-        cate_spus = list(cate_spus[:count*2])
+        cate_spus = list(cate_spus[:count])
 
         for i in range(int(count)):
 
@@ -541,9 +541,9 @@ def prepare_promote_image_album_single(cate, page_no, lightin_spus):
         images = json.loads(spu.images)
 
         if images and len(images) >= 5:
-            for image in image:
+            for image in images:
                 a = "/"
-                image_split = list(image)[0].split(a)
+                image_split = image.split(a)
 
                 image_split[4] = '800x800'
                 spu_im = a.join(image_split)
@@ -552,6 +552,7 @@ def prepare_promote_image_album_single(cate, page_no, lightin_spus):
                 spu_ims.append(spu_im)
 
         else:
+            print("图片数量太少")
             return  False
 
     # 把spu的图和模版拼在一起

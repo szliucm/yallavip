@@ -2090,21 +2090,18 @@ def combo_ad_image_template_single(spu_ims, spus_name,spus, page_no):
 
     item_count = len(spu_ims)
     print("图片数量", item_count)
-    if item_count == 1:
-        # 一张图
-        # 先做个800x800的画布
-        layer = Image.new("RGB", (1528, 800), "white")
-        bw, bh = layer.size
 
-        layer.paste(clipResizeImg_new(ims[0], 800, 800), (0, 0))
-        layer.paste(clipResizeImg_new(ims[1], 364, 364), (0, 72))
-        layer.paste(clipResizeImg_new(ims[2], 364, 364), (0, 436))
-        layer.paste(clipResizeImg_new(ims[3], 364, 364), (1164, 0))
-        layer.paste(clipResizeImg_new(ims[4], 364, 364), (1164, 364))
+    # 一张图
+    # 先做个1528x800的画布
+    layer = Image.new("RGB", (1528, 800), "white")
+    bw, bh = layer.size
 
+    layer.paste(clipResizeImg_new(ims[0], 800, 800), (0, 0))
+    layer.paste(clipResizeImg_new(ims[1], 364, 364), (0, 72))
+    layer.paste(clipResizeImg_new(ims[2], 364, 364), (0, 436))
+    layer.paste(clipResizeImg_new(ims[3], 364, 364), (1164, 0))
+    layer.paste(clipResizeImg_new(ims[4], 364, 364), (1164, 364))
 
-    else:
-        layer = None
 
 
 
