@@ -2150,7 +2150,7 @@ def combo_ad_image_template_single(spu_ims, spus_name,spus, page_no):
         font = ImageFont.truetype(FONT, int(20))
         draw = ImageDraw.Draw(layer)
         w, h = draw.textsize(str(price2), font=font)
-        price_postion_2 = oriprice_postion[i].split(",")
+        price_postion_2 = oriprice_postion[0].split(",")
 
         draw.text(( int(price_postion_2[0])-w,int(price_postion_2[1])), str(price2), (255, 182, 193), font=font)  # 设置文字位置/内容/颜色/字体
         draw = ImageDraw.Draw(layer)
