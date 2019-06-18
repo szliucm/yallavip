@@ -1732,7 +1732,7 @@ def combo_ad_image_v4(spu_ims, spus_name,page_no):
     if page_no:
         domain = "http://admin.yallavip.com"
         #logo
-        promote = MyPage.objects.get(page_no=page_no).promote_template.get(size="1.91:1")
+        promote = MyPage.objects.get(page_no=page_no).promote_template.get(size="1.91:1",main_image_count=2)
         promote_template = promote.promote_template
 
         destination_url = domain + os.path.join(promote_template.url)
