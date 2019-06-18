@@ -16,6 +16,8 @@ class FunmartSPU(models.Model):
     skuattr = models.TextField(default='', null=True, blank=True, verbose_name="skuattr")
     description = models.TextField(default='', null=True, blank=True, verbose_name="description")
     images = models.TextField(default='', null=True, blank=True, verbose_name="images")
+    images_count = models.IntegerField(u'images_count', default=0, blank=True, null=True)
+
     link = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="link")
     sale_price = models.FloatField(verbose_name="sale_price", default=0)
     skuList = models.TextField(default='', null=True, blank=True, verbose_name="skuList")
