@@ -122,7 +122,7 @@ def sync_cate_album(page_no=None):
                     YallavipAlbum.objects.create(
                         page=page,
                         cate=cate,
-                        catesize=None,
+                        #catesize=None,
                         album=new_album,
                         published=True,
                         publish_error="",
