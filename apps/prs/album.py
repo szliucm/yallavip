@@ -84,7 +84,8 @@ def sync_cate_album(page_no=None):
         cates  = PagePromoteCate.objects.get(mypage__pk=page.pk).cate.all().distinct()
 
         for cate in cates:
-            cate_sizes = cate.cate_size.all().distinct()
+            #cate_sizes = cate.cate_size.all().distinct()
+            cate_sizes = False
             #有尺码和无尺码的要分开处理
             if cate_sizes:
                 # 相册已经有了的，就设为active=True
