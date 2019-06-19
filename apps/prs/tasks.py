@@ -44,7 +44,7 @@ if DEBUG:
     appToken = "85413bb8f6a270e1ff4558af80f2bef5"
     appKey = "9dca0be4c02bed9e37c1c4189bc1f41b"
 else:
-    WAREHOUSE_CODE = "W07"
+    WAREHOUSE_CODE = "W08"
     warehouse_code_arr = ["W07", "W08"]
     shipping_methods = ["ARAMEX_KSA","FETCHR_SAUDI_DOM"]
     #shipping_method = "FETCHR_SAUDI_DOM"

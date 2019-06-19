@@ -1,5 +1,7 @@
 from .models import *
 
+
+
 def funmart_cates():
     cates = Lightin_SPU.objects.filter(vendor='funmart').values_list("cate_1","cate_2", "cate_3").distinct()
 
@@ -40,3 +42,5 @@ def funmart_cates():
 
             }
         )
+
+
