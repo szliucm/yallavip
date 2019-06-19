@@ -311,7 +311,7 @@ def prepare_yallavip_photoes_v2(page_no=None):
                     product_list.append(product)
 
             else:
-                products_to_add = Lightin_SPU.objects.filter(sellable__gt=0).filter(con, published=True).exclude(id__in=
+                products_to_add = Lightin_SPU.objects.filter(vendor="funmart",sellable__gt=0).filter(con).exclude(id__in=
                                                 LightinAlbum.objects.filter(
                                                     yallavip_album__pk=album.pk,
                                                     lightin_spu__isnull=False).values_list(
@@ -436,7 +436,7 @@ def filter_product(cate):
     elif cate.level == 3:
         q_cate.children.append(('cate_3', cate.name))
     '''
-    q_cate.children.append(('breadcrumb', cate.tags))
+    q_cate.children.append(('breadcrumb__icontains', cate.tags))
 
     #如果没尺码，就全上
     # 如果有尺码，均码的全上（one-size, free-size）
