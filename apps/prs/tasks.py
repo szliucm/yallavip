@@ -2604,8 +2604,8 @@ def get_wms_quantity_page(page, barcodes):
         "page": page,
         "product_sku": "",
         "product_sku_arr": barcodes,
-        "warehouse_code": "",
-        "warehouse_code_arr": warehouse_code_arr,
+        "warehouse_code": warehouse_code,
+        "warehouse_code_arr": [],
     }
 
     service = "getProductInventory"
