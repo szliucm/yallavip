@@ -475,13 +475,13 @@ def batch_sku(batch_no):
     mysql = "update funmart_batchsku b ,funmart_funmartspu p set b.sale_type = p.sale_type  where b.SPU = p.SPU"
     my_custom_sql(mysql)
 
-    BatchSKU.objects.filter(sale_type = "hot").update(action = "Put Away")
-    BatchSKU.objects.filter(order_count__gte=3).update(action="Put Away")
+    BatchSKU.objects.filter(batch_no=batch_no, sale_type = "hot").update(action = "Put Away")
+    BatchSKU.objects.filter(batch_no=batch_no, order_count__gte=3).update(action="Put Away")
 
-    BatchSKU.objects.filter(sale_type="normal", order_count__lt=3).update(action="Normal_Case")
-    BatchSKU.objects.filter(Q(skuattr__icontains="One Size")|Q(skuattr__icontains="Free Size"), sale_type="drug").update(action="Dead_No_Size")
+    BatchSKU.objects.filter(batch_no=batch_no, sale_type="normal", order_count__lt=3).update(action="Normal_Case")
+    BatchSKU.objects.filter(Q(skuattr__icontains="One Size")|Q(skuattr__icontains="Free Size"),batch_no=batch_no,  sale_type="drug").update(action="Dead_No_Size")
     BatchSKU.objects.filter(~Q(skuattr__icontains="One Size") ,~Q(skuattr__icontains="Free Size"),
-                            sale_type="drug").update(action="Dead_Size")
+                            batch_no=batch_no, sale_type="drug").update(action="Dead_Size")
 
 def download_spus_images():
     spu_pks = FunmartSPU.objects.filter(image_downloaded=False).values_list("pk",flat=True)

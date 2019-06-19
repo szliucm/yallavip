@@ -220,6 +220,11 @@ def scanpackageitem(request):
             item['scan_result'] = 'Cannot find package with the track_code'
             return JsonResponse(item)
 
+        if  funmartorder.batch_no != int(batch_no):
+            item['scan_result'] = 'The batch_no not match . The real is '+  str(funmartorder.batch_no)
+            return JsonResponse(item)
+
+
 
         if not barcode  :
             item['scan_result'] = 'Please Input Barcode'
