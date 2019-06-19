@@ -12,6 +12,7 @@ import  re
 from django.utils.safestring import mark_safe
 from xadmin.filters import manager as filter_manager, FILTER_PREFIX, SEARCH_VAR, DateFieldListFilter, \
     RelatedFieldSearchFilter
+from django.db.models import Q
 
 from .models import *
 from fb.models import MyPage,MyAlbum
