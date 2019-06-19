@@ -46,14 +46,8 @@ class MyCategoryResource(resources.ModelResource):
 @xadmin.sites.register(MyCategory)
 class MyCategoryAdmin(object):
     def spu_count(self, obj):
-        q_cate = Q()
-        q_cate.connector = 'AND'
 
-
-        q_cate.children.append(("cate_"+str(obj.level), obj.name))
-
-
-        return  Lightin_SPU.objects.filter(q_cate, sellable__gt=0).count()
+        return  Lightin_SPU.objects.filter( sellable__gt=0,breadcrumb__icontains=obj.tags).count()
 
     spu_count.short_description = "SPU数量"
 
