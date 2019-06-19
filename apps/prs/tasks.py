@@ -45,6 +45,7 @@ if DEBUG:
     appKey = "9dca0be4c02bed9e37c1c4189bc1f41b"
 else:
     WAREHOUSE_CODE = "W07"
+    warehouse_code_arr = ["W07", "W08"]
     shipping_methods = ["ARAMEX_KSA","FETCHR_SAUDI_DOM"]
     #shipping_method = "FETCHR_SAUDI_DOM"
     #shipping_method = "ARAMEX_KSA"
@@ -2579,9 +2580,8 @@ def sync_wms_quantity():
         print(mysql)
         my_custom_sql(mysql)
 
-def get_wms_quantity(barcodes=[], warehouse_code=None):
-    if not warehouse_code:
-        warehouse_code = WAREHOUSE_CODE
+def get_wms_quantity(barcodes=[]):
+
 
 
     page = 1
@@ -2592,20 +2592,20 @@ def get_wms_quantity(barcodes=[], warehouse_code=None):
     while page < pages and result:
 
         print("正在处理第 %s 页" % page)
-        get_wms_quantity_page.apply_async((page, barcodes,warehouse_code), queue='wms')
+        get_wms_quantity_page.apply_async((page, barcodes), queue='wms')
 
         page += 1
 
 @shared_task
-def get_wms_quantity_page(page, barcodes, warehouse_code):
+def get_wms_quantity_page(page, barcodes):
 
     param = {
         "pageSize": "100",
         "page": page,
         "product_sku": "",
         "product_sku_arr": barcodes,
-        "warehouse_code": warehouse_code,
-        "warehouse_code_arr": []
+        "warehouse_code": "",
+        "warehouse_code_arr": warehouse_code_arr,
     }
 
     service = "getProductInventory"
