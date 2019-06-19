@@ -44,7 +44,8 @@ if DEBUG:
     appToken = "85413bb8f6a270e1ff4558af80f2bef5"
     appKey = "9dca0be4c02bed9e37c1c4189bc1f41b"
 else:
-    WAREHOUSE_CODE = "W08"
+    #WAREHOUSE_CODE = "W08"
+    warehouse_code = "W08"
     warehouse_code_arr = ["W07", "W08"]
     shipping_methods = ["ARAMEX_KSA","FETCHR_SAUDI_DOM"]
     #shipping_method = "FETCHR_SAUDI_DOM"
@@ -2260,7 +2261,7 @@ def fulfill_order_lightin(order):
     param = {
         "platform": "B2C",
         "allocated_auto": "1",
-        "warehouse_code": WAREHOUSE_CODE,
+        "warehouse_code": warehouse_code,
         "shipping_method": shipping_method,
         "reference_no": order.order_no,
         # "order_desc":"\u8ba2\u5355\u63cf\u8ff0",
