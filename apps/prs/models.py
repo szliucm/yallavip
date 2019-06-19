@@ -17,6 +17,7 @@ class MyCategory(models.Model):
     name = models.CharField(u'品类名', default='', max_length=100, null=True, blank=True)
     level = models.BigIntegerField(u'层级', default=0, null=True, blank=True)
     tags = models.CharField(u'tags', default='', max_length=500, null=True, blank=True)
+    vendor = models.CharField(u'vendor', default='', max_length=500, null=True, blank=True)
 
     active = models.BooleanField(default=True, verbose_name="可用")
     published = models.BooleanField(default=False, verbose_name="已发布")
