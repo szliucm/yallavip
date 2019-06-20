@@ -2541,6 +2541,9 @@ def get_wms_product_page(page,update_start_time):
             Lightin_barcode.objects.update_or_create(
                 barcode=data.get("product_sku"),
                 defaults={
+                    "reference_no": data.get("reference_no"),
+
+
                     "product_status": data.get("product_status"),
                     "product_title": data.get("product_title"),
                     "product_weight": data.get("product_weight"),
@@ -2584,7 +2587,6 @@ def sync_wms_quantity():
                 my_custom_sql(mysql)
 
 def get_wms_quantity(warehouse_code, barcodes=[]):
-
 
 
     page = 1

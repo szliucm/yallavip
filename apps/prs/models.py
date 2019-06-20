@@ -263,7 +263,9 @@ class Lightin_barcode(models.Model):
     SKU = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="SKU")
 
     barcode = models.CharField(u'barcode', default='', max_length=100, blank=True)
+    reference_no = models.CharField(u'reference_no', default='', max_length=100, blank=True)
     quantity = models.IntegerField(u'数量', default=0, blank=True, null=True)
+
     # sellable = models.IntegerField(u'可销售库存', default=0, blank=True, null=True)
     # occupied = models.IntegerField(u'订单占用库存', default=0, blank=True, null=True)
     o_quantity = models.IntegerField(u'oms_可用数量', default=0, blank=True, null=True)
