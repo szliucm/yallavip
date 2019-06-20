@@ -13,6 +13,7 @@ from prs.models import *
 
 from shop.photo_mark import yallavip_mark_image
 from prs.fb_action import combo_ad_image_template_single
+import random
 
 #根据page cate 规则，更新page的相册
 #将page中失效的相册找出来并删掉
@@ -356,7 +357,7 @@ def prepare_yallavip_album_material(page_no=None):
 #相册和主推品类结合选品，打广告
 
 def prepare_promote_v2(page_no, free_shipping=True):
-    import random
+
 
     from django.db.models import Count
 
