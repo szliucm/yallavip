@@ -7081,7 +7081,7 @@ def breadcrumb_cates_v1():
         )
 
 def spu_cates_v1():
-    spus = Lightin_SPU.objects.all()
+    spus = Lightin_SPU.objects.filter(vendor="lightin")
 
     for spu in spus:
         if spu.breadcrumb :
