@@ -7099,5 +7099,7 @@ def spu_cates_v1():
         if len(cates)>2:
             spu.cate_3 = cates[2].strip()
 
+        spu.tags = ",".join(cates)
+
         spu.save()
 

@@ -63,6 +63,7 @@ class Lightin_SPU(models.Model):
 
     title = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="title")
     breadcrumb = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="breadcrumb")
+    tags = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="tags")
 
     currency = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="currency")
 
