@@ -12,10 +12,10 @@ def funmart_cates():
         if not cate:
             continue
 
-        tag_list = list(cate)
+
 
         if cate[0]:
-            tag = tag_list
+
             cate_1 = ("", cate[0].strip() , 1, ",".join(list(cate)[:1]))
             if cate_1 not in catelist:
                 catelist.append(cate_1)
