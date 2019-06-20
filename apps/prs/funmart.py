@@ -71,19 +71,24 @@ def cal_promote_price(spu):
 
 
 
-    free_shipping_price = promote_price + 25
-    spu.free_shipping_price = free_shipping_price
-    spu.spu_sku.update(free_shipping_price=free_shipping_price, sku_price = promote_price)
+    #小于5块的都卖5块，小于十块都卖10块
+    if promote_price <5:
+        promote_price = 5
+    elif promote_price <10:
+        promote_price = 10
 
+    #价格大于25的，都包邮
+    if promote_price >= 25:
+        spu.free_shipping = True
+    else:
+        spu.free_shipping = False
+
+    free_shipping_price = promote_price + 25
+    spu.spu_sku.update(free_shipping_price=free_shipping_price, sku_price = promote_price)
 
     #修改spu价格
     spu.free_shipping_price = free_shipping_price
     spu.yallavip_price = promote_price
-
     spu.promoted = True
     spu.save()
-
-
-
-
     return  True
