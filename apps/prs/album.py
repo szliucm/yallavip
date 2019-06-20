@@ -504,7 +504,7 @@ def prepare_promote_single(page_no,free_shipping=True):
         return
 
     # 取库存大、单价高、已经发布到相册 且还未打广告，单件包邮的商品
-    spus_all = Lightin_SPU.objects.filter(~Q(handle=""),handle__isnull=False,vendor="lightin", aded=False,sellable__gt=5, free_shipping=free_shipping)
+    spus_all = Lightin_SPU.objects.filter(~Q(handle=""),handle__isnull=False,vendor="funmart", aded=False,sellable__gt=5, free_shipping=free_shipping)
     # 把主推品类的所有适合的产品都拿出来打广告
 
     for cate in cates:
@@ -525,10 +525,10 @@ def prepare_promote_single(page_no,free_shipping=True):
             spus = [cate_spus[i]]
             print("当前处理 ", i, cate.tags, page_no, cate_spus[i].handle)
             #prepare_promote_image_album_v3(cate.tags, page_no, spu_pks)
-            prepare_promote_image_album_single(cate, page_no, spus)
+            prepare_promote_image_album_single(cate, page_no, spus, cate_spus[i].vendor)
 
 
-def prepare_promote_image_album_single(cate, page_no, lightin_spus):
+def prepare_promote_image_album_single(cate, page_no, lightin_spus, vendor):
 
 
 
@@ -547,11 +547,14 @@ def prepare_promote_image_album_single(cate, page_no, lightin_spus):
 
         if images and len(images) >= 5:
             for image in images:
-                a = "/"
-                image_split = image.split(a)
+                if vendor =="lightin":
+                    a = "/"
+                    image_split = image.split(a)
 
-                image_split[4] = '800x800'
-                spu_im = a.join(image_split)
+                    image_split[4] = '800x800'
+                    spu_im = a.join(image_split)
+                else:
+                    spu_im=image
 
                 spus.append(spu)
                 spu_ims.append(spu_im)

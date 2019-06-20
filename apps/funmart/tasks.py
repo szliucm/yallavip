@@ -613,27 +613,8 @@ def deal_funmart_skus():
     Lightin_SKU.objects.bulk_create(sku_list)
 
 def deal_funmart_barcodes():
-    Lightin_barcode.objects.filter(SKU="")
-
-    skus_to_add = FunmartSKU.objects.all() \
-        .exclude(SKU__in=list(Lightin_SKU.objects.filter(lightin_spu__vendor="funmart").values_list('SKU', flat=True))) \
-
-    print("有%s个sku需要新增" % skus_to_add.count())
-
-    sku_list = []
-    for sku_to_add in skus_to_add:
-        sku = Lightin_SKU(
-            SPU=sku_to_add.SPU,
-            SKU=sku_to_add.SKU,
-            vendor_sale_price=sku_to_add.sale_price,
-            vendor_supply_price=sku_to_add.sale_price * 0.1,
-            skuattr = sku_to_add.skuattr,
-            image = sku_to_add.images,
+    from prs.tasks import my_custom_sql
+    mysql = "update prs_lightin_barcode l, funmart_yallavipbarcode f set l.SKU = f.SKU where l.barcode = f.barcode"
 
 
-        )
-
-        sku_list.append(sku)
-
-    #print(sku_list)
-    Lightin_SKU.objects.bulk_create(sku_list)
+    my_custom_sql(mysql)
