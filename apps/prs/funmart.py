@@ -44,3 +44,46 @@ def funmart_cates():
         )
 
 
+#把价格大于40的，全部设置成单件包邮
+def set_spu_free_delivery_price():
+
+
+    spus = Lightin_SPU.objects.filter(vendor="funmart")
+    for spu in spus:
+      cal_promote_price(spu)
+
+#计算某个spu的促销价，修改sku，spu的促销价
+#原价大于40的，都设成单件包邮
+def cal_promote_price(spu):
+
+
+
+    #供货价的6倍 3.75*6
+
+    multiple_price = spu.vendor_supply_price * 22.5
+
+    # 供应商售价的6折 3.75*0.6
+    discount_price = spu.vendor_sale_price * 2.25
+    if multiple_price < discount_price:
+        promote_price = round(discount_price)
+    else:
+        promote_price = round(multiple_price)
+
+
+    fee = 25
+    free_shipping_price = promote_price + fee
+    spu.free_shipping_price = free_shipping_price
+    spu.spu_sku.update(free_shipping_price=free_shipping_price, sku_price = promote_price)
+
+
+    #修改spu价格
+    spu.free_shipping_price = free_shipping_price
+    spu.yallavip_price = promote_price
+
+    spu.promoted = True
+    spu.save()
+
+
+
+
+    return  True

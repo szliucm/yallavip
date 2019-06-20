@@ -44,8 +44,8 @@ if DEBUG:
     appToken = "85413bb8f6a270e1ff4558af80f2bef5"
     appKey = "9dca0be4c02bed9e37c1c4189bc1f41b"
 else:
-    #WAREHOUSE_CODE = "W08"
-    warehouse_code = "W08"
+    WAREHOUSE_CODE = "W07"
+    #warehouse_code = "W08"
     warehouse_code_arr = ["W07", "W08"]
     shipping_methods = ["ARAMEX_KSA","FETCHR_SAUDI_DOM"]
     #shipping_method = "FETCHR_SAUDI_DOM"
@@ -2261,7 +2261,7 @@ def fulfill_order_lightin(order):
     param = {
         "platform": "B2C",
         "allocated_auto": "1",
-        "warehouse_code": warehouse_code,
+        "warehouse_code": WAREHOUSE_CODE,
         "shipping_method": shipping_method,
         "reference_no": order.order_no,
         # "order_desc":"\u8ba2\u5355\u63cf\u8ff0",
@@ -2572,33 +2572,35 @@ def sync_wms_quantity():
         "UPDATE prs_lightin_spu INNER JOIN ( SELECT SPU, sum(o_sellable) as quantity FROM prs_lightin_sku GROUP BY SPU ) b ON prs_lightin_spu.SPU = b.SPU SET prs_lightin_spu.sellable = b.quantity",
     ]
 
+    warehouse_codes = Lightin_barcode.objects.values_list("warehouse_code",flat=True).distinct()
+    for warehouse_code in warehouse_codes:
+        if warehouse_code:
+            barcodes = Lightin_barcode.objects.filter(warehouse_code= warehouse_code,synced=False).values_list("barcode",flat=True)
+            if barcodes:
+                get_wms_quantity(warehouse_code,list(barcodes))
 
-    barcodes = Lightin_barcode.objects.filter(synced=False).values_list("barcode",flat=True)
-    if barcodes:
-        get_wms_quantity(list(barcodes))
+            for mysql in mysqls:
+                print(mysql)
+                my_custom_sql(mysql)
 
-    for mysql in mysqls:
-        print(mysql)
-        my_custom_sql(mysql)
-
-def get_wms_quantity(barcodes=[]):
+def get_wms_quantity(warehouse_code, barcodes=[]):
 
 
 
     page = 1
-    pages, result = get_wms_quantity_page(page, barcodes)
+    pages, result = get_wms_quantity_page(warehouse_code,page, barcodes)
 
     print("一共 %s页" % pages)
 
     while page < pages and result:
 
         print("正在处理第 %s 页" % page)
-        get_wms_quantity_page.apply_async((page, barcodes), queue='wms')
+        get_wms_quantity_page.apply_async((warehouse_code, page, barcodes), queue='wms')
 
         page += 1
 
 @shared_task
-def get_wms_quantity_page(page, barcodes):
+def get_wms_quantity_page(warehouse_code,page, barcodes):
 
     param = {
         "pageSize": "100",
