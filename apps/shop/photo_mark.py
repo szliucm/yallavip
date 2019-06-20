@@ -171,10 +171,14 @@ def deal_image(im,logo = None ,handle = None, price = None,price1 = None, price2
         font = ImageFont.truetype(FONT, int(45 * scale))
         draw1 = ImageDraw.Draw(im)
         # 简单打货号
-        draw1.rectangle((int(bw / 2 - 85 * scale), int(bh - 70 * scale - 2), int(bw / 2 + 85 * scale),
-                         int(bh - 8 * scale)), fill='yellow')
-        draw1.text((int(bw / 2 - 80 * scale), int(bh - 70 * scale)), handle, font=font,
-                   fill=(0, 0, 0))  # 设置文字位置/内容/颜色/字体
+        w, h = draw.textsize(handle, font=font)
+        draw1.rectangle((int((bw - w) / 2 - 5), int(bh - h - 15), int((bw + w) / 2 + 5),
+                         int(bh - 5)), fill='yellow')
+        draw1.text((int((bw - w) / 2), int(bh - h - 10)), handle, font=font,
+                   fill='black')  # 设置文字位置/内容/颜色/字体
+
+
+
         '''
         #两种打货号的方式：组合商品和单品
         if(version == 'combo'):
