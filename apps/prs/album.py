@@ -436,7 +436,7 @@ def filter_product(cate):
     elif cate.level == 3:
         q_cate.children.append(('cate_3', cate.name))
     '''
-    q_cate.children.append(('breadcrumb__icontains', cate.tags))
+    q_cate.children.append(('tags__icontains', cate.tags))
 
     #如果没尺码，就全上
     # 如果有尺码，均码的全上（one-size, free-size）
