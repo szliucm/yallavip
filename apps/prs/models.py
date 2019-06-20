@@ -40,7 +40,7 @@ class MyCategory(models.Model):
 
     def __str__(self):
         # return self.tags
-        return str(self.level - 1)+'-'+self.super_name + '-'+ str(self.level) + '-' + self.name
+        return str(self.vendor)+'-'+str(self.level - 1)+'-'+self.super_name + '-'+ str(self.level) + '-' + self.name
 
 
 class Lightin_SPU(models.Model):
