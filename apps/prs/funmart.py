@@ -70,8 +70,8 @@ def cal_promote_price(spu):
         promote_price = round(multiple_price)
 
 
-    fee = 25
-    free_shipping_price = promote_price + fee
+
+    free_shipping_price = promote_price + 25
     spu.free_shipping_price = free_shipping_price
     spu.spu_sku.update(free_shipping_price=free_shipping_price, sku_price = promote_price)
 
