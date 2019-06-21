@@ -97,6 +97,7 @@ CITY = (
     ("Wadi El Dwaser", "Wadi El Dwaser"),
     ("Yanbu", "Yanbu"),
     ("Yanbu Al Baher", "Yanbu Al Baher"),
+    ("Shaqra", "Shaqra"),
 
 )
 
