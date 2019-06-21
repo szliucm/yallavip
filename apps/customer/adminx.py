@@ -207,12 +207,12 @@ class CustomerAdmin(object):
                 count += draft.quantity
                 #print (sku, subtotal, count)
                 image = None
-
+                spu = sku.lightin_spu
                 if sku.image_marked:
                     image = sku.image_marked
-                elif sku.image:
-                    image = sku.image
-                 #   print("sku 图片")
+                elif spu.vendor == "funmart":
+                    images = json.loads(sku.image)
+                    image = images[0]
                 else:
 
                     spu = sku.lightin_spu
