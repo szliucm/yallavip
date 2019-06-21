@@ -191,7 +191,7 @@ class Lightin_SKUAdmin(object):
 
     def sku_photo(self, obj):
 
-        if obj.image:
+        if obj.lightin_spu.vendor =="funmart" and obj.image:
             images = json.loads(obj.image)
             if len(images) >0:
                 img = '<a><img src="%s" width="100px"></a>' % (images[0])
