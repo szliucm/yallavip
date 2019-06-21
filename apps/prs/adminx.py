@@ -190,12 +190,15 @@ class Lightin_SKUAdmin(object):
     photo.short_description = "spu图片"
 
     def sku_photo(self, obj):
-        if obj.image is not None and len(obj.image)>0 :
-           img = '<a><img src="%s" width="100px"></a>' % (obj.image)
-        else:
-            img = "no photo"
 
-        return mark_safe(img)
+        if obj.image:
+            images = json.loads(obj.image)
+            if len(images) >0:
+                img = '<a><img src="%s" width="100px"></a>' % (images[0])
+                return mark_safe(img)
+
+
+
 
     sku_photo.short_description = "sku图片"
 
@@ -214,7 +217,7 @@ class Lightin_SKUAdmin(object):
 
     handle.short_description = "handle"
 
-    list_display = ["SKU", "SPU", 'cn_name', "o_sellable","sku_photo", "handle","sku_price","free_shipping_price", "photo","skuattr",]
+    list_display = ["SKU", "SPU", 'cn_name', "o_sellable","sku_photo", "handle","sku_price","free_shipping_price", "skuattr",]
 
     # 'sku_name','img',
     search_fields = ["SPU", "SKU","lightin_spu__handle",]
