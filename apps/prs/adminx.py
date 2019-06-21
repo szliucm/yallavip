@@ -191,11 +191,23 @@ class Lightin_SKUAdmin(object):
 
     def sku_photo(self, obj):
 
-        if obj.lightin_spu.vendor =="funmart" and obj.image:
-            images = json.loads(obj.image)
-            if len(images) >0:
-                img = '<a><img src="%s" width="100px"></a>' % (images[0])
-                return mark_safe(img)
+        if obj.lightin_spu.vendor =="funmart":
+            if obj.image:
+                images = json.loads(obj.image)
+                if len(images) >0:
+                    img = '<a><img src="%s" width="100px"></a>' % (images[0])
+                    return mark_safe(img)
+        elif obj.lightin_spu.images and len(obj.lightin_spu.images)>0 :
+            photos = json.loads(obj.lightin_spu.images)
+            img = ''
+
+            for photo in photos:
+                try:
+                    img = img + '<a><img src="%s" width="384px"></a>' % (photo)
+                except Exception as e:
+                    img = "获取图片出错 "+ e
+
+            return mark_safe(img)
 
 
 
