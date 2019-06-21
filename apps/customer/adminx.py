@@ -109,24 +109,45 @@ class CustomerAdmin(object):
 
 
 
+            if lightin_spu.vendor =="lightin":
+                if lightin_spu.images_dict :
 
-            if lightin_spu.images_dict :
-                images= json.loads(lightin_spu.images_dict).values()
-                n=0
-                for image in images:
-                    '''
-                    a = "/"
-                    image_split = image.split(a)
+                    images= json.loads(lightin_spu.images_dict).values()
+                    n=0
+                    for image in images:
+                        '''
+                        a = "/"
+                        image_split = image.split(a)
+    
+                        image_split[4] = '800x800'
+                        photo = a.join(image_split)
+                        print("spu 图片", lightin_spu, photo)
+                        img = img + '<a><img src="%s" width="100px"></a>' % (photo)
+                        '''
+                        img = img + '<a><img src="%s" width="100px"></a>' % (image)
+                        n+=1
+                        if n%4 == 0:
+                            img += "<br>"
+            else:
+                if lightin_spu.images:
+                    images = json.loads(lightin_spu.images)
+                    n = 0
+                    for image in images:
+                        '''
+                        a = "/"
+                        image_split = image.split(a)
 
-                    image_split[4] = '800x800'
-                    photo = a.join(image_split)
-                    print("spu 图片", lightin_spu, photo)
-                    img = img + '<a><img src="%s" width="100px"></a>' % (photo)
-                    '''
-                    img = img + '<a><img src="%s" width="100px"></a>' % (image)
-                    n+=1
-                    if n%4 == 0:
-                        img += "<br>"
+                        image_split[4] = '800x800'
+                        photo = a.join(image_split)
+                        print("spu 图片", lightin_spu, photo)
+                        img = img + '<a><img src="%s" width="100px"></a>' % (photo)
+                        '''
+                        img = img + '<a><img src="%s" width="100px"></a>' % (image)
+                        n += 1
+                        if n % 4 == 0:
+                            img += "<br>"
+
+
 
 
 
@@ -627,7 +648,7 @@ class DraftAdmin(object):
         elif sku.image:
             images = json.loads(sku.image)
             image = images[0]
-            print(image)
+
         else:
 
            if spu.images_dict:
