@@ -637,9 +637,10 @@ class DraftAdmin(object):
         # 如果sku有属性图片则用属性图片，否则用spu图片的第一张
         image = None
         sku = obj.lightin_sku
+        spu = sku.lightin_spu
         if sku.comboed:
             image = sku.image_marked
-        elif sku.image:
+        elif spu.vendor == "funmart":
             images = json.loads(sku.image)
             image = images[0]
 
