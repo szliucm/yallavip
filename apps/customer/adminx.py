@@ -128,7 +128,7 @@ class CustomerAdmin(object):
                         n+=1
                         if n%4 == 0:
                             img += "<br>"
-            else:
+            elif lightin_spu.vendor =="funmart":
                 if lightin_spu.images:
                     images = json.loads(lightin_spu.images)
                     n = 0
@@ -147,15 +147,9 @@ class CustomerAdmin(object):
                         if n % 4 == 0:
                             img += "<br>"
 
-
-
-
-
-
-
-
             else:
                 img = img + "no photo"
+
         lightin_skus = Lightin_SKU.objects.filter(SKU__in=handles, o_sellable__gt=0).distinct()
 
         for lightin_sku in lightin_skus:
