@@ -108,6 +108,8 @@ class CustomerAdmin(object):
                 img += '<a>%s   [ %s sets]  [ %s SR]<br>%s</a><br>' % (sku[0],  str(sku[1]),price, sku[3])
 
 
+
+
             if lightin_spu.images_dict :
                 images= json.loads(lightin_spu.images_dict).values()
                 n=0
@@ -623,12 +625,11 @@ class DraftAdmin(object):
         if sku.comboed:
             image = sku.image_marked
         elif sku.image:
-            image = sku.image
-            print("sku 图片")
+            images = json.loads(sku.image)
+            image = images[0]
         else:
 
-            spu = sku.lightin_spu
-            if spu.images_dict:
+           if spu.images_dict:
                 image = json.loads(spu.images_dict).values()
                 if image and len(image) > 0:
                     a = "/"

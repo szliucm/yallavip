@@ -590,7 +590,7 @@ def deal_funmart_spus():
 def deal_funmart_skus():
 
     skus_to_add = FunmartSKU.objects.all() \
-        .exclude(SKU__in=list(Lightin_SKU.objects.filter(lightin_spu__vendor="funmart").values_list('SKU', flat=True))) \
+        .exclude(SKU__in=list(Lightin_SKU.objects.filter(lightin_spu__vendor="funmart").values_list('SKU', flat=True)))
 
     print("有%s个sku需要新增" % skus_to_add.count())
 
@@ -611,6 +611,27 @@ def deal_funmart_skus():
 
     #print(sku_list)
     Lightin_SKU.objects.bulk_create(sku_list)
+
+def deal_funmart_barcodes():
+    barcodes_to_add = FunmartBarcode.objects.all() \
+        .exclude(barcode__in=list(Lightin_barcode.objects.values_list('barcode', flat=True)))
+
+    print("有%barcode" % barcodes_to_add.count())
+
+    barcode_list = []
+    for barcode_to_add in barcodes_to_add:
+        barcode = Lightin_barcode(
+            SPU=sku_to_add.SPU,
+            barcode=barcode_to_add.barcode,
+
+
+        )
+
+        barcode_list.append(barcode_to_add)
+
+    #print(sku_list)
+    Lightin_barcode.objects.bulk_create(barcode_list)
+
 
 def deal_funmart_barcodes():
     from prs.tasks import my_custom_sql
