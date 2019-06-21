@@ -645,7 +645,7 @@ class DraftAdmin(object):
 
         else:
             spu = sku.lightin_spu
-           if spu.images_dict:
+            if spu.images_dict:
                 image = json.loads(spu.images_dict).values()
                 if image and len(image) > 0:
                     a = "/"
