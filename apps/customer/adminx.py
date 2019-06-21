@@ -627,6 +627,7 @@ class DraftAdmin(object):
         elif sku.image:
             images = json.loads(sku.image)
             image = images[0]
+            print(image)
         else:
 
            if spu.images_dict:
