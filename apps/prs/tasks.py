@@ -2119,7 +2119,7 @@ def get_barcodes(sku, quantity, price):
 
     # 每个可能的条码
     for lightin_barcode in lightin_barcodes:
-        print("处理每个可能的条码")
+        print("处理每个可能的条码", lightin_barcode)
         if quantity == 0:
             # 已经凑齐了sku所需的数量
             break
