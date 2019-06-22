@@ -140,6 +140,19 @@ class FunmartSKUAdmin(object):
 
 @xadmin.sites.register(YallavipBarcode)
 class YallavipBarcodeAdmin(object):
+    def show_photo(self, obj):
+
+        try:
+
+            photos = json.loads(obj.funmart_sku.images)
+            img = mark_safe('<img src="%s" width="100px" />' % (photos[0]))
+            print(img)
+        except Exception as e:
+            img = ''
+        return img
+
+    show_photo.short_description = 'photo'
+    show_photo.allow_tags = True
 
     def show_cate(self, obj):
         if obj.funmart_sku.funmart_spu.cate_3 :
@@ -154,7 +167,7 @@ class YallavipBarcodeAdmin(object):
 
     show_cate.short_description = "Category"
 
-    list_display = ["barcode", "SKU", "show_cate",]
+    list_display = ["barcode", "SKU", "show_photo","show_cate",]
     list_editable = []
 
     search_fields = ["barcode","SKU", ]

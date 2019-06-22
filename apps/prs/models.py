@@ -467,6 +467,9 @@ class PagePromoteCate(models.Model):
                                           related_name="cate_promote")
     promote_cate_active = models.BooleanField(default=False, verbose_name="promote_cate可用")
 
+    discount = models.IntegerField( null=False,blank=False, verbose_name="折扣")
+    multiple = models.IntegerField(null=False, blank=False, verbose_name="倍数")
+
     class Meta:
         verbose_name = "page主推cate"
         verbose_name_plural = verbose_name

@@ -58,12 +58,12 @@ def cal_promote_price(spu):
 
 
 
-    #供货价的6倍 3.75*6
+    #供货价的7倍 3.75*7
 
-    multiple_price = spu.vendor_supply_price * 22.5
+    multiple_price = spu.vendor_supply_price * 26.25
 
-    # 供应商售价的6折 3.75*0.6
-    discount_price = spu.vendor_sale_price * 2.25
+    # 供应商售价的7折 3.75*0.7
+    discount_price = spu.vendor_sale_price * 2.625
     if multiple_price < discount_price:
         promote_price = round(discount_price)
     else:
@@ -71,19 +71,19 @@ def cal_promote_price(spu):
 
 
 
-    #小于5块的都卖5块，小于十块都卖10块
+    #小于5块的都卖10块，小于20块都加10块
     if promote_price <5:
-        promote_price = 5
-    elif promote_price <10:
-        promote_price = 10
+        promote_price += 5
+    elif promote_price <20:
+        promote_price += 10
 
-    #价格大于25的，都包邮
-    if promote_price >= 25:
+    #价格大于30的，都包邮
+    if promote_price >= 30:
         spu.free_shipping = True
     else:
         spu.free_shipping = False
 
-    free_shipping_price = promote_price + 25
+    free_shipping_price = promote_price + 30
     spu.spu_sku.update(free_shipping_price=free_shipping_price, sku_price = promote_price)
 
     #修改spu价格
