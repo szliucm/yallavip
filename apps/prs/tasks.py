@@ -2245,9 +2245,11 @@ def fulfill_order_lightin(order):
     service = "createOrder"
     items = []
 
+
+
     for order_item in order.order_orderdetail_lightin.all():
         # print(order_item)
-
+        warehouse_code = order_item.barcode.warehouse_code
         item = {
             "product_sku": order_item.barcode.barcode,
             # "product_name_en":title,
@@ -2261,7 +2263,7 @@ def fulfill_order_lightin(order):
     param = {
         "platform": "B2C",
         "allocated_auto": "1",
-        "warehouse_code": WAREHOUSE_CODE,
+        "warehouse_code": warehouse_code,
         "shipping_method": shipping_method,
         "reference_no": order.order_no,
         # "order_desc":"\u8ba2\u5355\u63cf\u8ff0",
