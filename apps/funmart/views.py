@@ -234,6 +234,9 @@ def scanpackageitem(request):
 
 
         else:
+
+
+
             #如果有SKU，就用SKU查，否则就用原来的item_code查
             if SKU:
                 try:
@@ -260,6 +263,13 @@ def scanpackageitem(request):
 
                 #print("get from yallavip", funmartbarcode, funmart_sku)
                 SKU = funmart_sku.SKU
+
+            # 先查一下barcode是否已经记录过
+            yallavip_barcode = YallavipBarcode.objects.filter(barcode=barcode)
+
+            if yallavip_barcode and yallavip_barcode[0].SKU != SKU:
+                item['scan_result'] = 'Barcode has recorded with other SKU'
+                return JsonResponse(item)
 
             #找到SKU后拼接相应的信息
             try:
