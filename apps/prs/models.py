@@ -315,9 +315,12 @@ class Lightin_barcode(models.Model):
             barcode__barcode=self.barcode
         )
         if orderdetail_lightins:
-            return orderdetail_lightins.aggregate(nums=Sum('quantity')).get("nums")
-        else:
-            return 0
+            occupied = orderdetail_lightins.aggregate(nums=Sum('quantity')).get("nums")
+            if occupied:
+                return  occupied
+
+
+        return 0
 
     cal_occupied.short_description = "占用库存"
     occupied = property(cal_occupied)
