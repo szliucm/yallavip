@@ -38,6 +38,9 @@ def clipResizeImg_new(im, dst_w, dst_h, qua=95):
         先按照一个比例对图片剪裁，然后在压缩到指定尺寸
         一个图片 16:5 ，压缩为 2:1 并且宽为200，就要先把图片裁剪成 10:5,然后在等比压缩
     '''
+    from PIL import ImageFile
+    ImageFile.LOAD_TRUNCATED_IMAGES = True
+
     ori_w, ori_h = im.size
 
 
