@@ -625,7 +625,7 @@ class DraftAdmin(object):
     list_display = [ 'lightin_sku', 'customer','handle','sellable','quantity','price', 'skuattr', "photo",]
     list_editable = ["quantity", ]
 
-    search_fields = []
+    search_fields = ["lightin_sku__lightin_spu__handle",]
 
     ordering = ["-quantity"]
     list_filter = ()
