@@ -98,6 +98,8 @@ CITY = (
     ("Yanbu", "Yanbu"),
     ("Yanbu Al Baher", "Yanbu Al Baher"),
     ("Shaqra", "Shaqra"),
+    ("Al Khurma", "Al Khurma"),
+
 
 )
 
