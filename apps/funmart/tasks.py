@@ -723,9 +723,8 @@ def download_image(spu, remote_image,yallavip_image):
 def download_images_v2():
     spus = FunmartImage.objects.filter(downloaded=False).values_list("SPU",flat=True).distinct()
     for spu in spus:
-
+        print("spu is ", spu)
         remote_images = FunmartImage.objects.filter(downloaded=False,SPU = spu).values_list( "remote_image",flat=True)
-
 
         download_image_v2.apply_async((spu, list(remote_images) ), queue="funmart_image")
 
