@@ -655,10 +655,12 @@ def get_spu_images():
         image_list=[]
         for spu_to_add in ids.page(i).object_list:
             images = json.loads(spu_to_add.images)
-            for image in images:
+            for remote_image in images:
+                yallavip_image = remote_image.replace("http://img.funmart.com/catalog/product/","").replace("http://img.funmart.com/product/","")
                 image = FunmartImage(
                     SPU=spu_to_add.SPU,
-                    image=image,
+                    remote_image=remote_image,
+                    yallavip_image= yallavip_image
 
                 )
                 if image not in image_list:
