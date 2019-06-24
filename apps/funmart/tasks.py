@@ -682,7 +682,7 @@ def download_images():
 def download_image(spu, remote_image,yallavip_image):
     if not remote_image:
         print ("no images")
-        FunmartImage.objects.filter(image=remote_image).update(download_error= "no images")
+        FunmartImage.objects.filter(SPU=spu, image=remote_image).update(download_error= "no images")
         return False
 
     filename = os.path.join(settings.PRODUCT_ROOT, yallavip_image)
@@ -719,8 +719,8 @@ def download_image(spu, remote_image,yallavip_image):
         downloaded = True
         download_error = ""
 
-
-    obj, created = FunmartImage.objects.filter(SPU=spu, remote_image=remote_image).update(downloaded=downloaded,download_error = download_error)
+    print(spu, remote_image)
+    FunmartImage.objects.filter(SPU=spu, remote_image=remote_image).update(downloaded=downloaded,download_error = download_error)
 
 
 
