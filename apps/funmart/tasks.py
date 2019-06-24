@@ -724,18 +724,18 @@ def download_images_v2():
     spus = FunmartImage.objects.filter(downloaded=False).values_list("SPU",flat=True).distinct()
     for spu in spus:
 
-        image_tuples = FunmartImage.objects.filter(downloaded=False,SPU = spu).values_list( "remote_image","yallavip_image")
+        remote_images = FunmartImage.objects.filter(downloaded=False,SPU = spu).values_list( "remote_image",flat=True)
 
 
-        download_image_v2.apply_async((spu, image_tuples ), queue="funmart_image")
+        download_image_v2.apply_async((spu, list(remote_images) ), queue="funmart_image")
 
 @shared_task
-def download_image_v2(spu, image_tuples):
+def download_image_v2(spu, remote_images):
 
     downloaded_list = []
-    for image_tuples in image_tuples:
-        remote_image= image_tuple[0]
-        yallavip_image = image_tuple[1]
+    for remote_image in remote_images:
+
+        yallavip_image = remote_image.replace("http://img.funmart.com/catalog/product/","").replace("http://img.funmart.com/product/","")
 
 
         if not remote_image:
