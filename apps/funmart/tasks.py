@@ -670,8 +670,6 @@ def get_spu_images():
 
         FunmartImage.objects.bulk_create(image_list)
 
-
-
 def download_images():
     images = FunmartImage.objects.filter(downloaded=False).values_list("SPU", "remote_image","yallavip_image")
     for image in images:
@@ -721,6 +719,70 @@ def download_image(spu, remote_image,yallavip_image):
 
     #print(spu, remote_image)
     FunmartImage.objects.filter(SPU=spu, remote_image=remote_image).update(downloaded=downloaded,download_error = download_error)
+
+def download_images_v2():
+    spus = FunmartImage.objects.filter(downloaded=False).values_list("SPU",flat=True).distinct()
+    for spu in spus:
+
+        image_tuples = FunmartImage.objects.filter(downloaded=False,SPU = spu).values_list( "remote_image","yallavip_image")
+
+
+        download_image_v2.apply_async((spu, image_tuples ), queue="funmart_image")
+
+@shared_task
+def download_image_v2(spu, image_tuples):
+
+    downloaded_list = []
+    for image_tuples in image_tuples:
+        remote_image= image_tuple[0]
+        yallavip_image = image_tuple[1]
+
+
+        if not remote_image:
+            print ("no images")
+            FunmartImage.objects.filter(SPU=spu, image=remote_image).update(download_error= "no images")
+            continue
+
+        filename = os.path.join(settings.PRODUCT_ROOT, yallavip_image)
+
+        # 将文件路径分割出来
+        file_dir = os.path.split(filename)[0]
+        # 判断文件路径是否存在，如果不存在，则创建，此处是创建多级目录
+        if not os.path.isdir(file_dir):
+            os.makedirs(file_dir)
+        # 然后再判断文件是否存在，如果不存在，则从远程获取并保存
+        if not os.path.exists(filename):
+            image = get_remote_image(remote_image)
+            if not image:
+                print ("cannot get remote images", remote_image)
+                downloaded = False
+                download_error = "cannot get remote images"
+                FunmartImage.objects.filter(SPU=spu, remote_image=remote_image).update(downloaded=downloaded,
+                                                                                       download_error=download_error)
+                continue
+            else:
+                if image.mode != "RGB" :
+                    image = image.convert('RGB')
+
+                try:
+                    image.save(filename, 'JPEG', quality=95)
+
+                except Exception as e:
+                    downloaded = False
+                    download_error = e
+                    FunmartImage.objects.filter(SPU=spu, remote_image=remote_image).update(downloaded=downloaded,
+                                                                                           download_error=download_error)
+                    continue
+
+
+
+            downloaded_list.append(remote_image)
+
+
+
+
+
+        FunmartImage.objects.filter(SPU=spu, remote_image__in=downloaded_list).update(downloaded=True,download_error = "")
 
 
 
