@@ -69,6 +69,8 @@ class Lightin_SPU(models.Model):
 
     sale_price = models.FloatField(verbose_name="供方实际销售价", default=0)
     images = models.TextField(default='', null=True, blank=True, verbose_name="图片")
+    images_count = models.IntegerField(u'images_count', default=0, blank=True, null=True)
+
     images_dict = models.TextField(default='', null=True, blank=True, verbose_name="图片字典")
     attr_image_dict = models.TextField(default='', null=True, blank=True, verbose_name="属性图片字典")
 
