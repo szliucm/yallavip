@@ -676,7 +676,7 @@ def download_images():
     images = FunmartImage.objects.filter(downloaded=False).values_list("SPU", "remote_image","yallavip_image")
     for image in images:
 
-        download_image.apply_async((SPU, remote_image,yallavip_image ), queue="funmart_image")
+        download_image.apply_async((image[0], image[1],image[2] ), queue="funmart_image")
 
 @shared_task
 def download_image(spu, remote_image,yallavip_image):
