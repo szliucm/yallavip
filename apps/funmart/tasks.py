@@ -720,12 +720,7 @@ def download_image(spu, remote_image,yallavip_image):
         download_error = ""
 
 
-    obj, created = FunmartImage.objects.update_or_create(SPU=spu,
-                                                         remote_image=remote_image,
-                                                         defaults={'downloaded': downloaded,
-                                                                   'download_error': download_error,
-                                                                   }
-                                                         )
+    obj, created = FunmartImage.objects.filter(SPU=spu, remote_image=remote_image).update(downloaded=downloaded,download_error = download_error)
 
 
 
