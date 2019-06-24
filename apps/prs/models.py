@@ -328,13 +328,9 @@ class Lightin_barcode(models.Model):
     occupied = property(cal_occupied)
 
     def cal_sellable(self):
-        if not self.occupied:
-            print("occupied 不存在" )
-            return  self.o_sellable
-
-
-        if self.o_sellable and self.occupied:
-            return self.o_sellable - self.occupied
+        occupied = cal_occupied()
+        if self.o_sellable :
+            return self.o_sellable - occupied
         else:
             return 0
 
