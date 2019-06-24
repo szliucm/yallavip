@@ -667,3 +667,63 @@ def get_spu_images():
 
 
         FunmartImage.objects.bulk_create(image_list)
+
+
+
+def download_images():
+    images = FunmartImage.objects.filter(downloaded=False).values_list("SPU", "remote_image","yallavip_image")
+    for image in images:
+
+        download_image.apply_async((SPU, remote_image,yallavip_image ), queue="funmart_image")
+
+@shared_task
+def download_image(spu, remote_image,yallavip_image):
+    if not remote_image:
+        print ("no images")
+        FunmartImage.objects.filter(image=remote_image).update(download_error= "no images")
+        return False
+
+    filename = os.path.join(settings.PRODUCT_ROOT, yallavip_image)
+
+    # 将文件路径分割出来
+    file_dir = os.path.split(filename)[0]
+    # 判断文件路径是否存在，如果不存在，则创建，此处是创建多级目录
+    if not os.path.isdir(file_dir):
+        os.makedirs(file_dir)
+    # 然后再判断文件是否存在，如果不存在，则从远程获取并保存
+    if not os.path.exists(filename):
+        image = get_remote_image(remote_image)
+        if not image:
+            print ("cannot get remote images", remote_image)
+            downloaded = False
+            download_error = "cannot get remote images"
+        else:
+            if image.mode != "RGB" :
+                image = image.convert('RGB')
+
+            try:
+                image.save(filename, 'JPEG', quality=95)
+                downloaded = True
+                download_error = ""
+            except Exception as e:
+                downloaded = False
+                download_error = e
+
+
+
+
+
+    else:
+        downloaded = True
+        download_error = ""
+
+
+    obj, created = FunmartImage.objects.update_or_create(SPU=spu,
+                                                         image=remote_image,
+                                                         defaults={'downloaded': downloaded,
+                                                                   'download_error': download_error,
+                                                                   }
+                                                         )
+
+
+
