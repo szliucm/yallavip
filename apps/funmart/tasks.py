@@ -556,7 +556,7 @@ def download_spu_images(spu_pk):
 def deal_funmart_spus():
 
     spus_to_add = FunmartSPU.objects.all() \
-        .exclude(SPU__in=list(Lightin_SPU.objects.filter(vendor="funmart").values_list('SPU', flat=True))) \
+        .exclude(SPU__in=list(Lightin_SPU.objects.filter(vendor="funmart").values_list('SPU', flat=True)))
 
     print("有%s个spu需要新增" % spus_to_add.count())
 
@@ -639,3 +639,31 @@ def deal_funmart_barcodes():
 
 
     my_custom_sql(mysql)
+
+def get_spu_images():
+    from django.core.paginator import Paginator
+
+    spus_to_add = FunmartSPU.objects.all() \
+        .exclude(SPU__in=list(FunmartImage.objects.all().values_list('SPU', flat=True)))
+
+    FunmartImage.objects.filter(SPU__in=list(spus_to_add.values_list('SPU', flat=True))).delete()
+
+    ids = Paginator(list(spus_to_add), 100)
+    print("total page count", ids.num_pages)
+    for i in ids.page_range:
+        print("page ", i)
+        image_list=[]
+        for spu_to_add in ids.page(i).object_list:
+            images = json.loads(spu_to_add.images)
+            for image in images:
+                image = FunmartImage(
+                    SPU=spu_to_add.SPU,
+                    image=image,
+
+                )
+                if image not in image_list:
+                    print(image)
+                    image_list.append(image)
+
+
+        FunmartImage.objects.bulk_create(image_list)
