@@ -719,7 +719,7 @@ def download_image(spu, remote_image,yallavip_image):
         downloaded = True
         download_error = ""
 
-    print(spu, remote_image)
+    #print(spu, remote_image)
     FunmartImage.objects.filter(SPU=spu, remote_image=remote_image).update(downloaded=downloaded,download_error = download_error)
 
 
