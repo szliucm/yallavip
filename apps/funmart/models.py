@@ -313,7 +313,7 @@ class FunmartImage(models.Model):
         verbose_name = u"FunmartImage"
         verbose_name_plural = verbose_name
     def __str__(self):
-        return self.SPU + '-'+self.image
+        return self.SPU
 
 
 
