@@ -2596,7 +2596,7 @@ def get_wms_quantity(warehouse_code, barcodes=[]):
 
     print("一共 %s页" % pages)
 
-    while page < pages and result:
+    while page <= pages and result:
 
         print("正在处理第 %s 页" % page)
         get_wms_quantity_page.apply_async((warehouse_code, page, barcodes), queue='wms')

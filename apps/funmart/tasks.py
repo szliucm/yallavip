@@ -612,33 +612,16 @@ def deal_funmart_skus():
     #print(sku_list)
     Lightin_SKU.objects.bulk_create(sku_list)
 
-def deal_funmart_barcodes():
-    barcodes_to_add = FunmartBarcode.objects.all() \
-        .exclude(barcode__in=list(Lightin_barcode.objects.values_list('barcode', flat=True)))
-
-    print("有%barcode" % barcodes_to_add.count())
-
-    barcode_list = []
-    for barcode_to_add in barcodes_to_add:
-        barcode = Lightin_barcode(
-            SPU=sku_to_add.SPU,
-            barcode=barcode_to_add.barcode,
 
 
-        )
-
-        barcode_list.append(barcode_to_add)
-
-    #print(sku_list)
-    Lightin_barcode.objects.bulk_create(barcode_list)
-
-
+#从wms获取barcode的库存，所以只需要把barcode和sku对应起来就可以了
 def deal_funmart_barcodes():
     from prs.tasks import my_custom_sql
     mysql = "update prs_lightin_barcode l, funmart_yallavipbarcode f set l.SKU = f.SKU where l.barcode = f.barcode"
 
 
     my_custom_sql(mysql)
+
 
 def get_spu_images():
     from django.core.paginator import Paginator
