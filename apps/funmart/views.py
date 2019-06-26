@@ -313,6 +313,7 @@ def scanpackageitem(request):
 
             yallavip_barcode, created = YallavipBarcode.objects.update_or_create(
                 barcode=barcode,
+                track_code=track_code,
                 defaults={
                     'funmart_sku': funmart_sku,
                     'SKU': SKU,
