@@ -7106,7 +7106,7 @@ def spu_cates_v1():
         spu.save()
 
 def create_handle_funmart():
-    spus = Lightin_SPU.objects.filter(vendor="funmart")
+    spus = Lightin_SPU.objects.filter(Q(handle__isnull=True)|Q(handle=""),vendor="funmart")
 
     for spu in spus:
 

@@ -313,7 +313,7 @@ def prepare_yallavip_photoes_v2(page_no=None):
                     product_list.append(product)
 
             else:
-                products_to_add = Lightin_SPU.objects.filter(vendor="funmart",sellable__gt=0).filter(con).exclude(id__in=
+                products_to_add = Lightin_SPU.objects.filter(~Q(handle=""),vendor="funmart",sellable__gt=0).filter(con).exclude(id__in=
                                                 LightinAlbum.objects.filter(
                                                     yallavip_album__pk=album.pk,
                                                     lightin_spu__isnull=False).values_list(
@@ -504,7 +504,7 @@ def prepare_promote_single(page_no,free_shipping=True):
         return
 
     # 取库存大、单价高、已经发布到相册 且还未打广告，单件包邮的商品
-    spus_all = Lightin_SPU.objects.filter(~Q(handle=""),handle__isnull=False,vendor="funmart", aded=False,sellable__gt=3,yallavip_price__gte=30,yallavip_price__lte=80, free_shipping=free_shipping)
+    spus_all = Lightin_SPU.objects.filter(~Q(handle=""),handle__isnull=False,vendor="funmart", aded=False,sellable__gt=3,yallavip_price__gte=10,yallavip_price__lte=80, free_shipping=free_shipping)
     # 把主推品类的所有适合的产品都拿出来打广告
 
     for cate in cates:
