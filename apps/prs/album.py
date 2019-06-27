@@ -745,7 +745,7 @@ def prepare_a_album_v2(lightinalbum_pk):
         if spu.images:
             spu_ims = json.loads(spu.images)
             if spu_ims :
-                if len(spu_ims) >=5 :
+                if len(spu_ims) >=3 :
                     handles_name = spu.handle
                     lightin_spus = [spu]
 
