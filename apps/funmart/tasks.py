@@ -49,7 +49,7 @@ def deal_funmart_orders():
 
         sku_list.append(sku)
 
-    print(sku_list)
+    #print(sku_list)
     FunmartSKU.objects.bulk_create(sku_list)
 
 
@@ -73,7 +73,7 @@ def download_spus():
         )
         spu_list.append(spu)
 
-    print(spu_list)
+    #print(spu_list)
     FunmartSPU.objects.bulk_create(spu_list)
 
     # 外键关联
