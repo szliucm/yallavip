@@ -654,7 +654,7 @@ def get_spu_images():
         FunmartImage.objects.bulk_create(image_list)
 
 def download_images():
-    images = FunmartImage.objects.filter(downloaded=False).values_list("SPU", "remote_image","yallavip_image")
+    images = FunmartImage.objects.filter(downloaded=False,download_error="").values_list("SPU", "remote_image","yallavip_image")
     for image in images:
 
         download_image.apply_async((image[0], image[1],image[2] ), queue="funmart_image")

@@ -173,12 +173,15 @@ def batch_download_photos(limit=None):
             album.updated = True
             album.save()
 
+    update_photos_handle()
+
 def download_album_photos(album):
     album_no = album.album_no
     page_no = album.page_no
 
     # 重置原有相册的图片信息为不活跃
-    album.delete()
+    print()
+    album.delete("download_album_photos", album)
 
     fields = ["id", "name", "created_time", "updated_time", "picture", "link",
               "likes.summary(true)", "comments.summary(true)"
@@ -224,7 +227,7 @@ def download_album_photos(album):
                           )
         myphoto_list.append(myphoto)
     MyPhoto.objects.bulk_create(myphoto_list)
-    update_photos_handle()
+
 
 
 def batch_update_feed():
@@ -250,11 +253,12 @@ def update_feed(page_no,days=2):
     # 重置原有feed信息为不活跃
     MyFeed.objects.filter(page_no=page_no, created_time__gt=start_time).update(active=False)
 
-    fields = ["created_time", "description", "id","full_picture",
+    fields = ["created_time", "description", "id",
               "type", "message", "name",
               "actions_link","actions_name",
               "likes.summary(true)", "comments.summary(true)"
               ]
+
     params = {
         'limit': 100,
 
@@ -277,7 +281,7 @@ def update_feed(page_no,days=2):
                                                                       feed["created_time"],
                                                                   'active': True,
                                                                   'message': feed.get("message"),
-                                                                  "full_picture":feed.get("full_picture"),
+
                                                                   'description': feed.get("description"),
                                                                   'name': feed.get("name"),
                                                                   'type': feed.get("type"),
@@ -444,12 +448,20 @@ def update_photos_handle():
     myphotos = MyPhoto.objects.filter(active=True)
     for myphoto in myphotos:
         try:
+            pattern = re.compile(r'[LlFf]\d{6}')
+            m = pattern.search(myphoto.name)
+            if m:
+                myphoto.handle = m.group()
+            else:
+                myphoto.handle = ""
+
+            '''
             tmp = re.split(r"\[|\]", myphoto.name)
             if (1 < len(tmp)):
                 myphoto.handle = tmp[1]
             else:
                 myphoto.handle = ""
-
+            '''
         except:
             myphoto.handle = ""
 
