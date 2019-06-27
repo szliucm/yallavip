@@ -504,7 +504,7 @@ def prepare_promote_single(page_no,free_shipping=True):
         return
 
     # 取库存大、单价高、已经发布到相册 且还未打广告，单件包邮的商品
-    spus_all = Lightin_SPU.objects.filter(~Q(handle=""),handle__isnull=False,vendor="funmart", aded=False,sellable__gt=3, free_shipping=free_shipping)
+    spus_all = Lightin_SPU.objects.filter(~Q(handle=""),handle__isnull=False,vendor="funmart", aded=False,sellable__gt=3,yallavip_price__gte=30,yallavip_price__lte=80, free_shipping=free_shipping)
     # 把主推品类的所有适合的产品都拿出来打广告
 
     for cate in cates:
@@ -581,7 +581,7 @@ def prepare_promote_image_album_single(cate, page_no, lightin_spus, vendor):
               "How to order?Pls choice the product that you like it , then send us the picture, we will order it for you!🤩🤩"
     '''
 
-    message = "[Buy 3 get 1 free]+[free Shipping]+[all spot goods] \n" \
+    message = "Buy 3 get 1 free]+[free Shipping]+[all spot goods \n" \
               "Special Promotion big sale: “Buy 3 get 1 free”!!! \n" \
               "It means now if you buy 3 items, you can choose any 1 item of equal price or lower price for free, and the shipping fee is free too!!!! \nAll hot sale goods, limited quantity , all Riyadh warehouse spot, 3-5day deliver to your house!!!!\n" \
               "Don't wait, do it!!!!!"

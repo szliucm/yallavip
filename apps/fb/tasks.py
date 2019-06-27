@@ -237,7 +237,7 @@ def batch_update_feed():
 
         update_feed(page_no)
 
-def update_feed(page_no,days=2):
+def update_feed(page_no,days=30):
 
     import  datetime
     access_token, long_token = get_token(page_no)
@@ -289,8 +289,7 @@ def update_feed(page_no,days=2):
                                                                   'actions_name': feed.get("actions_name"),
                                                                   'like_count': feed["likes"]["summary"][
                                                                       "total_count"],
-                                                                  'comment_count': feed["comments"]["summary"][
-                                                                      "total_count"],
+                                                                  'comment_count': feed["comments"]["summary"]["total_count"],
 
 
                                                                   }
@@ -477,11 +476,18 @@ def update_feeds_handles():
     feeds = MyFeed.objects.filter(active=True)
     for feed in feeds:
         try:
+            pattern = re.compile(r'[LlFf]\d{6}')
+            m = pattern.findall(feed.message)
+
+            handles = ",".join(m)
+
+            '''
             tmp = re.split(r"\[|\]", feed.message)
             if 1 < len(tmp):
                 handles = tmp[1]
             else:
                 handles = ""
+            '''
             print (handles)
             feed.handles = handles
             feed.save()
