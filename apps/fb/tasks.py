@@ -302,66 +302,6 @@ def update_feed(page_no,days=2):
     update_feeds_handles()
 
 
-def update_conversation(page_no,days=2):
-
-    import  datetime
-    access_token, long_token = get_token(page_no)
-    if not access_token:
-        error = "获取token失败"
-        print (error)
-        return
-    adobjects = FacebookAdsApi.init(access_token=access_token, debug=True)
-
-    today = datetime.date.today()
-    start_time = str(today - datetime.timedelta(days=days))
-
-    # 重置原有feed信息为不活跃
-    MyFeed.objects.filter(page_no=page_no, created_time__gt=start_time).update(active=False)
-
-    fields = ["created_time", "description", "id","full_picture",
-              "type", "message", "name",
-              "actions_link","actions_name",
-              "likes.summary(true)", "comments.summary(true)"
-              ]
-    params = {
-        'limit': 100,
-
-    }
-    feeds = Page(page_no).get_feed(
-        fields=fields,
-        params=params,
-    )
-
-    for feed in feeds:
-        created_time = feed.get("created_time")
-        print(created_time)
-        if created_time < start_time:
-            print ("%s天前的就不看了"%days)
-            break
-
-        obj, created = MyFeed.objects.update_or_create(feed_no=feed["id"],
-                                                        defaults={'page_no': page_no,
-                                                                  'created_time':
-                                                                      feed["created_time"],
-                                                                  'active': True,
-                                                                  'message': feed.get("message"),
-                                                                  "full_picture":feed.get("full_picture"),
-                                                                  'description': feed.get("description"),
-                                                                  'name': feed.get("name"),
-                                                                  'type': feed.get("type"),
-                                                                  'actions_link': feed.get("actions_link"),
-                                                                  'actions_name': feed.get("actions_name"),
-                                                                  'like_count': feed["likes"]["summary"][
-                                                                      "total_count"],
-                                                                  'comment_count': feed["comments"]["summary"][
-                                                                      "total_count"],
-
-
-                                                                  }
-                                                        )
-
-    mysql = "update prs_yallavipad a , fb_myfeed f set a.fb_feed_id = f.id where f.feed_no=a.object_story_id"
-    my_custom_sql(mysql)
 
 
 def batch_update_adaccount():
