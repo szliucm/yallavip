@@ -249,7 +249,7 @@ class Lightin_barcodeResource(resources.ModelResource):
         skip_unchanged = True
         report_skipped = True
         import_id_fields = ('barcode',)
-        fields = ( "SKU","barcode","quantity")
+        fields = ( "SKU","barcode","y_sellable")
         # exclude = ()
 
 @xadmin.sites.register(Lightin_barcode)
