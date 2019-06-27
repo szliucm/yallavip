@@ -2096,11 +2096,25 @@ def combo_ad_image_template_single(spu_ims, spus_name,spus, page_no):
     layer = Image.new("RGB", (1528, 800), "white")
     bw, bh = layer.size
 
-    layer.paste(clipResizeImg_new(ims[0], 800, 800), (364, 0))
-    layer.paste(clipResizeImg_new(ims[1], 364, 364), (0, 72))
-    layer.paste(clipResizeImg_new(ims[2], 364, 364), (0, 436))
-    layer.paste(clipResizeImg_new(ims[3], 364, 364), (1164, 0))
-    layer.paste(clipResizeImg_new(ims[4], 364, 364), (1164, 364))
+    if item_count == 5:
+
+        layer.paste(clipResizeImg_new(ims[0], 800, 800), (364, 0))
+        layer.paste(clipResizeImg_new(ims[1], 364, 364), (0, 72))
+        layer.paste(clipResizeImg_new(ims[2], 364, 364), (0, 436))
+        layer.paste(clipResizeImg_new(ims[3], 364, 364), (1164, 0))
+        layer.paste(clipResizeImg_new(ims[4], 364, 364), (1164, 364))
+    elif item_count == 4:
+        layer.paste(clipResizeImg_new(ims[0], 800, 800), (364, 0))
+        layer.paste(clipResizeImg_new(ims[1], 364, 800), (0, 0))
+        layer.paste(clipResizeImg_new(ims[2], 364, 364), (1164, 0))
+        layer.paste(clipResizeImg_new(ims[3], 364, 364), (1164, 364))
+    elif item_count == 3:
+        layer.paste(clipResizeImg_new(ims[0], 800, 800), (364, 0))
+        layer.paste(clipResizeImg_new(ims[1], 364, 800), (0, 0))
+        layer.paste(clipResizeImg_new(ims[2], 364, 800), (1164, 0))
+    else:
+        return  None
+
 
 
 

@@ -504,7 +504,7 @@ def prepare_promote_single(page_no,free_shipping=True):
         return
 
     # 取库存大、单价高、已经发布到相册 且还未打广告，单件包邮的商品
-    spus_all = Lightin_SPU.objects.filter(~Q(handle=""),handle__isnull=False,vendor="funmart", aded=False,sellable__gt=3,yallavip_price__gte=10,yallavip_price__lte=80, free_shipping=free_shipping)
+    spus_all = Lightin_SPU.objects.filter(~Q(handle=""),handle__isnull=False,vendor="funmart", aded=False,sellable__gt=3,yallavip_price__gte=10,yallavip_price__lte=80, images_count__gte=3,free_shipping=free_shipping)
     # 把主推品类的所有适合的产品都拿出来打广告
 
     for cate in cates:
@@ -545,7 +545,7 @@ def prepare_promote_image_album_single(cate, page_no, lightin_spus, vendor):
         print("正在处理 handle ",spu.handle)
         images = json.loads(spu.images)
 
-        if images and len(images) >= 5:
+        if images and len(images) >= 3:
             for image in images:
                 if vendor =="lightin":
                     a = "/"
@@ -602,7 +602,7 @@ def prepare_promote_image_album_single(cate, page_no, lightin_spus, vendor):
     #把spu标示为已经打过广告了
     for spu in spus:
 
-        spu.longaded = True
+        spu.aded = True
         spu.save()
 
 
