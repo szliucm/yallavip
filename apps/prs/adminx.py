@@ -433,7 +433,7 @@ class YallavipAdAdmin(object):
                 if spu not in spu_list:
                     spu_list.append(spu)
 
-        Lightin_SPU.objects.filter(SPU__in = spu_list).update(aded=False)
+        Lightin_SPU.objects.filter(handle__in = spu_list).update(aded=False)
 
         queryset.delete()
 
