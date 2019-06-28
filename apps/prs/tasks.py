@@ -2108,7 +2108,7 @@ def mapping_order_lightin(order):
 
 def get_barcodes(sku, quantity, price):
     inventory_list = []
-    lightin_barcodes = Lightin_barcode.objects.filter(SKU=sku)
+    lightin_barcodes = Lightin_barcode.objects.filter(SKU=sku).order_by("?")
 
     print ("get_barcodes",  sku, type(sku))
     if lightin_barcodes is None:
@@ -7113,3 +7113,5 @@ def create_handle_funmart():
         spu.handle = 'F' + str(spu.pk).zfill(6)
         spu.save()
 
+def split_skuattr():
+    Lightin_SKU.objects.filter(Q(size="")|Q(color=""), sku_attr__isnull=False, vendor="funmart")
