@@ -238,6 +238,20 @@ class Lightin_SKUAdmin(object):
     readonly_fields = ()
     actions = []
     ordering = ["-o_sellable"]
+    list_bookmarks = [
+        {
+        "title": "女鞋",
+        "query": {
+            "lightin_spu__cate_1": "Women",
+            "lightin_spu__cate_2": "Shoes",
+            "o_sellable":">0",
+
+
+        },
+        "order": ("-name",),
+        #"cols": ('user_name', 'user_email', 'user_mobile'),
+        }
+    ]
 
 
 
