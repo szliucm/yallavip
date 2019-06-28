@@ -56,8 +56,6 @@ def set_spu_free_delivery_price():
 #原价大于40的，都设成单件包邮
 def cal_promote_price(spu):
 
-
-
     #供货价的7倍 3.75*7
 
     multiple_price = spu.vendor_supply_price * 26.25
@@ -65,30 +63,40 @@ def cal_promote_price(spu):
     # 供应商售价的7折 3.75*0.7
     discount_price = spu.vendor_sale_price * 2.625
     if multiple_price < discount_price:
-        promote_price = round(discount_price)
+        new_price = round(discount_price)
     else:
-        promote_price = round(multiple_price)
+        new_price = round(multiple_price)
 
 
 
     #小于5块的都卖10块，小于20块都加10块
-    if promote_price <5:
-        promote_price += 5
-    elif promote_price <20:
-        promote_price += 10
+    if new_price <5:
+        new_price += 5
+    elif new_price <20:
+        new_price += 10
 
     #价格大于30的，都包邮
-    if promote_price >= 30:
+    if new_price >= 30:
         spu.free_shipping = True
     else:
         spu.free_shipping = False
 
-    free_shipping_price = promote_price + 30
-    spu.spu_sku.update(free_shipping_price=free_shipping_price, sku_price = promote_price)
+    free_shipping_price = new_price + 30
+
+    #推广价
+    promote_price = int(new_price *0.85)
+    promote_free_shipping_price = promote_price + 30
+
+    spu.spu_sku.update(free_shipping_price=free_shipping_price, sku_price = new_price,
+                        promote_price=promote_price, promote_free_shipping_price = promote_free_shipping_price)
 
     #修改spu价格
     spu.free_shipping_price = free_shipping_price
-    spu.yallavip_price = promote_price
+    spu.yallavip_price = new_price
+
+    spu.promote_price = promote_price
+    spu.promote_free_shipping_price = promote_free_shipping_price
+
     spu.promoted = True
     spu.save()
     return  True

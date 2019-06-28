@@ -81,6 +81,9 @@ class Lightin_SPU(models.Model):
     yallavip_price = models.FloatField(u'yallavip售价', default=0, blank=True, null=True)
     free_shipping_price = models.FloatField(u'yallavip包邮价', default=0, blank=True, null=True)
 
+    promote_price = models.FloatField(u'推广售价', default=0, blank=True, null=True)
+    promote_free_shipping_price = models.FloatField(u'推广包邮价', default=0, blank=True, null=True)
+
     shopify_price = models.FloatField(u'shopify售价', default=0, blank=True, null=True)
 
     published = models.BooleanField(default=False, verbose_name="发布到shopify状态")
@@ -162,6 +165,9 @@ class Lightin_SKU(models.Model):
     combo_error = models.CharField(default='', max_length=100, null=True, blank=True, verbose_name="组合错误")
     sku_price = models.IntegerField(u'sku售价', default=0, blank=True, null=True)
     free_shipping_price = models.FloatField(u'yallavip包邮价', default=0, blank=True, null=True)
+
+    promote_price = models.FloatField(u'推广售价', default=0, blank=True, null=True)
+    promote_free_shipping_price = models.FloatField(u'推广包邮价', default=0, blank=True, null=True)
 
     # listing_status = models.BooleanField(u'发布到Facebook', default=False)
 

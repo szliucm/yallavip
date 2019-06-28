@@ -504,7 +504,11 @@ def prepare_promote_single(page_no,free_shipping=True):
         return
 
     # 取库存大、单价高、已经发布到相册 且还未打广告，单件包邮的商品
-    spus_all = Lightin_SPU.objects.filter(~Q(handle=""),handle__isnull=False,vendor="funmart", aded=False,sellable__gt=3,yallavip_price__gte=10,yallavip_price__lte=80, images_count__gte=3,free_shipping=free_shipping)
+    spus_all = Lightin_SPU.objects.filter(~Q(handle=""),handle__isnull=False,
+                                          vendor="funmart", aded=False,sellable__gt=3,
+                                          yallavip_price__gte=10,yallavip_price__lte=80,
+                                          images_count__gte=3,free_shipping=free_shipping)
+
     # 把主推品类的所有适合的产品都拿出来打广告
 
     for cate in cates:
@@ -520,7 +524,6 @@ def prepare_promote_single(page_no,free_shipping=True):
         cate_spus = list(cate_spus[:count])
 
         for i in range(int(count)):
-
 
             spus = [cate_spus[i]]
             print("当前处理 ", i, cate.tags, page_no, cate_spus[i].handle)
@@ -741,7 +744,7 @@ def prepare_a_album_v2(lightinalbum_pk):
         # name = name + "\n\nPrice:  " + str(price1) + "SAR"
 
         # 准备图片
-        # 如果图片大于等于5张，就生成多图拼图，否则就发第一张
+        # 如果图片大于等于3张，就生成多图拼图，否则就发第一张
         if spu.images:
             spu_ims = json.loads(spu.images)
             if spu_ims :
