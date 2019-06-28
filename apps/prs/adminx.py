@@ -420,8 +420,24 @@ class YallavipAdAdmin(object):
     list_filter = ["yallavip_album__page", "active","published","engagement_aded","message_aded", "long_ad","page_no",]
     list_editable = []
     readonly_fields = ()
-    actions = []
+    actions = ["reset_ads",]
     ordering = []
+
+    def reset_ads(self, request, queryset):
+
+        spus_name = queryset.values_list("spus_name",flat=True)
+        spu_list = []
+        for row in spus_name:
+            spus =  row.split(",")
+            for spu in spus:
+                if spu not in spu_list:
+                    spu_list.append(spu)
+
+        Lightin_SPU.objects.filter(SPU__in = spu_list).update(aded=False)
+
+        queryset.delete()
+
+    reset_ads.short_description = "重置广告"
 
 
 
