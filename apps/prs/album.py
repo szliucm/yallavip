@@ -570,7 +570,7 @@ def prepare_promote_image_album_single(cate, page_no, lightin_spus, vendor):
 
     handles_name = ','.join(handles)
 
-    image_marked_url = combo_ad_image_template_single(spu_ims, handles_name, lightin_spus,page_no)
+    image_marked_url = combo_ad_image_template_single(spu_ims, handles_name, lightin_spus,page_no,"ad")
     #print( image_marked_url )
 
     if not image_marked_url:
@@ -752,7 +752,7 @@ def prepare_a_album_v2(lightinalbum_pk):
                     handles_name = spu.handle
                     lightin_spus = [spu]
 
-                    image_marked_url = combo_ad_image_template_single(spu_ims, handles_name, lightin_spus, page_no)
+                    image_marked_url = combo_ad_image_template_single(spu_ims, handles_name, lightin_spus, page_no,"album")
                 else:
 
                     # 打水印

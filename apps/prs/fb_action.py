@@ -2062,7 +2062,7 @@ def ad_update_status(ad_id, status):
 
     return  None, True
 
-def combo_ad_image_template_single(spu_ims, spus_name,spus, page_no):
+def combo_ad_image_template_single(spu_ims, spus_name,spus, page_no,type):
     from shop.photo_mark import clipResizeImg_new, get_remote_image,clipResizeImg_box
     import os
     from django.conf import settings
@@ -2146,9 +2146,16 @@ def combo_ad_image_template_single(spu_ims, spus_name,spus, page_no):
 
         spu = spus[0]
         if spu.free_shipping:
-            price1 = int(spu.free_shipping_price)
+            if type =="album":
+                price1 = int(spu.free_shipping_price)
+            else:
+                price1 = int(spu.promote_free_shipping_price)
         else:
-            price1 = int(spu.yallavip_price)
+            if type =="album":
+                price1 = int(spu.yallavip_price)
+            else:
+                price1 = int(spu.promote_price)
+
 
         price2 = int(price1 * random.uniform(5, 6))
 
