@@ -287,7 +287,7 @@ class Lightin_SKUAdmin(object):
             },
         "order": ("-o_sellable",),
         #"cols": ('user_name', 'user_email', 'user_mobile'),
-        }
+        },
         {
             "title": "男装",
             "query": {
