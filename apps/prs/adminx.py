@@ -242,6 +242,7 @@ class Lightin_SKUAdmin(object):
         {
         "title": "女鞋",
         "query": {
+            "lightin_spu__vendor": "funmart",
             "lightin_spu__cate_1__contains": "Women",
             "lightin_spu__cate_2__contains": "Shoes",
             "o_sellable__gt":0,
