@@ -248,7 +248,7 @@ class Lightin_SKUAdmin(object):
 
 
         },
-        "order": ("-name",),
+        "order": ("-o_sellable",),
         #"cols": ('user_name', 'user_email', 'user_mobile'),
         }
     ]
