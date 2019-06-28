@@ -248,6 +248,9 @@ class Lightin_SKUAdmin(object):
                 "o_sellable__gt": 0,
 
             },
+            "order": ("-o_sellable",),
+            # "cols": ('user_name', 'user_email', 'user_mobile'),
+        },
         {
             "title": "女包",
             "query": {
@@ -257,6 +260,9 @@ class Lightin_SKUAdmin(object):
                 "o_sellable__gt": 0,
 
             },
+            "order": ("-o_sellable",),
+            # "cols": ('user_name', 'user_email', 'user_mobile'),
+        },
         {
         "title": "女鞋",
         "query": {
@@ -266,6 +272,9 @@ class Lightin_SKUAdmin(object):
             "o_sellable__gt":0,
 
 
+        },
+            "order": ("-o_sellable",),
+            # "cols": ('user_name', 'user_email', 'user_mobile'),
         },
         {
             "title": "女表",
