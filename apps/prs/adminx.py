@@ -229,7 +229,7 @@ class Lightin_SKUAdmin(object):
 
     handle.short_description = "handle"
 
-    list_display = ["SKU", "SPU", 'cn_name', "o_sellable","sku_photo", "handle","sku_price","free_shipping_price", "skuattr",]
+    list_display = ["SKU", "handle",  "o_sellable","sku_photo", "sku_price","free_shipping_price", "size","color",]
 
     # 'sku_name','img',
     search_fields = ["SPU", "SKU","lightin_spu__handle",]
@@ -240,6 +240,24 @@ class Lightin_SKUAdmin(object):
     ordering = ["-o_sellable"]
     list_bookmarks = [
         {
+            "title": "女装",
+            "query": {
+                "lightin_spu__vendor__in": "funmart",
+                "lightin_spu__cate_1__contains": "Women",
+                "lightin_spu__cate_2__contains": "Clothing",
+                "o_sellable__gt": 0,
+
+            },
+        {
+            "title": "女包",
+            "query": {
+                "lightin_spu__vendor__in": "funmart",
+                "lightin_spu__cate_1__contains": "Women",
+                "lightin_spu__cate_2__contains": "Bags",
+                "o_sellable__gt": 0,
+
+            },
+        {
         "title": "女鞋",
         "query": {
             "lightin_spu__vendor__in": "funmart",
@@ -249,6 +267,15 @@ class Lightin_SKUAdmin(object):
 
 
         },
+        {
+            "title": "女表",
+            "query": {
+                "lightin_spu__vendor__in": "funmart",
+                "lightin_spu__cate_1__contains": "Women",
+                "lightin_spu__cate_2__contains": "Watches",
+                "o_sellable__gt": 0,
+
+            },
         "order": ("-o_sellable",),
         #"cols": ('user_name', 'user_email', 'user_mobile'),
         }
