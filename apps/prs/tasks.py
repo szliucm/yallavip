@@ -7114,4 +7114,13 @@ def create_handle_funmart():
         spu.save()
 
 def split_skuattr():
-    Lightin_SKU.objects.filter(Q(size="")|Q(color=""), ~Q(sku_attr=""), vendor="funmart")
+    skus = Lightin_SKU.objects.filter(Q(size="")|Q(color=""), ~Q(skuattr=""), skuattr__isnull=False,lightin_spu__vendor="funmart")
+    for sku in skus:
+        try:
+            skuattr = json.loads(sku.skuattr)
+            sku.color = skuattr.get("Color","")
+            sku.size = skuattr.get("Size", "")
+            sku.save()
+        except:
+            print(sku, sku.skuattr)
+
