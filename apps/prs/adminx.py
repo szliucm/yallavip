@@ -288,6 +288,54 @@ class Lightin_SKUAdmin(object):
         "order": ("-o_sellable",),
         #"cols": ('user_name', 'user_email', 'user_mobile'),
         }
+        {
+            "title": "男装",
+            "query": {
+                "lightin_spu__vendor__in": "funmart",
+                "lightin_spu__cate_1__contains": "Men",
+                "lightin_spu__cate_2__contains": "Clothing",
+                "o_sellable__gt": 0,
+
+            },
+            "order": ("-o_sellable",),
+            # "cols": ('user_name', 'user_email', 'user_mobile'),
+        },
+        {
+            "title": "男包",
+            "query": {
+                "lightin_spu__vendor__in": "funmart",
+                "lightin_spu__cate_1__contains": "Men",
+                "lightin_spu__cate_2__contains": "Bags",
+                "o_sellable__gt": 0,
+
+            },
+            "order": ("-o_sellable",),
+            # "cols": ('user_name', 'user_email', 'user_mobile'),
+        },
+        {
+            "title": "男鞋",
+            "query": {
+                "lightin_spu__vendor__in": "funmart",
+                "lightin_spu__cate_1__contains": "Men",
+                "lightin_spu__cate_2__contains": "Shoes",
+                "o_sellable__gt": 0,
+
+            },
+            "order": ("-o_sellable",),
+            # "cols": ('user_name', 'user_email', 'user_mobile'),
+        },
+        {
+            "title": "男表",
+            "query": {
+                "lightin_spu__vendor__in": "funmart",
+                "lightin_spu__cate_1__contains": "Men",
+                "lightin_spu__cate_2__contains": "Watches",
+                "o_sellable__gt": 0,
+
+            },
+            "order": ("-o_sellable",),
+            # "cols": ('user_name', 'user_email', 'user_mobile'),
+        }
     ]
 
 
