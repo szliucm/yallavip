@@ -138,8 +138,22 @@ class FunmartSKUAdmin(object):
 
     actions = []
 
+class YallavipBarcodeResource(resources.ModelResource):
+
+    class Meta:
+        model = YallavipBarcode
+        skip_unchanged = True
+        report_skipped = True
+        import_id_fields = ('barcode',)
+        fields = ( "barcode","SKU","funmart_barcode",)
+        # exclude = ()
+
+
 @xadmin.sites.register(YallavipBarcode)
 class YallavipBarcodeAdmin(object):
+    import_export_args = {"import_resource_class": YallavipBarcodeResource,
+                          "export_resource_class": YallavipBarcodeResource}
+
     def show_photo(self, obj):
 
         try:

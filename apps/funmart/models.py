@@ -97,7 +97,7 @@ class YallavipBarcode(models.Model):
                                     related_name="funmartsku_yallavipbarcode", on_delete=models.CASCADE)
     SKU = models.CharField(default='',max_length=300, null=True, blank=True, verbose_name="SKU")
     barcode = models.CharField(u'barcode', default='', max_length=100, blank=True)
-
+    funmart_barcode = models.CharField(u'funmart_barcode', default='', max_length=100, blank=True)
 
     class Meta:
         verbose_name = "YallavipBarcode"

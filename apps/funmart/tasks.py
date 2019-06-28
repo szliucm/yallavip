@@ -483,6 +483,7 @@ def batch_sku(batch_no):
     BatchSKU.objects.filter(~Q(skuattr__icontains="One Size") ,~Q(skuattr__icontains="Free Size"),
                             batch_no=batch_no, sale_type="drug").update(action="Dead_Size")
 
+'''
 def download_spus_images():
     spu_pks = FunmartSPU.objects.filter(image_downloaded=False).values_list("pk",flat=True)
     for spu_pk in spu_pks:
@@ -551,6 +552,7 @@ def download_spu_images(spu_pk):
     spu.image_downloaded=True
     spu.download_error = ""
     spu.save()
+'''
 
 #把spu插入到系统spu
 def deal_funmart_spus():
