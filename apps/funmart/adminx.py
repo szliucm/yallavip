@@ -181,10 +181,10 @@ class YallavipBarcodeAdmin(object):
 
     show_cate.short_description = "Category"
 
-    list_display = ["barcode", "funmart_barcode", "SKU", "show_photo","show_cate",]
+    list_display = ["barcode", "item_code", "SKU", "show_photo","show_cate",]
     list_editable = []
 
-    search_fields = ["barcode","SKU","funmart_barcode", ]
+    search_fields = ["barcode","SKU","item_code", ]
     list_filter = ("funmart_sku__funmart_spu__sale_type",)
     ordering = ["-barcode"]
 
