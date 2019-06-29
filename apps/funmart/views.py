@@ -315,7 +315,7 @@ def scanpackageitem(request):
                 barcode=barcode,
                 track_code=track_code,
                 defaults={
-                    'funmart_sku': funmart_sku,
+                    'item_code': item_code,
                     'SKU': SKU,
 
                 }
