@@ -117,8 +117,8 @@ $('#barcode').bind('keyup',function(event){
                 var item_code = $("#item_code").val();
                 var SKU = $("#SKU").val();
 
-                alert_text = '请稍等,正在查询:' + item_code + '信息';
-                alert(alert_text);
+                //alert_text = '请稍等,正在查询:' + item_code + '信息';
+                //alert(alert_text);
                 $.ajax({
                     type: 'POST',
                      url: "/update_item/",
