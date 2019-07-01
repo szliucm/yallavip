@@ -2252,7 +2252,7 @@ def fulfill_order_lightin(order):
         warehouse_code = order_item.barcode.warehouse_code
         item = {
             "product_sku": order_item.barcode.barcode,
-            # "product_name_en":title,
+            "product_name_en":order_item.SKU,
             "product_declared_value": order_item.price,
             "quantity": order_item.quantity,
         }
