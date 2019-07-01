@@ -12,9 +12,9 @@
     <audio id="successAudio"><source src="/media/audio/success.mp3" type="audio/mpeg"></audio>
     <audio id="errorAudio"><source src="/media/audio/error.mp3" type="audio/mpeg"></audio>
     <form id="item" method="post">
-        Item_code  : <input type="text"   id="item_code" style="color:red ; font-size:30px" autofocus> <br>
-        <br>
         Barcode  : <input type="text"   id="barcode" style="color:red ; font-size:30px"> <br>
+        <br>
+        Item_code  : <input type="text"   id="item_code" style="color:red ; font-size:30px" autofocus> <br>
 
         SKU  : <input type="text"   id="SKU_search" style="color:red ; font-size:30px" hidden="hidden"> <br>
 
@@ -149,7 +149,7 @@ $('#barcode').bind('keyup',function(event){
                             $('#errorAudio')[0].play();
 
                             scan_result.css("backgroundColor", "red");
-                            $("#barcode").html("");
+                            //$("#barcode").html("");
                             $("#item_code").html("");
                             $("#SKU").html("");
 
@@ -178,7 +178,9 @@ $('#barcode').bind('keyup',function(event){
                             }
 
                             action.html(data.action);
+                            $("#barcode").val(String(Number(barcode)+1));
                             $("#SKU").html(data.SKU);
+
                             $("#sku_img").attr("src",data.sku_image)
 
                         }
