@@ -384,7 +384,7 @@ def get_adaccount_ads(adaccount_no):
 
 def update_photos_handle():
     import  re
-    myphotos = MyPhoto.objects.filter(active=True)
+    myphotos = MyPhoto.objects.filter(active=True,handle="")
     for myphoto in myphotos:
         try:
             pattern = re.compile(r'[LlFf]\d{6}')

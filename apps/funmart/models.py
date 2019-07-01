@@ -95,7 +95,7 @@ class YallavipBarcode(models.Model):
 
     funmart_sku = models.ForeignKey(FunmartSKU, null=True, blank=True, verbose_name="SKU",
                                     related_name="funmartsku_yallavipbarcode", on_delete=models.CASCADE)
-    SKU = models.CharField(default='',max_length=300, null=True, blank=True, verbose_name="SKU")
+    SKU = models.CharField(default='',max_length=300, null=True, blank=True, verbose_name="SKU Key")
     barcode = models.CharField(u'barcode', default='', max_length=100, blank=True)
     item_code = models.CharField(u'item_code', default='', max_length=100, blank=True)
     ori_SKU = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="ori_SKU")
@@ -271,6 +271,14 @@ class ScanPackage(models.Model):
 class ScanPackageItem(models.Model):
     class Meta:
         verbose_name = u"ScanPackageItem"
+        verbose_name_plural = verbose_name
+
+    def __unicode__(self):
+        return self.Meta.verbose_name
+
+class UpdateItem(models.Model):
+    class Meta:
+        verbose_name = u"UpdateItem"
         verbose_name_plural = verbose_name
 
     def __unicode__(self):

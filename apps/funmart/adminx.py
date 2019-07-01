@@ -269,7 +269,10 @@ class ScanPackageItemAdmin(object):
     list_display = []
     object_list_template = "funmart/scanpackageitem.html"
 
-
+@xadmin.sites.register(UpdateItem)
+class UpdateItemItemAdmin(object):
+    list_display = []
+    object_list_template = "funmart/updateitem.html"
 
 @xadmin.sites.register(FulfillBag)
 class FulfillBagAdmin(object):

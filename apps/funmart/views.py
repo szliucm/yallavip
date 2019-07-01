@@ -354,7 +354,92 @@ def scanpackageitem(request):
         #print ("response ",item)
         return JsonResponse(item)
 
+def updateitem(request):
 
+
+    from funmart.tasks import get_funmart_barcode
+
+    if request.method == 'GET':
+        pass
+    elif request.method == 'POST':
+        item = {}
+        item['scan_result'] = ""
+
+        posts = request.POST
+        #print(posts)
+        barcode = posts.get('barcode')
+        item_code = posts.get('item_code')
+        SKU = posts.get('SKU')
+
+        if not barcode  :
+            item['scan_result'] = 'Please Input Barcode'
+
+        elif not item_code and not SKU:
+            item['scan_result'] = 'Please Input Item_code'
+
+        else:
+            #如果有SKU，就用SKU查，否则就用原来的item_code查
+            if SKU:
+                try:
+                    funmart_sku = FunmartSKU.objects.get(SKU=SKU)
+                except:
+                    item['scan_result'] = 'SKU not Found'
+
+            else:
+                item_code = item_code.replace("－", "-")
+
+                funmartbarcodes = FunmartBarcode.objects.filter(barcode=item_code)
+                if not funmartbarcodes:
+                    funmartbarcode = get_funmart_barcode(item_code)
+                    #print("get from funmart", funmartbarcode)
+                else:
+                    funmartbarcode = funmartbarcodes[0]
+
+                if not funmartbarcode :
+                    item['scan_result'] = 'SKU not Found'
+                    return JsonResponse(item)
+
+
+                funmart_sku  = funmartbarcode.funmart_sku
+
+                #print("get from yallavip", funmartbarcode, funmart_sku)
+                SKU = funmart_sku.SKU
+
+            # 先查一下barcode是否已经记录过
+            yallavip_barcode = YallavipBarcode.objects.filter(barcode=barcode)
+
+            if yallavip_barcode and yallavip_barcode[0].SKU != SKU:
+                item['scan_result'] = 'Barcode has recorded with other SKU'
+                return JsonResponse(item)
+
+            #找到SKU后拼接相应的信息
+
+
+            try:
+                item["action"] = BatchSKU.objects.filter(SKU=SKU).order_by("-batch_no")[0].action
+            except:
+                item['scan_result'] = 'SKU not prepared'
+                return JsonResponse(item)
+
+            item["sku"] = SKU
+
+            item["new_barcode"] = barcode
+            item["sku_name"] = funmart_sku.name
+            tem["sku_image"] = json.loads(funmart_sku.images)[0]
+
+
+            item['scan_result'] = 'Success'
+
+            yallavip_barcode, created = YallavipBarcode.objects.update_or_create(
+                barcode=barcode,
+                defaults={
+                    'item_code': item_code,
+                    'SKU': SKU,
+
+                }
+            )
+
+        return JsonResponse(item)
 
 def fulfillbag(request):
 
