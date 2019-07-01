@@ -1,0 +1,207 @@
+#{% extends "xadmin/base_site.html" %}
+
+{% load staticfiles  %}
+{% load static %}
+
+{% block content %}
+
+    <script type="text/javascript">
+        var isPreviewOnly = true;
+    </script>
+    <h3>Update  Item Barcode </h3>
+    <audio id="successAudio"><source src="/media/audio/success.mp3" type="audio/mpeg"></audio>
+    <audio id="errorAudio"><source src="/media/audio/error.mp3" type="audio/mpeg"></audio>
+    <form id="item" method="post">
+        Item_code  : <input type="text"   id="item_code" style="color:red ; font-size:30px" autofocus> <br>
+        <br>
+        Barcode  : <input type="text"   id="barcode" style="color:red ; font-size:30px"> <br>
+
+        SKU  : <input type="text"   id="SKU" style="color:red ; font-size:30px"> <br>
+
+
+
+        <button type="button" id='get_item_info'>submit</button>
+
+
+        <p>Scan Result: <span id='scan_result' style="font-size:30px"></span></p>
+        <br>
+        <p>Action        : <span id='action' style="font-size:30px"></span></p>
+        <img id="sku_img" src="" width="100" />
+
+
+        {% csrf_token %}
+    </form>
+
+
+    <script>
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    var csrftoken = getCookie('csrftoken');
+
+    function csrfSafeMethod(method) {
+        // 这些HTTP方法不要求CSRF包含
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+
+
+    $.ajaxSetup({
+        beforeSend: function (xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+        }
+    });
+
+    $(document).keydown(function (event) {
+        //alert("document keydown")
+        if (document.activeElement.id ==""){
+            $("#item_code").focus();
+            $("#item_code").select();
+        }
+
+    });
+
+        //输入框的enter事件
+$('#item_code').bind('keyup',function(event){
+    if(event.keyCode == "13") {
+
+        if ( $("#barcode").val()  ==""){
+            $("#barcode").focus();
+            $("#barcode").select();
+
+        }
+        else {
+            $("#get_item_info").trigger("click");
+        }
+
+    }
+});
+
+$('#barcode').bind('keyup',function(event){
+    if(event.keyCode == "13") {
+        if ( $("#item_code").val()  ==""){
+            $("#item_code").focus();
+            $("#item_code").select();
+
+        }
+        else {
+            $("#get_item_info").trigger("click");
+        }
+
+    }
+});
+
+
+    //这里是关键点 .ready 函数好像监听器。
+    $(document).ready(function () {
+
+
+
+        $("#get_item_info").click(function () {
+
+                var barcode = $("#barcode").val();
+                var item_code = $("#item_code").val();
+                var SKU = $("#SKU").val();
+
+                alert_text = '请稍等,正在查询:' + item_code + '信息';
+                alert(alert_text);
+                $.ajax({
+                    type: 'POST',
+                     url: "/updateitem/",
+                    data: {
+
+                        barcode: barcode,
+                        item_code: item_code,
+                        SKU: SKU,
+
+                        csrfmiddlewaretoken: '{{ csrf_token }}'
+                    },
+                    success: function (data) {
+                        console.log("updateitem", data);
+                        var scan_result = $("#scan_result");
+                        var action = $("#action");
+
+                        $("#item_code").val("");
+                        $("#barcode").val("");
+                        $("#SKU").val("");
+
+                        scan_result.html(data.scan_result);
+                        $("#ret_item_code").html(item_code);
+
+                        if (data.scan_result !== "Success"){
+                            $('#errorAudio')[0].play();
+
+                            scan_result.css("backgroundColor", "red");
+                            $("#barcode").html("");
+                            $("#item_code").html("");
+                            $("#SKU").html("");
+
+                        }
+                        else{
+                            $('#successAudio')[0].play();
+                            scan_result.css("backgroundColor", "yellow");
+
+                            switch (data.action) {
+                                case "Put Away":
+                                    action.css("backgroundColor", "green");
+                                    break;
+                                case "Put Normal_Case":
+                                    action.css("backgroundColor", "yellow");
+                                    break;
+                                case "Dead_No_Size Away":
+                                    action.css("backgroundColor", "grey");
+                                    break;
+                                case "Dead_Size Away":
+                                    action.css("backgroundColor", "blue");
+                                    break;
+                                default:
+                                    action.css("backgroundColor", "red");
+                                    break;
+
+                            }
+
+                            action.html(data.action);
+                            $("#sku_img").attr("src",data.sku_image)
+
+                        }
+
+                        $("#item_code").focus();
+                        $("#item_code").select();
+
+
+
+
+
+                    }
+                });
+         });
+
+
+
+
+
+
+
+        });
+
+
+    </script>
+
+
+
+
+{% endblock %}
