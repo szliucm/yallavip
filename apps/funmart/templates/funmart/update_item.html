@@ -121,7 +121,7 @@ $('#barcode').bind('keyup',function(event){
                 alert(alert_text);
                 $.ajax({
                     type: 'POST',
-                     url: "/updateitem/",
+                     url: "/update_item/",
                     data: {
 
                         barcode: barcode,
@@ -131,7 +131,7 @@ $('#barcode').bind('keyup',function(event){
                         csrfmiddlewaretoken: '{{ csrf_token }}'
                     },
                     success: function (data) {
-                        console.log("updateitem", data);
+                        console.log("update_item", data);
                         var scan_result = $("#scan_result");
                         var action = $("#action");
 

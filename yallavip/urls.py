@@ -38,7 +38,7 @@ urlpatterns = [
     path('scanpackage/', scanpackage),
     path('preparebatch/', preparebatch),
     path('scanpackageitem/', scanpackageitem),
-    path('updateitem/', updateitem),
+    path('update_item/', update_item),
 
     path('fulfillbag/', fulfillbag),
     #path('packbag/', packbag),

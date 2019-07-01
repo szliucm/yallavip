@@ -354,7 +354,7 @@ def scanpackageitem(request):
         #print ("response ",item)
         return JsonResponse(item)
 
-def updateitem(request):
+def update_item(request):
 
 
     from funmart.tasks import get_funmart_barcode
