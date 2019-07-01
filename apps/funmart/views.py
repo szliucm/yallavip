@@ -425,6 +425,7 @@ def update_item(request):
 
             item["new_barcode"] = barcode
             item["sku_name"] = funmart_sku.name
+            item["SKU"] = SKU
             item["sku_image"] = json.loads(funmart_sku.images)[0]
 
 

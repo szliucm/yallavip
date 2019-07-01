@@ -16,7 +16,7 @@
         <br>
         Barcode  : <input type="text"   id="barcode" style="color:red ; font-size:30px"> <br>
 
-        SKU  : <input type="text"   id="SKU" style="color:red ; font-size:30px" hidden="hidden"> <br>
+        SKU  : <input type="text"   id="SKU_search" style="color:red ; font-size:30px" hidden="hidden"> <br>
 
 
 
@@ -24,6 +24,9 @@
 
 
         <p>Scan Result: <span id='scan_result' style="font-size:30px"></span></p>
+
+        <br>
+        <p>SKU: <span id='SKU' style="font-size:30px"></span></p>
         <br>
         <p>Action        : <span id='action' style="font-size:30px"></span></p>
         <img id="sku_img" src="" width="150" />
@@ -175,6 +178,7 @@ $('#barcode').bind('keyup',function(event){
                             }
 
                             action.html(data.action);
+                            $("#SKU").html(data.SKU);
                             $("#sku_img").attr("src",data.sku_image)
 
                         }
