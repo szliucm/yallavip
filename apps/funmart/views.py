@@ -366,7 +366,7 @@ def update_item(request):
         item['scan_result'] = ""
 
         posts = request.POST
-        #print(posts)
+        print(posts)
         barcode = posts.get('barcode')
         item_code = posts.get('item_code')
         SKU = posts.get('SKU')
@@ -425,7 +425,7 @@ def update_item(request):
 
             item["new_barcode"] = barcode
             item["sku_name"] = funmart_sku.name
-            tem["sku_image"] = json.loads(funmart_sku.images)[0]
+            item["sku_image"] = json.loads(funmart_sku.images)[0]
 
 
             item['scan_result'] = 'Success'
