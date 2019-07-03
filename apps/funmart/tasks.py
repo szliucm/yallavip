@@ -242,7 +242,7 @@ def get_funmart_sku(sku):
                     'sale_price': data.get("price"),
                     'pack_height': data.get("pack_height"),
                     'pack_length': data.get("pack_length"),
-                    'pack_weight': data.get("price"),
+                    'pack_weight': data.get("pack_weight"),
                     'pack_width': data.get("pack_width"),
                     'download_error': "",
 

@@ -56,12 +56,12 @@ def set_spu_free_delivery_price():
 #原价大于40的，都设成单件包邮
 def cal_promote_price(spu):
 
-    #供货价的7倍 3.75*7
+    #供货价的6倍 3.75*6
 
-    multiple_price = spu.vendor_supply_price * 26.25
+    multiple_price = spu.vendor_supply_price * 22.5
 
     # 供应商售价的7折 3.75*0.7
-    discount_price = spu.vendor_sale_price * 2.625
+    discount_price = spu.vendor_sale_price * 2.25
     if multiple_price < discount_price:
         new_price = round(discount_price)
     else:
@@ -85,7 +85,7 @@ def cal_promote_price(spu):
     free_shipping_price = new_price + 15
 
     #推广价
-    promote_price = int(new_price *0.85)
+    promote_price = int(new_price *0.75)
     promote_free_shipping_price = promote_price + 15
 
     spu.spu_sku.update(free_shipping_price=free_shipping_price, sku_price = new_price,

@@ -13,6 +13,8 @@ from prs.models import *
 
 from shop.photo_mark import yallavip_mark_image
 from prs.fb_action import combo_ad_image_template_single
+from prs.funmart import  cal_promote_price
+
 import random
 
 #根据page cate 规则，更新page的相册
@@ -533,14 +535,14 @@ def prepare_promote_single(page_no,free_shipping=True):
 
 def prepare_promote_image_album_single(cate, page_no, lightin_spus, vendor):
 
-
-
     print ("正在处理page ", cate, page_no, lightin_spus)
     target_page= MyPage.objects.get(page_no=page_no)
     spus=[]
     spu_ims = []
     handles = []
     for spu in lightin_spus:
+        cal_promote_price(spu)
+
         if spu.handle:
             handles.append(spu.handle)
         else:
@@ -610,7 +612,7 @@ def prepare_promote_image_album_single(cate, page_no, lightin_spus, vendor):
 
 
 
-def prepare_promote_image_album_v4(cate, page_no, lightin_spus,prepare_promote_image_album_v4):
+def prepare_promote_image_album_v4(cate, page_no, lightin_spus,freeshipping):
     from prs.fb_action import combo_ad_image_v4
 
 
@@ -683,7 +685,7 @@ def prepare_promote_image_album_v4(cate, page_no, lightin_spus,prepare_promote_i
 #生成单主图的多图
 @shared_task
 def prepare_a_album_v2(lightinalbum_pk):
-    from prs.funmart import  cal_promote_price
+
 
     ori_lightinalbum = LightinAlbum.objects.get(pk=lightinalbum_pk)
     page_no = ori_lightinalbum.yallavip_album.page.page_no
@@ -787,7 +789,7 @@ def prepare_a_album_v2(lightinalbum_pk):
                 material_error=error
             )
 
-#重置page的所有产品为未打广告状态
+#重置page的所有产品
 def reset_yallavip_album_ad(page_no):
     spus = LightinAlbum.objects.filter(yallavip_album__page__page_no=page_no).values_list("lightin_spu",flat=True)
     Lightin_SPU.objects.filter(pk__in = list(spus)).update(aded=False)
