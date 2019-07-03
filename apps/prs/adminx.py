@@ -142,12 +142,12 @@ class Lightin_SPUAdmin(object):
     import_export_args = {"import_resource_class": Lightin_SPUResource,
                           "export_resource_class": Lightin_SPUResource}
 
-    list_display = [ "SPU","handle", "sellable","free_shipping",  "yallavip_price","free_shipping_price", "en_name","cn_name", "photo","vendor","link", ]
+    list_display = [ "SPU","handle", "fake", "sellable","free_shipping",  "yallavip_price","free_shipping_price", "en_name","cn_name", "photo","vendor","link", ]
     # 'sku_name','img',
 
     search_fields = ["SPU","handle","breadcrumb", ]
-    list_filter = ["vendor","free_shipping", ]
-    list_editable = []
+    list_filter = ["vendor","free_shipping","cate_1","cate_2","cate_3", ]
+    list_editable = ["fake",]
     readonly_fields = ()
     actions = []
 

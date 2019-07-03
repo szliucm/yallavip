@@ -81,11 +81,12 @@ def cal_promote_price(spu):
     else:
         spu.free_shipping = False
 
-    free_shipping_price = new_price + 30
+    #两件包邮，只加 15 SAR
+    free_shipping_price = new_price + 15
 
     #推广价
     promote_price = int(new_price *0.85)
-    promote_free_shipping_price = promote_price + 30
+    promote_free_shipping_price = promote_price + 15
 
     spu.spu_sku.update(free_shipping_price=free_shipping_price, sku_price = new_price,
                         promote_price=promote_price, promote_free_shipping_price = promote_free_shipping_price)

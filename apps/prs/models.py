@@ -118,6 +118,8 @@ class Lightin_SPU(models.Model):
     size_count = models.IntegerField(u'size数量', default=0, blank=True, null=True)
     one_size = models.BooleanField(default=False, verbose_name="均码")
 
+    fake = models.BooleanField(default=False, verbose_name="仿牌")
+
     class Meta:
         verbose_name = "兰亭SPU"
         verbose_name_plural = verbose_name

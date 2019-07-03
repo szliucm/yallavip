@@ -683,6 +683,7 @@ def prepare_promote_image_album_v4(cate, page_no, lightin_spus,prepare_promote_i
 #生成单主图的多图
 @shared_task
 def prepare_a_album_v2(lightinalbum_pk):
+    from prs.funmart import  cal_promote_price
 
     ori_lightinalbum = LightinAlbum.objects.get(pk=lightinalbum_pk)
     page_no = ori_lightinalbum.yallavip_album.page.page_no
@@ -709,6 +710,8 @@ def prepare_a_album_v2(lightinalbum_pk):
         )
 
     elif spu:
+        cal_promote_price(spu)
+
         error = ""
         # 准备文字
         # 标题
@@ -783,3 +786,8 @@ def prepare_a_album_v2(lightinalbum_pk):
             LightinAlbum.objects.filter(pk=lightinalbum.pk).update(
                 material_error=error
             )
+
+#重置page的所有产品为未打广告状态
+def reset_yallavip_album_ad(page_no):
+    spus = LightinAlbum.objects.filter(yallavip_album__page__page_no=page_no).values_list("lightin_spu",flat=True)
+    Lightin_SPU.objects.filter(pk__in = list(spus)).update(aded=False)

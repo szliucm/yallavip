@@ -2067,7 +2067,6 @@ def combo_ad_image_template_single(spu_ims, spus_name,spus, page_no,type):
     import os
     from django.conf import settings
 
-
     domain = "http://admin.yallavip.com"
 
     try:
@@ -2114,10 +2113,6 @@ def combo_ad_image_template_single(spu_ims, spus_name,spus, page_no,type):
         layer.paste(clipResizeImg_new(ims[2], 364, 800), (1164, 0))
     else:
         return  None
-
-
-
-
 
     if page_no:
         domain = "http://admin.yallavip.com"
