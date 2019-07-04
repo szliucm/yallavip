@@ -150,7 +150,7 @@ class Lightin_SPUAdmin(object):
     # 'sku_name','img',
 
     search_fields = ["SPU","handle","breadcrumb", ]
-    list_filter = ["vendor","free_shipping","cate_1","cate_2","cate_3", ]
+    list_filter = ["vendor","free_shipping","cate_1","cate_2","cate_3", "fake","sellable",]
     list_editable = ["fake",]
     readonly_fields = ()
     actions = []
