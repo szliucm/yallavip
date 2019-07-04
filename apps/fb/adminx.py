@@ -1974,7 +1974,7 @@ class PromoteTemplateAdmin(object):
     list_display = ('batch_name', 'size', 'free_shipping','show_promote_template','main_image_count','sub_image_count','price_postion','oriprice_postion','update_time',)
     list_editable = ['batch_name', 'size','free_shipping', 'main_image_count','sub_image_count','price_postion','oriprice_postion',]
     search_fields = []
-    list_filter = ('batch_name', 'batch_name',)
+    list_filter = ('batch_name', 'batch_name',"size","free_shipping","main_image_count",)
     #model_icon = '<i class="fa fa-camera-retro fa-5x"></i> fa-5x'
 
     exclude = []

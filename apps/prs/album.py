@@ -759,6 +759,7 @@ def prepare_a_album_v2(lightinalbum_pk):
                     lightin_spus = [spu]
 
                     image_marked_url = combo_ad_image_template_single(spu_ims, handles_name, lightin_spus, page_no,"album")
+
                 #else:
 
 
@@ -769,6 +770,8 @@ def prepare_a_album_v2(lightinalbum_pk):
 
                     #image_marked, image_pure_url, image_marked_url = yallavip_mark_image(spu_ims[0], spu.handle, str(price1), str(price2),
                      #                                                    lightinalbum.yallavip_album.page, spu.free_shipping)
+                else:
+                    image_marked_url=None
 
                 if not image_marked_url:
                     error = "打水印失败"
