@@ -157,10 +157,10 @@ class Lightin_SPUAdmin(object):
                 "vendor__in": "funmart",
                 "cate_1__contains": "Women",
                 "cate_2__contains": "Clothing",
-                "o_sellable__gt": 0,
+                "sellable__gt": 0,
 
             },
-            "order": ("-o_sellable",),
+            "order": ("-sellable",),
             # "cols": ('user_name', 'user_email', 'user_mobile'),
         },
         {
@@ -169,10 +169,10 @@ class Lightin_SPUAdmin(object):
                 "vendor__in": "funmart",
                 "cate_1__contains": "Women",
                 "cate_2__contains": "Bags",
-                "o_sellable__gt": 0,
+                "sellable__gt": 0,
 
             },
-            "order": ("-o_sellable",),
+            "order": ("-sellable",),
             # "cols": ('user_name', 'user_email', 'user_mobile'),
         },
         {
@@ -181,10 +181,10 @@ class Lightin_SPUAdmin(object):
                 "vendor__in": "funmart",
                 "cate_1__contains": "Women",
                 "cate_2__contains": "Shoes",
-                "o_sellable__gt": 0,
+                "sellable__gt": 0,
 
             },
-            "order": ("-o_sellable",),
+            "order": ("-sellable",),
             # "cols": ('user_name', 'user_email', 'user_mobile'),
         },
         {
@@ -193,10 +193,10 @@ class Lightin_SPUAdmin(object):
                 "vendor__in": "funmart",
                 "cate_1__contains": "Women",
                 "cate_2__contains": "Watches",
-                "o_sellable__gt": 0,
+                "sellable__gt": 0,
 
             },
-            "order": ("-o_sellable",),
+            "order": ("-sellable",),
             # "cols": ('user_name', 'user_email', 'user_mobile'),
         },
         {
@@ -205,10 +205,10 @@ class Lightin_SPUAdmin(object):
                 "vendor__in": "funmart",
                 "cate_1__contains": "Men",
                 "cate_2__contains": "Clothing",
-                "o_sellable__gt": 0,
+                "sellable__gt": 0,
 
             },
-            "order": ("-o_sellable",),
+            "order": ("-sellable",),
             # "cols": ('user_name', 'user_email', 'user_mobile'),
         },
         {
@@ -217,10 +217,10 @@ class Lightin_SPUAdmin(object):
                 "vendor__in": "funmart",
                 "cate_1__contains": "Men",
                 "cate_2__contains": "Bags",
-                "o_sellable__gt": 0,
+                "sellable__gt": 0,
 
             },
-            "order": ("-o_sellable",),
+            "order": ("-sellable",),
             # "cols": ('user_name', 'user_email', 'user_mobile'),
         },
         {
@@ -229,10 +229,10 @@ class Lightin_SPUAdmin(object):
                 "vendor__in": "funmart",
                 "cate_1__contains": "Men",
                 "cate_2__contains": "Shoes",
-                "o_sellable__gt": 0,
+                "sellable__gt": 0,
 
             },
-            "order": ("-o_sellable",),
+            "order": ("-sellable",),
             # "cols": ('user_name', 'user_email', 'user_mobile'),
         },
         {
@@ -241,10 +241,10 @@ class Lightin_SPUAdmin(object):
                 "vendor__in": "funmart",
                 "cate_1__contains": "Men",
                 "cate_2__contains": "Watches",
-                "o_sellable__gt": 0,
+                "sellable__gt": 0,
 
             },
-            "order": ("-o_sellable",),
+            "order": ("-sellable",),
             # "cols": ('user_name', 'user_email', 'user_mobile'),
         }
     ]
