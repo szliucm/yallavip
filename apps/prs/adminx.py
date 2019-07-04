@@ -124,10 +124,14 @@ class Lightin_SPUAdmin(object):
         if obj.images is not None and len(obj.images)>0 :
             photos = json.loads(obj.images)
             img = ''
-
+            i=1
             for photo in photos:
+                if i>3:
+                    break
+                i+=1
+
                 try:
-                    img = img + '<a><img src="%s" width="100px"></a>' % (photo)
+                    img = img + '<a><img src="%s" width="150px"></a>' % (photo)
                 except Exception as e:
                     print("获取图片出错", e)
 
