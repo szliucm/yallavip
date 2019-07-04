@@ -13,7 +13,7 @@ from prs.models import *
 
 from shop.photo_mark import yallavip_mark_image
 from prs.fb_action import combo_ad_image_template_single
-from prs.funmart import  cal_promote_price_funmart
+
 
 import random
 
@@ -541,7 +541,7 @@ def prepare_promote_image_album_single(cate, page_no, lightin_spus, vendor):
     spu_ims = []
     handles = []
     for spu in lightin_spus:
-        cal_promote_price(spu)
+
 
         if spu.handle:
             handles.append(spu.handle)
@@ -713,7 +713,7 @@ def prepare_a_album_v2(lightinalbum_pk):
         )
 
     elif spu:
-        cal_promote_price(spu)
+
 
         error = ""
         # 准备文字
