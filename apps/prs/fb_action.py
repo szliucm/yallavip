@@ -2118,8 +2118,14 @@ def combo_ad_image_template_single(spu_ims, spus_name,spus, page_no,type):
         domain = "http://admin.yallavip.com"
 
         free_shipping = spus[0].free_shipping
-        promote = MyPage.objects.get(page_no=page_no).promote_template.get(size="1.91:1", main_image_count=1,
+        try:
+            promote = MyPage.objects.get(page_no=page_no).promote_template.get(size="1.91:1", main_image_count=1,
                                                                            free_shipping=free_shipping)
+        except Exception as e:
+            print (e)
+            return None
+
+
         promote_template = promote.promote_template
 
         destination_url = domain + os.path.join(promote_template.url)
