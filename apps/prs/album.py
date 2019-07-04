@@ -586,10 +586,11 @@ def prepare_promote_image_album_single(cate, page_no, lightin_spus, vendor):
               "How to order?Pls choice the product that you like it , then send us the picture, we will order it for you!🤩🤩"
     '''
 
-    message = "Buy 3 get 1 free]+[free Shipping]+[all spot goods \n" \
-              "Special Promotion big sale: “Buy 3 get 1 free”!!! \n" \
-              "It means now if you buy 3 items, you can choose any 1 item of equal price or lower price for free, and the shipping fee is free too!!!! \nAll hot sale goods, limited quantity , all Riyadh warehouse spot, 3-5day deliver to your house!!!!\n" \
-              "Don't wait, do it!!!!!"
+    message = "💋💋Buy 2 free Shipping + Buy 3 get 1 more free++[all spot goods 💋💋\n" \
+              "🥳🥳🥳Special Promotion big sale: “Buy 3 get 1 more free”!!! 🥳🥳🥳\n" \
+              "It means now if you buy any 3 items, you can choose any 1 more item of equal price or lower price for free!!!! \n" \
+              "All hot sale goods, limited quantity , all Riyadh warehouse spot, 3-5day deliver to your house!!!!❣️❣️\n" \
+              "Don't wait, do it!!!!!🤩🤩"
 
 
     message = message + "\n[" + handles_name+ "]"
@@ -758,14 +759,16 @@ def prepare_a_album_v2(lightinalbum_pk):
                     lightin_spus = [spu]
 
                     image_marked_url = combo_ad_image_template_single(spu_ims, handles_name, lightin_spus, page_no,"album")
-                else:
+                #else:
+
+
 
                     # 打水印
                     # logo， page促销标
                     # 如果有相册促销标，就打相册促销标，否则打价格标签
 
-                    image_marked, image_pure_url, image_marked_url = yallavip_mark_image(spu_ims[0], spu.handle, str(price1), str(price2),
-                                                                         lightinalbum.yallavip_album.page, spu.free_shipping)
+                    #image_marked, image_pure_url, image_marked_url = yallavip_mark_image(spu_ims[0], spu.handle, str(price1), str(price2),
+                     #                                                    lightinalbum.yallavip_album.page, spu.free_shipping)
 
                 if not image_marked_url:
                     error = "打水印失败"
