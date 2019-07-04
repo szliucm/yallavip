@@ -45,7 +45,7 @@ def funmart_cates():
 
 
 #把价格大于40的，全部设置成单件包邮
-def set_spu_free_delivery_price():
+def set_spu_free_delivery_price_funmart():
 
 
     spus = Lightin_SPU.objects.filter(vendor="funmart")
