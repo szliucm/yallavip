@@ -2187,7 +2187,7 @@ def combo_ad_image_template_single(spu_ims, spus_name,spus, page_no,type):
         out = layer.convert('RGB')
 
 
-        image_filename = spus_name+'.jpg'
+        image_filename = page_no+"_"+spus_name+'.jpg'
 
         destination = os.path.join(settings.MEDIA_ROOT, "ad/", image_filename)
 
