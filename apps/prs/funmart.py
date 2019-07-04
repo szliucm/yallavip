@@ -61,7 +61,7 @@ def cal_promote_price(spu):
     multiple_price = spu.vendor_supply_price * 20.6
 
     # 供应商售价的6折 3.75*0.55
-    discount_price = spu.vendor_sale_price * 20.6
+    discount_price = spu.vendor_sale_price * 2.06
     if multiple_price < discount_price:
         new_price = round(discount_price)
     else:
