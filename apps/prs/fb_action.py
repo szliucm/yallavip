@@ -2122,7 +2122,7 @@ def combo_ad_image_template_single(spu_ims, spus_name,spus, page_no,type):
             promote = MyPage.objects.get(page_no=page_no).promote_template.get(size="1.91:1", main_image_count=1,
                                                                            free_shipping=free_shipping)
         except Exception as e:
-            print (e)
+            print (page_no, e)
             return None
 
 
