@@ -150,6 +150,104 @@ class Lightin_SPUAdmin(object):
     list_editable = ["fake",]
     readonly_fields = ()
     actions = []
+    list_bookmarks = [
+        {
+            "title": "女装",
+            "query": {
+                "vendor__in": "funmart",
+                "cate_1__contains": "Women",
+                "cate_2__contains": "Clothing",
+                "o_sellable__gt": 0,
+
+            },
+            "order": ("-o_sellable",),
+            # "cols": ('user_name', 'user_email', 'user_mobile'),
+        },
+        {
+            "title": "女包",
+            "query": {
+                "vendor__in": "funmart",
+                "cate_1__contains": "Women",
+                "cate_2__contains": "Bags",
+                "o_sellable__gt": 0,
+
+            },
+            "order": ("-o_sellable",),
+            # "cols": ('user_name', 'user_email', 'user_mobile'),
+        },
+        {
+            "title": "女鞋",
+            "query": {
+                "vendor__in": "funmart",
+                "cate_1__contains": "Women",
+                "cate_2__contains": "Shoes",
+                "o_sellable__gt": 0,
+
+            },
+            "order": ("-o_sellable",),
+            # "cols": ('user_name', 'user_email', 'user_mobile'),
+        },
+        {
+            "title": "女表",
+            "query": {
+                "vendor__in": "funmart",
+                "cate_1__contains": "Women",
+                "cate_2__contains": "Watches",
+                "o_sellable__gt": 0,
+
+            },
+            "order": ("-o_sellable",),
+            # "cols": ('user_name', 'user_email', 'user_mobile'),
+        },
+        {
+            "title": "男装",
+            "query": {
+                "vendor__in": "funmart",
+                "cate_1__contains": "Men",
+                "cate_2__contains": "Clothing",
+                "o_sellable__gt": 0,
+
+            },
+            "order": ("-o_sellable",),
+            # "cols": ('user_name', 'user_email', 'user_mobile'),
+        },
+        {
+            "title": "男包",
+            "query": {
+                "vendor__in": "funmart",
+                "cate_1__contains": "Men",
+                "cate_2__contains": "Bags",
+                "o_sellable__gt": 0,
+
+            },
+            "order": ("-o_sellable",),
+            # "cols": ('user_name', 'user_email', 'user_mobile'),
+        },
+        {
+            "title": "男鞋",
+            "query": {
+                "vendor__in": "funmart",
+                "cate_1__contains": "Men",
+                "cate_2__contains": "Shoes",
+                "o_sellable__gt": 0,
+
+            },
+            "order": ("-o_sellable",),
+            # "cols": ('user_name', 'user_email', 'user_mobile'),
+        },
+        {
+            "title": "男表",
+            "query": {
+                "vendor__in": "funmart",
+                "cate_1__contains": "Men",
+                "cate_2__contains": "Watches",
+                "o_sellable__gt": 0,
+
+            },
+            "order": ("-o_sellable",),
+            # "cols": ('user_name', 'user_email', 'user_mobile'),
+        }
+    ]
 
 class Lightin_SKUResource(resources.ModelResource):
 
