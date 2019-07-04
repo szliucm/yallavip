@@ -13,7 +13,7 @@ from prs.models import *
 
 from shop.photo_mark import yallavip_mark_image
 from prs.fb_action import combo_ad_image_template_single
-from prs.funmart import  cal_promote_price
+from prs.funmart import  cal_promote_price_funmart
 
 import random
 
