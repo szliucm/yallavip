@@ -7124,5 +7124,3 @@ def split_skuattr():
         except:
             print(sku, sku.skuattr)
 
-def convert_skus():
-    newskus =  convert.objects.
