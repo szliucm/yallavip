@@ -50,11 +50,11 @@ def set_spu_free_delivery_price():
 
     spus = Lightin_SPU.objects.filter(vendor="funmart")
     for spu in spus:
-      cal_promote_price(spu)
+      cal_promote_price_funmart(spu)
 
 #计算某个spu的促销价，修改sku，spu的促销价
 #原价大于40的，都设成单件包邮
-def cal_promote_price(spu):
+def cal_promote_price_funmart(spu):
 
     #供货价的5.5倍 3.75*5.5
 
