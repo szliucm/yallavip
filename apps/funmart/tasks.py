@@ -754,13 +754,14 @@ def download_image_v2(spu, remote_images):
                 except Exception as e:
                     downloaded = False
                     download_error = e
+                    print (download_error)
                     FunmartImage.objects.filter(SPU=spu, remote_image=remote_image).update(downloaded=downloaded,
                                                                                            download_error=download_error)
                     continue
 
 
 
-            downloaded_list.append(remote_image)
+        downloaded_list.append(remote_image)
 
 
 
