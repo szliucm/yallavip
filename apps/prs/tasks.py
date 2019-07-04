@@ -4942,7 +4942,7 @@ def sync_yallavip_album(page_no=None):
         lightinalbums_all = lightinalbums_all.filter(
             yallavip_album__page__page_no=page_no)
 
-    print("有%s个相册待更新" % (lightinalbums_all.count()))
+    print("有%s个相册图片待更新" % (lightinalbums_all.count()))
 
     albums = lightinalbums_all.values_list('yallavip_album', "yallavip_album__cate__sellable_gt","yallavip_album__page__page_no").distinct()
 
