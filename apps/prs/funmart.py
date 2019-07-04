@@ -56,12 +56,12 @@ def set_spu_free_delivery_price():
 #原价大于40的，都设成单件包邮
 def cal_promote_price_funmart(spu):
 
-    #供货价的5.5倍 3.75*5.5
+    #供货价的6倍 3.75*6
 
-    multiple_price = spu.vendor_supply_price * 20.6
+    multiple_price = spu.vendor_supply_price * 22.5
 
     # 供应商售价的6折 3.75*0.55
-    discount_price = spu.vendor_sale_price * 2.06
+    discount_price = spu.vendor_sale_price * 2.25
     if multiple_price < discount_price:
         new_price = round(discount_price)
     else:
