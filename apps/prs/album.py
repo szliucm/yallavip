@@ -514,8 +514,8 @@ def prepare_promote_single(page_no,free_shipping=True):
         print ("没有促销品类")
         return
 
-    # 取库存大、单价高、已经发布到相册 且还未打广告，单件包邮的商品
-    spus_all = Lightin_SPU.objects.filter(~Q(handle=""),handle__isnull=False,
+    # 取库存大、单价高、已经发布到相册 且还未打广告，不是仿牌，单件包邮的商品
+    spus_all = Lightin_SPU.objects.filter(~Q(handle=""),handle__isnull=False,fake=False,
                                           vendor="funmart", aded=False,sellable__gt=3,
                                           yallavip_price__gte=10,yallavip_price__lte=80,
                                           images_count__gte=3,free_shipping=free_shipping)
