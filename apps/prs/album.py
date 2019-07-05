@@ -472,7 +472,7 @@ def get_promote_ads(page_no):
     else:
         return None, None
     delete_outstock_yallavipad()
-    ads = YallavipAd.objects.filter(page_no=page_no, active=True,  cate__in=cates)
+    ads = YallavipAd.objects.filter(page_no=page_no, active=True,  cate__in=cates, )
 
     return ads, cates
 

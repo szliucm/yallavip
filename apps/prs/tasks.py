@@ -6981,7 +6981,7 @@ def delete_outstock_yallavipad():
 
         handles = ad.spus_name.split(",")
         spus_all = Lightin_SPU.objects.filter(handle__in=handles)
-        spus_outstock = spus_all.filter(sellable__lte=0)
+        spus_outstock = spus_all.filter(Q(sellable__lte=0)|Q(fake=True))
         if spus_outstock.count() > 0:
             print("有spu无库存了", spus_outstock, ad )
             spus_all.update(aded=False)
