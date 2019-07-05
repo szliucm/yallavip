@@ -509,7 +509,7 @@ def delete_outstock_feeds():
 
         handles = feed.handles.split(",")
         spus_all = Lightin_SPU.objects.filter(handle__in=handles)
-        spus_outstock = spus_all.filter(Q(sellable__lte=0),Q(fake=True))
+        spus_outstock = spus_all.filter(Q(sellable__lte=0)|Q(fake=True))
         if spus_outstock.count() > 0:
             print("有spu无库存了", spus_outstock, feed, feed.feed_no)
             feed_nos.append((feed.page_no,feed.feed_no))
@@ -642,7 +642,7 @@ def delete_outstock_ad(ads):
         spus_all = Lightin_SPU.objects.filter(handle__in=handles)
 
 
-        spus_outstock = spus_all.filter(Q(sellable__lte=0),Q(fake=True))
+        spus_outstock = spus_all.filter(Q(sellable__lte=0)|Q(fake=True))
         if spus_outstock.count() > 0:
             print("有spu无库存了", spus_outstock, ad )
             spus_all.update(aded=False)
