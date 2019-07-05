@@ -75,8 +75,8 @@ def cal_promote_price_funmart(spu):
     elif new_price <20:
         new_price += 10
 
-    #价格大于30的，都包邮
-    if new_price >= 30:
+    #价格大于40的，都包邮
+    if new_price >= 40:
         spu.free_shipping = True
     else:
         spu.free_shipping = False
