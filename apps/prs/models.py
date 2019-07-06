@@ -152,7 +152,7 @@ class Lightin_SKU(models.Model):
 
     skuattr = models.TextField(default='', null=True, blank=True, verbose_name="skuattr")
     size = models.CharField(default='', max_length=20, null=True, blank=True, verbose_name="size")
-    color = models.CharField(default='', max_length=100, null=True, blank=True, verbose_name="color")
+    color = models.CharField(default='', max_length=200, null=True, blank=True, verbose_name="color")
 
     # image = models.ImageField(u'组合图', upload_to='combo/', default="", null=True, blank=True)
     image = models.TextField(default='', null=True, blank=True, verbose_name="sku图")
