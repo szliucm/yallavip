@@ -264,6 +264,22 @@ class Lightin_SKUResource(resources.ModelResource):
         # exclude = ()
 
 
+from django.contrib.admin import SimpleListFilter
+
+class SizeFilter(SimpleListFilter):
+    title = 'size' # or use _('country') for translated title
+    parameter_name = 'size'
+
+    def lookups(self, request, model_admin):
+        sizes = model_admin.model.objects.values_list("size",flat=True)
+        return [(size, size) for size in sizes]
+
+    def queryset(self, request, queryset):
+
+        if self.value():
+            return queryset.filter(size__exact=self.value())
+
+
 
 
 @xadmin.sites.register(Lightin_SKU)
@@ -335,7 +351,7 @@ class Lightin_SKUAdmin(object):
 
     # 'sku_name','img',
     search_fields = ["SPU", "SKU","lightin_spu__handle",]
-    list_filter = ["lightin_spu__free_shipping", "o_sellable", "size", "color","lightin_spu__cate_1","lightin_spu__cate_2","lightin_spu__cate_3","lightin_spu__vendor",]
+    list_filter = ["SizeFilter", "lightin_spu__free_shipping", "o_sellable", "size", "color","lightin_spu__cate_1","lightin_spu__cate_2","lightin_spu__cate_3","lightin_spu__vendor",]
     list_editable = []
     readonly_fields = ()
     actions = []

@@ -2155,11 +2155,11 @@ def get_barcodes(sku, quantity, price):
 
 @shared_task
 def fulfill_orders_lightin():
+    #先取出待发货订单
     orders = Order.objects.filter(
         Q(fulfillment_status__isnull=True)|Q(fulfillment_status=""),
                                 financial_status="paid",
-
-                                  status="open",
+                                 status="open",
                                   verify__verify_status="SUCCESS",
                                   verify__sms_status="CHECKED",
                                   wms_status__in=["", "F"])
@@ -2570,12 +2570,7 @@ def get_wms_product_page(page,update_start_time):
 
 
 def sync_wms_quantity():
-    mysqls = [
-        "update prs_lightin_barcode set o_quantity = y_sellable + y_reserved ,o_sellable = y_sellable , o_reserved = y_reserved,synced=True",
-        "UPDATE prs_lightin_sku INNER JOIN ( SELECT SKU,sum(o_sellable) as quantity FROM prs_lightin_barcode GROUP BY SKU ) b ON prs_lightin_sku.SKU = b.SKU SET prs_lightin_sku.o_quantity = b.quantity ",
-        "update prs_lightin_sku set o_sellable = o_quantity - o_reserved",
-        "UPDATE prs_lightin_spu INNER JOIN ( SELECT SPU, sum(o_sellable) as quantity FROM prs_lightin_sku GROUP BY SPU ) b ON prs_lightin_spu.SPU = b.SPU SET prs_lightin_spu.sellable = b.quantity",
-    ]
+
 
     warehouse_codes = Lightin_barcode.objects.values_list("warehouse_code",flat=True).distinct()
     for warehouse_code in warehouse_codes:
@@ -2584,9 +2579,7 @@ def sync_wms_quantity():
             if barcodes:
                 get_wms_quantity(warehouse_code,list(barcodes))
 
-            for mysql in mysqls:
-                print(mysql)
-                my_custom_sql(mysql)
+
 
 def get_wms_quantity(warehouse_code, barcodes=[],sku=None,):
 
@@ -7139,4 +7132,18 @@ def split_skuattr():
             sku.save()
         except:
             print(sku, sku.skuattr)
+
+#重置不在yallavipad里的spu的aded状态
+def reset_ads(self, request, queryset):
+
+    spus_name = YallavipAd.objects.values_list("spus_name",flat=True)
+    spu_list = []
+    for row in spus_name:
+        spus =  row.split(",")
+        for spu in spus:
+            if spu not in spu_list:
+                spu_list.append(spu)
+
+    Lightin_SPU.objects.exclude(handle__in = spu_list).update(aded=False)
+
 

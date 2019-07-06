@@ -69,10 +69,10 @@ def cal_promote_price_funmart(spu):
 
 
 
-    #小于5块的都卖10块，小于20块都加10块
-    if new_price <5:
-        new_price += 5
-    elif new_price <20:
+    #小于5块的都卖10块，小于40块都加10块
+    if new_price <10:
+        new_price = 10
+    elif new_price <40:
         new_price += 10
 
     #价格大于40的，都包邮
