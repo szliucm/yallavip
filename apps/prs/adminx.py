@@ -263,7 +263,7 @@ class Lightin_SKUResource(resources.ModelResource):
         fields = ("SPU", "SKU","barcode","quantity", "vendor_sale_price","vendor_supply_price","weight", "length","width","height","skuattr","image",)
         # exclude = ()
 
-
+'''
 from django.contrib.admin import SimpleListFilter
 
 class SizeFilter(SimpleListFilter):
@@ -278,7 +278,7 @@ class SizeFilter(SimpleListFilter):
 
         if self.value():
             return queryset.filter(size__exact=self.value())
-
+'''
 
 
 
