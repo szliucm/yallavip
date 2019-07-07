@@ -676,7 +676,11 @@ class DraftAdmin(object):
         else:
             order_quantity = 0
         #print("BBBBBBB", obj.lightin_sku.o_sellable + int(order_quantity))
-        return obj.lightin_sku.o_sellable + int(order_quantity)
+        o_sellable = obj.lightin_sku.o_sellable
+        if o_sellable<0:
+            return  o_sellable
+        else:
+            return o_sellable + int(order_quantity)
 
     sellable.short_description = "sellable"
 
