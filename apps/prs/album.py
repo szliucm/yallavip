@@ -518,7 +518,7 @@ def prepare_promote_single(page_no,free_shipping_count):
     spus_all = Lightin_SPU.objects.filter(~Q(handle=""),handle__isnull=False,fake=False,
                                           vendor="funmart", aded=False,sellable__gt=3,
                                           yallavip_price__gte=30,yallavip_price__lte=100,
-                                          images_count__gte=3,FREE_SHIPPING_COUNT=free_shipping_count)
+                                          images_count__gte=3,free_shipping_count=free_shipping_count)
 
     # 把主推品类的所有适合的产品都拿出来打广告
 
