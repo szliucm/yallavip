@@ -490,17 +490,17 @@ def chang_page_free_delivery(page_no):
         for spu in spus:
             update_promote_price(spu, True)
 
-def prepare_promote_singles(free_shipping=True):
+def prepare_promote_singles(free_shipping_count):
     # 找出所有活跃的page
     pages = MyPage.objects.filter(is_published=True, active=True, promotable=True)
     if page_no:
         pages = pages.filter(page_no=page_no)
 
     for page in pages:
-        prepare_promote_single(page.page_no, free_shipping)
+        prepare_promote_single(page.page_no, free_shipping_count)
 
 
-def prepare_promote_single(page_no,free_shipping=True):
+def prepare_promote_single(page_no,free_shipping_count):
     import random
 
     from django.db.models import Count
@@ -518,7 +518,7 @@ def prepare_promote_single(page_no,free_shipping=True):
     spus_all = Lightin_SPU.objects.filter(~Q(handle=""),handle__isnull=False,fake=False,
                                           vendor="funmart", aded=False,sellable__gt=3,
                                           yallavip_price__gte=30,yallavip_price__lte=100,
-                                          images_count__gte=3,FREE_SHIPPING_COUNT="2")
+                                          images_count__gte=3,FREE_SHIPPING_COUNT=free_shipping_count)
 
     # 把主推品类的所有适合的产品都拿出来打广告
 
@@ -748,11 +748,13 @@ def prepare_a_album_v2(lightinalbum_pk):
             name = name + "\n\n   " + option
 
         # 价格
-
+        '''
         if spu.free_shipping:
             price1 = int(spu.free_shipping_price)
         else:
             price1 = int(spu.yallavip_price)
+        '''
+        price1 =  int(spu.yallavip_price)
 
         price2 = int(price1 * random.uniform(5, 6))
         # 为了减少促销的麻烦，文案里不写价格了
