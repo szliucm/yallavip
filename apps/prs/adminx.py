@@ -146,11 +146,11 @@ class Lightin_SPUAdmin(object):
     import_export_args = {"import_resource_class": Lightin_SPUResource,
                           "export_resource_class": Lightin_SPUResource}
 
-    list_display = [ "SPU","handle", "fake", "sellable","free_shipping",  "yallavip_price","free_shipping_price", "en_name","cn_name", "photo","vendor","link", ]
+    list_display = [ "SPU","handle", "fake", "sellable","free_shipping_count", "promote_count", "yallavip_price", "en_name","cn_name", "photo","link", ]
     # 'sku_name','img',
 
-    search_fields = ["SPU","handle","breadcrumb", ]
-    list_filter = ["vendor","free_shipping","cate_1","cate_2","cate_3", "fake","sellable",]
+    search_fields = ["SPU","handle", ]
+    list_filter = ["vendor","free_shipping_count","promote_count", "cate_1","cate_2","cate_3", "fake","sellable",]
     list_editable = ["fake",]
     readonly_fields = ()
     actions = []
@@ -253,6 +253,10 @@ class Lightin_SPUAdmin(object):
         }
     ]
 
+    def queryset(self):
+        qs = super().queryset()
+        return qs.filter(vendor="funmart")
+
 class Lightin_SKUResource(resources.ModelResource):
 
     class Meta:
@@ -347,11 +351,11 @@ class Lightin_SKUAdmin(object):
 
     handle.short_description = "handle"
 
-    list_display = ["SKU", "handle",  "o_sellable","sku_photo", "sku_price","free_shipping_price", "size",]
+    list_display = ["SKU", "handle",  "size", "o_sellable","free_shipping_count", "promote_count", "sku_photo", "sku_price",]
 
     # 'sku_name','img',
     search_fields = ["SPU", "SKU","lightin_spu__handle",]
-    list_filter = [ "lightin_spu__free_shipping", "o_sellable", "size", "lightin_spu__cate_1","lightin_spu__cate_2","lightin_spu__cate_3","lightin_spu__vendor",]
+    list_filter = [ "free_shipping_count", "promote_count","o_sellable", "size", "lightin_spu__cate_1","lightin_spu__cate_2","lightin_spu__cate_3","lightin_spu__vendor",]
     list_editable = []
     readonly_fields = ()
     actions = []
@@ -456,7 +460,9 @@ class Lightin_SKUAdmin(object):
         }
     ]
 
-
+    def queryset(self):
+        qs = super().queryset()
+        return qs.filter(lightin_spu__vendor="funmart")
 
 
 class Lightin_barcodeResource(resources.ModelResource):
