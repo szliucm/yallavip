@@ -2,6 +2,7 @@ from django.db import models
 
 #from commodity.models import  SelectionRule
 
+from prs.models import  FREE_SHIPPING_COUNT, PROMOTE_COUNT
 
 # Create your models here.
 class PromoteTemplate(models.Model):
@@ -23,6 +24,9 @@ class PromoteTemplate(models.Model):
     oriprice_postion = models.CharField(verbose_name='原价坐标', default='', max_length=100,  null=False,blank=False)
     free_shipping = models.BooleanField(u"包邮",default=False)
     update_time = models.DateTimeField(verbose_name='更新时间', auto_now=True, null=True, blank=True)
+    free_shipping_count = models.CharField(choices=FREE_SHIPPING_COUNT, default='', max_length=20, null=True, blank=True, verbose_name="几件包邮")
+    promote_count = models.CharField(choices=PROMOTE_COUNT, default='', max_length=20, null=True, blank=True,
+                                     verbose_name="买送")
 
     class Meta:
         verbose_name = "促销模版"

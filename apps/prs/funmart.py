@@ -130,3 +130,10 @@ def cal_promote_price_funmart(spu):
     spu.save()
     return  True
 '''
+
+#标识没有尺码的spu
+def cal_onesize():
+
+    spus = Lightin_SKU.objects.filter(lightin_spu__vendor="funmart",size__in=["One Size","Free Size","",None]).values_list("SPU",flat=True).distinct()
+
+    Lightin_SPU.objects.filter(SPU__in =  list(spus)).update(one_size=True)

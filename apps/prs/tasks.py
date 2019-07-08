@@ -7119,6 +7119,7 @@ def spu_cates_v1():
 
 def create_handle_funmart():
     spus = Lightin_SPU.objects.filter(Q(handle__isnull=True)|Q(handle=""),vendor="funmart")
+    print("有%s个spu待处理"%spus.count())
 
     for spu in spus:
 
@@ -7141,8 +7142,13 @@ def split_skuattr():
                 else:
                     sku.size = size
                 sku.save()
+            else:
+                sku.size = ""
+                sku.save()
         except:
             print(sku, sku.skuattr)
+            sku.size = ""
+            sku.save()
 
 #重置不在yallavipad里的spu的aded状态
 def reset_ads(self, request, queryset):

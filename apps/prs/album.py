@@ -518,7 +518,7 @@ def prepare_promote_single(page_no,free_shipping=True):
     spus_all = Lightin_SPU.objects.filter(~Q(handle=""),handle__isnull=False,fake=False,
                                           vendor="funmart", aded=False,sellable__gt=3,
                                           yallavip_price__gte=30,yallavip_price__lte=100,
-                                          images_count__gte=3,free_shipping=free_shipping)
+                                          images_count__gte=3,FREE_SHIPPING_COUNT="2")
 
     # 把主推品类的所有适合的产品都拿出来打广告
 
@@ -551,11 +551,11 @@ def prepare_promote_image_album_single(cate, page_no, lightin_spus, vendor):
     handles = []
     for spu in lightin_spus:
 
-
         if spu.handle:
             handles.append(spu.handle)
         else:
             return False
+
         print("正在处理 handle ",spu.handle)
         images = json.loads(spu.images)
 
@@ -808,3 +808,47 @@ def prepare_a_album_v2(lightinalbum_pk):
 def reset_yallavip_album_ad(page_no):
     spus = LightinAlbum.objects.filter(yallavip_album__page__page_no=page_no).values_list("lightin_spu",flat=True)
     Lightin_SPU.objects.filter(pk__in = list(spus)).update(aded=False)
+
+
+#准备5件包邮的广告
+def prepare_promote_5s():
+    # 找出所有活跃的page
+    pages = MyPage.objects.filter(is_published=True, active=True, promotable=True)
+    if page_no:
+        pages = pages.filter(page_no=page_no)
+
+    for page in pages:
+        prepare_promote_5(page.page_no)
+
+#准备5件包邮的广告
+def prepare_promote_5(page_no):
+    # 取page对应的主推品类
+    try:
+        cates = PagePromoteCate.objects.get(mypage__page_no=page_no).promote_cate.all()
+    except:
+
+        print ("没有促销品类")
+        return
+
+    # 库存大、且还未打广告，不是仿牌，单件包邮的商品
+    #先处理没有尺码的
+    spus_all = Lightin_SPU.objects.filter(~Q(handle=""), handle__isnull=False, fake=False,
+                                          vendor="funmart", aded=False, sellable__gt=3,
+                                          free_shipping_count="5",one_size=True
+                                          )
+    # 把主推品类的所有适合的产品都拿出来打广告
+
+    for cate in cates:
+        con = filter_product(cate)
+        cate_spus = spus_all.filter(con).distinct().order_by("?")
+
+        # 每个cate最多10个
+        if cate_spus.count() > 10:
+            count = 10
+        else:
+            count = cate_spus.count()
+        print (cate, "一共有%s个广告可以准备" % (count))
+        cate_spus = cate_spus[:count]
+
+    pass
+
