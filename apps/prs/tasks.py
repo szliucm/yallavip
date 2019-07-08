@@ -2571,10 +2571,13 @@ def get_wms_product_page(page,update_start_time):
 
 def sync_wms_quantity():
 
-
+    '''
     warehouse_codes = Lightin_barcode.objects.values_list("warehouse_code",flat=True).distinct()
+    '''
+    warehouse_codes = ["W08"]
     for warehouse_code in warehouse_codes:
         if warehouse_code:
+
             barcodes = Lightin_barcode.objects.filter(warehouse_code= warehouse_code,synced=False).values_list("barcode",flat=True)
             if barcodes:
                 get_wms_quantity(warehouse_code,list(barcodes))

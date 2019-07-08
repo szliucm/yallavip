@@ -72,9 +72,36 @@ def cal_promote_price_funmart(spu):
     #小于5块的都卖10块，小于40块都加10块
     if new_price <10:
         new_price = 10
-    elif new_price <40:
+        free_shipping_count = 0
+        promote_count = M100-1
+    elif new_price <30:
         new_price += 10
+        free_shipping_count = 5
+        promote_count = B8-2
+    elif new_price <100:
+        new_price += 20
+        free_shipping_count = 2
+        promote_count = B3-1
+    else:
+        new_price += 40
+        free_shipping_count = 1
+        promote_count = B2-1
 
+    # 修改sku
+    spu.spu_sku.update( sku_price = new_price,
+                        free_shipping_count=free_shipping_count,
+                        promote_count = promote_count
+                       )
+
+    # 修改spu
+    spu.yallavip_price = new_price
+    spu.free_shipping_count = free_shipping_count
+    spu.promote_count = promote_count
+    spu.promoted = True
+    spu.save()
+    return True
+
+    '''
     #价格大于40的，都包邮
     if new_price >= 40:
         spu.free_shipping = True
@@ -87,6 +114,7 @@ def cal_promote_price_funmart(spu):
     #推广价
     promote_price = int(new_price )
     promote_free_shipping_price = promote_price + 15
+
 
     spu.spu_sku.update(free_shipping_price=free_shipping_price, sku_price = new_price,
                         promote_price=promote_price, promote_free_shipping_price = promote_free_shipping_price)
@@ -101,3 +129,4 @@ def cal_promote_price_funmart(spu):
     spu.promoted = True
     spu.save()
     return  True
+'''

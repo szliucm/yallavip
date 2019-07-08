@@ -4,7 +4,20 @@ from django.db import models
 from fb.models import MyPage, MyPhoto, MyFeed, MyAd, MyAlbum
 from shop.models import ShopifyProduct
 
+FREE_SHIPPING_COUNT = (
+    ("0", "不包邮"),
+    ("5", "5件包邮"),
+    ("2", "两件包邮"),
+    ("1", "一件包邮"),
 
+)
+PROMOTE_COUNT = (
+    ("M100-1", "满100送一"),
+    ("B8-2", "买8送二"),
+    ("B3-1", "买三送一"),
+    ("B2-1", "买二送一"),
+
+)
 # Create your models here.
 
 class MyCategory(models.Model):
@@ -120,6 +133,10 @@ class Lightin_SPU(models.Model):
 
     fake = models.BooleanField(default=False, verbose_name="仿牌")
 
+    #促销模式
+    free_shipping_count = models.CharField(choices=FREE_SHIPPING_COUNT, default='', max_length=20, null=True, blank=True, verbose_name="几件包邮")
+    promote_count = models.CharField(choices=PROMOTE_COUNT, default='', max_length=20, null=True, blank=True, verbose_name="买送")
+
     class Meta:
         verbose_name = "兰亭SPU"
         verbose_name_plural = verbose_name
@@ -171,6 +188,12 @@ class Lightin_SKU(models.Model):
 
     promote_price = models.FloatField(u'推广售价', default=0, blank=True, null=True)
     promote_free_shipping_price = models.FloatField(u'推广包邮价', default=0, blank=True, null=True)
+
+    # 促销模式
+    free_shipping_count = models.CharField(choices=FREE_SHIPPING_COUNT, default='', max_length=20, null=True,
+                                           blank=True, verbose_name="几件包邮")
+    promote_count = models.CharField(choices=PROMOTE_COUNT, default='', max_length=20, null=True, blank=True,
+                                     verbose_name="买送")
 
     # listing_status = models.BooleanField(u'发布到Facebook', default=False)
 
