@@ -2278,7 +2278,7 @@ def fulfill_order_lightin(order):
         "company": "company",
         "name": order.receiver_name,
         "phone": order.verify.phone_1,
-        "cell_phone": "",
+        "cell_phone": order.verify.phone_2,
         "email": "na@yallavip.com",
         "order_cod_price": order.order_amount,
         "order_cod_currency": "SAR",
