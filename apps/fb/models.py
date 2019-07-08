@@ -2,7 +2,7 @@ from django.db import models
 
 #from commodity.models import  SelectionRule
 
-from  prs.common import  FREE_SHIPPING_COUNT
+from  prs.common import  FREE_SHIPPING_COUNT, PROMOTE_COUNT
 
 
 
