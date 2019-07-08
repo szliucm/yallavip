@@ -894,14 +894,14 @@ class OrderDetailAdmin(object):
     def free_shipping_count(self,obj):
         from prs.models import Lightin_SKU
 
-        return Lightin_SKU.objects.get(SKU = obj.sku).free_shipping_count
+        return Lightin_SKU.objects.get(SKU = obj.sku).get_free_shipping_count_display
 
     free_shipping_count.short_description = "几件包邮"
 
     def promote_count(self,obj):
         from prs.models import Lightin_SKU
 
-        return Lightin_SKU.objects.get(SKU = obj.sku).promote_count
+        return Lightin_SKU.objects.get(SKU = obj.sku).get_promote_count_display
 
     promote_count.short_description = "买送"
 
