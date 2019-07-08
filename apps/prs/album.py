@@ -527,9 +527,9 @@ def prepare_promote_single(page_no,free_shipping_count, one_size):
         con = filter_product(cate)
         cate_spus = spus_all.filter(con).distinct().order_by("?")
 
-        # 每次最多20个
-        if cate_spus.count() > 10:
-            count = 10
+        # 每次最多5个
+        if cate_spus.count() > 5:
+            count = 5
         else:
             count = cate_spus.count()
         print (cate, "一共有%s个广告可以准备" % (count))
