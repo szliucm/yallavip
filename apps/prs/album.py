@@ -337,9 +337,12 @@ def prepare_yallavip_album_material(page_no=None):
 
    #每次每个相册处理最多100张图片
 
-    lightinalbums_all = LightinAlbum.objects.filter(published=False, publish_error="无", material=False,
+    lightinalbums_all = LightinAlbum.objects.filter(~Q(promote_count = "M100-1"), published=False, publish_error="无", material=False,
                                                     material_error="无",lightin_spu__sellable__gt=0,
-                                                    yallavip_album__isnull = False,yallavip_album__active = True  )
+
+                                                    yallavip_album__isnull = False,yallavip_album__active = True
+
+                                                    )
     if page_no:
         lightinalbums_all = lightinalbums_all.filter(yallavip_album__page__page_no=page_no)
 
@@ -595,12 +598,37 @@ def prepare_promote_image_album_single(cate, page_no, lightin_spus, vendor,free_
               "All goods are in Riyadh stock,It will be delivered to you in 3-5 days! ❣️❣️" \
               "How to order?Pls choice the product that you like it , then send us the picture, we will order it for you!🤩🤩"
     '''
-    if free_shipping_count == "3":
-        message = "💋💋Buy 3 free Shipping + Buy 5 get 1 more free++all spot goods 💋💋\n" \
-              "🥳🥳🥳Special Promotion big sale: “Buy 5 get 1 more free”!!! 🥳🥳🥳\n" \
-              "It means now if you buy any 5 items, you can choose any 1 more item of equal price or lower price for free!!!! \n" \
+    if free_shipping_count == "0":
+        message = "💋💋Buy 100SAR get 1 more free gift ++all spot goods 💋💋\n" \
+              "🥳🥳🥳Special Promotion big sale: “Buy 100SAR get 1 more free gift”!!! 🥳🥳🥳\n" \
+              "It means now if you buy every 100 Sar, you can choose 1 more gift for free!!!! \n" \
               "All hot sale goods, limited quantity , all Riyadh warehouse spot, 3-5day deliver to your house!!!!❣️❣️\n" \
               "Don't wait, do it!!!!!🤩🤩"
+    elif free_shipping_count == "1":
+        message = "💋💋Buy 1 free Shipping + Buy 2 get 1 more free++all spot goods 💋💋\n" \
+              "🥳🥳🥳Special Promotion big sale: “Buy 2 get 1 more free”!!! 🥳🥳🥳\n" \
+              "It means now if you buy 2 of this type of items, you can choose any 1 more item of equal price or lower price for free!!!! \n" \
+              "All hot sale goods, limited quantity , all Riyadh warehouse spot, 3-5day deliver to your house!!!!❣️❣️\n" \
+              "Don't wait, do it!!!!!🤩🤩"
+    elif free_shipping_count == "2":
+        message = "💋💋Buy 2 free Shipping + Buy 3 get 1 more free++all spot goods 💋💋\n" \
+              "🥳🥳🥳Special Promotion big sale: “Buy 3 get 1 more free”!!! 🥳🥳🥳\n" \
+              "It means now if you buy 3 of this type of items, you can choose any 1 more item of equal price or lower price for free!!!! \n" \
+              "All hot sale goods, limited quantity , all Riyadh warehouse spot, 3-5day deliver to your house!!!!❣️❣️\n" \
+              "Don't wait, do it!!!!!🤩🤩"
+    elif free_shipping_count == "3":
+        message = "💋💋Buy 3 free Shipping + Buy 5 get 1 more free++all spot goods 💋💋\n" \
+              "🥳🥳🥳Special Promotion big sale: “Buy 5 get 1 more free”!!! 🥳🥳🥳\n" \
+              "It means now if you buy 5 of this type of items, you can choose any 1 more item of equal price or lower price for free!!!! \n" \
+              "All hot sale goods, limited quantity , all Riyadh warehouse spot, 3-5day deliver to your house!!!!❣️❣️\n" \
+              "Don't wait, do it!!!!!🤩🤩"
+    elif free_shipping_count == "5":
+        message = "💋💋Buy 5 free Shipping + Buy 8 get 2 more free++all spot goods 💋💋\n" \
+              "🥳🥳🥳Special Promotion big sale: “Buy 8 get 2 more free”!!! 🥳🥳🥳\n" \
+              "It means now if you buy 8 of this type of items, you can choose any 2 more item of equal price or lower price for free!!!! \n" \
+              "All hot sale goods, limited quantity , all Riyadh warehouse spot, 3-5day deliver to your house!!!!❣️❣️\n" \
+              "Don't wait, do it!!!!!🤩🤩"
+
 
 
     message = message + "\n[" + handles_name+ "]"
