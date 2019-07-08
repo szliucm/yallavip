@@ -315,7 +315,7 @@ def prepare_yallavip_photoes_v2(page_no=None):
                     product_list.append(product)
 
             else:
-                products_to_add = Lightin_SPU.objects.filter(~Q(handle=""),vendor="funmart",sellable__gt=0).filter(con).exclude(id__in=
+                products_to_add = Lightin_SPU.objects.filter(~Q(handle=""),~Q(promote_count = "M100-1"),vendor="funmart",sellable__gt=0).filter(con).exclude(id__in=
                                                 LightinAlbum.objects.filter(
                                                     yallavip_album__pk=album.pk,
                                                     lightin_spu__isnull=False).values_list(
@@ -337,7 +337,7 @@ def prepare_yallavip_album_material(page_no=None):
 
    #每次每个相册处理最多100张图片
 
-    lightinalbums_all = LightinAlbum.objects.filter(~Q(promote_count = "M100-1"), published=False, publish_error="无", material=False,
+    lightinalbums_all = LightinAlbum.objects.filter(~Q(lightin_spu__promote_count = "M100-1"), published=False, publish_error="无", material=False,
                                                     material_error="无",lightin_spu__sellable__gt=0,
 
                                                     yallavip_album__isnull = False,yallavip_album__active = True
