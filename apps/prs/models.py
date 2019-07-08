@@ -7,15 +7,15 @@ from shop.models import ShopifyProduct
 FREE_SHIPPING_COUNT = (
     ("0", "不包邮"),
     ("5", "5件包邮"),
-    ("2", "两件包邮"),
-    ("1", "一件包邮"),
+    ("2", "2件包邮"),
+    ("1", "1件包邮"),
 
 )
 PROMOTE_COUNT = (
     ("M100-1", "满100送一"),
     ("B8-2", "买8送二"),
-    ("B3-1", "买三送一"),
-    ("B2-1", "买二送一"),
+    ("B3-1", "买3送一"),
+    ("B2-1", "买2送一"),
 
 )
 # Create your models here.
@@ -92,10 +92,9 @@ class Lightin_SPU(models.Model):
     got_time = models.DateTimeField(null=True, blank=True, verbose_name="更新时间")
 
     yallavip_price = models.FloatField(u'yallavip售价', default=0, blank=True, null=True)
-    free_shipping_price = models.FloatField(u'yallavip包邮价', default=0, blank=True, null=True)
-
-    promote_price = models.FloatField(u'推广售价', default=0, blank=True, null=True)
-    promote_free_shipping_price = models.FloatField(u'推广包邮价', default=0, blank=True, null=True)
+    #free_shipping_price = models.FloatField(u'yallavip包邮价', default=0, blank=True, null=True)
+    #promote_price = models.FloatField(u'推广售价', default=0, blank=True, null=True)
+    #promote_free_shipping_price = models.FloatField(u'推广包邮价', default=0, blank=True, null=True)
 
     shopify_price = models.FloatField(u'shopify售价', default=0, blank=True, null=True)
 
@@ -125,7 +124,7 @@ class Lightin_SPU(models.Model):
 
     active = models.BooleanField(default=True, verbose_name="有效性")
     promoted = models.BooleanField(default=False, verbose_name="促销状态")
-    free_shipping = models.BooleanField(default=False, verbose_name="包邮状态")
+    #free_shipping = models.BooleanField(default=False, verbose_name="包邮状态")
 
     longaded = models.BooleanField(default=False, verbose_name="长期广告状态")
     size_count = models.IntegerField(u'size数量', default=0, blank=True, null=True)
@@ -184,10 +183,10 @@ class Lightin_SKU(models.Model):
 
     combo_error = models.CharField(default='', max_length=100, null=True, blank=True, verbose_name="组合错误")
     sku_price = models.IntegerField(u'sku售价', default=0, blank=True, null=True)
-    free_shipping_price = models.FloatField(u'yallavip包邮价', default=0, blank=True, null=True)
+    #free_shipping_price = models.FloatField(u'yallavip包邮价', default=0, blank=True, null=True)
 
-    promote_price = models.FloatField(u'推广售价', default=0, blank=True, null=True)
-    promote_free_shipping_price = models.FloatField(u'推广包邮价', default=0, blank=True, null=True)
+    #promote_price = models.FloatField(u'推广售价', default=0, blank=True, null=True)
+    #promote_free_shipping_price = models.FloatField(u'推广包邮价', default=0, blank=True, null=True)
 
     # 促销模式
     free_shipping_count = models.CharField(choices=FREE_SHIPPING_COUNT, default='', max_length=20, null=True,

@@ -150,7 +150,7 @@ class Lightin_SPUAdmin(object):
     # 'sku_name','img',
 
     search_fields = ["SPU","handle", ]
-    list_filter = ["vendor","free_shipping_count","promote_count", "cate_1","cate_2","cate_3", "fake","sellable",]
+    list_filter = ["free_shipping_count","promote_count", "cate_1","cate_2","cate_3", "fake","sellable",]
     list_editable = ["fake",]
     readonly_fields = ()
     actions = []
@@ -355,7 +355,7 @@ class Lightin_SKUAdmin(object):
 
     # 'sku_name','img',
     search_fields = ["SPU", "SKU","lightin_spu__handle",]
-    list_filter = [ "free_shipping_count", "promote_count","o_sellable", "size", "lightin_spu__cate_1","lightin_spu__cate_2","lightin_spu__cate_3","lightin_spu__vendor",]
+    list_filter = [ "free_shipping_count", "promote_count","o_sellable", "size", "lightin_spu__cate_1","lightin_spu__cate_2","lightin_spu__cate_3",]
     list_editable = []
     readonly_fields = ()
     actions = []

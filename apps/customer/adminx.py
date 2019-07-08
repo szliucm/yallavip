@@ -94,13 +94,15 @@ class CustomerAdmin(object):
                 img += '<br><a>out of stock</a><br><br>'
                 continue
 
-
+            '''
             if lightin_spu.free_shipping:
 
                 price = lightin_spu.free_shipping_price
             else:
                 price = lightin_spu.yallavip_price
+            '''
 
+            price = lightin_spu.yallavip_price
 
             skus = lightin_skus.values_list("SKU",   "o_sellable","lightin_spu__yallavip_price", "skuattr",)
             for sku in skus:
@@ -356,11 +358,14 @@ class CustomerAdmin(object):
                     price = lightin_sku.sku_price
                 else:
                     spu = lightin_sku.lightin_spu
+                    '''
                     if spu.free_shipping:
 
                         price = spu.free_shipping_price
                     else:
                         price = spu.yallavip_price
+                    '''
+                    price = spu.yallavip_price
 
 
                 obj, created = Draft.objects.update_or_create(
