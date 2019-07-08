@@ -14,3 +14,7 @@ PROMOTE_COUNT = (
     ("B2-1", "买2送一"),
 
 )
+
+NORMAL_SIZE = [
+    "L","M","Medium","S","Style 1","XL","XXL","39","40","41","42","43","44",
+    ]

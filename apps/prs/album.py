@@ -518,11 +518,21 @@ def prepare_promote_single(page_no,free_shipping_count, one_size):
         return
 
     # 取库存大、单价高、已经发布到相册 且还未打广告，不是仿牌，单件包邮的商品
-    spus_all = Lightin_SPU.objects.filter(~Q(handle=""),handle__isnull=False,fake=False,
+    if one_size:
+        spus_all = Lightin_SPU.objects.filter(~Q(handle=""),handle__isnull=False,fake=False,
                                           vendor="funmart", aded=False,sellable__gt=3,
                                           #yallavip_price__gte=30,yallavip_price__lte=100,
                                           images_count__gte=3,
                                           free_shipping_count=free_shipping_count, one_size=one_size)
+    else:
+        #有尺码的，要选主流尺码有库存的spu
+        spus_list = Lightin_SKU.objects.filter(size__in=NORMAL_SIZE ,o_sellable__gt=3).values_list("lightin_spu",flat=True)
+        spus_all = Lightin_SPU.objects.filter(~Q(handle=""),handle__isnull=False,fake=False,
+                                              pk__in=list(spus_list),
+                                          vendor="funmart", aded=False,sellable__gt=3,
+                                          images_count__gte=3,
+                                          free_shipping_count=free_shipping_count)
+
 
     # 把主推品类的所有适合的产品都拿出来打广告
 
@@ -839,6 +849,10 @@ def prepare_a_album_v2(lightinalbum_pk):
 def reset_yallavip_album_ad(page_no):
     spus = LightinAlbum.objects.filter(yallavip_album__page__page_no=page_no).values_list("lightin_spu",flat=True)
     Lightin_SPU.objects.filter(pk__in = list(spus)).update(aded=False)
+
+
+
+
 
 
 

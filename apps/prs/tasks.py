@@ -29,7 +29,7 @@ from facebook_business.api import FacebookAdsApi
 from facebook_business.adobjects.page import Page
 
 from shop.photo_mark import yallavip_mark_image
-from prs.album import get_promote_ads
+from prs.album import *
 
 my_app_id = "562741177444068"
 my_app_secret = "e6df363351fb5ce4b7f0080adad08a4d"
@@ -7163,4 +7163,17 @@ def reset_ads(self, request, queryset):
 
     Lightin_SPU.objects.exclude(handle__in = spu_list).update(aded=False)
 
+#发布新的一波广告
+def start_new_promotion(page_no,free_shipping_count, one_size) :
+    prepare_promote_single(page_no,free_shipping_count, one_size)
 
+    to_create_count = 5
+    page_post_v2(page_no, to_create_count)
+
+    ad_type = "engagement"
+    to_create_count = 5
+    post_ads_v2(page_no, ad_type, to_create_count)
+
+    ad_type = "message"
+    to_create_count = 5
+    post_ads_v2(page_no, ad_type, to_create_count)
