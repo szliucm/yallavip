@@ -540,10 +540,10 @@ def prepare_promote_single(page_no,free_shipping_count, one_size):
             spus = [cate_spus[i]]
             print("当前处理 ", i, cate.tags, page_no, cate_spus[i].handle)
             #prepare_promote_image_album_v3(cate.tags, page_no, spu_pks)
-            prepare_promote_image_album_single(cate, page_no, spus, cate_spus[i].vendor)
+            prepare_promote_image_album_single(cate, page_no, spus, cate_spus[i].vendor, free_shipping_count)
 
 
-def prepare_promote_image_album_single(cate, page_no, lightin_spus, vendor):
+def prepare_promote_image_album_single(cate, page_no, lightin_spus, vendor,free_shipping_count):
 
     print ("正在处理page ", cate, page_no, lightin_spus)
     target_page= MyPage.objects.get(page_no=page_no)
@@ -595,10 +595,10 @@ def prepare_promote_image_album_single(cate, page_no, lightin_spus, vendor):
               "All goods are in Riyadh stock,It will be delivered to you in 3-5 days! ❣️❣️" \
               "How to order?Pls choice the product that you like it , then send us the picture, we will order it for you!🤩🤩"
     '''
-
-    message = "💋💋Buy 2 free Shipping + Buy 3 get 1 more free++[all spot goods 💋💋\n" \
-              "🥳🥳🥳Special Promotion big sale: “Buy 3 get 1 more free”!!! 🥳🥳🥳\n" \
-              "It means now if you buy any 3 items, you can choose any 1 more item of equal price or lower price for free!!!! \n" \
+    if free_shipping_count == "3":
+        message = "💋💋Buy 3 free Shipping + Buy 5 get 1 more free++all spot goods 💋💋\n" \
+              "🥳🥳🥳Special Promotion big sale: “Buy 5 get 1 more free”!!! 🥳🥳🥳\n" \
+              "It means now if you buy any 5 items, you can choose any 1 more item of equal price or lower price for free!!!! \n" \
               "All hot sale goods, limited quantity , all Riyadh warehouse spot, 3-5day deliver to your house!!!!❣️❣️\n" \
               "Don't wait, do it!!!!!🤩🤩"
 
