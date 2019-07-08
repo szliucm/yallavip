@@ -1,7 +1,8 @@
 from django.db import models
 
 #from commodity.models import  SelectionRule
-from  prs.models import  FREE_SHIPPING_COUNT
+from customer.models import    CITY
+#from  prs.models import  FREE_SHIPPING_COUNT
 
 
 

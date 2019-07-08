@@ -4,6 +4,8 @@ from django.db import models
 from fb.models import MyPage, MyPhoto, MyFeed, MyAd, MyAlbum
 from shop.models import ShopifyProduct
 
+
+
 FREE_SHIPPING_COUNT = (
     ("0", "不包邮"),
     ("5", "5件包邮"),
