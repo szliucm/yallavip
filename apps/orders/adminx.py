@@ -891,6 +891,20 @@ class OrderDetailAdmin(object):
 
     handle.short_description = "handle"
 
+    def free_shipping_count(self,obj):
+        from prs.models import Lightin_SKU
+
+        return Lightin_SKU.objects.get(SKU = obj.sku).free_shipping_count
+
+    free_shipping_count.short_description = "几件包邮"
+
+    def promote_count(self,obj):
+        from prs.models import Lightin_SKU
+
+        return Lightin_SKU.objects.get(SKU = obj.sku).promote_count
+
+    promote_count.short_description = "买送"
+
     def skuattr(self,obj):
         from prs.models import Lightin_SKU
 
@@ -1048,7 +1062,7 @@ class OrderDetailAdmin(object):
 
     #为了快速做海外仓包裹，所以把可能的图片显示出来
     #"fb_photo", "show_image", 'show_local_image','show_supply_status','alternative',
-    list_display = ['order', 'sku',"handle","skuattr", 'product_quantity','stock',  'price','order_status', ]
+    list_display = ['order', 'sku',"handle","skuattr", 'product_quantity',"free_shipping_count", "promote_count", 'stock',  'price','order_status', ]
 
     search_fields = ["order__order_no",'sku',"order__logistic_no", ]
 
