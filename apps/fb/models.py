@@ -2,7 +2,7 @@ from django.db import models
 
 #from commodity.models import  SelectionRule
 
-from prs.models import  FREE_SHIPPING_COUNT, PROMOTE_COUNT
+from prs.models import  *
 
 # Create your models here.
 class PromoteTemplate(models.Model):
