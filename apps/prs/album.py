@@ -490,17 +490,17 @@ def chang_page_free_delivery(page_no):
         for spu in spus:
             update_promote_price(spu, True)
 
-def prepare_promote_singles(free_shipping_count):
+def prepare_promote_singles(free_shipping_count, one_size):
     # 找出所有活跃的page
     pages = MyPage.objects.filter(is_published=True, active=True, promotable=True)
     if page_no:
         pages = pages.filter(page_no=page_no)
 
     for page in pages:
-        prepare_promote_single(page.page_no, free_shipping_count)
+        prepare_promote_single(page.page_no, free_shipping_count, one_size)
 
 
-def prepare_promote_single(page_no,free_shipping_count):
+def prepare_promote_single(page_no,free_shipping_count, one_size):
     import random
 
     from django.db.models import Count
@@ -518,7 +518,8 @@ def prepare_promote_single(page_no,free_shipping_count):
     spus_all = Lightin_SPU.objects.filter(~Q(handle=""),handle__isnull=False,fake=False,
                                           vendor="funmart", aded=False,sellable__gt=3,
                                           yallavip_price__gte=30,yallavip_price__lte=100,
-                                          images_count__gte=3,free_shipping_count=free_shipping_count)
+                                          images_count__gte=3,
+                                          free_shipping_count=free_shipping_count, one_size=one_size)
 
     # 把主推品类的所有适合的产品都拿出来打广告
 
