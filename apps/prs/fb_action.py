@@ -2146,6 +2146,7 @@ def combo_ad_image_template_single(spu_ims, spus_name,spus, page_no,type):
 
 
         spu = spus[0]
+        '''
         if spu.free_shipping:
             if type =="album":
                 price1 = int(spu.free_shipping_price)
@@ -2156,7 +2157,8 @@ def combo_ad_image_template_single(spu_ims, spus_name,spus, page_no,type):
                 price1 = int(spu.yallavip_price)
             else:
                 price1 = int(spu.promote_price)
-
+        '''
+        price1 = int(spu.yallavip_price)
 
         price2 = int(price1 * random.uniform(5, 6))
 
