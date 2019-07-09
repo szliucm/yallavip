@@ -16,13 +16,14 @@ PROMOTE_COUNT = (
 
 )
 
-NORMAL_SIZE = [
-    "L","M","Medium","S","Style 1","XL","XXL","39","40","41","42","43","44",
-    ]
-
 CATE_TYPE  = (
     ("Product", "Product"),
     ("M100-1", "M100-1"),
 
 
 )
+
+NORMAL_SIZE = [
+    "L","M","Medium","S","Style 1","XL","XXL","39","40","41","42","43","44",
+    ]
+
