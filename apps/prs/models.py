@@ -125,7 +125,7 @@ class Lightin_SPU(models.Model):
 
     #促销模式
     free_shipping_count = models.CharField(choices=FREE_SHIPPING_COUNT, default='', max_length=20, null=True, blank=True, verbose_name="几件包邮")
-    promote_count = models.CharField(choices=PROMOTE_COUNT, default='', max_length=20, null=True, blank=True, verbose_name="买送")
+    promote_count = models.CharField(choices=PROMOTE_COUNT, default='Product', max_length=20, null=True, blank=True, verbose_name="买送")
 
     class Meta:
         verbose_name = "兰亭SPU"
