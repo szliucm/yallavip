@@ -7165,7 +7165,7 @@ def reset_ads(self, request, queryset):
 
 #发布新的一波相册
 def start_new_page(page_no) :
-    sync_cate_album(page_no)
+    sync_cate_album_v2(page_no)
     prepare_yallavip_photoes_v2(page_no)
     prepare_yallavip_album_material(page_no)
 

@@ -78,12 +78,12 @@ def cal_promote_price_funmart(spu):
         new_price += 10
         free_shipping_count = "3"
         promote_count = "B5-1"
-    elif new_price <100:
-        new_price += 20
+    elif new_price <60:
+        new_price += 15
         free_shipping_count = "2"
         promote_count = "B3-1"
     else:
-        new_price += 40
+        new_price += 25
         free_shipping_count = "1"
         promote_count = "B2-1"
 
