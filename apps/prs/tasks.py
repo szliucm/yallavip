@@ -7163,6 +7163,14 @@ def reset_ads(self, request, queryset):
 
     Lightin_SPU.objects.exclude(handle__in = spu_list).update(aded=False)
 
+#发布新的一波相册
+def start_new_page(page_no) :
+    sync_cate_album(page_no)
+    prepare_yallavip_photoes_v2(page_no)
+    prepare_yallavip_album_material(page_no)
+
+
+
 #发布新的一波广告
 def start_new_promotion(page_no,free_shipping_count, one_size) :
     prepare_promote_single(page_no,free_shipping_count, one_size)
