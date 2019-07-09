@@ -69,6 +69,7 @@ def create_album(page_no , album_name ):
         return  None
 
 #根据page cate 创建相册
+'''
 def sync_cate_album(page_no=None):
 
     # 找出所有活跃的page
@@ -221,7 +222,7 @@ def prepare_yallavip_photoes(page_no=None):
                                                                              }
                                                                    )
 
-
+'''
 
 
 #################################################################################################
@@ -339,7 +340,7 @@ def prepare_yallavip_album_material(page_no=None):
 
    #每次每个相册处理最多100张图片
 
-    lightinalbums_all = LightinAlbum.objects.filter(~Q(lightin_spu__promote_count = "M100-1"), published=False, publish_error="无", material=False,
+    lightinalbums_all = LightinAlbum.objects.filter( published=False, publish_error="无", material=False,
                                                     material_error="无",lightin_spu__sellable__gt=0,
 
                                                     yallavip_album__isnull = False,yallavip_album__active = True
