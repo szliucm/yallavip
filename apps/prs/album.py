@@ -355,7 +355,7 @@ def prepare_yallavip_album_material(page_no=None):
 
     for album in albums_list:
         #lightinalbums = lightinalbums_all.filter(yallavip_album=album).order_by("lightin_spu__sellable")[:100]
-        lightinalbums = lightinalbums_all.filter(yallavip_album=album).order_by("lightin_spu__sellable")[:100]
+        lightinalbums = lightinalbums_all.filter(yallavip_album=album).order_by("?")[:100]
         print(lightinalbums)
 
         for lightinalbum in lightinalbums:
