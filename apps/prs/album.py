@@ -267,6 +267,8 @@ def sync_cate_album_v2(page_no=None):
                 else:
                     print("创建相册失败！")
 
+
+
 #根据yallavip_album相册规则，生成相册图片记录
 #这里只处理根据品类创建相册的情况
 #不分尺码，但是要根据库存数量和尺码数量来筛选商品发布
@@ -315,7 +317,7 @@ def prepare_yallavip_photoes_v2(page_no=None):
                     product_list.append(product)
 
             else:
-                products_to_add = Lightin_SPU.objects.filter(~Q(handle=""),~Q(promote_count = "M100-1"),vendor="funmart",sellable__gt=0).filter(con).exclude(id__in=
+                products_to_add = Lightin_SPU.objects.filter(~Q(handle=""),vendor="funmart",sellable__gt=0).filter(con).exclude(id__in=
                                                 LightinAlbum.objects.filter(
                                                     yallavip_album__pk=album.pk,
                                                     lightin_spu__isnull=False).values_list(
@@ -432,35 +434,41 @@ def init_spu_one_size():
 
 # 根据 MyCategory 拼接筛选产品的条件
 def filter_product(cate):
-    q_cate = Q()
-    q_cate.connector = 'OR'
-
-    '''
-    if cate.level == 1:
-        q_cate.children.append(('cate_1', cate.name))
-    elif cate.level == 2:
-        q_cate.children.append(('cate_2', cate.name))
-    elif cate.level == 3:
-        q_cate.children.append(('cate_3', cate.name))
-    '''
-    q_cate.children.append(('tags__contains', cate.tags))
-
-    #如果没尺码，就全上
-    # 如果有尺码，均码的全上（one-size, free-size）
-    #其他尺码的，就要sellable > n 的才上
-    q_size = Q()
-    q_size.connector = 'OR'
-
-    #多尺码的cate，要么是均码，要么有最低库存要求，
-
-
-    q_size.children.append(('sellable__gt', cate.sellable_gt))
-
-    q_size.children.append(('one_size',True))
-
     con = Q()
-    con.add(q_cate, 'AND')
-    con.add(q_size, 'AND')
+
+    if cate.cate_type == "Product":
+        q_cate = Q()
+        q_cate.connector = 'OR'
+
+        '''
+        if cate.level == 1:
+            q_cate.children.append(('cate_1', cate.name))
+        elif cate.level == 2:
+            q_cate.children.append(('cate_2', cate.name))
+        elif cate.level == 3:
+            q_cate.children.append(('cate_3', cate.name))
+        '''
+        q_cate.children.append(('tags__contains', cate.tags))
+
+        #如果没尺码，就全上
+        # 如果有尺码，均码的全上（one-size, free-size）
+        #其他尺码的，就要sellable > n 的才上
+        q_size = Q()
+        q_size.connector = 'OR'
+
+        #多尺码的cate，要么是均码，要么有最低库存要求，
+
+
+        q_size.children.append(('sellable__gt', cate.sellable_gt))
+
+        q_size.children.append(('one_size',True))
+
+
+        con.add(q_cate, 'AND')
+        con.add(q_size, 'AND')
+    elif cate.cate_type == "M100-1":
+        con.children.append(('promote_count', "M100-1"))
+
 
     return  con
 
