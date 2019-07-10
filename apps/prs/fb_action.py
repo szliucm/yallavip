@@ -2111,6 +2111,18 @@ def combo_ad_image_template_single(spu_ims, spus_name,spus, page_no,type):
         layer.paste(clipResizeImg_new(ims[0], 800, 800), (364, 0))
         layer.paste(clipResizeImg_new(ims[1], 364, 800), (0, 0))
         layer.paste(clipResizeImg_new(ims[2], 364, 800), (1164, 0))
+    elif item_count == 2:
+        ims.append(ims[1])
+        layer.paste(clipResizeImg_new(ims[0], 800, 800), (364, 0))
+        layer.paste(clipResizeImg_new(ims[1], 364, 800), (0, 0))
+        layer.paste(clipResizeImg_new(ims[2], 364, 800), (1164, 0))
+    elif item_count == 1:
+        ims.append(ims[0])
+        ims.append(ims[0])
+        layer.paste(clipResizeImg_new(ims[0], 800, 800), (364, 0))
+        layer.paste(clipResizeImg_new(ims[1], 364, 800), (0, 0))
+        layer.paste(clipResizeImg_new(ims[2], 364, 800), (1164, 0))
+
     else:
         return  None
 
