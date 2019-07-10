@@ -108,7 +108,8 @@ def get_funmart_order(track_code=None, order_no=None,order_ref=None, batch_no=No
 
 @shared_task
 def download_funmart_order(track_code=None, order_no=None, order_ref=None,update=True, ):
-    url = " http://47.98.80.172/api/searchOrder"
+    #url = " http://47.98.80.172/api/searchOrder"
+    url = "http://api.funmart.com/erp/api/getorderitems"
     param = dict()
     # 如果输入了order_ref，就忽略track_code
     if order_ref:
