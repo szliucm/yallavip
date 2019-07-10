@@ -2521,6 +2521,8 @@ def get_wms_product():
 
         page += 1
 
+
+
 @shared_task
 def get_wms_product_page(page,update_start_time):
     param = {
@@ -2582,6 +2584,16 @@ def sync_wms_quantity():
             if barcodes:
                 get_wms_quantity(warehouse_code,list(barcodes))
 
+    mysqls = [
+        "update prs_lightin_barcode set o_quantity = y_sellable + y_reserved ,o_sellable = y_sellable , o_reserved = y_reserved,synced=True",
+        "UPDATE prs_lightin_sku INNER JOIN ( SELECT SKU,sum(o_sellable) as quantity FROM prs_lightin_barcode GROUP BY SKU ) b ON prs_lightin_sku.SKU = b.SKU SET prs_lightin_sku.o_quantity = b.quantity ",
+        "update prs_lightin_sku set o_sellable = o_quantity - o_reserved",
+        "UPDATE prs_lightin_spu INNER JOIN ( SELECT SPU, sum(o_sellable) as quantity FROM prs_lightin_sku GROUP BY SPU ) b ON prs_lightin_spu.SPU = b.SPU SET prs_lightin_spu.sellable = b.quantity",
+    ]
+    for mysql in mysqls:
+        print(mysql)
+        my_custom_sql(mysql)
+
 
 
 def get_wms_quantity(warehouse_code, barcodes=[],sku=None,):
@@ -2600,7 +2612,8 @@ def get_wms_quantity(warehouse_code, barcodes=[],sku=None,):
     while page <= pages and result:
 
         print("正在处理第 %s 页" % page)
-        get_wms_quantity_page.apply_async((warehouse_code, page, barcodes), queue='wms')
+        #get_wms_quantity_page.apply_async((warehouse_code, page, barcodes), queue='wms')
+        get_wms_quantity_page(warehouse_code, page, barcodes)
 
         page += 1
 
@@ -2648,15 +2661,7 @@ def get_wms_quantity_page(warehouse_code,page, barcodes):
         print("获取wms库存出错", result.get("message"))
         return 0, False
 
-    mysqls = [
-        "update prs_lightin_barcode set o_quantity = y_sellable + y_reserved ,o_sellable = y_sellable , o_reserved = y_reserved,synced=True",
-        "UPDATE prs_lightin_sku INNER JOIN ( SELECT SKU,sum(o_sellable) as quantity FROM prs_lightin_barcode GROUP BY SKU ) b ON prs_lightin_sku.SKU = b.SKU SET prs_lightin_sku.o_quantity = b.quantity ",
-        "update prs_lightin_sku set o_sellable = o_quantity - o_reserved",
-        "UPDATE prs_lightin_spu INNER JOIN ( SELECT SPU, sum(o_sellable) as quantity FROM prs_lightin_sku GROUP BY SPU ) b ON prs_lightin_spu.SPU = b.SPU SET prs_lightin_spu.sellable = b.quantity",
-    ]
-    for mysql in mysqls:
-        print(mysql)
-        my_custom_sql(mysql)
+
 
     if result.get("nextPage") == "false":
         print("No more page")
