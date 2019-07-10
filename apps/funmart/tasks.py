@@ -53,6 +53,8 @@ def deal_funmart_orders():
     FunmartSKU.objects.bulk_create(sku_list)
 
 
+
+
 def download_skus():
     # 没有下载的sku就下载sku；
     skus = FunmartSKU.objects.filter(download_error="",downloaded=False )
@@ -769,6 +771,23 @@ def download_image_v2(spu, remote_images):
 
 
         FunmartImage.objects.filter(SPU=spu, remote_image__in=downloaded_list).update(downloaded=True,download_error = "")
+
+def batch_update(type=1):
+    if type == 1:
+        download_funmart_orders()
+        deal_funmart_orders()
+        download_skus()
+
+    elif type ==2:
+        download_spus()
+        lable_spus()
+        deal_funmart_spus()
+        deal_funmart_skus()
+        deal_funmart_barcodes()
+        download_images_v2()
+
+
+
 
 
 
