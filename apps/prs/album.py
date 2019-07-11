@@ -565,6 +565,8 @@ def prepare_promote_single(page_no,free_shipping_count, one_size):
             prepare_promote_image_album_single(cate, page_no, spus, cate_spus[i].vendor, free_shipping_count)
 
 
+
+
 def prepare_promote_image_album_single(cate, page_no, lightin_spus, vendor,free_shipping_count):
 
     print ("正在处理page ", cate, page_no, lightin_spus)
@@ -861,7 +863,108 @@ def reset_yallavip_album_ad(page_no):
 
 
 
+def prepare_promote_image_album(cate, page_no, lightin_spus, vendor,free_shipping_count, single=True):
 
+    print ("正在处理page ", cate, page_no, lightin_spus)
+    target_page= MyPage.objects.get(page_no=page_no)
+    spus=[]
+    spu_ims = []
+    handles = []
+    for spu in lightin_spus:
+
+        if spu.handle:
+            handles.append(spu.handle)
+        else:
+            return False
+
+        print("正在处理 handle ",spu.handle)
+        images = json.loads(spu.images)
+
+        if images and len(images) >= 3:
+            for image in images:
+                if vendor =="lightin":
+                    a = "/"
+                    image_split = image.split(a)
+
+                    image_split[4] = '800x800'
+                    spu_im = a.join(image_split)
+                else:
+                    spu_im=image
+
+                spus.append(spu)
+                spu_ims.append(spu_im)
+
+        else:
+            print("图片数量太少")
+            return  False
+
+    # 把spu的图和模版拼在一起
+
+    handles_name = ','.join(handles)
+
+    image_marked_url = combo_ad_image_template_single(spu_ims, handles_name, lightin_spus,page_no,"ad")
+    #print( image_marked_url )
+
+    if not image_marked_url:
+        print("没有生成广告图片")
+        return
+    '''
+    message = "💋💋Flash Sale ！！！💋💋" \
+              "90% off！Lowest Price Online ！！！" \
+              "🥳🥳🥳 10:00-22:00 Everyday ,Update 100 New items Every Hour !! The quantity is limited !!😇😇" \
+              "All goods are in Riyadh stock,It will be delivered to you in 3-5 days! ❣️❣️" \
+              "How to order?Pls choice the product that you like it , then send us the picture, we will order it for you!🤩🤩"
+    '''
+    if free_shipping_count == "0":
+        message = "💋💋Buy 100SAR get 1 more free gift ++all spot goods 💋💋\n" \
+              "🥳🥳🥳Special Promotion big sale: “Buy 100SAR get 1 more free gift”!!! 🥳🥳🥳\n" \
+              "It means now if you buy every 100 Sar, you can choose 1 more gift for free!!!! \n" \
+              "All hot sale goods, limited quantity , all Riyadh warehouse spot, 3-5day deliver to your house!!!!❣️❣️\n" \
+              "Don't wait, do it!!!!!🤩🤩"
+    elif free_shipping_count == "1":
+        message = "💋💋Buy 1 free Shipping + Buy 2 get 1 more free++all spot goods 💋💋\n" \
+              "🥳🥳🥳Special Promotion big sale: “Buy 2 get 1 more free”!!! 🥳🥳🥳\n" \
+              "It means now if you buy 2 of this type of items, you can choose any 1 more item of equal price or lower price for free!!!! \n" \
+              "All hot sale goods, limited quantity , all Riyadh warehouse spot, 3-5day deliver to your house!!!!❣️❣️\n" \
+              "Don't wait, do it!!!!!🤩🤩"
+    elif free_shipping_count == "2":
+        message = "💋💋Buy 2 free Shipping + Buy 3 get 1 more free++all spot goods 💋💋\n" \
+              "🥳🥳🥳Special Promotion big sale: “Buy 3 get 1 more free”!!! 🥳🥳🥳\n" \
+              "It means now if you buy 3 of this type of items, you can choose any 1 more item of equal price or lower price for free!!!! \n" \
+              "All hot sale goods, limited quantity , all Riyadh warehouse spot, 3-5day deliver to your house!!!!❣️❣️\n" \
+              "Don't wait, do it!!!!!🤩🤩"
+    elif free_shipping_count == "3":
+        message = "💋💋Buy 3 free Shipping + Buy 5 get 1 more free++all spot goods 💋💋\n" \
+              "🥳🥳🥳Special Promotion big sale: “Buy 5 get 1 more free”!!! 🥳🥳🥳\n" \
+              "It means now if you buy 5 of this type of items, you can choose any 1 more item of equal price or lower price for free!!!! \n" \
+              "All hot sale goods, limited quantity , all Riyadh warehouse spot, 3-5day deliver to your house!!!!❣️❣️\n" \
+              "Don't wait, do it!!!!!🤩🤩"
+    elif free_shipping_count == "5":
+        message = "💋💋Buy 5 free Shipping + Buy 8 get 2 more free++all spot goods 💋💋\n" \
+              "🥳🥳🥳Special Promotion big sale: “Buy 8 get 2 more free”!!! 🥳🥳🥳\n" \
+              "It means now if you buy 8 of this type of items, you can choose any 2 more item of equal price or lower price for free!!!! \n" \
+              "All hot sale goods, limited quantity , all Riyadh warehouse spot, 3-5day deliver to your house!!!!❣️❣️\n" \
+              "Don't wait, do it!!!!!🤩🤩"
+
+
+
+    message = message + "\n[" + handles_name+ "]"
+
+    obj, created = YallavipAd.objects.update_or_create(page_no=page_no,
+                                                       spus_name=handles_name,
+                                                       defaults={'image_marked_url': image_marked_url,
+                                                                 'message': message,
+                                                                 'active': True,
+                                                                 'long_ad':True,
+                                                                 'cate':cate,
+
+                                                                 }
+                                                       )
+    #把spu标示为已经打过广告了
+    for spu in spus:
+
+        spu.aded = True
+        spu.save()
 
 
 

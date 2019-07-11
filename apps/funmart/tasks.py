@@ -169,7 +169,7 @@ def download_funmart_order(track_code=None, order_no=None, order_ref=None,update
 def update_order_item(order, orderitems):
     quantity = 0
     for item in orderitems:
-        quantity += item.get("qty")
+        quantity += int(item.get("qty"))
         FunmartOrderItem.objects.update_or_create(
             order = order,
             sku = item.get("sku"),
