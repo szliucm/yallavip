@@ -75,7 +75,7 @@ class FbConversationAdmin(object):
 
     def has_delete_permission(self):
         return False
-
+    '''
     def queryset(self):
         qs = super().queryset()
         # 获取当前登录用户所在组
@@ -86,7 +86,7 @@ class FbConversationAdmin(object):
         else:
             #获取当前登录用户用户名
             return qs.filter(Q(staff=self.request.user) | Q(staff="无人认领") )
-
+    '''
 
 
     class MessageInline(object):
