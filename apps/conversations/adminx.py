@@ -60,11 +60,33 @@ class FbConversationAdmin(object):
 
     import_export_args = {'import_resource_class': FbConversationResource, 'export_resource_class': FbConversationResource}
 
-    list_display = ["conversation_no", "message_count", "customer_link" , "lost_time","color_status","task_type", "task_stat", "last_message",]
+    list_display = ["conversation_no", "staff", "message_count", "customer_link" , "lost_time","color_status","task_type", "task_stat", "last_message",]
     list_editable = ["task_type","task_stat",]
     search_fields = ['customer', ]
-    list_filter = ["status","task_type", "task_stat", "page", ]
+    list_filter = ["staff","status","task_type", "task_stat", "page", ]
     ordering = ["-updated_time"]
+    actions = ["batch_claim", ]
+
+    def batch_claim(self, request, queryset):
+        # 定义actions函数
+        queryset.filter(staff="无人认领").update(staff = str(self.request.user))
+
+    batch_claim.short_description = "批量认领会话"
+
+    def has_delete_permission(self):
+        return False
+
+    def queryset(self):
+        qs = super().queryset()
+        # 获取当前登录用户所在组
+        group = Group.objects.get(user=self.request.user) #获取当前登录用户所在组
+        #获取当前登录用户所在组名称
+        if group.name == "主管":
+            return  qs
+        else:
+            #获取当前登录用户用户名
+            return qs.filter(Q(staff=self.request.user) | Q(staff="无人认领") )
+
 
 
     class MessageInline(object):
