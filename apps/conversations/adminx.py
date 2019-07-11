@@ -79,14 +79,17 @@ class FbConversationAdmin(object):
 
     def queryset(self):
         qs = super().queryset()
-        # 获取当前登录用户所在组
-        group = Group.objects.get(user=self.request.user) #获取当前登录用户所在组
-        #获取当前登录用户所在组名称
-        if group.name == "主管":
+        try:
+            # 获取当前登录用户所在组
+            group = Group.objects.get(user=self.request.user) #获取当前登录用户所在组
+            #获取当前登录用户所在组名称
+            if group.name == "主管":
+                return  qs
+            else:
+                #获取当前登录用户用户名
+                return qs.filter(Q(staff=self.request.user) | Q(staff="无人认领") )
+        except:
             return  qs
-        else:
-            #获取当前登录用户用户名
-            return qs.filter(Q(staff=self.request.user) | Q(staff="无人认领") )
 
 
 
