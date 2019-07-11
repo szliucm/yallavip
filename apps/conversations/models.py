@@ -20,6 +20,7 @@ class FbConversation(models.Model):
     got_time = models.DateTimeField(null=True, blank=True, verbose_name="最后获取时间")
 
     customer = models.CharField(max_length=500,null=True, blank=True, verbose_name="客户")
+    staff = models.CharField(max_length=500, null=True, blank=True, verbose_name="客服")
     last_message = models.CharField(max_length=500,null=True, blank=True, verbose_name="最后的对话")
 
     STATUS = (

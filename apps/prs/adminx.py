@@ -365,8 +365,8 @@ class Lightin_SKUAdmin(object):
             "title": "女装",
             "query": {
                 "lightin_spu__vendor__in": "funmart",
-                "lightin_spu__cate_1__contains": "Women",
-                "lightin_spu__cate_2__contains": "Clothing",
+                "lightin_spu__cate_1__in": "Women",
+                "lightin_spu__cate_2__in": "Clothing",
                 "o_sellable__gt": 0,
 
             },
