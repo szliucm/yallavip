@@ -876,7 +876,41 @@ def get_ads_insights(ad):
                                                               'active' : True
 
                                                               }
-                                                    )
+
+def update_ads_status(ads, ad_status):
+    for ad in ads:
+
+        # 修改广告状态
+        ad_status = ad_status
+
+        # print("ad待删除")
+        info, updated = ad_update_status(ad.ad_no, status=ad_status)
+        if updated:
+            ad.ad_status = ad_status
+        else:
+            ad.update_error = info
+        time.sleep(30)
+
+        ad.active = False
+        ad.save()
+
+
+def control_ads():
+    today = get_today()
+    #关闭效果不佳的活跃广告
+
+    #花费超过10元，但没有成效的
+    ads_topause = list(AdInsights.objects.filter(ad_time=today, effective_status="ACTIVE",action_count=0,spend__gt=10))
+
+    #单价超过7元的广告
+    ads_topause += list(AdInsights.objects.filter(ad_time=today, effective_status="ACTIVE",action_cost__gte=7))
+
+    update_ads_status(ads_topause, "PAUSE")
+
+    #重启便宜的广告
+    ads_toactive = list(AdInsights.objects.filter(ad_time=today, effective_status="PAUSED", action_cost__lt=7))
+    update_ads_status(ads_toactive, "ACTIVE")
+
 
 
 
