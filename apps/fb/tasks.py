@@ -347,7 +347,7 @@ def get_adaccount_ads(adaccount_no):
 
     adobjects = FacebookAdsApi.init(access_token=ad_tokens, debug=True)
 
-    fields =['id','account_id','ad_review_feedback','adlabels','adset_id', campaign{name},'name','status',
+    fields =['id','account_id','ad_review_feedback','adlabels','adset_id', 'campaign{name}','name','status',
              'effective_status','creative','created_time','updated_time'
 
     ]
