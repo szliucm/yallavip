@@ -334,8 +334,8 @@ def batch_update_adaccount():
 
 
 def batch_update_ad():
-    adaccount_no = "1903121643086425"
-    get_adaccount_ads(adaccount_no)
+    adaccount_id = "1903121643086425"
+    get_adaccount_ads(adaccount_id)
 
     '''
     queryset = MyAdAccount.objects.filter(account_status ='1',active=True)
@@ -359,7 +359,7 @@ def get_adaccount_campaigns(adaccount_id):
     campaigns = AdAccount(adaccount_no).get_campaigns(fields=fields, params=params, )
 
     # 重置原有ad信息为不活跃
-    MyCampaign.objects.filter(account_no=adaccount_no).update(active=False)
+    MyCampaign.objects.filter(adaccount_no=adaccount_no).update(active=False)
     for campaign in campaigns:
         campaign_name = ad.get("campaign").get("name")
 
