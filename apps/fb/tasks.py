@@ -857,7 +857,7 @@ def get_ads_insights(ad):
     if int(conversaion_count) >0:
         for cost_per_action_type in cost_per_action_types:
             if cost_per_action_type['action_type'] == "onsite_conversion.messaging_first_reply":
-                conversaion_cost = action['value']
+                conversaion_cost = cost_per_action_types['value']
                 break
 
 
