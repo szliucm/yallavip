@@ -724,7 +724,6 @@ def download_image_v2(spu, remote_images):
 
         yallavip_image = remote_image.replace("http://img.funmart.com/catalog/product/","").replace("http://img.funmart.com/product/","")
 
-
         if not remote_image:
             print ("no images")
             FunmartImage.objects.filter(SPU=spu, image=remote_image).update(download_error= "no images")

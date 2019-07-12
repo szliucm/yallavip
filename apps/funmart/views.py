@@ -414,12 +414,28 @@ def update_item(request):
 
             #找到SKU后拼接相应的信息
 
-
+            '''
             try:
                 item["action"] = BatchSKU.objects.filter(SKU=SKU).order_by("-batch_no")[0].action
             except:
                 item['scan_result'] = 'SKU not prepared'
                 return JsonResponse(item)
+            '''
+            if funmart_sku:
+                sale_type = funmart_sku.funmart_spu.sale_type
+                if sale_type == "hot":
+                    item["action"] = "Put_Away"
+                elif sale_type == "nommal":
+                    item["action"] = "Normal_Case"
+                else:
+                    item["action"] = "Dead_Size"
+            else:
+                item['scan_result'] = 'SKU not prepared'
+                return JsonResponse(item)
+
+
+
+
 
             item["sku"] = SKU
 
