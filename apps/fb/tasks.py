@@ -343,17 +343,58 @@ def batch_update_ad():
         get_adaccount_ads(adaccount.adaccount_no)
     '''
 
+
+def get_adaccount_campaigns(adaccount_id):
+    adobjects = FacebookAdsApi.init(access_token=ad_tokens, debug=True)
+
+    fields = ['id',  'name', 'status','objective',
+              'effective_status', 'created_time', 'updated_time'
+
+              ]
+    params = {
+        # 'effective_status': ["ACTIVE"," PAUSED"," DELETED"," PENDING_REVIEW"," DISAPPROVED"," PREAPPROVED"," PENDING_BILLING_INFO"," CAMPAIGN_PAUSED"," ARCHIVED"," ADSET_PAUSED"," WITH_ISSUES",],
+    }
+
+    adaccount_no = "act_" + adaccount_id
+    campaigns = AdAccount(adaccount_no).get_campaigns(fields=fields, params=params, )
+
+    # 重置原有ad信息为不活跃
+    MyCampaign.objects.filter(account_no=adaccount_no).update(active=False)
+    for campaign in campaigns:
+        campaign_name = ad.get("campaign").get("name")
+
+        obj, created = MyCampaign.objects.update_or_create(campaign_no=campaign["id"],
+                                                     defaults={
+                                                         'adaccount_no': campaign.get("account_id"),
+                                                         'campaign_no': campaign.get("id"),
+                                                         'name': campaign.get("name"),
+                                                         'objective': campaign.get("objective"),
+                                                         'status': ad.get("status"),
+                                                         'effective_status': ad.get("effective_status"),
+                                                         'created_time': ad.get("created_time"),
+                                                         'updated_time': ad.get("updated_time"),
+                                                         'active': True,
+
+                                                     }
+                                                     )
+
+
 def get_adaccount_ads(adaccount_no):
 
     adobjects = FacebookAdsApi.init(access_token=ad_tokens, debug=True)
 
-    fields =['id','account_id','ad_review_feedback','adlabels','adset_id', 'campaign{name}','name','status',
+
+
+
+    fields =['id','account_id','ad_review_feedback','adlabels','adset_id', 'campaign','name','status',
              'effective_status','creative','created_time','updated_time'
 
     ]
     params = {
         #'effective_status': ["ACTIVE"," PAUSED"," DELETED"," PENDING_REVIEW"," DISAPPROVED"," PREAPPROVED"," PENDING_BILLING_INFO"," CAMPAIGN_PAUSED"," ARCHIVED"," ADSET_PAUSED"," WITH_ISSUES",],
     }
+
+
 
     adaccount_no = "act_"+ adaccount_no
     ads = AdAccount(adaccount_no).get_ads(fields=fields, params=params, )

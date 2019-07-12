@@ -97,7 +97,13 @@ class MyCampaign(models.Model):
     campaign_no = models.CharField(u'广告系列', default='', max_length=100, null=True,blank=True)
     name = models.CharField(u'广告系列名字', max_length=200, null=True, blank=True)
     objective = models.CharField(u'目标', max_length=200, null=True, blank=True)
+
+    status = models.CharField(u'广告状态', max_length=200, null=True, blank=True)
+    effective_status = models.CharField(u'有效状态', max_length=200, null=True, blank=True)
+
     active =  models.BooleanField(u"状态", default=False)
+    created_time = models.DateTimeField(u'创建时间', auto_now=False, null=True, blank=True)
+    updated_time = models.DateTimeField(u'更新时间', auto_now=False, null=True, blank=True)
 
     class Meta:
         verbose_name = "广告系列"
