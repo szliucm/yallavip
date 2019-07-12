@@ -347,7 +347,7 @@ def get_adaccount_ads(adaccount_no):
 
     adobjects = FacebookAdsApi.init(access_token=ad_tokens, debug=True)
 
-    fields =['id','account_id','ad_review_feedback','adlabels','adset_id','campaign_id', 'name','status',
+    fields =['id','account_id','ad_review_feedback','adlabels','adset_id', campaign{name},'name','status',
              'effective_status','creative','created_time','updated_time'
 
     ]
@@ -361,6 +361,11 @@ def get_adaccount_ads(adaccount_no):
     # 重置原有ad信息为不活跃
     MyAd.objects.filter(account_no=adaccount_no).update(active=False)
     for ad in ads:
+        campaign_name = ad.get("campaign").get("name")
+        page_name = campaign_name.split("_",0)
+        page_no = campaign_name.split("_", 1)
+        objective = campaign_name.split("_", 2)
+
         obj, created = MyAd.objects.update_or_create(ad_no=ad["id"],
                                                         defaults={
                                                             'adset_no': ad.get("adset_id"),
@@ -368,7 +373,11 @@ def get_adaccount_ads(adaccount_no):
                                                             #'ad_review_feedback': ad.get("ad_review_feedback"),
                                                             #'adlabels': ad.get("adlabels"),
                                                             'account_no': ad.get("account_id"),
-                                                            'campaign_no': ad.get("campaign_id"),
+                                                            'campaign_no': ad.get("campaign").get("id"),
+                                                            'campaign_name': campaign_name,
+                                                            'page_name': page_name,
+                                                            'page_no': page_no,
+                                                            'objective': objective,
                                                             'status': ad.get("status"),
                                                             'effective_status': ad.get("effective_status"),
                                                             'created_time': ad.get("created_time"),
@@ -762,9 +771,15 @@ def get_today():
 
     return  today
 
-def get_ads_insights(ad_no):
+def get_message_ads_insights():
+    ads = MyAd.objects.filter(active=True, objective="message")
 
+    for ad in ads:
+        get_ads_insights(ad)
 
+def get_ads_insights(ad):
+
+    ad_no = ad.ad_no
 
     adobjects = FacebookAdsApi.init(access_token=ad_tokens, debug=True)
 
@@ -798,6 +813,7 @@ def get_ads_insights(ad_no):
 
 
     obj, created = AdInsights.objects.update_or_create(ad_no=ad_no,
+                                                       myad = ad,
                                                     defaults={'ad_time': get_today(),
                                                               'reach' : ads_insight["reach"],
                                                               'spend': ads_insight["spend"],
