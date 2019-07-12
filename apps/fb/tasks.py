@@ -816,6 +816,7 @@ def get_today():
 
 def get_message_ads_insights():
     ads = MyAd.objects.filter(active=True, objective="message", effective_status__in=["PAUSED", "ACTIVE"])
+    AdInsights.objects.update(active=False)
 
     for ad in ads:
         get_ads_insights(ad)
@@ -870,7 +871,8 @@ def get_ads_insights(ad):
                                                               'action_count': conversaion_count,
                                                               'action_cost': conversaion_cost,
                                                               'effective_status': ad.effective_status,
-                                                              'updated_time' : dt.now()
+                                                              'updated_time' : dt.now(),
+                                                              'active' : True
 
                                                               }
                                                     )
