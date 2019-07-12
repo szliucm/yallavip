@@ -359,34 +359,33 @@ def get_adaccount_campaigns(adaccount_id):
     campaigns = AdAccount(adaccount_no).get_campaigns(fields=fields, params=params, )
 
     # 重置原有ad信息为不活跃
-    MyCampaign.objects.filter(adaccount_no=adaccount_no).update(active=False)
+    MyCampaign.objects.filter(adaccount_no=adaccount_id).update(active=False)
     for campaign in campaigns:
-        campaign_name = ad.get("campaign").get("name")
 
         obj, created = MyCampaign.objects.update_or_create(campaign_no=campaign["id"],
                                                      defaults={
-                                                         'adaccount_no': campaign.get("account_id"),
+                                                         'adaccount_no': adaccount_id,
                                                          'campaign_no': campaign.get("id"),
                                                          'name': campaign.get("name"),
                                                          'objective': campaign.get("objective"),
-                                                         'status': ad.get("status"),
-                                                         'effective_status': ad.get("effective_status"),
-                                                         'created_time': ad.get("created_time"),
-                                                         'updated_time': ad.get("updated_time"),
+                                                         'status': campaign.get("status"),
+                                                         'effective_status': campaign.get("effective_status"),
+                                                         'created_time': campaign.get("created_time"),
+                                                         'updated_time': campaign.get("updated_time"),
                                                          'active': True,
 
                                                      }
                                                      )
 
 
-def get_adaccount_ads(adaccount_no):
+def get_adaccount_ads(adaccount_id):
 
     adobjects = FacebookAdsApi.init(access_token=ad_tokens, debug=True)
 
 
 
 
-    fields =['id','account_id','ad_review_feedback','adlabels','adset_id', 'campaign','name','status',
+    fields =['id','account_id','ad_review_feedback','adlabels','adset_id', 'campaign_id','name','status',
              'effective_status','creative','created_time','updated_time'
 
     ]
@@ -396,16 +395,18 @@ def get_adaccount_ads(adaccount_no):
 
 
 
-    adaccount_no = "act_"+ adaccount_no
+    adaccount_no = "act_"+ adaccount_id
     ads = AdAccount(adaccount_no).get_ads(fields=fields, params=params, )
 
     # 重置原有ad信息为不活跃
-    MyAd.objects.filter(account_no=adaccount_no).update(active=False)
+    MyAd.objects.filter(account_no=adaccount_id).update(active=False)
     for ad in ads:
-        campaign_name = ad.get("campaign").get("name")
-        page_name = campaign_name.split("_",0)
-        page_no = campaign_name.split("_", 1)
-        objective = campaign_name.split("_", 2)
+        campaign_no = ad.get("campaign_id")
+
+        campaign_name = MyCampaign.objects.get(campaign_no = campaign_no ).name
+        page_name = campaign_name.split("_")[0]
+        page_no = campaign_name.split("_")[1]
+        objective = campaign_name.split("_")[2]
 
         obj, created = MyAd.objects.update_or_create(ad_no=ad["id"],
                                                         defaults={
@@ -414,7 +415,7 @@ def get_adaccount_ads(adaccount_no):
                                                             #'ad_review_feedback': ad.get("ad_review_feedback"),
                                                             #'adlabels': ad.get("adlabels"),
                                                             'account_no': ad.get("account_id"),
-                                                            'campaign_no': ad.get("campaign").get("id"),
+                                                            'campaign_no': campaign_no,
                                                             'campaign_name': campaign_name,
                                                             'page_name': page_name,
                                                             'page_no': page_no,
@@ -846,7 +847,7 @@ def get_ads_insights(ad):
             conversaion_count = action['value']
             break
 
-    if conversaion_count >0:
+    if int(conversaion_count) >0:
         for cost_per_action_type in cost_per_action_types:
             if cost_per_action_type['action_type'] == "onsite_conversion.messaging_first_reply":
                 conversaion_cost = action['value']
@@ -862,7 +863,7 @@ def get_ads_insights(ad):
                                                               'action_type': "conversation",
                                                               'action_count': conversaion_count,
                                                               'action_cost': conversaion_cost,
-
+                                                              'effective_status': ad.effective_status,
 
                                                               }
                                                     )
