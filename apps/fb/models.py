@@ -175,6 +175,22 @@ class MyAd(models.Model):
     def __str__(self):
         return self.ad_no
 
+class AdInsights(models.Model):
+    ad_no = models.CharField(u'广告', default='', max_length=100, blank=True)
+    myad = models.ForeignKey(MyAd, related_name='ad_insights', null=True, blank=True,
+                                      verbose_name="MyAd", on_delete=models.CASCADE)
+    ad_time = models.DateField(u'创建时间', auto_now=False, null=True, blank=True)
+    action_type = models.CharField(u'action_type', max_length=20, null=True, blank=True)
+    action_count = models.CharField(u'成效', max_length=20, null=True, blank=True)
+    action_cost = models.CharField(u'成本', max_length=20, null=True, blank=True)
+
+    class Meta:
+        verbose_name = "广告效果"
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.ad_no
+
 class MyFeed(models.Model):
     page_no = models.CharField(max_length=30, null=True, blank=True, verbose_name="PageID")
     feed_no = models.CharField(default='', unique=True, max_length=50, blank=True, verbose_name="FeedID")

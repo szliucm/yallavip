@@ -751,3 +751,64 @@ def download_album_photos(access_token,page_no,album_no):
     MyPhoto.objects.bulk_create(myphoto_list)
     #update_photos_handle()
 
+def get_today():
+    import pytz
+    from datetime import datetime,timedelta
+    from django.db.models.functions import TruncDate
+
+    dubai = pytz.timezone('Asia/Dubai')
+    now = datetime.now(dubai)
+    today = datetime(now.year, now.month, now.day, tzinfo=dubai)
+
+    return  today
+
+def get_ads_insights(ad_no):
+
+
+
+    adobjects = FacebookAdsApi.init(access_token=ad_tokens, debug=True)
+
+    fields =['spend','reach','actions','cost_per_action_type',
+
+    ]
+    params = {
+        'date_preset' : 'today'
+
+    }
+
+
+    ads_insights = Ad(ad_no).get_insights(fields=fields, params=params )
+
+    ads_insight = ads_insights[0]
+    actions = ads_insight["actions"]
+    cost_per_action_types = ads_insight["cost_per_action_type"]
+
+    conversaion_count = 0
+    conversaion_cost = 0
+    for action in actions:
+        if action['action_type'] == "onsite_conversion.messaging_first_reply":
+            conversaion_count = action['value']
+            break
+
+    if conversaion_count >0:
+        for cost_per_action_type in cost_per_action_types:
+            if cost_per_action_type['action_type'] == "onsite_conversion.messaging_first_reply":
+                conversaion_cost = action['value']
+                break
+
+
+    obj, created = AdInsights.objects.update_or_create(ad_no=ad_no,
+                                                    defaults={'ad_time': get_today(),
+                                                              'action_type': "conversation",
+                                                              'action_count': conversaion_count,
+                                                              'action_cost': conversaion_cost,
+
+
+                                                              }
+                                                    )
+
+
+
+
+
+
