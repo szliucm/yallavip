@@ -857,7 +857,7 @@ def get_ads_insights(ad):
     if int(conversaion_count) >0:
         for cost_per_action_type in cost_per_action_types:
             if cost_per_action_type['action_type'] == "onsite_conversion.messaging_first_reply":
-                conversaion_cost = cost_per_action_types['value']
+                conversaion_cost = cost_per_action_type['value']
                 break
 
 
@@ -865,12 +865,12 @@ def get_ads_insights(ad):
                                                        myad = ad,
                                                        ad_time = get_today(),
                                                     defaults={
-                                                              'reach' : ads_insight["reach"],
-                                                              'spend': ads_insight["spend"],
+                                                              'reach' : int(ads_insight["reach"]),
+                                                              'spend': int(float(ads_insight["spend"])),
 
                                                               'action_type': "conversation",
-                                                              'action_count': conversaion_count,
-                                                              'action_cost': conversaion_cost,
+                                                              'action_count': int(conversaion_count),
+                                                              'action_cost': int(float(conversaion_cost)),
                                                               'effective_status': ad.effective_status,
                                                               'updated_time' : dt.now(),
                                                               'active' : True

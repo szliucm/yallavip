@@ -191,12 +191,16 @@ class AdInsights(models.Model):
     myad = models.ForeignKey(MyAd, related_name='ad_insights', null=True, blank=True,
                                       verbose_name="MyAd", on_delete=models.CASCADE)
     ad_time = models.DateField(u'创建时间', auto_now=False, null=True, blank=True)
-    reach = models.CharField(u'reach', max_length=20, null=True, blank=True)
-    spend = models.CharField(u'spend', max_length=20, null=True, blank=True)
+    reach = models.IntegerField( null=True, blank=True, verbose_name="reach")
+
+    spend = models.IntegerField( null=True, blank=True, verbose_name="spend")
+
 
     action_type = models.CharField(u'action_type', max_length=20, null=True, blank=True)
-    action_count = models.CharField(u'成效', max_length=20, null=True, blank=True)
-    action_cost = models.CharField(u'成本', max_length=20, null=True, blank=True)
+    action_count = models.IntegerField( null=True, blank=True, verbose_name="成效")
+
+    action_cost = models.IntegerField( null=True, blank=True, verbose_name="成本")
+
     effective_status = models.CharField(u'effective_status', max_length=200, null=True, blank=True)
     updated_time = models.DateTimeField(u'更新时间', auto_now=False, null=True, blank=True)
 
