@@ -455,7 +455,8 @@ def list_to_dict(photos):
 
 @shared_task
 def delete_outstock_photos():
-    mysql = " SELECT p.page_no, p.photo_no from fb_myphoto p, prs_lightin_spu s where p.handle = s.handle and s.handle<>'' and (s.sellable<=0  or s.fake=True)"
+    #mysql = " SELECT p.page_no, p.photo_no from fb_myphoto p, prs_lightin_spu s where p.active=True and p.handle = s.handle and s.handle<>'' and (s.sellable<=0  or s.fake=True)"
+    mysql = " SELECT p.page_no, p.photo_no from fb_myphoto p, prs_lightin_spu s where p.active=True and p.handle = s.handle and s.handle<>'' and s.sellable<=0"
     photos = my_custom_sql(mysql)
 
     photo_miss = list_to_dict(photos)

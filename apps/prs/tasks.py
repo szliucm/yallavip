@@ -2280,6 +2280,7 @@ def fulfill_order_lightin(order):
         "phone": order.verify.phone_1,
         "cell_phone": order.verify.phone_2,
         "email": "na@yallavip.com",
+        "is_order_cod":1,
         "order_cod_price": order.order_amount,
         "order_cod_currency": "SAR",
         "order_age_limit": "2",
