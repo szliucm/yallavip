@@ -180,6 +180,9 @@ class AdInsights(models.Model):
     myad = models.ForeignKey(MyAd, related_name='ad_insights', null=True, blank=True,
                                       verbose_name="MyAd", on_delete=models.CASCADE)
     ad_time = models.DateField(u'创建时间', auto_now=False, null=True, blank=True)
+    reach = models.CharField(u'reach', max_length=20, null=True, blank=True)
+    spend = models.CharField(u'spend', max_length=20, null=True, blank=True)
+
     action_type = models.CharField(u'action_type', max_length=20, null=True, blank=True)
     action_count = models.CharField(u'成效', max_length=20, null=True, blank=True)
     action_cost = models.CharField(u'成本', max_length=20, null=True, blank=True)
