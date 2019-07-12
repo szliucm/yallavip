@@ -863,7 +863,8 @@ def get_ads_insights(ad):
 
     obj, created = AdInsights.objects.update_or_create(ad_no=ad_no,
                                                        myad = ad,
-                                                    defaults={'ad_time': get_today(),
+                                                       ad_time = get_today(),
+                                                    defaults={
                                                               'reach' : ads_insight["reach"],
                                                               'spend': ads_insight["spend"],
 
