@@ -17,6 +17,7 @@ from facebook_business.adobjects.user import User
 from facebook_business.api import FacebookAdsApi
 from facebook_business.exceptions import FacebookRequestError
 from fb.models import *
+from django.utils import timezone as dt
 
 from prs.models import  Lightin_SPU
 from prs.fb_action import get_token
@@ -814,7 +815,7 @@ def get_today():
     return  today
 
 def get_message_ads_insights():
-    ads = MyAd.objects.filter(active=True, objective="message")
+    ads = MyAd.objects.filter(active=True, objective="message", effective_status__in=["PAUSED", "ACTIVE"])
 
     for ad in ads:
         get_ads_insights(ad)
@@ -836,7 +837,12 @@ def get_ads_insights(ad):
 
     ads_insights = Ad(ad_no).get_insights(fields=fields, params=params )
 
-    ads_insight = ads_insights[0]
+    try:
+        ads_insight = ads_insights[0]
+    except:
+        print("获取insight失败 ",ad, ads_insights)
+        return
+
     actions = ads_insight["actions"]
     cost_per_action_types = ads_insight["cost_per_action_type"]
 
@@ -864,6 +870,7 @@ def get_ads_insights(ad):
                                                               'action_count': conversaion_count,
                                                               'action_cost': conversaion_cost,
                                                               'effective_status': ad.effective_status,
+                                                              'updated_time' : dt.now()
 
                                                               }
                                                     )

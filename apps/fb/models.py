@@ -198,6 +198,7 @@ class AdInsights(models.Model):
     action_count = models.CharField(u'成效', max_length=20, null=True, blank=True)
     action_cost = models.CharField(u'成本', max_length=20, null=True, blank=True)
     effective_status = models.CharField(u'effective_status', max_length=200, null=True, blank=True)
+    updated_time = models.DateTimeField(u'更新时间', auto_now=False, null=True, blank=True)
 
     class Meta:
         verbose_name = "广告效果"
