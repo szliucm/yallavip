@@ -844,20 +844,20 @@ def get_ads_insights(ad):
         print("获取insight失败 ",ad, ads_insights)
         return
 
-    actions = ads_insight["actions"]
-    cost_per_action_types = ads_insight["cost_per_action_type"]
+    actions = ads_insight.get("actions")
+    cost_per_action_types = ads_insight.get("cost_per_action_type")
 
     conversaion_count = 0
     conversaion_cost = 0
     for action in actions:
-        if action['action_type'] == "onsite_conversion.messaging_first_reply":
-            conversaion_count = action['value']
+        if action.get('action_type') == "onsite_conversion.messaging_first_reply":
+            conversaion_count = action.get('value')
             break
 
     if int(conversaion_count) >0:
         for cost_per_action_type in cost_per_action_types:
-            if cost_per_action_type['action_type'] == "onsite_conversion.messaging_first_reply":
-                conversaion_cost = cost_per_action_type['value']
+            if cost_per_action_type.get('action_type') == "onsite_conversion.messaging_first_reply":
+                conversaion_cost = cost_per_action_type.get('value')
                 break
 
 
@@ -865,8 +865,8 @@ def get_ads_insights(ad):
                                                        myad = ad,
                                                        ad_time = get_today(),
                                                     defaults={
-                                                              'reach' : int(ads_insight["reach"]),
-                                                              'spend': int(float(ads_insight["spend"])),
+                                                              'reach' : int(ads_insight.get("reach")),
+                                                              'spend': int(float(ads_insight.get("spend"))),
 
                                                               'action_type': "conversation",
                                                               'action_count': int(conversaion_count),
