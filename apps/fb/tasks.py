@@ -912,7 +912,7 @@ def control_ads():
     ads_topause += list(AdInsights.objects.filter(ad_time=today, effective_status="ACTIVE",action_cost__gte=7))
     print("贵的一共%s条 " % len(ads_topause))
 
-    update_ads_status(ads_topause, "PAUSE")
+    update_ads_status(ads_topause, "PAUSED")
 
 
     #重启便宜的广告
