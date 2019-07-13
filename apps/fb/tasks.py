@@ -880,6 +880,8 @@ def get_ads_insights(ad):
                                                            )
 
 def update_ads_status(ads, ad_status):
+    import time
+
     for ad in ads:
 
         # 修改广告状态
@@ -898,6 +900,7 @@ def update_ads_status(ads, ad_status):
 
 
 def control_ads():
+
     today = get_today()
     #关闭效果不佳的活跃广告
 
