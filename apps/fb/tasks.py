@@ -876,6 +876,7 @@ def get_ads_insights(ad):
                                                               'active' : True
 
                                                               }
+                                                       )
 
 def update_ads_status(ads, ad_status):
     for ad in ads:
