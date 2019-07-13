@@ -20,7 +20,7 @@ from fb.models import *
 from django.utils import timezone as dt
 
 from prs.models import  Lightin_SPU
-from prs.fb_action import get_token
+from prs.fb_action import get_token, ad_update_status
 
 from prs.tasks import my_custom_sql, ad_tokens
 from celery import shared_task, task
@@ -684,7 +684,7 @@ def delete_outstock_ads():
     delete_outstock_ad(ads)
 
 def delete_outstock_ad(ads):
-    from prs.fb_action import ad_update_status
+
     import time
 
     ads_todelete = []
