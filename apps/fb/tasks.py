@@ -901,14 +901,18 @@ def control_ads():
 
     #花费超过10元，但没有成效的
     ads_topause = list(AdInsights.objects.filter(ad_time=today, effective_status="ACTIVE",action_count=0,spend__gt=10))
+    print("没有成效的一共%s条 "%len(ads_topause))
 
     #单价超过7元的广告
     ads_topause += list(AdInsights.objects.filter(ad_time=today, effective_status="ACTIVE",action_cost__gte=7))
+    print("贵的一共%s条 " % len(ads_topause))
 
     update_ads_status(ads_topause, "PAUSE")
 
+
     #重启便宜的广告
     ads_toactive = list(AdInsights.objects.filter(ad_time=today, effective_status="PAUSED", action_cost__lt=7))
+    print("便宜的一共%s条 " % len(ads_toactive))
     update_ads_status(ads_toactive, "ACTIVE")
 
 
