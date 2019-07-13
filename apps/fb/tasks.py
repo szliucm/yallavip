@@ -849,34 +849,35 @@ def get_ads_insights(ad):
 
     conversaion_count = 0
     conversaion_cost = 0
-    for action in actions:
-        if action.get('action_type') == "onsite_conversion.messaging_first_reply":
-            conversaion_count = action.get('value')
-            break
-
-    if int(conversaion_count) >0:
-        for cost_per_action_type in cost_per_action_types:
-            if cost_per_action_type.get('action_type') == "onsite_conversion.messaging_first_reply":
-                conversaion_cost = cost_per_action_type.get('value')
+    if actions:
+        for action in actions:
+            if action.get('action_type') == "onsite_conversion.messaging_first_reply":
+                conversaion_count = action.get('value')
                 break
 
+        if int(conversaion_count) >0:
+            for cost_per_action_type in cost_per_action_types:
+                if cost_per_action_type.get('action_type') == "onsite_conversion.messaging_first_reply":
+                    conversaion_cost = cost_per_action_type.get('value')
+                    break
 
-    obj, created = AdInsights.objects.update_or_create(ad_no=ad_no,
-                                                       myad = ad,
-                                                       ad_time = get_today(),
-                                                    defaults={
-                                                              'reach' : int(ads_insight.get("reach")),
-                                                              'spend': int(float(ads_insight.get("spend"))),
 
-                                                              'action_type': "conversation",
-                                                              'action_count': int(conversaion_count),
-                                                              'action_cost': int(float(conversaion_cost)),
-                                                              'effective_status': ad.effective_status,
-                                                              'updated_time' : dt.now(),
-                                                              'active' : True
+        obj, created = AdInsights.objects.update_or_create(ad_no=ad_no,
+                                                           myad = ad,
+                                                           ad_time = get_today(),
+                                                        defaults={
+                                                                  'reach' : int(ads_insight.get("reach")),
+                                                                  'spend': int(float(ads_insight.get("spend"))),
 
-                                                              }
-                                                       )
+                                                                  'action_type': "conversation",
+                                                                  'action_count': int(conversaion_count),
+                                                                  'action_cost': int(float(conversaion_cost)),
+                                                                  'effective_status': ad.effective_status,
+                                                                  'updated_time' : dt.now(),
+                                                                  'active' : True
+
+                                                                  }
+                                                           )
 
 def update_ads_status(ads, ad_status):
     for ad in ads:
