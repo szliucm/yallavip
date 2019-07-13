@@ -4,9 +4,7 @@ from .models import *
 from orders.models import Order
 from conversations.models import FbMessage
 
-
-
-def update_performance(days=3):
+def update_performance(days=10):
     from django.db.models import Count, Sum, Q,F
     import pytz
     from datetime import datetime,timedelta
