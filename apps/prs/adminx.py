@@ -159,8 +159,8 @@ class Lightin_SPUAdmin(object):
             "title": "女装",
             "query": {
                 "vendor__in": "funmart",
-                "cate_1__contains": "Women",
-                "cate_2__contains": "Clothing",
+                "cate_1__in": "Women",
+                "cate_2__in": "Clothing",
                 "sellable__gt": 0,
 
             },
@@ -171,8 +171,8 @@ class Lightin_SPUAdmin(object):
             "title": "女包",
             "query": {
                 "vendor__in": "funmart",
-                "cate_1__contains": "Women",
-                "cate_2__contains": "Bags",
+                "cate_1__in": "Women",
+                "cate_2__in": "Bags",
                 "sellable__gt": 0,
 
             },
@@ -183,8 +183,8 @@ class Lightin_SPUAdmin(object):
             "title": "女鞋",
             "query": {
                 "vendor__in": "funmart",
-                "cate_1__contains": "Women",
-                "cate_2__contains": "Shoes",
+                "cate_1__in": "Women",
+                "cate_2__in": "Shoes",
                 "sellable__gt": 0,
 
             },
@@ -195,8 +195,8 @@ class Lightin_SPUAdmin(object):
             "title": "女表",
             "query": {
                 "vendor__in": "funmart",
-                "cate_1__contains": "Women",
-                "cate_2__contains": "Watches",
+                "cate_1__in": "Women",
+                "cate_2__in": "Watches",
                 "sellable__gt": 0,
 
             },
@@ -207,8 +207,8 @@ class Lightin_SPUAdmin(object):
             "title": "男装",
             "query": {
                 "vendor__in": "funmart",
-                "cate_1__contains": "Men",
-                "cate_2__contains": "Clothing",
+                "cate_1__in": "Men",
+                "cate_2__in": "Clothing",
                 "sellable__gt": 0,
 
             },
@@ -219,8 +219,8 @@ class Lightin_SPUAdmin(object):
             "title": "男包",
             "query": {
                 "vendor__in": "funmart",
-                "cate_1__contains": "Men",
-                "cate_2__contains": "Bags",
+                "cate_1__in": "Men",
+                "cate_2__in": "Bags",
                 "sellable__gt": 0,
 
             },
@@ -231,8 +231,8 @@ class Lightin_SPUAdmin(object):
             "title": "男鞋",
             "query": {
                 "vendor__in": "funmart",
-                "cate_1__contains": "Men",
-                "cate_2__contains": "Shoes",
+                "cate_1__in": "Men",
+                "cate_2__in": "Shoes",
                 "sellable__gt": 0,
 
             },
@@ -243,8 +243,8 @@ class Lightin_SPUAdmin(object):
             "title": "男表",
             "query": {
                 "vendor__in": "funmart",
-                "cate_1__contains": "Men",
-                "cate_2__contains": "Watches",
+                "cate_1__in": "Men",
+                "cate_2__in": "Watches",
                 "sellable__gt": 0,
 
             },

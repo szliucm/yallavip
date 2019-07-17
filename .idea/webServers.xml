@@ -26,6 +26,14 @@
           <option name="port" value="22" />
         </fileTransfer>
       </webServer>
+      <webServer id="c52c584e-ea49-4b3d-a920-362c671ab0f4" name="分销平台服务器" url="http://149.28.10.160">
+        <fileTransfer host="149.28.10.160" port="22" rootFolder="/data/wwwroot/yallavip" accessType="SFTP">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+          <option name="port" value="22" />
+        </fileTransfer>
+      </webServer>
     </option>
   </component>
 </project>

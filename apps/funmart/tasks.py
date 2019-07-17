@@ -617,6 +617,8 @@ def deal_funmart_skus():
     #print(sku_list)
     Lightin_SKU.objects.bulk_create(sku_list)
 
+    #更新价格
+
 
 
 #从wms获取barcode的库存，所以只需要把barcode和sku对应起来就可以了
