@@ -108,7 +108,8 @@ def update_album_photos(album):
     page_no = album.page_no
     
     # 重置原有相册的图片信息为不活跃
-    album.update(active=False)
+    album.active=False
+    album.save()
 
     fields = ["id", "name", "created_time", "updated_time", "picture", "link",
               "likes.summary(true)", "comments.summary(true)"
@@ -727,6 +728,11 @@ def delete_outstock_ad(ads):
 
 @shared_task
 def delete_outstock():
+    update_albums()
+    batch_update_photos(limit=None)
+    batch_update_feed()
+    batch_update_ad()
+
     delete_outstock_photos.apply_async((), queue='outstock')
     delete_outstock_feeds.apply_async((), queue='outstock')
     delete_outstock_ads.apply_async((), queue='outstock')
