@@ -315,7 +315,7 @@ class Lightin_SKUAdmin(object):
 
         if obj.lightin_spu.vendor =="funmart":
             if obj.image:
-                images = json.loads(obj.image)
+                images = json.loads(obj.ori_image)
                 if len(images) >0:
                     img = '<a><img src="%s" width="100px"></a>' % (images[0])
                     return mark_safe(img)
