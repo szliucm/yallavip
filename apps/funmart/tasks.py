@@ -644,7 +644,12 @@ def get_spu_images():
         print("page ", i)
         image_list=[]
         for spu_to_add in ids.page(i).object_list:
-            images = json.loads(spu_to_add.images)
+            try:
+                images = json.loads(spu_to_add.images)
+            except Exception as e:
+                print(spus_to_add, e)
+                continue
+
             for remote_image in images:
                 yallavip_image = remote_image.replace("http://img.funmart.com/catalog/product/","").replace("http://img.funmart.com/product/","")
                 image = FunmartImage(
