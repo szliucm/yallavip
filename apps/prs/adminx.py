@@ -83,16 +83,27 @@ class MyCategoryAdmin(object):
     size.short_description = "尺码汇总"
 
 
-    list_display = ["super_cate", "super_name", "name", "level","tags","spu_count","spu_onesize","spu_count_5","spu_count_10", "longaded_count","size", "active","published" ,]
-
+    list_display = ["super_cate", "super_name", "name", "level","tags", "one_size", "active","published" ,]
+    #"spu_count", "spu_onesize", "spu_count_5", "spu_count_10", "longaded_count", "size",
 
     search_fields = ["name", ]
     list_filter = ["super_name","level","active","published","vendor", ]
-    list_editable = []
+    list_editable = ["one_size",]
     readonly_fields = ()
     actions = []
 
+@xadmin.sites.register(MyCategorySize)
+class MyCategorySizeAdmin(object):
 
+
+    list_display = ["standard_size", "mycategory", ]
+    #"spu_count", "spu_onesize", "spu_count_5", "spu_count_10", "longaded_count", "size",
+
+    search_fields = ["standard_size", ]
+    list_filter = ["mycategory", "mycategory__level",]
+    list_editable = []
+    readonly_fields = ()
+    actions = []
 
 class Lightin_SPUResource(resources.ModelResource):
     '''

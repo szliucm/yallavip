@@ -36,6 +36,7 @@ class MyCategory(models.Model):
     cate_2 = models.CharField(u'cate_2', default='', max_length=256, null=True, blank=True)
     cate_3 = models.CharField(u'cate_3', default='', max_length=256, null=True, blank=True)
     '''
+    one_size = models.BooleanField(default=False, verbose_name="均码")
 
     class Meta:
         verbose_name = "商品品类"
@@ -48,6 +49,18 @@ class MyCategory(models.Model):
         # return self.tags
         #return str(self.vendor)+'-'+str(self.level - 1)+'-'+self.super_name + '-'+ str(self.level) + '-' + self.name
         return str(self.vendor)+'-'+str(self.level)+'-'+self.tags
+
+class MyCategorySize(models.Model):
+    mycategory = models.ForeignKey(MyCategory, null=True, blank=True, verbose_name="品类",
+                                   related_name="cate_size", on_delete=models.CASCADE)
+    standard_size = models.CharField(default='', max_length=20, null=True, blank=True, verbose_name="Standard Size")
+
+    class Meta:
+        verbose_name = "品类尺码"
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return  standard_size
 
 class Lightin_SPU(models.Model):
     mycategory = models.ForeignKey(MyCategory, null=True, blank=True, verbose_name="品类",
@@ -161,7 +174,8 @@ class Lightin_SKU(models.Model):
     height = models.FloatField(verbose_name="height", default=0, blank=True, null=True)
 
     skuattr = models.TextField(default='', null=True, blank=True, verbose_name="skuattr")
-    size = models.CharField(default='', max_length=20, null=True, blank=True, verbose_name="size")
+    size = models.CharField(default='', max_length=20, null=True, blank=True, verbose_name="standard_size")
+    standard_size = models.CharField(default='', max_length=20, null=True, blank=True, verbose_name="size")
     #color = models.CharField(default='', max_length=200, null=True, blank=True, verbose_name="color")
 
     # image = models.ImageField(u'组合图', upload_to='combo/', default="", null=True, blank=True)
@@ -208,6 +222,8 @@ class YallavipAlbum(models.Model):
 
     cate = models.ForeignKey(MyCategory, null=True, blank=True, verbose_name="MyCategory",
                              related_name="cate_album", on_delete=models.CASCADE)
+    standard_size = models.CharField(default='', max_length=20, null=True, blank=True, verbose_name="Standard Size")
+
     # catesize = models.ForeignKey(MyCategorySize, null=True, blank=True, verbose_name="MyCategorySize",
     #                               related_name="catesize_album", on_delete=models.CASCADE)
 
