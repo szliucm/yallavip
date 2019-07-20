@@ -103,6 +103,7 @@ class MyCategorySizeAdmin(object):
     list_filter = ["mycategory", "mycategory__level",]
     list_editable = []
     readonly_fields = ()
+    relfield_style = 'fk_ajax'
     actions = []
 
 class Lightin_SPUResource(resources.ModelResource):

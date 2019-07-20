@@ -257,17 +257,22 @@ def sync_cate_album_v2(page_no=None):
 
         for cate in cates:
             # 相册已经有了，置为active，否则要创建
-            cate_album = yallvip_album.filter(cate=cate)
-            if cate_album:
-                cate_album.update(active=True)
-            else:
-                print(cate.name)
-                if cate.one_size:
-                    create_album(page.page_no, "%s %s" % (cate.super_name ,cate.name))
+
+            if cate.one_size:
+                cate_album = yallvip_album.filter(cate=cate)
+                if cate_album:
+                    cate_album.update(active=True)
                 else:
-                    standard_sizes = cate.cate_size.all()
-                    for standard_size in standard_sizes:
-                        create_album(page.page_no, "%s %s [%s]" % (cate.super_name ,cate.name, size), standard_size)
+                    print(cate.name)
+                    create_album(page.page_no, "%s %s" % (cate.super_name ,cate.name))
+            else:
+                standard_sizes = cate.cate_size.all()
+                for standard_size in standard_sizes:
+                    cate_album = yallvip_album.filter(cate=cate, standard_size=standard_size)
+                    if cate_album:
+                        cate_album.update(active=True)
+                    else:
+                        create_album(page.page_no, "%s %s [%s]" % (cate.super_name, cate.name, size), standard_size)
 
 
 
