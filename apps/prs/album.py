@@ -21,7 +21,14 @@ import random
 #将page中失效的相册找出来并删掉
 #未创建的则创建之
 
-def create_album(page_no , album_name, standard_size = "" ):
+def create_album(page,cate, standard_size = "" ):
+
+    page_no = page.page_no
+    if standard_size == "":
+        album_name = "%s %s" % (cate.super_name ,cate.name)
+    else:
+        album_name = "%s %s [%s]" % (cate.super_name, cate.name,  standard_size)
+
     access_token, long_token = get_token(page_no)
     FacebookAdsApi.init(access_token=access_token, debug=True)
 
@@ -64,7 +71,7 @@ def create_album(page_no , album_name, standard_size = "" ):
             page=page,
             cate=cate,
             standard_size=standard_size,
-            album=new_album,
+            album=obj,
             published=True,
             publish_error="",
             published_time=dt.now(),
@@ -264,7 +271,9 @@ def sync_cate_album_v2(page_no=None):
                     cate_album.update(active=True)
                 else:
                     print(cate.name)
-                    create_album(page.page_no, "%s %s" % (cate.super_name ,cate.name))
+                    create_album(page, cate )
+                    #create_album(page.page_no, "%s %s" % (cate.super_name ,cate.name))
+
             else:
                 standard_sizes = cate.cate_size.all()
                 for standard_size in standard_sizes:
@@ -272,7 +281,8 @@ def sync_cate_album_v2(page_no=None):
                     if cate_album:
                         cate_album.update(active=True)
                     else:
-                        create_album(page.page_no, "%s %s [%s]" % (cate.super_name, cate.name, size), standard_size)
+                        create_album(page,cate,standard_size)
+                        #create_album(page.page_no, "%s %s [%s]" % (cate.super_name, cate.name, size), standard_size)
 
 
 
