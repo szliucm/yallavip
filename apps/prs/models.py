@@ -60,7 +60,7 @@ class MyCategorySize(models.Model):
         verbose_name_plural = verbose_name
 
     def __str__(self):
-        return  standard_size
+        return  self.standard_size
 
 class Lightin_SPU(models.Model):
     mycategory = models.ForeignKey(MyCategory, null=True, blank=True, verbose_name="品类",
