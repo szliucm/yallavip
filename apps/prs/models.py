@@ -36,7 +36,7 @@ class MyCategory(models.Model):
     cate_2 = models.CharField(u'cate_2', default='', max_length=256, null=True, blank=True)
     cate_3 = models.CharField(u'cate_3', default='', max_length=256, null=True, blank=True)
     '''
-    one_size = models.BooleanField(default=False, verbose_name="均码")
+    one_size = models.BooleanField(default=True, verbose_name="均码")
 
     class Meta:
         verbose_name = "商品品类"

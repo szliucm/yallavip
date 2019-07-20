@@ -21,7 +21,7 @@ import random
 #将page中失效的相册找出来并删掉
 #未创建的则创建之
 
-def create_album(page_no , album_name ):
+def create_album(page_no , album_name, standard_size = "" ):
     access_token, long_token = get_token(page_no)
     FacebookAdsApi.init(access_token=access_token, debug=True)
 
@@ -59,8 +59,17 @@ def create_album(page_no , album_name ):
                                                               'link': album["link"],
 
                                                               }
-                                                    )
-
+                                                        )
+        YallavipAlbum.objects.create(
+            page=page,
+            cate=cate,
+            standard_size=standard_size,
+            album=new_album,
+            published=True,
+            publish_error="",
+            published_time=dt.now(),
+            active=True
+        )
 
 
 
@@ -248,25 +257,20 @@ def sync_cate_album_v2(page_no=None):
 
         for cate in cates:
             # 相册已经有了，置为active，否则要创建
-            cate_album = yallvip_album.filter(cate = cate)
+            cate_album = yallvip_album.filter(cate=cate)
             if cate_album:
                 cate_album.update(active=True)
             else:
-                print (cate.name)
-                new_album = create_album(page.page_no, cate.name)
-                if new_album:
-                    YallavipAlbum.objects.create(
-                        page=page,
-                        cate=cate,
-                        #catesize=None,
-                        album=new_album,
-                        published=True,
-                        publish_error="",
-                        published_time=dt.now(),
-                        active=True
-                    )
+                print(cate.name)
+                if cate.one_size:
+                    create_album(page.page_no, "%s %s" % (cate.super_name ,cate.name))
                 else:
-                    print("创建相册失败！")
+                    standard_sizes = cate.cate_size.all()
+                    for standard_size in standard_sizes:
+                        create_album(page.page_no, "%s %s [%s]" % (cate.super_name ,cate.name, size), standard_size)
+
+
+
 
 
 
