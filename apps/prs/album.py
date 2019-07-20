@@ -308,7 +308,7 @@ def prepare_yallavip_photoes_v2(page_no=None):
         for album in albums:
             is_sku = False
             print("album is ", album)
-            con = filter_product(album.cate)
+            con = filter_product(album)
 
 
             # 根据品类找已经上架到shopify 但还未添加到相册的产品
@@ -352,6 +352,68 @@ def prepare_yallavip_photoes_v2(page_no=None):
                                                                              }
                                                                    )
 
+
+#根据yallavip_album相册规则，生成相册图片记录
+#根据品类和尺码创建相册的情况
+#分尺码，根据库存数量来筛选商品发布
+def prepare_yallavip_photoes_v3(page_no=None):
+
+
+    # 找出所有活跃的page
+    pages = MyPage.objects.filter(is_published=True, active=True, promotable=True)
+    if page_no:
+        pages = pages.filter(page_no=page_no)
+
+    for page in pages:
+        # 遍历page对应的相册
+        print("page is ", page)
+        albums = YallavipAlbum.objects.filter(page__pk= page.pk, active=True  )
+        print("albums is ", albums)
+        for album in albums:
+            is_sku = False
+            print("album is ", album)
+            con = filter_product(album)
+
+            # 根据品类找已经上架到shopify 但还未添加到相册的产品
+            product_list = []
+
+            if is_sku:
+                skus_to_add = Lightin_SKU.objects.filter(con, listed=True, locked=True, imaged=True,o_sellable__gt=0).\
+                    exclude(id__in = LightinAlbum.objects.filter(
+                                            yallavip_album__pk=album.pk,
+                                            lightin_sku__isnull=False).values_list('lightin_sku__id',flat=True)).distinct()
+
+                for sku_to_add in skus_to_add:
+
+                    name = "[" + sku_to_add.SKU + "]"
+                    items = sku_to_add.combo_item.all().values_list("lightin_sku__SKU", flat=True)
+                    for item in items:
+                        name = name + "\n" + item
+                    name = name + "\n\nPrice:  " + str(sku_to_add.sku_price) + "SAR"
+
+                    product = LightinAlbum(
+                        lightin_sku=sku_to_add,
+                        yallavip_album=album,
+                        name=name
+
+                    )
+                    product_list.append(product)
+
+            else:
+                products_to_add = Lightin_SPU.objects.filter(~Q(handle=""),vendor="funmart",sellable__gt=0).filter(con).exclude(id__in=
+                                                LightinAlbum.objects.filter(
+                                                    yallavip_album__pk=album.pk,
+                                                    lightin_spu__isnull=False).values_list(
+                                                    'lightin_spu__id',
+                                                    flat=True)).distinct()
+
+                for product_to_add in products_to_add:
+                    obj, created = LightinAlbum.objects.update_or_create(lightin_spu=product_to_add,
+                                                                         yallavip_album=album,
+                                                                   defaults={'name': product_to_add.title
+
+                                                                             }
+                                                                   )
 
 def prepare_yallavip_album_material(page_no=None):
     from django.db.models import Max
@@ -453,7 +515,8 @@ def init_spu_one_size():
     Lightin_SPU.objects.filter(pk__in=list(spus)).update(one_size=True)
 
 # 根据 MyCategory 拼接筛选产品的条件
-def filter_product(cate):
+def filter_product(album):
+    cate = album.cate
     con = Q()
 
     if cate.cate_type == "Product":
@@ -469,27 +532,22 @@ def filter_product(cate):
             q_cate.children.append(('cate_3', cate.name))
         '''
         q_cate.children.append(('tags__contains', cate.tags))
+        con.add(q_cate, 'AND')
 
         #如果没尺码，就全上
         # 如果有尺码，均码的全上（one-size, free-size）
         #其他尺码的，就要sellable > n 的才上
-        q_size = Q()
-        q_size.connector = 'OR'
+        if not album.standard_size == "":
+            q_size = Q()
+            q_size.connector = 'OR'
 
-        #多尺码的cate，要么是均码，要么有最低库存要求，
-
-
-        q_size.children.append(('sellable__gt', cate.sellable_gt))
-
-        q_size.children.append(('one_size',True))
-
-
-        con.add(q_cate, 'AND')
-        con.add(q_size, 'AND')
+            #多尺码的cate，要么是均码，要么有最低库存要求，
+            #q_size.children.append(('sellable__gt', cate.sellable_gt))
+            #q_size.children.append(('one_size',True))
+            q_size.children.append(('size', album.standard_size))
+            con.add(q_size, 'AND')
     elif cate.cate_type == "M100-1":
         con.children.append(('promote_count', "M100-1"))
-
-
     return  con
 
 def get_promote_ads(page_no):
