@@ -249,7 +249,7 @@ class YallavipAlbum(models.Model):
 
     def __str__(self):
         if self.cate:
-            return "%s [%s]"%(self.cate.name , self.standard_size)
+            return "%s %s [%s]"%(self.cate.super_name ,self.cate.name , self.standard_size)
 
 
 class LightinAlbum(models.Model):

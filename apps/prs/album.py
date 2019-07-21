@@ -400,17 +400,32 @@ def prepare_yallavip_photoes_v3(page_no=None):
                     product_list.append(product)
 
             else:
-                products_to_add = Lightin_SPU.objects.filter(~Q(handle=""),vendor="funmart",sellable__gt=0).filter(con).exclude(id__in=
-                                                LightinAlbum.objects.filter(
-                                                    yallavip_album__pk=album.pk,
-                                                    lightin_spu__isnull=False).values_list(
-                                                    'lightin_spu__id',
-                                                    flat=True)).distinct()
+                if album.standard_size == "":
+                    products_to_add = Lightin_SPU.objects.filter(~Q(handle=""),vendor="funmart",sellable__gt=0)\
+                        .filter(con)\
+                        .exclude(id__in=
+                                        LightinAlbum.objects.filter(
+                                            yallavip_album__pk=album.pk,
+                                            lightin_spu__isnull=False).values_list(
+                                            'lightin_spu__id',
+                                            flat=True))\
+                        .values_list('id', 'title').distinct()
+                else:
+                    products_to_add = Lightin_SKU.objects.filter(~Q(lightin_spu__handle=""),lightin_spu__vendor="funmart",o_sellable__gt=0)\
+                        .filter(con)\
+                        .exclude(lightin_spu__id__in=
+                                                    LightinAlbum.objects.filter(
+                                                        yallavip_album__pk=album.pk,
+                                                        lightin_spu__isnull=False).values_list(
+                                                        'lightin_spu__id',
+                                                        ))\
+                        .values_list('lightin_spu__id', 'lightin_spu__title').distinct()
+
 
                 for product_to_add in products_to_add:
-                    obj, created = LightinAlbum.objects.update_or_create(lightin_spu=product_to_add,
+                    obj, created = LightinAlbum.objects.update_or_create(lightin_spu_id=product_to_add[0],
                                                                          yallavip_album=album,
-                                                                   defaults={'name': product_to_add.title
+                                                                   defaults={'name': product_to_add[1]
 
                                                                              }
                                                                    )
@@ -515,6 +530,8 @@ def init_spu_one_size():
     Lightin_SPU.objects.filter(pk__in=list(spus)).update(one_size=True)
 
 # 根据 MyCategory 拼接筛选产品的条件
+#如果没有尺码，则返回spu的过滤条件
+#如果有尺码，则返回sku的过滤条件
 def filter_product(album):
     cate = album.cate
     con = Q()
@@ -523,29 +540,19 @@ def filter_product(album):
         q_cate = Q()
         q_cate.connector = 'OR'
 
-        '''
-        if cate.level == 1:
-            q_cate.children.append(('cate_1', cate.name))
-        elif cate.level == 2:
-            q_cate.children.append(('cate_2', cate.name))
-        elif cate.level == 3:
-            q_cate.children.append(('cate_3', cate.name))
-        '''
-        q_cate.children.append(('tags__contains', cate.tags))
-        con.add(q_cate, 'AND')
+        if album.standard_size == "":
+            q_cate.children.append(('tags__contains', cate.tags))
+        else:
+            q_cate.children.append(('lightin_spu__tags__contains', cate.tags))
 
-        #如果没尺码，就全上
-        # 如果有尺码，均码的全上（one-size, free-size）
-        #其他尺码的，就要sellable > n 的才上
-        if not album.standard_size == "":
             q_size = Q()
             q_size.connector = 'OR'
 
-            #多尺码的cate，要么是均码，要么有最低库存要求，
-            #q_size.children.append(('sellable__gt', cate.sellable_gt))
-            #q_size.children.append(('one_size',True))
             q_size.children.append(('size', album.standard_size))
             con.add(q_size, 'AND')
+
+        con.add(q_cate, 'AND')
+
     elif cate.cate_type == "M100-1":
         con.children.append(('promote_count', "M100-1"))
     return  con
