@@ -308,7 +308,7 @@ def prepare_yallavip_photoes_v2(page_no=None):
         for album in albums:
             is_sku = False
             print("album is ", album)
-            con = filter_product(album)
+            con = filter_product(album.cate, album.standard_size)
 
 
             # 根据品类找已经上架到shopify 但还未添加到相册的产品
@@ -372,7 +372,7 @@ def prepare_yallavip_photoes_v3(page_no=None):
         for album in albums:
             is_sku = False
             print("album is ", album)
-            con = filter_product(album)
+            con = filter_product(album.cate,album.standard_size)
 
             # 根据品类找已经上架到shopify 但还未添加到相册的产品
             product_list = []
@@ -532,15 +532,15 @@ def init_spu_one_size():
 # 根据 MyCategory 拼接筛选产品的条件
 #如果没有尺码，则返回spu的过滤条件
 #如果有尺码，则返回sku的过滤条件
-def filter_product(album):
-    cate = album.cate
+def filter_product(cate, standard_size=""):
+
     con = Q()
 
     if cate.cate_type == "Product":
         q_cate = Q()
         q_cate.connector = 'OR'
 
-        if album.standard_size == "":
+        if standard_size == "":
             q_cate.children.append(('tags__contains', cate.tags))
         else:
             q_cate.children.append(('lightin_spu__tags__contains', cate.tags))
@@ -548,7 +548,7 @@ def filter_product(album):
             q_size = Q()
             q_size.connector = 'OR'
 
-            q_size.children.append(('size', album.standard_size))
+            q_size.children.append(('size', standard_size))
             con.add(q_size, 'AND')
 
         con.add(q_cate, 'AND')
