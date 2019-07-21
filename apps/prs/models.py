@@ -54,6 +54,7 @@ class MyCategorySize(models.Model):
     mycategory = models.ForeignKey(MyCategory, null=True, blank=True, verbose_name="品类",
                                    related_name="cate_size", on_delete=models.CASCADE)
     standard_size = models.CharField(default='', max_length=20, null=True, blank=True, verbose_name="Standard Size")
+    normal = models.BooleanField(default=False, verbose_name="常见尺码", null=True, blank=True, )
 
     class Meta:
         verbose_name = "品类尺码"

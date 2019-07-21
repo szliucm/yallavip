@@ -96,12 +96,12 @@ class MyCategoryAdmin(object):
 class MyCategorySizeAdmin(object):
 
 
-    list_display = ["standard_size", "mycategory", ]
+    list_display = ["mycategory","standard_size", "normal", ]
     #"spu_count", "spu_onesize", "spu_count_5", "spu_count_10", "longaded_count", "size",
 
     search_fields = ["standard_size", ]
     list_filter = ["mycategory", "mycategory__level",]
-    list_editable = []
+    list_editable = ["normal",]
     readonly_fields = ()
     relfield_style = 'fk_ajax'
     actions = []
