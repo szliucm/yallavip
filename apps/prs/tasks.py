@@ -6692,7 +6692,7 @@ def link_page_post(page_no,access_token, ad):
     try:
         # 创建post
         fields = [
-            'object_id',
+
         ]
 
         params = {
