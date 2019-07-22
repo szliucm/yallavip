@@ -2080,7 +2080,7 @@ def combo_ad_image_template_single(spu_ims, spus_name,spus, page_no,type):
     for spu_im in spu_ims:
         im = get_remote_image(spu_im)
         if not im:
-            print ("image打不开")
+            print("image打不开")
             return None
         ims.append(im)
 
@@ -2288,3 +2288,166 @@ EAAHZCz2P7ZAuQBABHO6LywLswkIwvScVqBP2eF5CrUt4wErhesp8fJUQVqRli9MxspKRYYA4JVihu7s
 
 
 
+def combo_ad_image_template_single_v2(spu_ims, handle_name, spu, page_no,type):
+    from shop.photo_mark import clipResizeImg_new, get_remote_image,clipResizeImg_box
+    import os
+    from django.conf import settings
+
+    domain = "http://admin.yallavip.com"
+
+    try:
+        from PIL import Image, ImageDraw, ImageFont, ImageEnhance
+
+    except ImportError:
+        import Image, ImageDraw, ImageFont, ImageEnhance
+
+    ims = []
+
+    for spu_im in spu_ims:
+        im = get_remote_image(spu_im)
+        if not im:
+            print("image打不开")
+            return None
+        ims.append(im)
+
+
+    # 开始拼图
+
+    item_count = len(spu_ims)
+    print("图片数量", item_count)
+
+    # 一张图
+    # 先做个1528x800的画布
+    layer = Image.new("RGB", (1528, 800), "white")
+    bw, bh = layer.size
+
+    if item_count >= 5:
+
+        layer.paste(clipResizeImg_new(ims[0], 800, 800), (364, 0))
+        layer.paste(clipResizeImg_new(ims[1], 364, 364), (0, 72))
+        layer.paste(clipResizeImg_new(ims[2], 364, 364), (0, 436))
+        layer.paste(clipResizeImg_new(ims[3], 364, 364), (1164, 0))
+        layer.paste(clipResizeImg_new(ims[4], 364, 364), (1164, 364))
+    elif item_count == 4:
+        layer.paste(clipResizeImg_new(ims[0], 800, 800), (364, 0))
+        layer.paste(clipResizeImg_new(ims[1], 364, 800), (0, 0))
+        layer.paste(clipResizeImg_new(ims[2], 364, 364), (1164, 0))
+        layer.paste(clipResizeImg_new(ims[3], 364, 364), (1164, 364))
+    elif item_count == 3:
+        layer.paste(clipResizeImg_new(ims[0], 800, 800), (364, 0))
+        layer.paste(clipResizeImg_new(ims[1], 364, 800), (0, 0))
+        layer.paste(clipResizeImg_new(ims[2], 364, 800), (1164, 0))
+    elif item_count == 2:
+        ims.append(ims[1])
+        layer.paste(clipResizeImg_new(ims[0], 800, 800), (364, 0))
+        layer.paste(clipResizeImg_new(ims[1], 364, 800), (0, 0))
+        layer.paste(clipResizeImg_new(ims[2], 364, 800), (1164, 0))
+    elif item_count == 1:
+        ims.append(ims[0])
+        ims.append(ims[0])
+        layer.paste(clipResizeImg_new(ims[0], 800, 800), (364, 0))
+        layer.paste(clipResizeImg_new(ims[1], 364, 800), (0, 0))
+        layer.paste(clipResizeImg_new(ims[2], 364, 800), (1164, 0))
+
+    else:
+        return  None
+
+    if page_no:
+        domain = "http://admin.yallavip.com"
+
+        free_shipping_count = spu.free_shipping_count
+        try:
+            promote = MyPage.objects.get(page_no=page_no).promote_template.get(size="1.91:1", main_image_count=1,
+                                                                           free_shipping_count=free_shipping_count)
+        except Exception as e:
+            print (page_no, e)
+            return None
+
+
+        promote_template = promote.promote_template
+
+        destination_url = domain + os.path.join(promote_template.url)
+        im_promote_template = get_remote_image(destination_url)
+        if not im_promote_template:
+            print ("im_promote_template打不开")
+            return None
+        ims.append(im_promote_template)
+
+        # 把文件加到新的图层上，然后把新旧图层融合
+        layer_template = Image.new('RGBA', layer.size, (0, 0, 0, 0))
+        layer_template.paste(im_promote_template, (0, 0))
+        layer = Image.composite(im_promote_template, layer, im_promote_template)
+
+        price_postion= promote.price_postion.split(";")
+        oriprice_postion = promote.oriprice_postion.split(";")
+        #写价格
+
+
+
+        '''
+        if spu.free_shipping:
+            if type =="album":
+                price1 = int(spu.free_shipping_price)
+            else:
+                price1 = int(spu.promote_free_shipping_price)
+        else:
+            if type =="album":
+                price1 = int(spu.yallavip_price)
+            else:
+                price1 = int(spu.promote_price)
+        '''
+        price1 = int(spu.yallavip_price)
+
+        price2 = int(price1 * random.uniform(5, 6))
+
+        # 设置所使用的字体
+        font = ImageFont.truetype(FONT, int(50))
+        draw = ImageDraw.Draw(layer)
+        w, h = draw.textsize(str(price1), font=font)
+        price_postion_1 = price_postion[0].split(",")
+
+        draw.text((int(price_postion_1[0])-w-5,int(price_postion_1[1])), str(price1), (255, 255, 255), font=font)  # 设置文字位置/内容/颜色/字体
+        draw = ImageDraw.Draw(layer)  # Just draw it!
+
+        font = ImageFont.truetype(FONT, int(20))
+        draw = ImageDraw.Draw(layer)
+        w, h = draw.textsize(str(price2), font=font)
+        price_postion_2 = oriprice_postion[0].split(",")
+
+        draw.text(( int(price_postion_2[0])-w,int(price_postion_2[1])), str(price2), (255, 182, 193), font=font)  # 设置文字位置/内容/颜色/字体
+        draw = ImageDraw.Draw(layer)
+
+        #货号
+        handle = spu.handle
+        font = ImageFont.truetype(FONT, int(45 ))
+        draw1 = ImageDraw.Draw(layer)
+        # 简单打货号
+        w, h = draw.textsize(handle, font=font)
+        draw1.rectangle((int((bw - w)/2 -5 ), int(bh - h -15), int( (bw +w)/ 2 + 5 ),
+                         int(bh - 5 )), fill='yellow')
+        draw1.text((int((bw -w)/2), int(bh - h -10)), handle, font=font,
+                   fill='black')  # 设置文字位置/内容/颜色/字体
+        draw1 = ImageDraw.Draw(layer)
+
+    if layer:
+        out = layer.convert('RGB')
+
+
+        image_filename = page_no+"_"+handle_name+'.jpg'
+
+        destination = os.path.join(settings.MEDIA_ROOT, "ad/", image_filename)
+
+        out.save(destination, 'JPEG', quality=95)
+        # out.save('target%s.jpg'%(combo.SKU), 'JPEG')
+
+        destination_url = domain + os.path.join(settings.MEDIA_URL, "ad/", image_filename)
+        #print("destination_url", destination_url)
+        return  destination_url
+    else:
+        print("items数量问题")
+        destination_url = None
+
+    for im in ims:
+        im.close()
+
+    return  destination_url

@@ -695,7 +695,7 @@ def prepare_promote_image_album_single(cate, page_no, lightin_spus, vendor,free_
 
     if not image_marked_url:
         print("没有生成广告图片")
-        return
+        return False
     '''
     message = "💋💋Flash Sale ！！！💋💋" \
               "90% off！Lowest Price Online ！！！" \
@@ -753,6 +753,8 @@ def prepare_promote_image_album_single(cate, page_no, lightin_spus, vendor,free_
 
         spu.aded = True
         spu.save()
+
+    return  True
 
 
 
@@ -1052,4 +1054,52 @@ def prepare_promote_image_album(cate, page_no, lightin_spus, vendor,free_shippin
 
 
 
+#0722新的广告系统
+#每个page的主推品类每次生成一个广告
+def prepare_promote_single_v2(page_no):
+    import random
+
+    from django.db.models import Count
+    from prs.tasks import  prepare_promote_image_album_v3
+
+    # 取page对应的主推品类
+    try:
+        cates = PagePromoteCate.objects.get(mypage__page_no=page_no).promote_cate.all()
+    except:
+
+        print ("没有促销品类")
+        return
+
+    for cate in cates:
+        con = filter_product(cate)
+        spus_all = Lightin_SPU.objects.filter(~Q(handle=""), handle__isnull=False, fake=False,
+                                              vendor="funmart", aded=False,
+                                              images_count__gte=3, free_shipping_count__gt=0,sellable__gt=3)
+
+        cate_spus = spus_all.filter(con).distinct().order_by("?")
+
+        for spu in cate_spus:
+            print("当前处理 ", page_no, cate.tags, spu.handle)
+            if spu.one_size:
+                if spu.sellable < 3:
+                    continue
+            else:
+                sizes = []
+                if spu.cate_2 == "Clothing":
+                    sizes = ["M","L"]
+                elif spu.cate_2 == "Shoes":
+                    if spu.cate_1 == "Women":
+                        sizes = ["37","38","39"]
+                    elif spu.cate_1 == "Men":
+                        sizes = ["42","43","44"]
+                sellable = spu.spu_sku.filter(size__in=sizes).aggregate(sum_sellable=Sum("o_sellable"))
+                if sellable <= 3:
+                    continue
+            print("可以投放！！！")
+            spus = [spu]
+            ret = prepare_promote_image_album_single(cate, page_no, spus, spu.vendor, spu.free_shipping_count)
+            if ret:
+                break
+            else:
+                continue
 
