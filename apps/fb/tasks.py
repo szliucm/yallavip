@@ -255,10 +255,7 @@ def update_feed(page_no,days=30):
     # 重置原有feed信息为不活跃
     MyFeed.objects.filter(page_no=page_no, created_time__gt=start_time).update(active=False)
 
-    fields = ["created_time",  "id",
-               "message",
-
-              "likes.summary(true)", "comments.summary(true)"
+    fields = ["created_time",  "id", "message","likes.summary(true)", "comments.summary(true)"
               ]
 
     params = {
@@ -281,14 +278,7 @@ def update_feed(page_no,days=30):
                                                         defaults={'page_no': page_no,
                                                                   'created_time':
                                                                       feed["created_time"],
-                                                                  'active': True,
                                                                   'message': feed.get("message"),
-
-                                                                  'description': feed.get("description"),
-                                                                  'name': feed.get("name"),
-                                                                  'type': feed.get("type"),
-                                                                  'actions_link': feed.get("actions_link"),
-                                                                  'actions_name': feed.get("actions_name"),
                                                                   'like_count': feed["likes"]["summary"][
                                                                       "total_count"],
                                                                   'comment_count': feed["comments"]["summary"]["total_count"],
