@@ -181,7 +181,7 @@ def update_order_item(order, orderitems):
                 'order_no' : order.order_no,
                 'track_code' : order.track_code,
 
-                'quantity': item.get("qty"),
+                'quantity': int(float(item.get("qty"))),
                 'price': item.get("price"),
                 'category_cn': item.get("category_cn"),
                 'category_en': item.get("category_en"),
