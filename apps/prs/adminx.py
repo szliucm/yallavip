@@ -366,7 +366,7 @@ class Lightin_SKUAdmin(object):
     list_display = ["SKU", "handle",  "size", "o_sellable","free_shipping_count", "promote_count", "sku_photo", "sku_price",]
 
     # 'sku_name','img',
-    search_fields = ["SPU", "SKU","lightin_spu__handle","en_name",]
+    search_fields = ["SPU", "SKU","lightin_spu__handle","lightin_spu__en_name",]
     list_filter = [ "free_shipping_count", "promote_count","o_sellable", "size", "lightin_spu__cate_1","lightin_spu__cate_2","lightin_spu__cate_3",]
     list_editable = []
     readonly_fields = ()

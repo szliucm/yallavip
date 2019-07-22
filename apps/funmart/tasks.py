@@ -68,6 +68,8 @@ def download_spus():
     FunmartSPU.objects.all().values_list(
         'SPU', flat=True)).values_list("SPU", flat=True).distinct()
 
+    print("有%s个SPU待下载"%spus_to_add.count())
+
     spu_list = []
     for spu_to_add in spus_to_add:
         spu = FunmartSPU(
