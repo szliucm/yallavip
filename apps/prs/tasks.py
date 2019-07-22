@@ -7177,6 +7177,7 @@ def start_new_page(page_no) :
 
 
 
+
 #发布新的一波广告
 def start_new_promotion(page_no,free_shipping_count, one_size) :
     prepare_promote_single(page_no,free_shipping_count, one_size)
@@ -7190,4 +7191,30 @@ def start_new_promotion(page_no,free_shipping_count, one_size) :
 
     ad_type = "message"
     to_create_count = 1
+    post_ads_v2(page_no, ad_type, to_create_count)
+
+#############################################################################
+#
+#分尺码的发布相册
+#
+##############################################################################
+
+#发布新的一波相册
+def start_new_page_v2(page_no) :
+    sync_cate_album_v2(page_no)
+    prepare_yallavip_photoes_v3(page_no)
+    prepare_yallavip_album_material(page_no)
+
+#发布新的一波广告
+#按page定时发
+def start_new_promotion_v2(page_no):
+    prepare_promote_single_v2(page_no)
+
+    to_create_count = 1
+    page_post_v2(page_no, to_create_count)
+
+    ad_type = "engagement"
+    post_ads_v2(page_no, ad_type, to_create_count)
+
+    ad_type = "message"
     post_ads_v2(page_no, ad_type, to_create_count)
