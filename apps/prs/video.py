@@ -191,7 +191,7 @@ def fb_slideshow(images, target_page):
     if not images:
         print("no got images")
         return
-    url = "https://graph.facebook.com/v3.2/{}/videos".format(target_page)
+    url = "https://graph.facebook.com/v3.3/{}/videos".format(target_page)
     params = {
         'slideshow_spec': {
             "images_urls": images,

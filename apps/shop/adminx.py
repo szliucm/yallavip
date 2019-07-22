@@ -52,7 +52,7 @@ import random
 
 
 DEBUG = False
-API_VERSION = "v3.2"
+API_VERSION = "v3.3"
 FONT = "/root/yallavip/static/font/ARIAL.TTF"
 my_app_id = "562741177444068"
 my_app_secret = "e6df363351fb5ce4b7f0080adad08a4d"
@@ -63,7 +63,7 @@ from .shop_action import Post_to_Album
 
 
 def get_token(target_page):
-    url = "https://graph.facebook.com/v3.2/{}?fields=access_token".format(target_page)
+    url = "https://graph.facebook.com/v3.3/{}?fields=access_token".format(target_page)
     param = dict()
     param["access_token"] = my_access_token
 

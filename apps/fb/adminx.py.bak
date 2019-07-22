@@ -37,7 +37,7 @@ from .models import  MyPage, MyAdAccount,MyCampaign, MyAdset, MyAd, \
 my_access_token = "EAAHZCz2P7ZAuQBABHO6LywLswkIwvScVqBP2eF5CrUt4wErhesp8fJUQVqRli9MxspKRYYA4JVihu7s5TL3LfyA0ZACBaKZAfZCMoFDx7Tc57DLWj38uwTopJH4aeDpLdYoEF4JVXHf5Ei06p7soWmpih8BBzadiPUAEM8Fw4DuW5q8ZAkSc07PrAX4pGZA4zbSU70ZCqLZAMTQZDZD"
 def get_token(target_page):
 
-    url = "https://graph.facebook.com/v3.2/{}?fields=access_token".format(target_page)
+    url = "https://graph.facebook.com/v3.3/{}?fields=access_token".format(target_page)
     param = dict()
     param["access_token"] = my_access_token
 
@@ -59,7 +59,7 @@ class MyPageAdmin(object):
     actions = ["batch_update_pages","batch_update_albums","batch_update_ads",]
 
     def batch_update_pages(self, request, queryset):
-        url = "https://graph.facebook.com/v3.2/me/accounts"
+        url = "https://graph.facebook.com/v3.3/me/accounts"
         param = dict()
         param["access_token"] = my_access_token
         param["limit"] = "100"
@@ -120,7 +120,7 @@ class MyPageAdmin(object):
     batch_update_albums.short_description = "批量更新相册"
 
     def batch_update_ads(self, request, queryset):
-        url = "https://graph.facebook.com/v3.2/me/adaccounts"
+        url = "https://graph.facebook.com/v3.3/me/adaccounts"
         param = dict()
         param["access_token"] = my_access_token
         param["limit"] = "100"
@@ -617,7 +617,7 @@ class MyAlbumAdmin(object):
         """
         This method will get the feed data
         """
-        url = "https://graph.facebook.com/v3.2/{}/photos".format(target_page)
+        url = "https://graph.facebook.com/v3.3/{}/photos".format(target_page)
         param = dict()
         param["access_token"] = token
         param["limit"] = "100"
@@ -1205,7 +1205,7 @@ class AlbumUpdateAdmin(object):
         """
         This method will get the feed data
         """
-        url = "https://graph.facebook.com/v3.2/{}/albums".format(target_page)
+        url = "https://graph.facebook.com/v3.3/{}/albums".format(target_page)
         param = dict()
         param["access_token"] = token
         param["limit"] = "100"
@@ -1355,7 +1355,7 @@ class ConversationUpdateAdmin(object):
         """
         This method will get the feed data
         """
-        url = "https://graph.facebook.com/v3.2/{}/conversations".format(target_page)
+        url = "https://graph.facebook.com/v3.3/{}/conversations".format(target_page)
         param = dict()
         param["access_token"] = token
         param["limit"] = "100"

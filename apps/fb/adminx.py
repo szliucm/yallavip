@@ -102,7 +102,7 @@ class MyPageAdmin(object):
 
     def batch_update_accounts(self, request, queryset):
 
-        url = "https://graph.facebook.com/v3.2/me/accounts"
+        url = "https://graph.facebook.com/v3.3/me/accounts"
         param = dict()
         param["access_token"] = my_access_token
         param["limit"] = "100"
@@ -252,7 +252,7 @@ class MyPageAdmin(object):
     batch_update_ad.short_description = "批量下载ad信息"
 
     def batch_update_ads(self, request, queryset):
-        url = "https://graph.facebook.com/v3.2/me/adaccounts"
+        url = "https://graph.facebook.com/v3.3/me/adaccounts"
         param = dict()
         param["access_token"] = my_access_token
         param["limit"] = "100"
@@ -786,7 +786,7 @@ class MyAdAdmin(object):
 
         for ad in queryset:
 
-            url = "https://graph.facebook.com/v3.2/%s"%(ad.ad_no)
+            url = "https://graph.facebook.com/v3.3/%s"%(ad.ad_no)
             param = dict()
             param["access_token"] = my_access_token
             param["status"] = "DELETED"
@@ -852,7 +852,7 @@ class MyAlbumAdmin(object):
         """
         This method will get the feed data
         """
-        url = "https://graph.facebook.com/v3.2/{}/photos".format(target_page)
+        url = "https://graph.facebook.com/v3.3/{}/photos".format(target_page)
         param = dict()
         param["access_token"] = token
         param["limit"] = "100"
@@ -1467,7 +1467,7 @@ class AlbumUpdateAdmin(object):
         """
         This method will get the feed data
         """
-        url = "https://graph.facebook.com/v3.2/{}/albums".format(target_page)
+        url = "https://graph.facebook.com/v3.3/{}/albums".format(target_page)
         param = dict()
         param["access_token"] = token
         param["limit"] = "100"
@@ -1617,7 +1617,7 @@ class ConversationUpdateAdmin(object):
         """
         This method will get the feed data
         """
-        url = "https://graph.facebook.com/v3.2/{}/conversations".format(target_page)
+        url = "https://graph.facebook.com/v3.3/{}/conversations".format(target_page)
         param = dict()
         param["access_token"] = token
         param["limit"] = "100"

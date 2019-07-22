@@ -14,8 +14,8 @@ def get_token(short_lived_token):
     app_id = "1976935359278305"
     app_secret = "f4ee797596ed236c0bc74d33f52e6a54"
 
-    #url = "https://graph.facebook.com/v3.2/{}?fields=access_token".format(target_page)
-    url = "https://graph.facebook.com/v3.2/oauth/access_token?grant_type=fb_exchange_token" \
+    #url = "https://graph.facebook.com/v3.3/{}?fields=access_token".format(target_page)
+    url = "https://graph.facebook.com/v3.3/oauth/access_token?grant_type=fb_exchange_token" \
           "&client_id=%s&client_secret=%s&fb_exchange_token=%s"%(app_id,app_secret ,short_lived_token)
     #param = dict()
     #param["access_token"] = my_access_token

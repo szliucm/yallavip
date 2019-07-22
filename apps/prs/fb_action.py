@@ -50,7 +50,7 @@ def get_token(target_page,token=None):
     '''
 
     #使用systemu_uer 的token
-    url = "https://graph.facebook.com/v3.2/{}?fields=access_token".format(target_page)
+    url = "https://graph.facebook.com/v3.3/{}?fields=access_token".format(target_page)
     param = dict()
     if token is None:
         param["access_token"] = systemuser_token
@@ -76,7 +76,7 @@ def get_token(target_page,token=None):
         my_access_tokens = active_tokens.filter(page_no = "")
 
     for my_access_token in my_access_tokens:
-        url = "https://graph.facebook.com/v3.2/{}?fields=access_token".format(target_page)
+        url = "https://graph.facebook.com/v3.3/{}?fields=access_token".format(target_page)
         param = dict()
         if token is None:
             param["access_token"] = my_access_token.long_token
@@ -956,7 +956,7 @@ def post_lightin_album_v0330(lightinalbum):
         return error, None
     '''
 
-    url = "https://graph.facebook.com/v3.2/%s"/photos % (album_no)
+    url = "https://graph.facebook.com/v3.3/%s"/photos % (album_no)
     param = dict()
     param[
         "access_token"] = "EAAcGAyHVbOEBAEtwMPUeTci0x3G6XqlAwIhuQiZBZCVhZBRx88Rki0Lo7WNSxvAw7jAhhRlxsLjARbAZCnDvIoQ68Baj9TJrQC8KvEzyDhRWlnILGxRyc49b02aPInvpI9bcfgRowJfDrIt0kFE01LGD86vLKuLixtB0aTvTHww9SkedBzFZA"
@@ -2252,7 +2252,7 @@ def get_appsecret_proof(msg):
 
 '''
 curl -i -X POST \
-    https://graph.facebook.com/v3.2/100029952330435/access_tokens?business_app=562741177444068&scope=ads_management%2Cads_read%2Cbusiness_management%2Cmanage_pages%2Cpages_manage_cta%2Cpages_manage_instant_articles%2Cpages_show_list%2Cpublish_pages%2Cread_insights%2Cread_page_mailboxes&appsecret_proof=7f47c397a667ca645a375863fcc00df53d8bef08ae1b158e22b49b2be4c91282&access_token=
+    https://graph.facebook.com/v3.3/100029952330435/access_tokens?business_app=562741177444068&scope=ads_management%2Cads_read%2Cbusiness_management%2Cmanage_pages%2Cpages_manage_cta%2Cpages_manage_instant_articles%2Cpages_show_list%2Cpublish_pages%2Cread_insights%2Cread_page_mailboxes&appsecret_proof=7f47c397a667ca645a375863fcc00df53d8bef08ae1b158e22b49b2be4c91282&access_token=
     
     APP_SCOPED_SYSTEM_USER_ID 100029952330435
     business_app 562741177444068

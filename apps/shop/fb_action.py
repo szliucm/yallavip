@@ -10,7 +10,7 @@ my_access_token = "EAAHZCz2P7ZAuQBABHO6LywLswkIwvScVqBP2eF5CrUt4wErhesp8fJUQVqRl
 
 def get_token(target_page):
 
-    url = "https://graph.facebook.com/v3.2/{}?fields=access_token".format(target_page)
+    url = "https://graph.facebook.com/v3.3/{}?fields=access_token".format(target_page)
     param = dict()
     param["access_token"] = my_access_token
 
@@ -29,7 +29,7 @@ def create_page_feed(mypage, myphoto):
     FacebookAdsApi.init(access_token=get_token(page_id))
 
     #获取图片地址
-    url = "https://graph.facebook.com/v3.2/{}?fields=height,images".format(myphoto.photo_no)
+    url = "https://graph.facebook.com/v3.3/{}?fields=height,images".format(myphoto.photo_no)
     param = dict()
     param["access_token"] = my_access_token
 

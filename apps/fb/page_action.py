@@ -43,7 +43,7 @@ import requests
 import json
 
 def get_token(target_page):
-    url = "https://graph.facebook.com/v3.2/{}?fields=access_token".format(target_page)
+    url = "https://graph.facebook.com/v3.3/{}?fields=access_token".format(target_page)
     param = dict()
     param["access_token"] = my_access_token
 
