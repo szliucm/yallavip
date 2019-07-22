@@ -2081,7 +2081,7 @@ def combo_ad_image_template_single(spu_ims, spus_name,spus, page_no,type):
         im = get_remote_image(spu_im)
         if not im:
             print("image打不开")
-            return None
+            continue
         ims.append(im)
 
 

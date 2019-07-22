@@ -7181,13 +7181,13 @@ def start_new_page(page_no) :
 def start_new_promotion(page_no,free_shipping_count, one_size) :
     prepare_promote_single(page_no,free_shipping_count, one_size)
 
-    to_create_count = 5
+    to_create_count = 1
     page_post_v2(page_no, to_create_count)
 
     ad_type = "engagement"
-    to_create_count = 5
+    to_create_count = 1
     post_ads_v2(page_no, ad_type, to_create_count)
 
     ad_type = "message"
-    to_create_count = 5
+    to_create_count = 1
     post_ads_v2(page_no, ad_type, to_create_count)
