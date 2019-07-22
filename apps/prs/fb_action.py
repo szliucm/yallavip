@@ -2087,7 +2087,7 @@ def combo_ad_image_template_single(spu_ims, spus_name,spus, page_no,type):
 
     # 开始拼图
 
-    item_count = len(spu_ims)
+    item_count = len(ims)
     print("图片数量", item_count)
 
     # 一张图
