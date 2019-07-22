@@ -7218,3 +7218,12 @@ def start_new_promotion_v2(page_no):
 
     ad_type = "message"
     post_ads_v2(page_no, ad_type, to_create_count)
+
+@shared_task
+def auto_new_ads():
+    #选择需要推广的page
+    pages = MyPage.objects.filter(is_published=True, active=True, promotable=True)
+
+    #遍历每个page
+    for page in pages:
+        start_new_promotion_v2(page.page_no)
