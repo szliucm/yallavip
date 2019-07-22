@@ -158,10 +158,10 @@ class Lightin_SPUAdmin(object):
     import_export_args = {"import_resource_class": Lightin_SPUResource,
                           "export_resource_class": Lightin_SPUResource}
 
-    list_display = [ "SPU","handle", "fake", "sellable","free_shipping_count", "promote_count", "yallavip_price", "en_name","cn_name", "photo","link", ]
+    list_display = [ "SPU","handle", "fake", "sellable","free_shipping_count", "promote_count", "yallavip_price", "en_name", "photo","link", ]
     # 'sku_name','img',
 
-    search_fields = ["SPU","handle", ]
+    search_fields = ["SPU","handle", "en_name",  ]
     list_filter = ["free_shipping_count","promote_count", "cate_1","cate_2","cate_3", "fake","sellable",]
     list_editable = ["fake",]
     readonly_fields = ()
@@ -366,7 +366,7 @@ class Lightin_SKUAdmin(object):
     list_display = ["SKU", "handle",  "size", "o_sellable","free_shipping_count", "promote_count", "sku_photo", "sku_price",]
 
     # 'sku_name','img',
-    search_fields = ["SPU", "SKU","lightin_spu__handle",]
+    search_fields = ["SPU", "SKU","lightin_spu__handle","en_name",]
     list_filter = [ "free_shipping_count", "promote_count","o_sellable", "size", "lightin_spu__cate_1","lightin_spu__cate_2","lightin_spu__cate_3",]
     list_editable = []
     readonly_fields = ()
