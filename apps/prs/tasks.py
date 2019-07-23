@@ -2570,21 +2570,7 @@ def get_wms_product_page(page,update_start_time):
     else:
         return  pages, True
 
-
-
-def sync_wms_quantity():
-
-    '''
-    warehouse_codes = Lightin_barcode.objects.values_list("warehouse_code",flat=True).distinct()
-    '''
-    warehouse_codes = ["W08"]
-    for warehouse_code in warehouse_codes:
-        if warehouse_code:
-
-            barcodes = Lightin_barcode.objects.filter(warehouse_code= warehouse_code,synced=False).values_list("barcode",flat=True)
-            if barcodes:
-                get_wms_quantity(warehouse_code,list(barcodes))
-
+def update_wms_database():
     mysqls = [
         "update prs_lightin_barcode set o_quantity = y_sellable + y_reserved ,o_sellable = y_sellable , o_reserved = y_reserved,synced=True",
         "UPDATE prs_lightin_sku INNER JOIN ( SELECT SKU,sum(o_sellable) as quantity FROM prs_lightin_barcode GROUP BY SKU ) b ON prs_lightin_sku.SKU = b.SKU SET prs_lightin_sku.o_quantity = b.quantity ",
@@ -2595,9 +2581,26 @@ def sync_wms_quantity():
         print(mysql)
         my_custom_sql(mysql)
 
+def sync_wms_quantity(batch=False):
+
+    '''
+    warehouse_codes = Lightin_barcode.objects.values_list("warehouse_code",flat=True).distinct()
+    '''
+    warehouse_codes = ["W08"]
+    for warehouse_code in warehouse_codes:
+        if warehouse_code:
+
+            barcodes = Lightin_barcode.objects.filter(warehouse_code= warehouse_code,synced=False).values_list("barcode",flat=True)
+            if barcodes:
+                get_wms_quantity(warehouse_code,list(barcodes),batch)
+    if not batch:
+        update_wms_database()
 
 
-def get_wms_quantity(warehouse_code, barcodes=[],sku=None,):
+
+
+
+def get_wms_quantity(warehouse_code, barcodes=[],sku=None, batch=False):
 
 
     if sku:
@@ -2613,8 +2616,10 @@ def get_wms_quantity(warehouse_code, barcodes=[],sku=None,):
     while page <= pages and result:
 
         print("正在处理第 %s 页" % page)
-        #get_wms_quantity_page.apply_async((warehouse_code, page, barcodes), queue='wms')
-        get_wms_quantity_page(warehouse_code, page, barcodes)
+        if batch:
+            get_wms_quantity_page.apply_async((warehouse_code, page, barcodes), queue='wms')
+        else:
+            get_wms_quantity_page(warehouse_code, page, barcodes)
 
         page += 1
 
