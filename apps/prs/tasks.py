@@ -2612,9 +2612,7 @@ def get_wms_quantity(warehouse_code, barcodes=[],sku=None, batch=False):
 
     print("一共 %s页" % pages)
 
-
     while page <= pages and result:
-
         print("正在处理第 %s 页" % page)
         if batch:
             get_wms_quantity_page.apply_async((warehouse_code, page, barcodes), queue='wms')
