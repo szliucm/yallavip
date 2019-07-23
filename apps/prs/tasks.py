@@ -2297,6 +2297,7 @@ def fulfill_order_lightin(order):
     }
 
     result = yunwms(service, param)
+    print(service, param)
     print(result)
     if result.get("ask") == "Success":
         # 发货成功，更新订单状态
@@ -2592,7 +2593,7 @@ def sync_wms_quantity(batch=False):
 
             barcodes = Lightin_barcode.objects.filter(warehouse_code= warehouse_code,synced=False).values_list("barcode",flat=True)
             if barcodes:
-                get_wms_quantity(warehouse_code,list(barcodes),batch)
+                get_wms_quantity(warehouse_code,list(barcodes),batch=batch)
     if not batch:
         update_wms_database()
 
@@ -2600,7 +2601,7 @@ def sync_wms_quantity(batch=False):
 
 
 
-def get_wms_quantity(warehouse_code, barcodes=[],sku=None, batch=False):
+def get_wms_quantity(warehouse_code, barcodes=[], batch=False,sku=None,):
 
 
     if sku:
