@@ -2598,6 +2598,8 @@ def sync_wms_quantity(batch=False):
         update_wms_database()
 
 
+def full_sync_wms_quantity():
+    get_wms_quantity(warehouse_code="W08", barcodes=[],batch=True)
 
 
 

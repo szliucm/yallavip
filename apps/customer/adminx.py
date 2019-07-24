@@ -132,7 +132,7 @@ class CustomerAdmin(object):
                             img += "<br>"
             elif lightin_spu.vendor =="funmart":
                 if lightin_spu.images:
-                    images = json.loads(lightin_spu.images)
+                    images = json.loads(lightin_spu.old_images)
                     n = 0
                     for image in images:
                         '''
