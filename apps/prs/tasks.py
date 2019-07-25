@@ -2295,9 +2295,9 @@ def fulfill_order_lightin(order):
         #    "file_data":"hVJPjUP4+yHjvKErt5PuFfvRhd..."
         # }
     }
-
-    result = yunwms(service, param)
     print(service, param)
+    result = yunwms(service, param)
+
     print(result)
     if result.get("ask") == "Success":
         # 发货成功，更新订单状态
