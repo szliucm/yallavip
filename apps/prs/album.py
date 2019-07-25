@@ -1074,7 +1074,7 @@ def prepare_promote_single_v2(page_no):
         con = filter_product(cate)
         spus_all = Lightin_SPU.objects.filter(~Q(handle=""), handle__isnull=False, fake=False,
                                               vendor="funmart", aded=False,
-                                              images_count__gte=3, free_shipping_count__gt=0,sellable__gt=3)
+                                              images_count__gte=3, free_shipping_count__in=["1", "2", "3"],sellable__gt=3)
 
         cate_spus = spus_all.filter(con).distinct().order_by("?")
 
