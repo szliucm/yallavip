@@ -903,9 +903,9 @@ def prepare_a_album_v2(lightinalbum_pk):
             if spu_ims :
                 if len(spu_ims) >0 :
                     handles_name = spu.handle
-                    lightin_spus = [spu]
 
-                    image_marked_url = combo_ad_image_v3(spu_ims, handles_name, lightin_spus, page_no,"album")
+
+                    image_marked_url = combo_ad_image_v3(spu_ims, handles_name, spu, page_no,"album")
 
                 #else:
 
