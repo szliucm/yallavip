@@ -12,7 +12,7 @@ from fb.models import MyPage, MyAlbum
 from prs.models import *
 
 from shop.photo_mark import yallavip_mark_image
-from prs.fb_action import combo_ad_image_v3
+from prs.fb_action import combo_ad_image_template_single, combo_ad_image_v3
 from prs.common import *
 
 import random
