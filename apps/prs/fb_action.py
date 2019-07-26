@@ -2128,8 +2128,10 @@ def combo_ad_image_template_single(spu_ims, spus_name,spus, page_no,type):
 
     if page_no:
         domain = "http://admin.yallavip.com"
-
-        free_shipping_count = spus[0].free_shipping_count
+        if page_no in ["2020583608262911"]:
+            free_shipping_count = "150"
+        else:
+            free_shipping_count = spus[0].free_shipping_count
         try:
             promote = MyPage.objects.get(page_no=page_no).promote_template.get(size="1.91:1", main_image_count=1,
                                                                            free_shipping_count=free_shipping_count)
