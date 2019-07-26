@@ -66,6 +66,7 @@ class FunmartSKU(models.Model):
     downloaded = models.BooleanField(u"downloaded", null=True, blank=True,default=False)  # 从erp下载sku信息
     download_error = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="download_error")
     uploaded = models.BooleanField(u"uploaded", null=True, blank=True,default=False)  # 上传sku信息到wms
+    image_downloaded = models.BooleanField(u"image_downloaded", default=False)
 
     class Meta:
         verbose_name = "Funmart SKU"
@@ -316,6 +317,7 @@ class Test(models.Model):
 
 class FunmartImage(models.Model):
     SPU = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="SPU")
+    SKU = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="SKU")
     remote_image = models.TextField(default='', null=True, blank=True, verbose_name="remote_image")
     yallavip_image = models.TextField(default='', null=True, blank=True, verbose_name="yallavip_image")
 

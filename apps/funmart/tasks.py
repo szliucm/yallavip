@@ -74,6 +74,7 @@ def download_spus():
     for spu_to_add in spus_to_add:
         spu = FunmartSPU(
             SPU=spu_to_add,
+            downloaded=False
         )
         spu_list.append(spu)
 
@@ -85,7 +86,8 @@ def download_spus():
     my_custom_sql(mysql)
 
     # spu没有下载的就下载spu
-    funmartspus = FunmartSPU.objects.filter(download_error="", downloaded=False)
+    funmartspus = FunmartSPU.objects.filter( downloaded=False)
+    # download_error="",
     for spu in funmartspus:
         get_funmart_spu.apply_async((spu.SPU,), queue='funmart')
 
@@ -225,6 +227,7 @@ def create_order_item(order, orderitems):
 @shared_task
 def get_funmart_sku(sku):
     print("get sku info", sku)
+
     url = "http://47.96.143.109:9527/api/getInfoBySku"
     param = dict()
     param["sku"] = sku
@@ -795,6 +798,69 @@ def batch_update(type=1):
         download_images_v2()
 
 
+def download_all_skus():
+    mysql = "select distinct  sku from mc_wms_detail"
+
+    rows = my_custom_sql(mysql)
+    n = len(rows)
+
+    print("一共有 %s条待更新"%n)
+
+    for row in rows:
+        get_funmart_sku.apply_async((row[0],), queue='funmart')
 
 
+#把mc_wmc_detail表里的全部插入到sku表，一次性用途
+def insert_sku():
+    mysql = "select distinct  sku from mc_wms_detail"
 
+    rows = my_custom_sql(mysql)
+
+    all_skus = []
+    for row in rows:
+        all_skus.append(row[0])
+
+    skus = list(FunmartSKU.objects.all().values_list("SKU", flat=True))
+    skus_add = list(set(all_skus).difference(set(skus)))
+
+    to_adds = []
+    for sku_add in skus_add:
+            sku = FunmartSKU(
+                SKU=sku_add,
+                downloaded=False
+            )
+            to_adds.append(sku)
+    FunmartSKU.objects.bulk_create(to_adds)
+
+
+def get_sku_images():
+
+    skus_to_add = FunmartSKU.objects.filter(image_downloaded=False)
+    all_image = list( FunmartImage.objects.all().values_list("remote_image", flat=True))
+    image_list = []
+    for sku_to_add in skus_to_add:
+        try:
+            images = json.loads(sku_to_add.images)
+        except Exception as e:
+            print(sku_to_add, e)
+            continue
+
+        for remote_image in images:
+            if not remote_image in all_image:
+                all_image.append(remote_image)
+
+                yallavip_image = remote_image.replace("http://img.funmart.com/catalog/product/","").replace("http://img.funmart.com/product/","")
+                image = FunmartImage(
+                    SPU=sku_to_add.SPU,
+                    SKU=sku_to_add.SPU,
+                    remote_image=remote_image,
+                    yallavip_image= yallavip_image
+
+                )
+                if image not in image_list:
+                    #print(image)
+                    image_list.append(image)
+        skus_to_add.image_downloaded = True
+        skus_to_add.save()
+
+    FunmartImage.objects.bulk_create(image_list)
