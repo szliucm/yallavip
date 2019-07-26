@@ -127,7 +127,7 @@ class SalesAdmin(object):
     #更新最近7天的销售记录
     def batch_update_performance(self, request, queryset):
 
-        update_performance(7)
+        update_performance(60)
 
     batch_update_performance.short_description = "更新业绩"
 

@@ -955,3 +955,5 @@ def get_sku_images_v2():
 
 
         FunmartImage.objects.bulk_create(image_list)
+
+
