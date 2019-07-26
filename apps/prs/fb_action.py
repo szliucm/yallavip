@@ -2454,7 +2454,7 @@ def combo_ad_image_template_single_v2(spu_ims, handle_name, spu, page_no,type):
 
 
 #只是注释掉了free_shipping_count，以便使用统一的买送模板
-def combo_ad_image_template_single_v3(spu_ims, handle_name, spu, page_no,type):
+def combo_ad_image_v3(spu_ims, handle_name, spu, page_no,type):
     from shop.photo_mark import clipResizeImg_new, get_remote_image,clipResizeImg_box
     import os
     from django.conf import settings

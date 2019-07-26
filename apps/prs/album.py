@@ -12,7 +12,7 @@ from fb.models import MyPage, MyAlbum
 from prs.models import *
 
 from shop.photo_mark import yallavip_mark_image
-from prs.fb_action import combo_ad_image_template_single_v3
+from prs.fb_action import combo_ad_image_v3
 from prs.common import *
 
 import random
@@ -905,7 +905,7 @@ def prepare_a_album_v2(lightinalbum_pk):
                     handles_name = spu.handle
                     lightin_spus = [spu]
 
-                    image_marked_url = combo_ad_image_template_single_v3(spu_ims, handles_name, lightin_spus, page_no,"album")
+                    image_marked_url = combo_ad_image_v3(spu_ims, handles_name, lightin_spus, page_no,"album")
 
                 #else:
 
