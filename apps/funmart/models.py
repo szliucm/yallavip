@@ -48,6 +48,7 @@ class FunmartSKU(models.Model):
                                     related_name="funmartspu_sku", on_delete=models.CASCADE)
     SPU = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="SPU")
     SKU = models.CharField(default='', max_length=100, null=True, blank=True, verbose_name="SKU")
+    SKU_ref = models.CharField(default='', max_length=100, null=True, blank=True, verbose_name="SKU_ref")
     name = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="name")
     cn_name = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="cn_name")
     skuattr = models.TextField(default='', null=True, blank=True, verbose_name="skuattr")
