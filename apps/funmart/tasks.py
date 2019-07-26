@@ -871,7 +871,7 @@ def download_images_v3():
         print("remote_images is ", remote_images)
         remote_image = funmart_image[0]
         id = funmart_image[1]
-        download_image_v3.apply_async((remote_image, id), queue="funmart_image")
+        download_image_v3.apply_async((remote_image, id), queue="funmartimage")
 
 @shared_task
 def download_image_v3( remote_image, id):
