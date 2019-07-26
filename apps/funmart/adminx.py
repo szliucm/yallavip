@@ -114,8 +114,21 @@ class FunmartSPUAdmin(object):
 
     actions = []
 
+
+class FunmartSKUResource(resources.ModelResource):
+
+    class Meta:
+        model = FunmartSKU
+        skip_unchanged = True
+        report_skipped = True
+        import_id_fields = ('SKU',)
+        fields = ('SKU','SKU_ref',)
+        # exclude = ()
+
+
 @xadmin.sites.register(FunmartSKU)
 class FunmartSKUAdmin(object):
+    import_export_args = {'import_resource_class': FunmartSKUResource, 'export_resource_class': FunmartSKUResource}
     def show_photo(self, obj):
 
         try:
