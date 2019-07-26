@@ -54,7 +54,7 @@ class FunmartSKU(models.Model):
     skuattr = models.TextField(default='', null=True, blank=True, verbose_name="skuattr")
 
     images = models.TextField(default='', null=True, blank=True, verbose_name="images")
-    sale_price = models.FloatField(verbose_name="sale_price", default=0)
+    sale_price = models.FloatField(verbose_name="sale_price", null=True, blank=True,default=0)
 
     pack_height =models.CharField(default='', max_length=100, null=True, blank=True, verbose_name="pack_height")
     pack_length = models.CharField(default='', max_length=100, null=True, blank=True, verbose_name="pack_length")
@@ -63,9 +63,9 @@ class FunmartSKU(models.Model):
 
 
 
-    downloaded = models.BooleanField(u"downloaded", default=False)  # 从erp下载sku信息
+    downloaded = models.BooleanField(u"downloaded", null=True, blank=True,default=False)  # 从erp下载sku信息
     download_error = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="download_error")
-    uploaded = models.BooleanField(u"uploaded", default=False)  # 上传sku信息到wms
+    uploaded = models.BooleanField(u"uploaded", null=True, blank=True,default=False)  # 上传sku信息到wms
 
     class Meta:
         verbose_name = "Funmart SKU"
