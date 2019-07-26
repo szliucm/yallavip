@@ -867,7 +867,7 @@ def get_sku_images():
     FunmartImage.objects.bulk_create(image_list)
 
 def download_images_v3():
-    funmart_images = FunmartImage.objects.filter(downloaded=False).values_list("remote_image","id").distinct()
+    funmart_images = FunmartImage.objects.filter(downloaded=False,download_error="").values_list("remote_image","id").distinct()
     print("一共有%s张图片要下载"%funmart_images.count())
     for funmart_image in funmart_images:
 
@@ -919,3 +919,39 @@ def download_image_v3( remote_image, id):
                 return
 
     funmart_image.update(downloaded=True, download_error="")
+
+def get_sku_images_v2():
+    from django.core.paginator import Paginator
+
+    skus_to_add = FunmartSKU.objects.all() \
+        .exclude(SKU__in=list(FunmartImage.objects.all().values_list('SKU', flat=True)))
+
+    FunmartImage.objects.filter(SKU__in=list(skus_to_add.values_list('SKU', flat=True))).delete()
+
+    ids = Paginator(list(skus_to_add), 100)
+    print("total page count", ids.num_pages)
+    for i in ids.page_range:
+        print("page ", i)
+        image_list=[]
+        for skus_to_add in ids.page(i).object_list:
+            try:
+                images = json.loads(skus_to_add.images)
+            except Exception as e:
+                print(skus_to_add, e)
+                continue
+
+            for remote_image in images:
+                yallavip_image = remote_image.replace("http://img.funmart.com/catalog/product/","").replace("http://img.funmart.com/product/","")
+                image = FunmartImage(
+                    SPU=skus_to_add.SPU,
+                    SKU=skus_to_add.SKU,
+                    remote_image=remote_image,
+                    yallavip_image= yallavip_image
+
+                )
+                if image not in image_list:
+                    print(image)
+                    image_list.append(image)
+
+
+        FunmartImage.objects.bulk_create(image_list)

@@ -318,8 +318,8 @@ class Test(models.Model):
 class FunmartImage(models.Model):
     SPU = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="SPU")
     SKU = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="SKU")
-    remote_image = models.TextField(default='', null=True, blank=True, verbose_name="remote_image")
-    yallavip_image = models.TextField(default='', null=True, blank=True, verbose_name="yallavip_image")
+    remote_image = models.CharField(default='', max_length=150, null=True, blank=True, verbose_name="remote_image")
+    yallavip_image = models.CharField(default='', max_length=150, null=True, blank=True, verbose_name="yallavip_image")
 
     downloaded = models.BooleanField(u"downloaded", default=False)
     download_error = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="download_error")
