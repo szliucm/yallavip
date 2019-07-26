@@ -13,6 +13,8 @@ from prs.tasks import my_custom_sql
 from shop.photo_mark import  get_remote_image
 from .models import *
 from  prs.models import  Lightin_SPU, Lightin_SKU
+from PIL import ImageFile
+ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 
 def test_funmart_product():
