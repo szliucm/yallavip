@@ -867,11 +867,14 @@ def get_sku_images():
 
 def download_images_v3():
     funmart_images = FunmartImage.objects.filter(downloaded=False).values_list("remote_image","id").distinct()
+    print("一共有%s张图片要下载"%funmart_images.count())
     for funmart_image in funmart_images:
-        print("remote_images is ", remote_images)
+
         remote_image = funmart_image[0]
         id = funmart_image[1]
         download_image_v3.apply_async((remote_image, id), queue="funmartimage")
+
+        print("%s已发送" % id)
 
 @shared_task
 def download_image_v3( remote_image, id):
