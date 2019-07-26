@@ -24,10 +24,13 @@ import random
 def create_album(page,cate, standard_size = "" ):
 
     page_no = page.page_no
-    if standard_size == "":
-        album_name = "%s %s" % (cate.super_name ,cate.name)
+    if cate.cate_type == "product":
+        if standard_size == "":
+            album_name = "%s %s" % (cate.super_name ,cate.name)
+        else:
+            album_name = "%s %s [%s]" % (cate.super_name, cate.name,  standard_size)
     else:
-        album_name = "%s %s [%s]" % (cate.super_name, cate.name,  standard_size)
+        album_name = "%s" % (cate.name)
 
     access_token, long_token = get_token(page_no)
     FacebookAdsApi.init(access_token=access_token, debug=True)
