@@ -16,7 +16,6 @@ from  prs.models import  Lightin_SPU, Lightin_SKU
 from PIL import ImageFile
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
-
 def test_funmart_product():
     url = "http://47.96.143.109:9527/api/getInfoBySku"
     param = dict()
