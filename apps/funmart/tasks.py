@@ -89,7 +89,7 @@ def download_spus():
     funmartspus = FunmartSPU.objects.filter( downloaded=False)
     # download_error="",
     for spu in funmartspus:
-        get_funmart_spu.apply_async((spu.SPU,), queue='funmart')
+        get_funmart_spu.apply_async((spu.SPU,), queue='funmart_spu')
 
 
 @shared_task
@@ -835,8 +835,8 @@ def insert_sku():
 
 def get_sku_images():
 
-    skus_to_add = FunmartSKU.objects.filter(image_downloaded=False)
-    all_image = list( FunmartImage.objects.all().values_list("remote_image", flat=True))
+    skus_to_add = FunmartSKU.objects.filter(downloaded=True, image_downloaded=False)
+    all_image = list( FunmartImage.objects.all().values_list("remote_image", flat=True).distinct())
     image_list = []
     for sku_to_add in skus_to_add:
         try:
@@ -860,7 +860,57 @@ def get_sku_images():
                 if image not in image_list:
                     #print(image)
                     image_list.append(image)
-        skus_to_add.image_downloaded = True
-        skus_to_add.save()
+        sku_to_add.image_downloaded = True
+        sku_to_add.save()
 
     FunmartImage.objects.bulk_create(image_list)
+
+def download_images_v3():
+    funmart_images = FunmartImage.objects.filter(downloaded=False).values_list("remote_image","id").distinct()
+    for funmart_image in funmart_images:
+        print("remote_images is ", remote_images)
+        remote_image = funmart_image[0]
+        id = funmart_image[1]
+        download_image_v3.apply_async((remote_image, id), queue="funmart_image")
+
+@shared_task
+def download_image_v3( remote_image, id):
+    funmart_image = FunmartImage.objects.filter(id=id)
+    if not remote_image:
+        print ("no images")
+        funmart_image.update(download_error= "no images")
+        return
+
+    yallavip_image = remote_image.replace("http://img.funmart.com/catalog/product/", "").replace(
+        "http://img.funmart.com/product/", "")
+
+    filename = os.path.join(settings.PRODUCT_ROOT, yallavip_image)
+
+    # 将文件路径分割出来
+    file_dir = os.path.split(filename)[0]
+    # 判断文件路径是否存在，如果不存在，则创建，此处是创建多级目录
+    if not os.path.isdir(file_dir):
+        os.makedirs(file_dir)
+    # 然后再判断文件是否存在，如果不存在，则从远程获取并保存
+    if not os.path.exists(filename):
+        image = get_remote_image(remote_image)
+        if not image:
+            print ("cannot get remote images", remote_image)
+            downloaded = False
+            download_error = "cannot get remote images"
+            funmart_image.update(downloaded=downloaded, download_error=download_error)
+            return
+        else:
+            if image.mode != "RGB" :
+                image = image.convert('RGB')
+            try:
+                image.save(filename, 'JPEG', quality=95)
+
+            except Exception as e:
+                downloaded = False
+                download_error = e
+                print (download_error)
+                funmart_image.update(downloaded=downloaded, download_error=download_error)
+                return
+
+    funmart_image.update(downloaded=True, download_error="")
