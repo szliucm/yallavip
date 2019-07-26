@@ -556,7 +556,7 @@ def filter_product(cate, standard_size=""):
 
         con.add(q_cate, 'AND')
 
-    elif cate.cate_type == "M100-1":
+    elif cate.cate_type == "promote":
         con.children.append(('promote_count', "M100-1"))
     return  con
 

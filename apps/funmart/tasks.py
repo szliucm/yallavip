@@ -798,4 +798,3 @@ def batch_update(type=1):
 
 
 
-
