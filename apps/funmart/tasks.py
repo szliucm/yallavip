@@ -875,6 +875,7 @@ def download_images_v3():
 
 @shared_task
 def download_image_v3( remote_image, id):
+    print(id)
     funmart_image = FunmartImage.objects.filter(id=id)
     if not remote_image:
         print ("no images")
