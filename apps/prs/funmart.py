@@ -71,7 +71,7 @@ def cal_promote_price_funmart(spu):
 
     #小于5块的都卖10块，小于40块都加10块
     if new_price <10:
-        new_price = 10
+        new_price += 10
         free_shipping_count = "0"
         promote_count = "M100-1"
     elif new_price <20:
@@ -79,7 +79,7 @@ def cal_promote_price_funmart(spu):
         free_shipping_count = "5"
         promote_count = "B8-2"
     elif new_price <30:
-        new_price += 10
+        new_price += 12
         free_shipping_count = "3"
         promote_count = "B5-1"
     elif new_price <60:
