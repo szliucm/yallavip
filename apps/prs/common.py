@@ -21,7 +21,7 @@ PROMOTE_COUNT = (
 
 CATE_TYPE  = (
     ("Product", "Product"),
-    ("M100-1", "M100-1"),
+    ("Promote", "Promote"),
 
 
 )
