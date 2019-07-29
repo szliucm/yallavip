@@ -7233,3 +7233,10 @@ def auto_new_ads():
     #遍历每个page
     for page in pages:
         start_new_promotion_v2(page.page_no)
+
+def logistict_update():
+    from performance.adminx import *
+    sync_Shipped_order_lightin(30)
+    updatelogistic_trail_lightin()
+    update_performance(days=60)
+
