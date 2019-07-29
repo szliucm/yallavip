@@ -7239,5 +7239,6 @@ def logistict_update():
     from logistic.tasks import  updatelogistic_trail_lightin
     sync_Shipped_order_lightin(30)
     updatelogistic_trail_lightin()
+    Order.objects.filter(track_status="CC").update(status="delivered")
     update_performance(days=60)
 

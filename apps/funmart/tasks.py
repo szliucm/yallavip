@@ -314,6 +314,7 @@ def get_funmart_spu(spu):
 @shared_task
 def get_funmart_barcode(barcode):
     print("get barcode info", barcode)
+    '''
     url = "http://47.96.143.109:9527/api/getInfoBySku"
     param = dict()
     param["sku"] = barcode
@@ -326,44 +327,52 @@ def get_funmart_barcode(barcode):
 
             sku = data.get("sku")
 
+'''
+    mysql = 'select sku from mc_wms_detail where basiccode_num = "%s"'%(barcode)
 
-            funmart_skus = FunmartSKU.objects.filter(SKU =sku)
-            if funmart_skus:
-                funmart_sku = funmart_skus[0]
-            else:
-                funmart_sku, created = FunmartSKU.objects.update_or_create(
-                    SKU=sku,
-                    defaults={
-                        'SPU': data.get("spu"),
-                        'name': data.get("en_name"),
-                        'skuattr': json.dumps(data.get("skuattr")),
-                        'images': json.dumps(data.get("images")),
-                        'sale_price': data.get("price"),
-                        'downloaded': True
-                    }
-                )
+    rows = my_custom_sql(mysql)
 
-            funmartbarcode, created = FunmartBarcode.objects.update_or_create(
-                barcode=barcode,
-                defaults={
-                    'funmart_sku': funmart_sku,
-                    'SKU': data.get("sku"),
+    if rows:
+        sku = rows[0][0]
 
-
-                }
-            )
-            return funmartbarcode
-
+        funmart_skus = FunmartSKU.objects.filter(SKU =sku)
+        if funmart_skus:
+            funmart_sku = funmart_skus[0]
         else:
-            funmartbarcode, created = FunmartBarcode.objects.update_or_create(
-                barcode=barcode,
+            funmart_sku, created = FunmartSKU.objects.update_or_create(
+                SKU=sku,
                 defaults={
-
-                    'download_error': return_data.get("message")
+                    'SPU': data.get("spu"),
+                    'name': data.get("en_name"),
+                    'skuattr': json.dumps(data.get("skuattr")),
+                    'images': json.dumps(data.get("images")),
+                    'sale_price': data.get("price"),
+                    'downloaded': True
                 }
             )
 
-            print (return_data.get("message"))
+        funmartbarcode, created = FunmartBarcode.objects.update_or_create(
+            barcode=barcode,
+            defaults={
+                'funmart_sku': funmart_sku,
+                'SKU': data.get("sku"),
+
+
+            }
+        )
+        return funmartbarcode
+
+    else:
+        funmartbarcode, created = FunmartBarcode.objects.update_or_create(
+            barcode=barcode,
+            defaults={
+
+                #'download_error': return_data.get("message")
+                'download_error': "Not found the sku"
+            }
+        )
+
+        print (return_data.get("message"))
 
     return None
 
