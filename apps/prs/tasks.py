@@ -7235,7 +7235,7 @@ def auto_new_ads():
         start_new_promotion_v2(page.page_no)
 
 def logistict_update():
-    from performance.adminx import *
+    from performance.adminx import update_performance
     sync_Shipped_order_lightin(30)
     updatelogistic_trail_lightin()
     update_performance(days=60)
