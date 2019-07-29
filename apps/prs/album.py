@@ -24,7 +24,7 @@ import random
 def create_album(page,cate, standard_size = "" ):
 
     page_no = page.page_no
-    if cate.cate_type == "product":
+    if cate.cate_type == "Product":
         if standard_size == "":
             album_name = "%s %s" % (cate.super_name ,cate.name)
         else:
