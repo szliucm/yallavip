@@ -338,7 +338,9 @@ def get_funmart_barcode(barcode):
         funmart_skus = FunmartSKU.objects.filter(SKU =sku)
         if funmart_skus:
             funmart_sku = funmart_skus[0]
+        '''
         else:
+            
             funmart_sku, created = FunmartSKU.objects.update_or_create(
                 SKU=sku,
                 defaults={
@@ -350,30 +352,29 @@ def get_funmart_barcode(barcode):
                     'downloaded': True
                 }
             )
+            '''
 
         funmartbarcode, created = FunmartBarcode.objects.update_or_create(
-            barcode=barcode,
-            defaults={
-                'funmart_sku': funmart_sku,
-                'SKU': data.get("sku"),
+                barcode=barcode,
+                defaults={
+                    'funmart_sku': funmart_sku,
+                    #'SKU': data.get("sku"),
+                    'SKU': sku,
 
 
-            }
+                }
         )
         return funmartbarcode
 
-    else:
-        funmartbarcode, created = FunmartBarcode.objects.update_or_create(
-            barcode=barcode,
-            defaults={
 
-                #'download_error': return_data.get("message")
-                'download_error': "Not found the sku"
-            }
-        )
+    funmartbarcode, created = FunmartBarcode.objects.update_or_create(
+        barcode=barcode,
+        defaults={
 
-        print (return_data.get("message"))
-
+            #'download_error': return_data.get("message")
+            'download_error': "Not found the sku"
+        }
+    )
     return None
 
 # 根据订单汇总，给spu打标
