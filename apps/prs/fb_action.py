@@ -2128,7 +2128,7 @@ def combo_ad_image_template_single(spu_ims, spus_name,spus, page_no,type):
 
     if page_no:
         domain = "http://admin.yallavip.com"
-        if page_no in ["2020583608262911"]:
+        if page_no in ["2020583608262911","437797513321974"]:
             free_shipping_count = "150"
         else:
             free_shipping_count = spus[0].free_shipping_count

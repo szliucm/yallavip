@@ -7236,6 +7236,7 @@ def auto_new_ads():
 
 def logistict_update():
     from performance.adminx import update_performance
+    from logistic.tasks import  updatelogistic_trail_lightin
     sync_Shipped_order_lightin(30)
     updatelogistic_trail_lightin()
     update_performance(days=60)
