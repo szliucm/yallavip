@@ -627,7 +627,7 @@ class CustomerAdmin(object):
 
 @xadmin.sites.register(Draft)
 class DraftAdmin(object):
-    list_display = [ 'lightin_sku', 'customer','handle','sellable','quantity','price', 'skuattr', "photo",]
+    list_display = [ 'lightin_sku', 'size','handle','sellable','quantity','price', 'skuattr', "photo",'customer',]
     list_editable = ["quantity", ]
 
     search_fields = ["lightin_sku__lightin_spu__handle","lightin_sku__SKU",]
@@ -671,6 +671,13 @@ class DraftAdmin(object):
         return  obj.lightin_sku.skuattr
 
     skuattr.short_description = "skuattr"
+
+    def size(self,obj):
+        return  obj.lightin_sku.size
+
+    skuattr.short_description = "size"
+
+
 
     def sellable(self, obj):
         #sellable + 客户订单占用的库存
