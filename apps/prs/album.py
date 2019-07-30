@@ -562,9 +562,9 @@ def filter_product(cate, standard_size=""):
         con.children.append(('promote_count', "M100-1"))
 
     if standard_size == "":
-        con.children.append('cate_3__in', cate_3)
+        con.children.append(('cate_3__in', cate_3))
     else:
-        con.children.append('lightin_spu__cate_3__in', cate_3)
+        con.children.append(('lightin_spu__cate_3__in', cate_3))
 
     return con
 
