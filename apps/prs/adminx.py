@@ -363,7 +363,7 @@ class Lightin_SKUAdmin(object):
 
     handle.short_description = "handle"
 
-    list_display = ["SKU", "handle",  "size", "o_sellable","free_shipping_count", "promote_count", "sku_photo", "sku_price",]
+    list_display = ["SKU", "handle",  "size","skuattr", "o_sellable","free_shipping_count", "promote_count", "sku_photo", "sku_price",]
 
     # 'sku_name','img',
     search_fields = ["SPU", "SKU","lightin_spu__handle","lightin_spu__en_name",]
