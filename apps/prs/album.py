@@ -375,7 +375,7 @@ def prepare_yallavip_photoes_v3(page_no=None):
         for album in albums:
             is_sku = False
             print("album is ", album)
-            con = filter_product(album.cate,album.standard_size)
+            con = filter_product(album.cate,album.standard_size,"album")
 
             # 根据品类找已经上架到shopify 但还未添加到相册的产品
             product_list = []

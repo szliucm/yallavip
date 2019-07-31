@@ -323,6 +323,8 @@ class CustomerAdmin(object):
 
 
     actions = ['batch_prepare_draft','batch_submit_draft','batch_cancel_order',]
+    def has_delete_permission(self):
+        return False
     relfield_style = 'fk_ajax'
     inlines = [ ConversationInline ]
 
@@ -637,6 +639,8 @@ class DraftAdmin(object):
 
 
     actions = [ ]
+    def has_delete_permission(self):
+        return False
 
     def photo(self, obj):
         # 如果sku有属性图片则用属性图片，否则用spu图片的第一张

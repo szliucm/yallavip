@@ -243,7 +243,8 @@ class OrderAdmin(object):
     search_fields = ["order_no",'logistic_no', "buyer_name", ]
     list_filter = ( "status","wms_status","track_status","order_time")
     ordering = ['-order_time']
-
+    def has_delete_permission(self):
+        return False
     #data_charts = {
     #    "order_count": {'title': u"订单统计","x-field": "order_time", "y-field": ("order_no", ), "order": ('order_time',)},
     #}
@@ -1377,6 +1378,9 @@ class VerifyAdmin(object):
     actions = ['batch_paid', 'batch_copy',  'batch_simple','batch_complex', 'batch_sms', 'batch_confirmSMS','batch_timeoutSMS','batch_verify', 'batch_customercancel','batch_cscancel','batch_timeoutcancel', 'batch_notstart','batch_restart','batch_cancel_order', ]
     #'batch_error_money', 'batch_error_contact', 'batch_error_address', 'batch_error_cod', 'batch_error_note',
     #自定义django的admin后台action
+
+    def has_delete_permission(self):
+        return False
 
     def batch_paid(self, request, queryset):
         # 定义actions函数
