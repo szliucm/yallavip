@@ -535,7 +535,7 @@ def init_spu_one_size():
 # 根据 MyCategory 拼接筛选产品的条件
 #如果没有尺码，则返回spu的过滤条件
 #如果有尺码，则返回sku的过滤条件
-def filter_product(cate, standard_size=""):
+def filter_product(cate, standard_size="",type="album"):
     cate_3 = ["Activewear","Anklet","Bracelets","Casual Shoes","Clutches/Wallets","Creative Watches","Dresses","Flats","Jeans","Lingerie","Lips","Lovers Watches","Makeup Tools","Maxi Dresses","Men's Hoodies & Swea","Outerwear","Pajamas","Panties","Pants","Polo Shirts","Print Dresses","Pumps & Heels","Quartz Watches","Rings","Robes & Sleepwear","Romantic Lace Dresse","Sexy Bodies","Shirts","Shoulder Bags","Skin Care Tools","Skirts","Slippers","Sneakers","Sports Bra Collectio","Suits&Blazers","Teeth & Mouth Care","Two Pieces Suits","Women's Blazers & Ja","Women's Hats","Women's Jumpsuits &","Women's Tops","Women's Two Piece Se",]
 
     con = Q()
@@ -561,10 +561,11 @@ def filter_product(cate, standard_size=""):
     elif cate.cate_type == "promote":
         con.children.append(('promote_count', "M100-1"))
 
-    if standard_size == "":
-        con.children.append(('cate_3__in', cate_3))
-    else:
-        con.children.append(('lightin_spu__cate_3__in', cate_3))
+    if type == "promote":
+        if standard_size == "":
+            con.children.append(('cate_3__in', cate_3))
+        else:
+            con.children.append(('lightin_spu__cate_3__in', cate_3))
 
     return con
 
