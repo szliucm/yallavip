@@ -244,7 +244,7 @@ class OrderAdmin(object):
     search_fields = ["order_no",'logistic_no', "buyer_name", ]
     list_filter = ( "status","wms_status","track_status","order_time")
     ordering = ['-order_time']
-
+    '''
     def queryset(self):
         qs = super().queryset()
         try:
@@ -260,6 +260,7 @@ class OrderAdmin(object):
         except Exception as e:
             print(e)
             return  qs
+    '''
 
     def has_delete_permission(self):
         return False
@@ -1833,7 +1834,7 @@ class ClientServiceAdmin(object):
 
                      'receiver_phone', 'phone_1', 'phone_2','verify_comments',  \
                     'facebook_user_name', 'sales', 'show_conversation')
-
+    '''
     def queryset(self):
         qs = super().queryset()
         try:
@@ -1849,7 +1850,7 @@ class ClientServiceAdmin(object):
         except Exception as e:
             print(e)
             return  qs
-
+    '''
 
 
     def get_list_queryset(self):
