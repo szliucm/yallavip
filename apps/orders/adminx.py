@@ -1821,10 +1821,10 @@ class ClientServiceAdmin(object):
         qs = super().queryset()
         try:
             # 获取当前登录用户所在组
-            group = Group.objects.get(user=self.request.user) #获取当前登录用户所在组
-            print(group.name)
+            groups = self.request.user.groups #获取当前登录用户所在组
+            print(groups)
             #获取当前登录用户所在组名称
-            if group.name == "主管":
+            if groups.filter(name="主管"):
                 return  qs
             else:
                 #获取当前登录用户用户名
