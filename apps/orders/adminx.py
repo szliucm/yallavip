@@ -1821,6 +1821,7 @@ class ClientServiceAdmin(object):
         try:
             # 获取当前登录用户所在组
             group = Group.objects.get(user=self.request.user) #获取当前登录用户所在组
+            print(group.name)
             #获取当前登录用户所在组名称
             if group.name == "主管":
                 return  qs
