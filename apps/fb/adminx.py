@@ -714,7 +714,8 @@ class MyAdAdmin(object):
             print("*****************0801*******", obj,obj.handle)
             spu = Lightin_SPU.objects.filter(handle=obj.handle)[0]
             print("*****************0801*******", spu)
-        except:
+        except Exception as e:
+            print(e)
             return 0
 
         return spu.sellable
