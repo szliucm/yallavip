@@ -399,11 +399,14 @@ def get_adaccount_ads(adaccount_id):
         page_name = campaign_name.split("_")[0]
         page_no = campaign_name.split("_")[1]
         objective = campaign_name.split("_")[2]
+        name = ad.get("name")
+        #handles = name.split("_")[-1].split(",")
+        handle = name.split("_")[-1]
 
         obj, created = MyAd.objects.update_or_create(ad_no=ad["id"],
                                                         defaults={
                                                             'adset_no': ad.get("adset_id"),
-                                                            'name': ad.get("name"),
+                                                            'name': name,
                                                             #'ad_review_feedback': ad.get("ad_review_feedback"),
                                                             #'adlabels': ad.get("adlabels"),
                                                             'account_no': ad.get("account_id"),
@@ -417,6 +420,7 @@ def get_adaccount_ads(adaccount_id):
                                                             'created_time': ad.get("created_time"),
                                                             'updated_time': ad.get("updated_time"),
                                                             'active': True,
+                                                            'handle':handle
 
                                                                   }
                                                         )
