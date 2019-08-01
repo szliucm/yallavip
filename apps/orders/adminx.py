@@ -1827,7 +1827,8 @@ class ClientServiceAdmin(object):
             else:
                 #获取当前登录用户用户名
                 return qs.filter(Q(sales=self.request.user)  )
-        except:
+        except Exception as e:
+            print(e)
             return  qs
 
 
