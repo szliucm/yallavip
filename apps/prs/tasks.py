@@ -7213,6 +7213,7 @@ def start_new_page_v2(page_no) :
 
 #发布新的一波广告
 #按page定时发
+@shared_task
 def start_new_promotion_v2(page_no):
     prepare_promote_single_v2(page_no)
 
@@ -7227,12 +7228,17 @@ def start_new_promotion_v2(page_no):
 
 @shared_task
 def auto_new_ads():
+    #先删除无库存的广告
+    from fb.tasks import  batch_update_ad, delete_outstock_ads
+    batch_update_ad()
+    delete_outstock_ads.apply_async((), queue='fbad')
     #选择需要推广的page
     pages = MyPage.objects.filter(is_published=True, active=True, promotable=True)
 
     #遍历每个page
     for page in pages:
-        start_new_promotion_v2(page.page_no)
+        #start_new_promotion_v2(page.page_no)
+        start_new_promotion_v2.apply_async((page.page_no,), queue='fbad')
 
 def logistict_update():
     from performance.adminx import update_performance
