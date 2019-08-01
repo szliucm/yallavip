@@ -711,10 +711,12 @@ class MyAdsetAdmin(object):
 class MyAdAdmin(object):
     def sellable(self, obj):
         try:
-            spu = Lightin_SPU.objects.get(handle=obj.handle )
+            print("*****************0801*******", obj,obj.handle)
+            spu = Lightin_SPU.objects.get(handle=obj.handle)
+            print("*****************0801*******", spu)
         except:
             return 0
-        print("*****************0801*******",obj, spu, spu.sellable)
+
         return spu.sellable
 
 
