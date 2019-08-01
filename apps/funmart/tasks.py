@@ -277,8 +277,8 @@ def get_funmart_sku(sku):
 @shared_task
 def get_funmart_spu(spu):
     print("get spu info", spu)
-
-    url = "http://47.96.143.109:9527/api/getInfoBySku"
+    url = "http://api.funmart.com/erp/api/getInfoBySku"
+    #url = "http://47.96.143.109:9527/api/getInfoBySku"
     param = dict()
     param["sku"] = spu
     r = requests.post(url, data=json.dumps(param))

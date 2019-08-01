@@ -173,6 +173,7 @@ class MyAd(models.Model):
     #creative = models.CharField(u'creative', max_length=200, null=True, blank=True)
     created_time = models.DateTimeField(u'创建时间', auto_now=False, null=True, blank=True)
     updated_time = models.DateTimeField(u'更新时间', auto_now=False, null=True, blank=True)
+    handle = models.CharField(u'handle', max_length=20, null=True, blank=True)
 
     active = models.BooleanField(u"状态", default=False)
     local_status = models.CharField(u'本地状态', default="", max_length=50, null=True, blank=True)

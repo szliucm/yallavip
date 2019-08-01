@@ -683,6 +683,9 @@ def delete_outstock_ad(ads):
     for ad in ads:
 
         handles = ad.name.split("_")[-1].split(",")
+        ad.handle = handles
+        ad.save()
+
         spus_all = Lightin_SPU.objects.filter(handle__in=handles)
 
 

@@ -639,6 +639,7 @@ class DraftAdmin(object):
 
     actions = [ ]
 
+
     def photo(self, obj):
         # 如果sku有属性图片则用属性图片，否则用spu图片的第一张
         image = None

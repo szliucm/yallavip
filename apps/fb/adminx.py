@@ -709,8 +709,19 @@ class MyAdsetAdmin(object):
 
 @xadmin.sites.register(MyAd)
 class MyAdAdmin(object):
+    def sellable(self, obj):
+        try:
+            spu = Lightin_SPU.objects.get(handle=obj.handle )
+        except:
+            return 0
 
-    list_display = [ "ad_no","adset_no",'name', ]
+        return spu.sellable
+
+
+    sellable.short_description = "sellable"
+
+
+    list_display = [ "ad_no","adset_no",'name','handle', 'sellable']
     search_fields = ['ad_no', 'name',]
     actions = ["delete_ad", ]
 
