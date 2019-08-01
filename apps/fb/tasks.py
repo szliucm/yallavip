@@ -695,7 +695,7 @@ def delete_outstock_ad(ads):
 
         spus_outstock = spus_all.filter(Q(sellable__lte=0)|Q(fake=True))
         if spus_outstock.count() > 0:
-            print("有spu无库存了", spus_outstock, ad )
+            print("有spu无库存了", spus_outstock, ad.name )
             spus_all.update(aded=False)
             ads_todelete.append(ad)
 

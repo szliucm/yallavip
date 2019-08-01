@@ -1815,11 +1815,22 @@ class ClientServiceAdmin(object):
 
                      'receiver_phone', 'phone_1', 'phone_2','verify_comments',  \
                     'facebook_user_name', 'sales', 'show_conversation')
-    '''
+
     def queryset(self):
-        qs = super(ClientServiceAdmin, self).queryset()
-        return qs.filter(verify_status='COMPLEX')
-    '''
+        qs = super().queryset()
+        try:
+            # 获取当前登录用户所在组
+            group = Group.objects.get(user=self.request.user) #获取当前登录用户所在组
+            #获取当前登录用户所在组名称
+            if group.name == "主管":
+                return  qs
+            else:
+                #获取当前登录用户用户名
+                return qs.filter(Q(sales=self.request.user)  )
+        except:
+            return  qs
+
+
 
     def get_list_queryset(self):
         """xadmin 有效的批量查询订单号"""
