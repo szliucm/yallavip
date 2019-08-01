@@ -712,7 +712,7 @@ class MyAdAdmin(object):
     def sellable(self, obj):
         try:
             print("*****************0801*******", obj,obj.handle)
-            spu = Lightin_SPU.objects.get(handle=obj.handle)
+            spu = Lightin_SPU.objects.filter(handle=obj.handle)[0]
             print("*****************0801*******", spu)
         except:
             return 0
