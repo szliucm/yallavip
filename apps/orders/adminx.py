@@ -262,7 +262,7 @@ class OrderAdmin(object):
             return  qs
     '''
 
-    def has_delete_permission(self):
+    def has_delete_permission():
         return False
     #data_charts = {
     #    "order_count": {'title': u"订单统计","x-field": "order_time", "y-field": ("order_no", ), "order": ('order_time',)},
