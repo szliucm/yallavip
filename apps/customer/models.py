@@ -127,6 +127,7 @@ class Customer(models.Model):
     class Meta:
         verbose_name = "客户"
         verbose_name_plural = verbose_name
+        app_label = 'customer'
 
     def __str__(self):
         return self.name

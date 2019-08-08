@@ -127,6 +127,7 @@ DATABASES = {
         'HOST': 'localhost',
         'OPTIONS': {'charset': 'utf8mb4'},
     },
+
     'auth_db': {
         # 'ENGINE': 'django.db.backends.sqlite3',
         # 'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
@@ -155,9 +156,12 @@ DATABASES = {
         'HOST': '140.82.27.238',
         'OPTIONS': {'charset': 'utf8mb4'},
     },
+
 }
 
-DATABASE_ROUTERS = ['yallavip.AuthRouter.AuthRouter', 'yallavip.PrimaryReplicaRouter.PrimaryReplicaRouter']
+#DATABASE_ROUTERS = ['yallavip.AuthRouter.AuthRouter', 'yallavip.PrimaryReplicaRouter.PrimaryReplicaRouter']
+
+
 
 AUTH_USER_MODEL = 'users.UserProfile'    #由于我们在users/models.py继承了django的AbstractUser，所以需要在settings.py中指定我们自定义的user模型,否则创建模型会报E304错误
 
