@@ -119,7 +119,14 @@ WSGI_APPLICATION = 'yallavip.wsgi.application'
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {},
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'yallavip',
+        'USER': 'niger',
+        'PASSWORD': 'Niger@2018',
+        'HOST': 'localhost',
+        'OPTIONS': {'charset': 'utf8mb4'},
+    },
     'auth_db': {
         # 'ENGINE': 'django.db.backends.sqlite3',
         # 'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
