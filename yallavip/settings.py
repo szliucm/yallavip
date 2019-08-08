@@ -141,7 +141,7 @@ DATABASES = {
         'OPTIONS': {'charset':'utf8mb4'},
     },
     'replica1': {
-        'NAME': 'replica1',
+        'NAME': 'yallavip',
         'ENGINE': 'django.db.backends.mysql',
         'USER': 'niger',
         'PASSWORD': 'Niger@2018',
