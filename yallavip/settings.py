@@ -119,17 +119,38 @@ WSGI_APPLICATION = 'yallavip.wsgi.application'
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-#        'ENGINE': 'django.db.backends.sqlite3',
-#        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-	'ENGINE': 'django.db.backends.mysql',
+    'default': {},
+    'auth_db': {
+        # 'ENGINE': 'django.db.backends.sqlite3',
+        # 'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
         'NAME': 'yallavip',
         'USER': 'niger',
         'PASSWORD': 'Niger@2018',
-	'HOST':'localhost',
-    'OPTIONS': {'charset':'utf8mb4'},
-    }
+        'HOST': 'localhost',
+        'OPTIONS': {'charset': 'utf8mb4'},
+    },
+    'primary': {
+        # 'ENGINE': 'django.db.backends.sqlite3',
+        # 'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'yallavip',
+        'USER': 'niger',
+        'PASSWORD': 'Niger@2018',
+        'HOST': 'localhost',
+        'OPTIONS': {'charset':'utf8mb4'},
+    },
+    'replica1': {
+        'NAME': 'replica1',
+        'ENGINE': 'django.db.backends.mysql',
+        'USER': 'niger',
+        'PASSWORD': 'Niger@2018',
+        'HOST': '140.82.27.238',
+        'OPTIONS': {'charset': 'utf8mb4'},
+    },
 }
+
+DATABASE_ROUTERS = ['yallavip.AuthRouter.AuthRouter', 'yallavip.PrimaryReplicaRouter.PrimaryReplicaRouter']
 
 AUTH_USER_MODEL = 'users.UserProfile'    #由于我们在users/models.py继承了django的AbstractUser，所以需要在settings.py中指定我们自定义的user模型,否则创建模型会报E304错误
 
