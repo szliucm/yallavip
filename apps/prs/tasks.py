@@ -7240,6 +7240,17 @@ def auto_new_ads():
         #start_new_promotion_v2(page.page_no)
         start_new_promotion_v2.apply_async((page.page_no,), queue='fbad')
 
+@shared_task
+def auto_new_pages():
+
+    #选择需要推广的page
+    pages = MyPage.objects.filter(is_published=True, active=True, promotable=True)
+
+    #遍历每个page
+    for page in pages:
+        start_new_page_v2(page.page_no)
+        #start_new_promotion_v2.apply_async((page.page_no,), queue='fbad')
+
 def logistict_update():
     from performance.adminx import update_performance
     from logistic.tasks import  updatelogistic_trail_lightin
