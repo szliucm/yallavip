@@ -34,7 +34,7 @@ class FbConversationAdmin(object):
 
     def customer_link(self, obj):
         return mark_safe(
-            '<a href="http://business.facebook.com%s" target="view_window">%s</a>'
+            '<a href="http://business.facebook.com%s" target="_blank">%s</a>'
             % (obj.link,obj.customer))
 
     customer_link.short_description = '会话链接'
