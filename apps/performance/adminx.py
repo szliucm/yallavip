@@ -9,7 +9,7 @@ def update_performance(days=60):
     import pytz
     from datetime import datetime,timedelta
     # from django.utils import timezone as dt
-    from django.db.models.functions import TruncDate
+    from django.db.models.functions import TruncDate,TruncMonth
 
 
     riyadh = pytz.timezone('Asia/Riyadh')
