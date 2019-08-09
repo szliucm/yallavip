@@ -14,6 +14,8 @@ from shop.photo_mark import  get_remote_image
 from .models import *
 from  prs.models import  Lightin_SPU, Lightin_SKU
 from PIL import ImageFile
+from django.core.paginator import Paginator
+
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 def test_funmart_product():
@@ -576,36 +578,46 @@ def download_spu_images(spu_pk):
 #把spu插入到系统spu
 def deal_funmart_spus():
 
-    spus_to_add = FunmartSPU.objects.all() \
-        .exclude(SPU__in=list(Lightin_SPU.objects.filter(vendor="funmart").values_list('SPU', flat=True)))
+    #spus_to_add = FunmartSPU.objects.all() \
+    #    .exclude(SPU__in=list(Lightin_SPU.objects.filter(vendor="funmart").values_list('SPU', flat=True)))
+    spus_to_del = list(Lightin_SPU.objects.filter(en_name="", vendor="funmart").values_list('SPU', flat=True))
+    spus_to_add = FunmartSPU.objects.all().exclude(SPU__in=spus_to_del)
 
     print("有%s个spu需要新增" % spus_to_add.count())
+    Lightin_SPU.objects.filter(SPU__in=spus_to_del).delete()
 
-    spu_list = []
-    for spu_to_add in spus_to_add:
-        spu = Lightin_SPU(
-            SPU=spu_to_add.SPU,
-            vendor = 'funmart',
-            en_name = spu_to_add.en_name,
+    ids = Paginator(list(spus_to_add), 100)
+    print("total page count", ids.num_pages)
+
+    for i in ids.page_range:
+        print("page ", i)
+        spu_list = []
+        for spu_to_add in ids.page(i).object_list:
+            if len(spu_to_add.cate_2)>20 or len(spu_to_add.cate_3)>20:
+                continue
+            spu = Lightin_SPU(
+                SPU=spu_to_add.SPU,
+                vendor = 'funmart',
+                en_name = spu_to_add.en_name,
 
 
-            cate_1 = spu_to_add.cate_1,
-            cate_2 = spu_to_add.cate_2,
-            cate_3 = spu_to_add.cate_3,
+                cate_1 = spu_to_add.cate_1,
+                cate_2 = spu_to_add.cate_2,
+                cate_3 = spu_to_add.cate_3,
 
-            vendor_sale_price = spu_to_add.sale_price,
-            vendor_supply_price = spu_to_add.sale_price * 0.1,
-            link = spu_to_add.link,
+                vendor_sale_price = spu_to_add.sale_price,
+                vendor_supply_price = spu_to_add.sale_price * 0.1,
+                link = spu_to_add.link,
 
-            title = spu_to_add.en_name,
-            images = spu_to_add.images,
+                title = spu_to_add.en_name,
+                images = spu_to_add.images,
 
-        )
+            )
 
-        spu_list.append(spu)
+            spu_list.append(spu)
 
-    #print(spu_list)
-    Lightin_SPU.objects.bulk_create(spu_list)
+        #print(spu_list)
+        Lightin_SPU.objects.bulk_create(spu_list)
     
 #把sku插入到系统sku
 def deal_funmart_skus():

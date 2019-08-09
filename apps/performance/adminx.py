@@ -80,6 +80,28 @@ def update_performance(days=60):
                                                                     "amount"),
                                                                 }
                                                       )
+
+    #统计客服业绩跟踪
+    staff_counts = orders.annotate(month=TruncMonth("order_time", tzinfo=riyadh)) \
+        .values("month", "status","verify__sales").annotate(orders=Count("order_no"),amount=Sum("order_amount")).order_by("-month")
+
+    # 把相应的记录先删掉
+    #StaffPerformance.objects.filter(order_month__gt=(today - timedelta(days=days))).delete()
+
+    for staff_count in staff_counts:
+        staff=staff_count.get("verify__sales")
+        if not staff:
+            staff = "unknown"
+        print(track_count.get("status"))
+        if track_count.get("status") in ['open','transit','delivered', 'refused','cancelled']:
+            obj, created = StaffTrack.objects.update_or_create(order_date=track_count.get("date"),
+                                                        staff=staff,
+                                                      defaults={track_count.get("status"): track_count.get("orders"),
+                                                                track_count.get("status") + "_amount": track_count.get(
+                                                                    "amount"),
+                                                                }
+                                                      )
+
     # 统计page业绩跟踪
     page_counts = orders.annotate(date=TruncDate("order_time", tzinfo=riyadh)) \
         .values("date", "status", "verify__mailbox_id").annotate(orders=Count("order_no"),
@@ -156,6 +178,18 @@ class StaffTrackAdmin(object):
     readonly_fields = ()
     actions = [ ]
     ordering = ['-order_date',"staff",]
+
+@xadmin.sites.register(StaffPerformance)
+class StaffPerformanceAdmin(object):
+    list_display = ["order_month", "staff", "delivered_rate","open","open_amount", 'transit',"transit_amount", 'delivered',"delivered_amount", 'refused',"refused_amount","cancelled","cancelled_amount",   ]
+
+    # 'sku_name','img',
+    search_fields = ["staff", ]
+    list_filter = [ "order_month",'staff', ]
+    list_editable = []
+    readonly_fields = ()
+    actions = [ ]
+    ordering = ['-order_month',"staff",]
 
 @xadmin.sites.register(PageTrack)
 class PageTrackTrackAdmin(object):
