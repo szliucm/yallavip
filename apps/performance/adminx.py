@@ -92,12 +92,12 @@ def update_performance(days=60):
         staff=staff_count.get("verify__sales")
         if not staff:
             staff = "unknown"
-        print(track_count.get("status"))
-        if track_count.get("status") in ['open','transit','delivered', 'refused','cancelled']:
-            obj, created = StaffTrack.objects.update_or_create(order_date=track_count.get("date"),
+        print(staff_count.get("status"))
+        if staff_count.get("status") in ['open','transit','delivered', 'refused','cancelled']:
+            obj, created = StaffPerformance.objects.update_or_create(order_month=staff_count.get("month"),
                                                         staff=staff,
-                                                      defaults={track_count.get("status"): track_count.get("orders"),
-                                                                track_count.get("status") + "_amount": track_count.get(
+                                                      defaults={staff_count.get("status"): staff_count.get("orders"),
+                                                                staff_count.get("status") + "_amount": staff_count.get(
                                                                     "amount"),
                                                                 }
                                                       )
@@ -189,7 +189,7 @@ class StaffPerformanceAdmin(object):
     list_editable = []
     readonly_fields = ()
     actions = [ ]
-    ordering = ['-order_month',"staff",]
+    ordering = ['-order_month',"-delivered",]
 
 @xadmin.sites.register(PageTrack)
 class PageTrackTrackAdmin(object):
