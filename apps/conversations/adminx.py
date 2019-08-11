@@ -64,7 +64,7 @@ class FbConversationAdmin(object):
     list_display = ["conversation_no", "staff", "message_count", "customer_link" , "lost_time","color_status","task_type", "task_stat", "last_message",]
     list_editable = ["task_type","task_stat",]
     search_fields = ['customer', ]
-    list_filter = ["staff","status","task_type", "task_stat", "page", ]
+    list_filter = ["status","task_type", "task_stat", "page", ]
     ordering = ["-updated_time"]
     actions = ["batch_claim", ]
 
@@ -76,7 +76,7 @@ class FbConversationAdmin(object):
 
     def has_delete_permission(self):
         return False
-
+    '''
     def queryset(self):
         qs = super().queryset()
         try:
@@ -90,7 +90,7 @@ class FbConversationAdmin(object):
                 return qs.filter(Q(staff=self.request.user) | Q(staff="无人认领") )
         except:
             return  qs
-
+    '''
 
 
     class MessageInline(object):
