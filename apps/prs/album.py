@@ -26,11 +26,12 @@ def create_album(page,cate, standard_size = "" ):
     page_no = page.page_no
     if cate.cate_type == "Product":
         if standard_size == "":
-            album_name = "%s %s" % (cate.super_name ,cate.name)
+            #album_name = "%s %s" % (cate.super_name ,cate.name)
+            album_name = cate.name
         else:
-            album_name = "%s %s [%s]" % (cate.super_name, cate.name,  standard_size)
+            album_name = "%s [%s]" % (cate.name,  standard_size)
     else:
-        album_name = "%s" % (cate.name)
+        album_name = cate.name
 
     access_token, long_token = get_token(page_no)
     FacebookAdsApi.init(access_token=access_token, debug=True)
@@ -558,7 +559,7 @@ def filter_product(cate, standard_size="",type="album"):
 
         con.add(q_cate, 'AND')
 
-    elif cate.cate_type == "promote":
+    elif cate.cate_type == "Promote":
         con.children.append(('promote_count', "M100-1"))
 
     if type == "promote":
