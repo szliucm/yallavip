@@ -128,7 +128,11 @@ DATABASES = {
         'OPTIONS': {'charset': 'utf8mb4'},
     },
 
-    'auth_db': {
+
+
+}
+'''
+'auth_db': {
         # 'ENGINE': 'django.db.backends.sqlite3',
         # 'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
         'ENGINE': 'django.db.backends.mysql',
@@ -156,10 +160,8 @@ DATABASES = {
         'HOST': '140.82.27.238',
         'OPTIONS': {'charset': 'utf8mb4'},
     },
-
-}
-
-DATABASE_ROUTERS = ['yallavip.AuthRouter.AuthRouter', 'yallavip.PrimaryReplicaRouter.PrimaryReplicaRouter']
+'''
+#DATABASE_ROUTERS = ['yallavip.AuthRouter.AuthRouter', 'yallavip.PrimaryReplicaRouter.PrimaryReplicaRouter']
 
 
 
