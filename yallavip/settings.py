@@ -159,7 +159,7 @@ DATABASES = {
 
 }
 
-#DATABASE_ROUTERS = ['yallavip.AuthRouter.AuthRouter', 'yallavip.PrimaryReplicaRouter.PrimaryReplicaRouter']
+DATABASE_ROUTERS = ['yallavip.AuthRouter.AuthRouter', 'yallavip.PrimaryReplicaRouter.PrimaryReplicaRouter']
 
 
 
