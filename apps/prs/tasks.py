@@ -2244,13 +2244,13 @@ def fulfill_order_lightin(order):
 
     service = "createOrder"
     items = []
-
+    warehouse_code = "W08"
 
 
     for order_item in order.order_orderdetail_lightin.all():
         # print(order_item)
         #warehouse_code = order_item.barcode.warehouse_code
-        warehouse_code = "W08"
+
         item = {
             "product_sku": order_item.barcode.barcode,
             "product_name_en":order_item.SKU,
