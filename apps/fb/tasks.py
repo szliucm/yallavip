@@ -428,40 +428,52 @@ def get_adaccount_ads(adaccount_id):
 
 
 
-
+#albumname比较简单，split即可，photo name中有多个[],所以要精准匹配
 def update_photos_handle():
     import  re
-    myphotos = MyPhoto.objects.filter(active=True,handle="")
+    myphotos = MyPhoto.objects.filter(Q(handle__isnull=True)|Q(size__isnull=True),active=True)
     album_nos = myphotos.values_list("album_no",flat=True)
 
     pattern = re.compile(r'[LlFf]\d{6}')
-    pattern_size = re.compile(r'[+]')
-    for album_no in album_nos:
-        album_name = MyAlbum.objects.get(album_no=album_no).name
-        s = pattern_size.search(album_name)
-        if s:
-            size = s.group()
+#    pattern_size = re.compile(r'\[[A-Za-z0-9]+]')
+    albums = MyAlbum.objects.filter(album_no__in=album_nos)
+    for album in albums:
+
+        tmp = re.split(r"\[|\]", album.name)
+        if (1 < len(tmp)):
+            size = tmp[1]
         else:
             size = ""
 
-        myphotos_toupdate = myphotos.filter(album_no=album_no)
+        '''
+        s = pattern_size.search(album_name)
+        if s:
+            size = s.group()
+            re.split(r"\[|\]", str(s.group()))
+        else:
+            size = ""
+        '''
+
+        myphotos_toupdate = myphotos.filter(album_no=album.album_no)
         for myphoto in myphotos_toupdate:
             try:
 
                 m = pattern.search(myphoto.name)
                 if m:
                     myphoto.handle = m.group()
+
                 else:
                     myphoto.handle = ""
 
 
                 '''
-                tmp = re.split(r"\[|\]", myphoto.name)
-                if (1 < len(tmp)):
-                    myphoto.handle = tmp[1]
+                tmp1 = re.split(r"\[|\]", myphoto.name)
+                if (1 < len(tmp1)):
+                    myphoto.handle = tmp1[1]
                 else:
                     myphoto.handle = ""
                 '''
+
             except:
                 myphoto.handle = ""
             myphoto.size = size
@@ -522,6 +534,52 @@ def delete_outstock_photos():
 
     photo_miss = list_to_dict(photos)
     print("共有%s个图片待删除"%len(photo_miss))
+    for page_no in photo_miss:
+
+        photo_nos = photo_miss[page_no]
+        print("page %s 待删除数量 %s  " % (page_no, len(photo_nos)))
+
+
+        if photo_nos is None or len(photo_nos) == 0:
+            continue
+
+        delete_photos(page_no, photo_nos)
+
+
+def delete_outstock_photos_size():
+    myphotos = MyPhoto.objects.filter(~Q(size=""),handle__isnull=False, size__isnull=False, active=True)
+
+    sizes = myphotos.values_list("size",flat=True).distinct()
+
+    for size in sizes :
+        handles = Lightin_SKU.objects.filter(size=size, o_sellable__lte=0)\
+            .values_list("lightin_spu__handle", flat=True)\
+            .distinct()
+        photos = myphotos.filter(handle__in=list(handles),size=size).values_list("page_no","photo_no")
+
+        photo_miss = list_to_dict(photos)
+        print("尺码 %s 共有%s个图片待删除"%(size,len(photos)))
+        for page_no in photo_miss:
+
+            photo_nos = photo_miss[page_no]
+            print("page %s 待删除数量 %s  " % (page_no, len(photo_nos)))
+
+
+            if photo_nos is None or len(photo_nos) == 0:
+                continue
+
+            delete_photos(page_no, photo_nos)
+
+def delete_outstock_photos_freesize():
+    myphotos = MyPhoto.objects.filter(size="", handle__isnull=False,  active=True)
+
+    handles = Lightin_SPU.objects.filter( sellable__lte=0)\
+        .values_list("handle", flat=True)\
+        .distinct()
+    photos = myphotos.filter(handle__in=list(handles)).values_list("page_no","photo_no")
+
+    photo_miss = list_to_dict(photos)
+    print("共有%s个图片待删除"%(len(photos)))
     for page_no in photo_miss:
 
         photo_nos = photo_miss[page_no]
