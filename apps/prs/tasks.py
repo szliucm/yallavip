@@ -2249,7 +2249,8 @@ def fulfill_order_lightin(order):
 
     for order_item in order.order_orderdetail_lightin.all():
         # print(order_item)
-        warehouse_code = order_item.barcode.warehouse_code
+        #warehouse_code = order_item.barcode.warehouse_code
+        warehouse_code = "W08"
         item = {
             "product_sku": order_item.barcode.barcode,
             "product_name_en":order_item.SKU,
@@ -7258,4 +7259,31 @@ def logistict_update():
     updatelogistic_trail_lightin()
     Order.objects.filter(track_status="CC").update(status="delivered")
     update_performance(days=60)
+
+#品类表里找到唯一的父类目
+def find_super_cate():
+    cates = MyCategory.objects.filter(vendor="funmart")
+    for cate in cates:
+        super_tags = ",".join(cate.tags.split(",")[:-1])
+
+        super_cates = MyCategory.objects.filter(tags=super_tags)
+        if super_cates:
+            print(cate.tags, "-----------", super_tags, "--------", super_cates[0])
+            cate.super_cate =  super_cates[0]
+            cate.save()
+
+#产品找到对应的品类信息
+def find_cate():
+    cates = MyCategory.objects.filter(vendor="funmart")
+    for cate in cates:
+        super_tags = ",".join(cate.tags.split(",")[:-1])
+
+        super_cates = MyCategory.objects.filter(tags=super_tags)
+        if super_cates:
+            print(cate.tags, "-----------", super_tags, "--------", super_cates[0])
+            cate.super_cate =  super_cates[0]
+            cate.save()
+
+
+
 

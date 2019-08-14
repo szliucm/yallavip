@@ -725,8 +725,8 @@ def delete_outstock_ad(ads):
 
 @shared_task
 def delete_outstock():
-    update_albums()
-    batch_update_photos(limit=None)
+    #update_albums()
+    #batch_update_photos(limit=None)
     batch_update_feed()
     batch_update_ad()
 
