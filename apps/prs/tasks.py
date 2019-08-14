@@ -7216,9 +7216,11 @@ def start_new_page_v2(page_no) :
 #按page定时发
 @shared_task
 def start_new_promotion_v2(page_no):
-    prepare_promote_single_v2(page_no)
-    '''
     to_create_count = 1
+    '''
+    prepare_promote_single_v2(page_no)
+
+
     page_post_v2(page_no, to_create_count)
 
     ad_type = "engagement"
