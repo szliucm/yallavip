@@ -7217,7 +7217,7 @@ def start_new_page_v2(page_no) :
 @shared_task
 def start_new_promotion_v2(page_no):
     to_create_count = 1
-    '''
+
     prepare_promote_single_v2(page_no)
 
 
@@ -7225,7 +7225,7 @@ def start_new_promotion_v2(page_no):
 
     ad_type = "engagement"
     post_ads_v2(page_no, ad_type, to_create_count)
-    '''
+
 
     ad_type = "message"
     post_ads_v2(page_no, ad_type, to_create_count)
