@@ -2121,6 +2121,7 @@ def combo_ad_image_template_single(spu_ims, spus_name,spus, page_no,type):
         ims.append(ims[0])
         layer.paste(clipResizeImg_new(ims[0], 800, 800), (364, 0))
         layer.paste(clipResizeImg_new(ims[1], 364, 800), (0, 0))
+        layer.paste(clipResizeImg_new(ims[1], 364, 800), (0, 0))
         layer.paste(clipResizeImg_new(ims[2], 364, 800), (1164, 0))
 
     else:
