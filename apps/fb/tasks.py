@@ -19,7 +19,7 @@ from facebook_business.exceptions import FacebookRequestError
 from fb.models import *
 from django.utils import timezone as dt
 
-from prs.models import  Lightin_SPU
+from prs.models import  Lightin_SPU, Lightin_SKU
 from prs.fb_action import get_token, ad_update_status
 
 from prs.tasks import my_custom_sql, ad_tokens
