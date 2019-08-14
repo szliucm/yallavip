@@ -432,26 +432,40 @@ def get_adaccount_ads(adaccount_id):
 def update_photos_handle():
     import  re
     myphotos = MyPhoto.objects.filter(active=True,handle="")
-    for myphoto in myphotos:
-        try:
-            pattern = re.compile(r'[LlFf]\d{6}')
-            m = pattern.search(myphoto.name)
-            if m:
-                myphoto.handle = m.group()
-            else:
-                myphoto.handle = ""
+    album_nos = myphotos.values_list("album_no",flat=True)
 
-            '''
-            tmp = re.split(r"\[|\]", myphoto.name)
-            if (1 < len(tmp)):
-                myphoto.handle = tmp[1]
-            else:
-                myphoto.handle = ""
-            '''
-        except:
-            myphoto.handle = ""
+    pattern = re.compile(r'[LlFf]\d{6}')
+    pattern_size = re.compile(r'[+]')
+    for album_no in album_nos:
+        album_name = MyAlbum.objects.get(album_no=album_no).name
+        s = pattern_size.search(album_name)
+        if s:
+            size = s.group()
+        else:
+            size = ""
 
-        myphoto.save()
+        myphotos_toupdate = myphotos.filter(album_no=album_no)
+        for myphoto in myphotos_toupdate:
+            try:
+
+                m = pattern.search(myphoto.name)
+                if m:
+                    myphoto.handle = m.group()
+                else:
+                    myphoto.handle = ""
+
+
+                '''
+                tmp = re.split(r"\[|\]", myphoto.name)
+                if (1 < len(tmp)):
+                    myphoto.handle = tmp[1]
+                else:
+                    myphoto.handle = ""
+                '''
+            except:
+                myphoto.handle = ""
+            myphoto.size = size
+            myphoto.save()
 
 
 def delete_photos(page_no, photo_nos):
