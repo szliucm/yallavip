@@ -35,7 +35,10 @@ my_app_id = "562741177444068"
 my_app_secret = "e6df363351fb5ce4b7f0080adad08a4d"
 #my_access_token = "EAAHZCz2P7ZAuQBABHO6LywLswkIwvScVqBP2eF5CrUt4wErhesp8fJUQVqRli9MxspKRYYA4JVihu7s5TL3LfyA0ZACBaKZAfZCMoFDx7Tc57DLWj38uwTopJH4aeDpLdYoEF4JVXHf5Ei06p7soWmpih8BBzadiPUAEM8Fw4DuW5q8ZAkSc07PrAX4pGZA4zbSU70ZCqLZAMTQZDZD"
 #my_access_token = "	EAAcGAyHVbOEBAEtwMPUeTci0x3G6XqlAwIhuQiZBZCVhZBRx88Rki0Lo7WNSxvAw7jAhhRlxsLjARbAZCnDvIoQ68Baj9TJrQC8KvEzyDhRWlnILGxRyc49b02aPInvpI9bcfgRowJfDrIt0kFE01LGD86vLKuLixtB0aTvTHww9SkedBzFZA"
-ad_tokens = "EAAHZCz2P7ZAuQBADNHZBaWh3u8chTb1CZBZBippgm5HfeX0z0AtWdWTWnZCtZBKVfGpeZBMcRhqUauqN7ulyxACwma0LYFSeHr3b0DpIhXtrdcvFCml1YiZBSPrMzTZCQObgeSefwCGJlczzNnWY5DePTCO8GNoT07bfAfOoqATs00njG6WvY7ZAk7k"
+#ad_tokens = "EAAHZCz2P7ZAuQBADNHZBaWh3u8chTb1CZBZBippgm5HfeX0z0AtWdWTWnZCtZBKVfGpeZBMcRhqUauqN7ulyxACwma0LYFSeHr3b0DpIhXtrdcvFCml1YiZBSPrMzTZCQObgeSefwCGJlczzNnWY5DePTCO8GNoT07bfAfOoqATs00njG6WvY7ZAk7k"
+Ad_Tokens = ["EAAGOOkWV6LgBAAU5qdiOCZBL2qYsfaz5W0t3FYZC1uSUq8RWlv2OxmfL8OsEUrTAAl5HG5CB2iF7rhxPoMc3hfqFGzsADU0ZAkyqjSpMqQZAzGZCLJ2yZBosxErZA3J4jlgrE2AjTIYC0bHn6mnRZCPX8ouQuDB8ZCu0E3LnRMfGLZC6xZAfLITrCsH",
+                 "EAAHZCz2P7ZAuQBADNHZBaWh3u8chTb1CZBZBippgm5HfeX0z0AtWdWTWnZCtZBKVfGpeZBMcRhqUauqN7ulyxACwma0LYFSeHr3b0DpIhXtrdcvFCml1YiZBSPrMzTZCQObgeSefwCGJlczzNnWY5DePTCO8GNoT07bfAfOoqATs00njG6WvY7ZAk7k"]
+ad_tokens = random.choice(Ad_Tokens)
 DEBUG = False
 
 if DEBUG:
@@ -6039,11 +6042,8 @@ def post_ads_v2(page_no, ad_type, to_create_count=1, keyword=None):
     if keyword:
         ads_all = ads_all.filter(yallavip_album__rule__name__icontains=keyword)
 
-    Ad_Tokens = ["EAAGOOkWV6LgBAAU5qdiOCZBL2qYsfaz5W0t3FYZC1uSUq8RWlv2OxmfL8OsEUrTAAl5HG5CB2iF7rhxPoMc3hfqFGzsADU0ZAkyqjSpMqQZAzGZCLJ2yZBosxErZA3J4jlgrE2AjTIYC0bHn6mnRZCPX8ouQuDB8ZCu0E3LnRMfGLZC6xZAfLITrCsH",
-                 "EAAHZCz2P7ZAuQBADNHZBaWh3u8chTb1CZBZBippgm5HfeX0z0AtWdWTWnZCtZBKVfGpeZBMcRhqUauqN7ulyxACwma0LYFSeHr3b0DpIhXtrdcvFCml1YiZBSPrMzTZCQObgeSefwCGJlczzNnWY5DePTCO8GNoT07bfAfOoqATs00njG6WvY7ZAk7k"]
-    #local_ad_tokens = random.choice(Ad_Tokens)
-    local_ad_tokens = Ad_Tokens[0]
-    adobjects = FacebookAdsApi.init(access_token= local_ad_tokens, debug=True)
+
+    adobjects = FacebookAdsApi.init(access_token=ad_tokens, debug=True)
     for cate in cates:
 
         ads = ads_all.filter(cate=cate)
@@ -6072,7 +6072,7 @@ def post_ads_v2(page_no, ad_type, to_create_count=1, keyword=None):
                 ad.active=False
 
             ad.save()
-            time.sleep(60)
+            time.sleep(30)
 
 
 def post_ad(page_no,adaccount_no, adset_no, serial, ad):
