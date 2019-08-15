@@ -67,7 +67,7 @@ class Lightin_SPU(models.Model):
     mycategory = models.ForeignKey(MyCategory, null=True, blank=True, verbose_name="品类",
                                    related_name="cate_spu", on_delete=models.CASCADE)
 
-    SPU = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="SPU")
+    SPU = models.CharField(unique=True, default='', max_length=300, null=True, blank=True, verbose_name="SPU")
 
     vendor = models.CharField(default='', max_length=20, null=True, blank=True, verbose_name="Vendor")
 
@@ -157,7 +157,7 @@ class Lightin_SKU(models.Model):
                                     related_name="spu_sku", on_delete=models.CASCADE)
 
     SPU = models.CharField(default='', max_length=300, null=True, blank=True, verbose_name="SPU")
-    SKU = models.CharField(default='', max_length=100, null=True, blank=True, verbose_name="SKU")
+    SKU = models.CharField(unique=True,default='', max_length=100, null=True, blank=True, verbose_name="SKU")
 
     # barcode = models.CharField(u'barcode', default='', max_length=100, blank=True)
 

@@ -5891,7 +5891,7 @@ def page_post_v2(page_no, to_create_count):
     for cate in cates:
 
         ads = ads_all.filter(cate=cate)
-        print(cate,"有 %s 条post待发布"%ads.count())
+        print(cate.name,"有 %s 条post待发布"%ads.count())
 
         i=1
         for ad in ads:

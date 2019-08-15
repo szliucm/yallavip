@@ -100,6 +100,7 @@ class MyPageAdmin(object):
     filter_horizontal = ('promote_template',)
     style_fields = {'promote_template': 'm2m_transfer',
                     }
+    ordering = ['-promotable']
 
     def batch_update_accounts(self, request, queryset):
 
