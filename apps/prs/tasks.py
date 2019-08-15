@@ -6001,6 +6001,8 @@ def post_ads(page_no, ad_type, to_create_count=1,keyword=None, long_ad=False):
 def post_ads_v2(page_no, ad_type, to_create_count=1, keyword=None):
     import time
     from prs.fb_action import choose_ad_set
+    import random
+
 
     from django.db.models import Q
 
@@ -6037,7 +6039,11 @@ def post_ads_v2(page_no, ad_type, to_create_count=1, keyword=None):
     if keyword:
         ads_all = ads_all.filter(yallavip_album__rule__name__icontains=keyword)
 
-    adobjects = FacebookAdsApi.init(access_token=ad_tokens, debug=True)
+    Ad_Tokens = ["EAAGOOkWV6LgBAAU5qdiOCZBL2qYsfaz5W0t3FYZC1uSUq8RWlv2OxmfL8OsEUrTAAl5HG5CB2iF7rhxPoMc3hfqFGzsADU0ZAkyqjSpMqQZAzGZCLJ2yZBosxErZA3J4jlgrE2AjTIYC0bHn6mnRZCPX8ouQuDB8ZCu0E3LnRMfGLZC6xZAfLITrCsH",
+                 "EAAHZCz2P7ZAuQBADNHZBaWh3u8chTb1CZBZBippgm5HfeX0z0AtWdWTWnZCtZBKVfGpeZBMcRhqUauqN7ulyxACwma0LYFSeHr3b0DpIhXtrdcvFCml1YiZBSPrMzTZCQObgeSefwCGJlczzNnWY5DePTCO8GNoT07bfAfOoqATs00njG6WvY7ZAk7k"]
+    #local_ad_tokens = random.choice(Ad_Tokens)
+    local_ad_tokens = Ad_Tokens[0]
+    adobjects = FacebookAdsApi.init(access_token= local_ad_tokens, debug=True)
     for cate in cates:
 
         ads = ads_all.filter(cate=cate)
