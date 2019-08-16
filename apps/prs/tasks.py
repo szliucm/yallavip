@@ -2263,7 +2263,7 @@ def fulfill_order_lightin(order):
         }
         items.append(item)
     #选择物流公司
-    shipping_method=  shipping_methods[1]
+    shipping_method=  shipping_methods[0]
 
     param = {
         "platform": "B2C",
