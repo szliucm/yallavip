@@ -2263,7 +2263,11 @@ def fulfill_order_lightin(order):
         }
         items.append(item)
     #选择物流公司
-    shipping_method=  shipping_methods[0]
+    city = order.verify.city
+    if city in ["Riyadh", "Jeddah", "Dammam"]:
+        shipping_method=  shipping_methods[0]
+    else:
+        shipping_method = shipping_methods[2]
 
     param = {
         "platform": "B2C",

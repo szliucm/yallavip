@@ -224,7 +224,10 @@ def updatelogistic_trail_lightin(type=None):
         oriorders_list = []
         for row in result.get("Data"):
             #处理单个订单
-            waybillnumber = row["TrackingNumber"]
+            waybillnumber = row.get("TrackingNumber")
+            if not waybillnumber:
+                continue
+
             order = Order.objects.get(logistic_no=waybillnumber)
             print(waybillnumber)
             obj, created = Package.objects.update_or_create(
