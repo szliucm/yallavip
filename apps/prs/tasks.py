@@ -2267,7 +2267,7 @@ def fulfill_order_lightin(order):
     if city in ["Riyadh", "Jeddah", "Dammam"]:
         shipping_method=  shipping_methods[0]
     else:
-        shipping_method = shipping_methods[2]
+        shipping_method = shipping_methods[0]
 
     param = {
         "platform": "B2C",
