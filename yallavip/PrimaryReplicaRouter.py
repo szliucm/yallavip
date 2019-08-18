@@ -10,8 +10,7 @@ class PrimaryReplicaRouter:
         """
         Reads go to a randomly-chosen replica.
         """
-        if model._meta.app_label in DATABASE_MAPPING:
-            return DATABASE_MAPPING[model._meta.app_label]
+
         return random.choice(['primary','replica1'])
 
     def db_for_write(self, model, **hints):
