@@ -162,7 +162,12 @@ DATABASES = {
 'yallavip.AuthRouter.AuthRouter',
 '''
 DATABASE_ROUTERS = [ 'yallavip.PrimaryReplicaRouter.PrimaryReplicaRouter']
+DATABASE_APPS_MAPPING = {
+    # example:
+    #'app_name':'database_name',
 
+
+}
 
 
 AUTH_USER_MODEL = 'users.UserProfile'    #由于我们在users/models.py继承了django的AbstractUser，所以需要在settings.py中指定我们自定义的user模型,否则创建模型会报E304错误

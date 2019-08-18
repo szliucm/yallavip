@@ -2093,6 +2093,7 @@ def mapping_order_lightin(order):
                 quantity=inventory[2],
                 price=inventory[3],
             )
+
             orderdetail_lightin_list.append(orderdetail_lightin)
 
             # 更新barcode占用
@@ -2251,7 +2252,7 @@ def fulfill_order_lightin(order):
     warehouse_code = "W08"
 
 
-    for order_item in order.order_orderdetail_lightin.all():
+    for order_item in order.order_orderdetail_lightin.using("primary").all():
         # print(order_item)
         #warehouse_code = order_item.barcode.warehouse_code
 
