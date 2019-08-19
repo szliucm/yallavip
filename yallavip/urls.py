@@ -14,7 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include, re_path
+from django.urls import path
 from django.conf.urls.static import static
 from django.conf import settings
 import  xadmin
@@ -23,8 +23,6 @@ from funmart.views import  *
 from . import view
 from rest_framework.documentation import include_docs_urls
 
-from customer.views import
-
 
 
 
@@ -32,10 +30,10 @@ from customer.views import
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('xadmin/', xadmin.site.urls),
-    path('api-auth/', include('rest_framework.urls')),  # drf 认证url
+    #path('api-auth/', include('rest_framework.urls')),  # drf 认证url
 
     # DRF文档
-    path('docs/', include_docs_urls(title='DRF文档')),
+    #path('docs/', include_docs_urls(title='DRF文档')),
 
     # 二级联动页面请求
     path('select/mypage_myalbum/', SelectView.as_view(), name='mypage_myalbum'),
@@ -60,7 +58,10 @@ urlpatterns = [
     path('demo/', demo),
     path('data/', response_data),
 
-    path('customer/', CustomerViewSet.as_view(), name='customer_list'),
+    #path('customer/', CustomerViewSet.as_view(), name='customer_list'),
+
+
+
 
 
     #path('ueditor/', include('DjangoUeditor.urls')),
