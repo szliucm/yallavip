@@ -21,6 +21,8 @@ import  xadmin
 from prs.views import  SelectView
 from funmart.views import  *
 from . import view
+from rest_framework.documentation import include_docs_urls
+
 
 
 
@@ -28,6 +30,11 @@ from . import view
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('xadmin/', xadmin.site.urls),
+    path('api-auth/', include('rest_framework.urls')),  # drf 认证url
+
+    # DRF文档
+    path('docs/', include_docs_urls(title='DRF文档')),
+
     # 二级联动页面请求
     path('select/mypage_myalbum/', SelectView.as_view(), name='mypage_myalbum'),
     path('hello/', view.Hello.as_view()),
@@ -50,6 +57,8 @@ urlpatterns = [
 
     path('demo/', demo),
     path('data/', response_data),
+
+    path('customer/', CustomerViewSet.as_view(), name='customer_list'),
 
 
 
