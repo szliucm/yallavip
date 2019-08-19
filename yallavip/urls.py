@@ -33,7 +33,7 @@ urlpatterns = [
     #path('api-auth/', include('rest_framework.urls')),  # drf 认证url
 
     # DRF文档
-    path('docs/', include_docs_urls(title='DRF文档')),
+    #path('docs/', include_docs_urls(title='DRF文档')),
 
     # 二级联动页面请求
     path('select/mypage_myalbum/', SelectView.as_view(), name='mypage_myalbum'),
