@@ -58,7 +58,7 @@ urlpatterns = [
     path('demo/', demo),
     path('data/', response_data),
 
-    path('customer/', CustomerViewSet.as_view(), name='customer_list'),
+    #path('customer/', CustomerViewSet.as_view(), name='customer_list'),
 
 
 
