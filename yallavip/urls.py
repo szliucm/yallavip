@@ -30,7 +30,7 @@ from rest_framework.documentation import include_docs_urls
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('xadmin/', xadmin.site.urls),
-    path('api-auth/', include('rest_framework.urls')),  # drf 认证url
+    #path('api-auth/', include('rest_framework.urls')),  # drf 认证url
 
     # DRF文档
     path('docs/', include_docs_urls(title='DRF文档')),
