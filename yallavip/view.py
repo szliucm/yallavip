@@ -1,5 +1,11 @@
 
 from django.shortcuts import render
+from rest_framework import mixins, viewsets, status
+from rest_framework.permissions import IsAuthenticated
+from utils.permissions import IsOwnerOrReadOnly
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.authentication import SessionAuthentication
+
 from django.contrib import messages
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -9,6 +15,7 @@ from django.utils import timezone as dt
 import requests,json
 
 from prs.models import  Token
+
 
 def get_token(short_lived_token):
     app_id = "1976935359278305"
@@ -62,10 +69,6 @@ class Hello(View):
         response_data['message'] = "登录成功啦！"
         return JsonResponse(response_data)
 
-
-
-
-
 '''
 from django.shortcuts import render
 
@@ -81,3 +84,5 @@ def p2(request):
         print(city)
         return render(request,"popup_response.html",{"city":city})
 '''
+
+

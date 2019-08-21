@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
 
+
     #'rules',
     'users',      #注册app
     #'goods',
@@ -66,6 +67,16 @@ INSTALLED_APPS = [
     'funmart',
 
 
+    # 添加drf应用
+    'rest_framework',
+    'rest_framework.authtoken',
+    'django_filters',
+    # Django跨域解决
+    'corsheaders',
+
+    'coreschema',
+
+
     'import_export',
     #'DjangoUeditor',
     'crispy_forms',
@@ -82,6 +93,8 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',  # corsheaders跨域
+    'django.middleware.common.CommonMiddleware',  # corsheaders跨域
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -127,7 +140,12 @@ DATABASES = {
         'HOST': 'localhost',
         'OPTIONS': {'charset': 'utf8mb4'},
     },
-    'primary': {
+
+
+
+}
+'''
+'primary': {
         # 'ENGINE': 'django.db.backends.sqlite3',
         # 'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
         'ENGINE': 'django.db.backends.mysql',
@@ -146,9 +164,6 @@ DATABASES = {
         'OPTIONS': {'charset': 'utf8mb4'},
     },
 
-
-}
-'''
 'auth_db': {
         # 'ENGINE': 'django.db.backends.sqlite3',
         # 'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
@@ -160,7 +175,7 @@ DATABASES = {
         'OPTIONS': {'charset': 'utf8mb4'},
     },
 'yallavip.AuthRouter.AuthRouter',
-'''
+
 DATABASE_ROUTERS = [ 'yallavip.PrimaryReplicaRouter.PrimaryReplicaRouter']
 DATABASE_APPS_MAPPING = {
     # example:
@@ -168,7 +183,7 @@ DATABASE_APPS_MAPPING = {
 
 
 }
-
+'''
 
 AUTH_USER_MODEL = 'users.UserProfile'    #由于我们在users/models.py继承了django的AbstractUser，所以需要在settings.py中指定我们自定义的user模型,否则创建模型会报E304错误
 
@@ -241,7 +256,20 @@ DATE_FORMAT = 'Y-m-d'
 CELERY_RESULT_BACKEND = 'django-db'
 CELERY_RESULT_BACKEND = 'django-cache'
 
+# 跨域CORS设置
+# CORS_ORIGIN_ALLOW_ALL = False  # 默认为False，如果为True则允许所有连接
+CORS_ORIGIN_WHITELIST = (  # 配置允许访问的白名单
+    'http://localhost:8080',
+    'http://127.0.0.1:8080',
+)
 
+# JWT自定义配置
+from datetime import timedelta
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=7),  # 配置过期时间
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=15),
+}
 
 '''
 my_app_id = "562741177444068"

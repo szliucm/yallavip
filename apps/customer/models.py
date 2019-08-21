@@ -1,6 +1,12 @@
 from django.db import models
 
-from prs.models import Lightin_SKU
+
+from prs.models import Lightin_SPU, Lightin_SKU
+from conversations.models import FbConversation
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
 
 # Create your models here.
 
@@ -133,6 +139,48 @@ class Customer(models.Model):
     def __str__(self):
         return self.name
 
+class CustomerFav(models.Model):
+    """
+    用户收藏操作
+    """
+    conversation = models.ForeignKey(FbConversation, on_delete=models.CASCADE, verbose_name="客户会话")
+
+    spu = models.ForeignKey(Lightin_SPU,related_name='fav_spu', on_delete=models.CASCADE, verbose_name="商品", help_text="商品id")
+
+    #sales = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="销售客服")
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="用户")
+    add_time = models.DateTimeField("添加时间",auto_now=True)
+
+    class Meta:
+        verbose_name = '客户收藏'
+        verbose_name_plural = verbose_name
+        unique_together = ("conversation", "spu")
+
+    def __str__(self):
+        return self.conversation.customer
+
+class CustomerCart(models.Model):
+
+    conversation = models.ForeignKey(FbConversation, on_delete=models.CASCADE, verbose_name="客户会话")
+    sku = models.ForeignKey(Lightin_SKU, related_name='cart_sku', null=False, on_delete=models.CASCADE,
+                                    verbose_name="sku")
+
+    price = models.CharField(u'单价', default='', max_length=50, blank=False, null=False)
+    quantity = models.IntegerField(u'数量', default=0, blank=False, null=False)
+
+    # sales = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="销售客服")
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="用户")
+    add_time = models.DateTimeField("添加时间", auto_now=True)
+
+    class Meta:
+        verbose_name = "客户购物车"
+        verbose_name_plural = verbose_name
+        unique_together = ("conversation", "sku")
+
+    def __str__(self):
+        return self.conversation.customer
 
 class Receiver(models.Model):
     customer = models.ForeignKey(Customer, related_name='customer_receiver', null=False, on_delete=models.CASCADE,

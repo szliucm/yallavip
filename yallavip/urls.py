@@ -1,3 +1,4 @@
+
 """yallavip URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
@@ -14,23 +15,41 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path,include, re_path
 from django.conf.urls.static import static
 from django.conf import settings
 import  xadmin
 from prs.views import  SelectView
 from funmart.views import  *
+from customer.views import  *
+from conversations.views import  *
+from prs.views import SpusListViewSet
+
 from . import view
 from rest_framework.documentation import include_docs_urls
+from rest_framework.routers import DefaultRouter
+from rest_framework.authtoken import views
+from rest_framework_simplejwt import views as simplejwt_views  # 引入simplejwt
 
 
+router = DefaultRouter()
 
-
+#配置customer的url
+router.register(r'customers', CustomerViewSet)
+#FbConversation
+router.register(r'fbconversation', FbConversationViewSet)
+#CustomerFavViewSet
+router.register(r'customerfav', CustomerFavViewSet)
+#CustomerCartViewSet
+router.register(r'customercart', CustomerCartViewSet)
+#配置spus的url
+router.register(r'spus', SpusListViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('xadmin/', xadmin.site.urls),
-    #path('api-auth/', include('rest_framework.urls')),  # drf 认证url
+    path('api-auth/', include('rest_framework.urls')),  # drf 认证url
+    path('login/', simplejwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),  # simplejwt认证接口
 
     # DRF文档
     #path('docs/', include_docs_urls(title='DRF文档')),
@@ -58,7 +77,9 @@ urlpatterns = [
     path('demo/', demo),
     path('data/', response_data),
 
-    #path('customer/', CustomerViewSet.as_view(), name='customer_list'),
+    path('', include(router.urls)),  # API url现在由路由器自动确定。
+
+
 
 
 

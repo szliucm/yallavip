@@ -1,3 +1,4 @@
+# -*- coding:utf-8 -*-
 from commodity.models import SelectionRule
 from datetime import datetime
 from django.db import models
@@ -154,7 +155,7 @@ class Lightin_SPU(models.Model):
 
 class Lightin_SKU(models.Model):
     lightin_spu = models.ForeignKey(Lightin_SPU, null=True, blank=True, verbose_name="SPU外键",
-                                    related_name="spu_sku", on_delete=models.CASCADE)
+                                    related_name="spu_skus", on_delete=models.CASCADE)
 
     SPU = models.CharField(default='', max_length=50, null=True, blank=True, verbose_name="SPU")
     SKU = models.CharField(unique=True,default='', max_length=50, null=True, blank=True, verbose_name="SKU")
@@ -175,9 +176,10 @@ class Lightin_SKU(models.Model):
     height = models.FloatField(verbose_name="height", default=0, blank=True, null=True)
 
     skuattr = models.TextField(default='', null=True, blank=True, verbose_name="skuattr")
-    size = models.CharField(default='', max_length=20, null=True, blank=True, verbose_name="standard_size")
-    standard_size = models.CharField(default='', max_length=20, null=True, blank=True, verbose_name="size")
-    #color = models.CharField(default='', max_length=200, null=True, blank=True, verbose_name="color")
+    size = models.CharField(default='', max_length=20, null=True, blank=True, verbose_name="size")
+    color = models.CharField(default='', max_length=200, null=True, blank=True, verbose_name="color")
+    standard_size = models.CharField(default='', max_length=20, null=True, blank=True, verbose_name="standard_size")
+
 
     # image = models.ImageField(u'组合图', upload_to='combo/', default="", null=True, blank=True)
     image = models.TextField(default='', null=True, blank=True, verbose_name="sku图")
