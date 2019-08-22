@@ -144,36 +144,35 @@ DATABASES = {
 
 
 
-'
-'primary': {
-        # 'ENGINE': 'django.db.backends.sqlite3',
-        # 'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'yallavip',
-        'USER': 'niger',
-        'PASSWORD': 'Niger@2018',
-        'HOST': 'localhost',
-        'OPTIONS': {'charset': 'utf8mb4'},
-    },
-    'replica1': {
-        'NAME': 'yallavip',
-        'ENGINE': 'django.db.backends.mysql',
-        'USER': 'niger',
-        'PASSWORD': 'Niger@2018',
-        'HOST': '140.82.27.238',
-        'OPTIONS': {'charset': 'utf8mb4'},
-    },
+    'primary': {
+            # 'ENGINE': 'django.db.backends.sqlite3',
+            # 'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'yallavip',
+            'USER': 'niger',
+            'PASSWORD': 'Niger@2018',
+            'HOST': 'localhost',
+            'OPTIONS': {'charset': 'utf8mb4'},
+        },
+        'replica1': {
+            'NAME': 'yallavip',
+            'ENGINE': 'django.db.backends.mysql',
+            'USER': 'niger',
+            'PASSWORD': 'Niger@2018',
+            'HOST': '140.82.27.238',
+            'OPTIONS': {'charset': 'utf8mb4'},
+        },
 
-'auth_db': {
-        # 'ENGINE': 'django.db.backends.sqlite3',
-        # 'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'yallavip',
-        'USER': 'niger',
-        'PASSWORD': 'Niger@2018',
-        'HOST': 'localhost',
-        'OPTIONS': {'charset': 'utf8mb4'},
-    },
+    'auth_db': {
+            # 'ENGINE': 'django.db.backends.sqlite3',
+            # 'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'yallavip',
+            'USER': 'niger',
+            'PASSWORD': 'Niger@2018',
+            'HOST': 'localhost',
+            'OPTIONS': {'charset': 'utf8mb4'},
+        },
 }
 
 
