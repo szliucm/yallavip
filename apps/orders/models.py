@@ -307,8 +307,8 @@ class Order(models.Model):
     resell_status = models.CharField(choices=RESELL_STTUS, max_length=50, default='UNLISTING', verbose_name="二次销售状态",
                                    blank=True)
 
-    conversation = models.ForeignKey(FbConversation, on_delete=models.CASCADE, verbose_name="客户会话")
-    user = models.ForeignKey(User, verbose_name='用户', help_text='用户', on_delete=models.CASCADE, related_name='user_order')
+    conversation = models.ForeignKey(FbConversation,  blank=True, null=True,on_delete=models.CASCADE, verbose_name="客户会话")
+    user = models.ForeignKey(User, blank=True, null=True, verbose_name='用户', help_text='用户', on_delete=models.CASCADE, related_name='user_order')
     add_time = models.DateTimeField(auto_now_add=True, verbose_name='添加时间', null=True, blank=True)
 
 
