@@ -40,4 +40,4 @@ class ReceiverFilter(filters.FilterSet):
 
     class Meta:
         model = Receiver
-        fields = ['id', 'conversation']
+        fields = ['id']
