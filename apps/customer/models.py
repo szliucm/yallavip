@@ -204,8 +204,8 @@ class Receiver(models.Model):
     phone_2 = models.CharField(u'phone_1', default='', max_length=100, blank=True)
 
     comments = models.TextField(u'备注', blank=True, null=True)
-    default = models.BooleanField("缺省收件人", default=False)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="用户")
+    default = models.BooleanField("缺省收件人", default=False, blank=True, null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE,, blank=True, null=True verbose_name="用户")
     add_time = models.DateTimeField("添加时间",auto_now=True, blank=True, null=True )
 
     class Meta:
