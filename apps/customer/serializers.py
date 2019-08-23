@@ -3,7 +3,7 @@ from django.utils.timezone import now
 from datetime import timedelta
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
-from .models import Customer,CustomerFav, CustomerCart
+from .models import Customer,CustomerFav, CustomerCart, Receiver
 from conversations.models import FbConversation
 from prs.serializers import SpusSerializer, SkusSerializer
 
@@ -58,7 +58,7 @@ class CustomerCartListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomerCart
-        fields = ('id', 'conversation','user','sku', 'add_time')
+        fields = ('id', 'conversation','user','sku',  'price','quantity', 'add_time')
         #fields = "__all__"
 
 
@@ -70,6 +70,15 @@ class CustomerCartSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomerCart
-        fields = ('id', 'conversation','user','sku', 'add_time')
+        fields = ('id', 'conversation','user','sku', 'price','quantity', 'add_time')
         #fields = "__all__"
         read_only_fields = ()
+
+class ReceiverSerializer(serializers.ModelSerializer):
+    user = serializers.HiddenField(
+        default=serializers.CurrentUserDefault()  # 表示user为隐藏字段，默认为获取当前登录用户
+    )
+    country_code = serializers.HiddenField(default="SA")
+    class Meta:
+        model = Receiver
+        fields = "__all__"

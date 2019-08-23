@@ -3,7 +3,11 @@ from django.utils.html import format_html
 #from conversations.models import Conversation
 from prs.models import  Lightin_SPU, Lightin_SKU,Lightin_barcode
 from customer.models import  Customer,  CITY
+from conversations.models import FbConversation
 
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 # Create your models here.
 class Order(models.Model):
@@ -72,8 +76,8 @@ class Order(models.Model):
         ("COD", "COD"),
         ("FEE", "运费"),
     )
-    order_id = models.CharField(u'订单id', default='', max_length=100, blank=True)
-    order_no = models.CharField(u'订单号', default='', max_length=50, blank=True)
+    order_id = models.CharField(u'订单id', default='', max_length=100, blank=True, null=True)
+    order_no = models.CharField(u'订单号', default='', max_length=50, unique=True, blank=True, null=True)
     updated = models.BooleanField(u'更新状态', default=False)
     #inventory_status  = models.CharField(u'库存状态', default='', max_length=50, blank=True)
 
@@ -164,7 +168,7 @@ class Order(models.Model):
 
     #shopify 订单状态
 
-    status = models.CharField(u'shopify订单状态', max_length=30, default='', blank=True)
+    status = models.CharField(u'shopify订单状态', max_length=30, default='paid', blank=True)
     financial_status = models.CharField(u'shopify订单支付状态', max_length=30, default='',null=True, blank=True)
     fulfillment_status = models.CharField(u'shopify订单仓配状态', max_length=100, default='',null=True, blank=True)
 
@@ -303,8 +307,9 @@ class Order(models.Model):
     resell_status = models.CharField(choices=RESELL_STTUS, max_length=50, default='UNLISTING', verbose_name="二次销售状态",
                                    blank=True)
 
-
-
+    conversation = models.ForeignKey(FbConversation, on_delete=models.CASCADE, verbose_name="客户会话")
+    user = models.ForeignKey(User, verbose_name='用户', help_text='用户', on_delete=models.CASCADE, related_name='user_order')
+    add_time = models.DateTimeField(auto_now_add=True, verbose_name='添加时间', null=True, blank=True)
 
     class Meta:
         verbose_name = "订单"
@@ -317,7 +322,8 @@ class Order(models.Model):
 class OrderDetail(models.Model):
     order = models.ForeignKey(Order, related_name='order_orderdetail', null=False, on_delete=models.CASCADE,
                               verbose_name="Order")
-
+    F_SKU = models.ForeignKey(Lightin_SKU, related_name='sku_orderdetail', null=False, on_delete=models.CASCADE,
+                              verbose_name="SKU")
     sku = models.CharField(u'SKU', default='', max_length=100, null=True, blank=True)
     # product = models.CharField(u'产品名称',default='',  max_length=500,  blank=True)
     product_quantity = models.CharField(u'Quantity', default='', max_length=50, blank=True)

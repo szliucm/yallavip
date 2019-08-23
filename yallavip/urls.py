@@ -24,6 +24,7 @@ from funmart.views import  *
 from customer.views import  *
 from conversations.views import  *
 from prs.views import SpusListViewSet
+from orders.views import OrderViewSet
 
 from . import view
 from rest_framework.documentation import include_docs_urls
@@ -44,6 +45,11 @@ router.register(r'customerfav', CustomerFavViewSet)
 router.register(r'customercart', CustomerCartViewSet)
 #配置spus的url
 router.register(r'spus', SpusListViewSet)
+# 订单管理
+router.register(r'order', OrderViewSet, base_name='order')
+# 收件人管理
+router.register(r'receiver', ReceiverViewSet, base_name='receiver')
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),

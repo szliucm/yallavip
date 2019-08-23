@@ -167,7 +167,7 @@ class CustomerCart(models.Model):
                                     verbose_name="sku")
 
     price = models.CharField(u'单价', default='', max_length=50, blank=False, null=False)
-    quantity = models.IntegerField(u'数量', default=0, blank=False, null=False)
+    quantity = models.IntegerField(u'数量', default=1, blank=False, null=False)
 
     # sales = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="销售客服")
 
@@ -183,8 +183,9 @@ class CustomerCart(models.Model):
         return self.conversation.customer
 
 class Receiver(models.Model):
-    customer = models.ForeignKey(Customer, related_name='customer_receiver', null=False, on_delete=models.CASCADE,
+    customer = models.ForeignKey(Customer, related_name='customer_receiver', null=True, blank=True, on_delete=models.CASCADE,
                                  verbose_name="Customer")
+    conversation = models.ForeignKey(FbConversation, on_delete=models.CASCADE, verbose_name="客户会话")
 
     name = models.CharField(u'收件人姓名', default='', max_length=100, blank=False, null=False)
     COUNTRIES = (
@@ -203,6 +204,9 @@ class Receiver(models.Model):
     phone_2 = models.CharField(u'phone_1', default='', max_length=100, blank=True)
 
     comments = models.TextField(u'备注', blank=True, null=True)
+    default = models.BooleanField("缺省收件人", default=False)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="用户")
+    add_time = models.DateTimeField("添加时间",auto_now=True)
 
     class Meta:
         verbose_name = "收件人"

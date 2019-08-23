@@ -2421,6 +2421,31 @@ def sync_Shipped_order_lightin(days=1):
 
 
                     # 更新本地的订单状态
+                    try:
+                        order = Order.objects.get(order_no=order_no)
+                        order.ms_status= data.get("order_status")
+                        order.ogistic_type= data.get("shipping_method")
+
+                        if not order.ogistic_no:
+                            order.ogistic_no= data.get("tracking_no")
+
+                        order.send_time= send_time
+                        order.eight= data.get("order_weight")
+                        order.save()
+                    except Oder.DoesNotExist:
+                        print("订单不存在")
+                        '''
+                        Order.objects.create(
+                            order_no=order_no,
+                            wms_status= data.get("order_status"),
+                            logistic_type= data.get("shipping_method"),
+                            logistic_no= data.get("tracking_no"),
+                            send_time= send_time,
+                            weight= data.get("order_weight"),
+                            )
+                        '''
+
+                    '''
                     Order.objects.update_or_create(
                         order_no=order_no,
                         defaults={
@@ -2431,6 +2456,7 @@ def sync_Shipped_order_lightin(days=1):
                             "weight": data.get("order_weight"),
                         },
                     )
+                    '''
                     print ("更新本地的订单状态")
 
         if result.get("nextPage") == "false":
