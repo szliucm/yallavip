@@ -185,7 +185,7 @@ class CustomerCart(models.Model):
 class Receiver(models.Model):
     customer = models.ForeignKey(Customer, related_name='customer_receiver', null=True, blank=True, on_delete=models.CASCADE,
                                  verbose_name="Customer")
-    conversation = models.ForeignKey(FbConversation, on_delete=models.CASCADE, verbose_name="客户会话")
+    conversation = models.ForeignKey(FbConversation, on_delete=models.CASCADE, verbose_name="客户会话",null=True, blank=True,)
 
     name = models.CharField(u'收件人姓名', default='', max_length=100, blank=False, null=False)
     COUNTRIES = (
