@@ -63,7 +63,7 @@ class OrderViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, mixins.Retrie
         for customer_cart in customer_carts:
             OrderDetail.objects.create(
                 order=order,
-                F_SKU=customer_cart.sku,
+                #F_SKU=customer_cart.sku,
                 product_quantity=customer_cart.quantity,
                 price=customer_cart.price,
 
