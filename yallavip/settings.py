@@ -154,7 +154,10 @@ DATABASES = {
             'USER': 'niger',
             'PASSWORD': 'Niger@2018',
             'HOST': 'localhost',
-            'OPTIONS': {'charset': 'utf8mb4'},
+            'OPTIONS': {
+                'charset': 'utf8mb4',
+                "init_command": "SET foreign_key_checks = 0;",
+            },
         },
         'replica1': {
             'NAME': 'yallavip',
@@ -162,7 +165,10 @@ DATABASES = {
             'USER': 'niger',
             'PASSWORD': 'Niger@2018',
             'HOST': '140.82.27.238',
-            'OPTIONS': {'charset': 'utf8mb4'},
+            'OPTIONS':{
+                'charset': 'utf8mb4',
+                "init_command": "SET foreign_key_checks = 0;",
+            },
         },
 
     'auth_db': {
