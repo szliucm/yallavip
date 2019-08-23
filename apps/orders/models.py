@@ -324,7 +324,7 @@ class OrderDetail(models.Model):
     order = models.ForeignKey(Order, related_name='order_orderdetail', null=False, on_delete=models.CASCADE,
                               verbose_name="Order")
 
-    F_SKU = models.ForeignKey(Lightin_SKU, related_name='sku_orderdetail', null=False, on_delete=models.CASCADE,
+    F_SKU = models.ForeignKey(Lightin_SKU, related_name='sku_orderdetail', null=True, blank=True, on_delete=models.CASCADE,
                               verbose_name="SKU")
 
     sku = models.CharField(u'SKU', default='', max_length=100, null=True, blank=True)
