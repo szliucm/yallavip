@@ -143,7 +143,7 @@ class CustomerFav(models.Model):
     """
     用户收藏操作
     """
-    conversation = models.ForeignKey(FbConversation, on_delete=models.CASCADE, verbose_name="客户会话")
+    conversation = models.ForeignKey(FbConversation, on_delete=models.CASCADE, verbose_name="客户会话", blank=True, null=True)
 
     spu = models.ForeignKey(Lightin_SPU,related_name='fav_spu', on_delete=models.CASCADE, verbose_name="商品", help_text="商品id")
 
@@ -162,7 +162,7 @@ class CustomerFav(models.Model):
 
 class CustomerCart(models.Model):
 
-    conversation = models.ForeignKey(FbConversation, on_delete=models.CASCADE, verbose_name="客户会话")
+    conversation = models.ForeignKey(FbConversation, on_delete=models.CASCADE, verbose_name="客户会话",null=True, blank=True)
     sku = models.ForeignKey(Lightin_SKU, related_name='cart_sku', null=False, on_delete=models.CASCADE,
                                     verbose_name="sku")
 
@@ -185,7 +185,7 @@ class CustomerCart(models.Model):
 class Receiver(models.Model):
     customer = models.ForeignKey(Customer, related_name='customer_receiver', null=True, blank=True, on_delete=models.CASCADE,
                                  verbose_name="Customer")
-    conversation = models.ForeignKey(FbConversation, on_delete=models.CASCADE, verbose_name="客户会话",null=True, blank=True,)
+    conversation = models.ForeignKey(FbConversation, on_delete=models.CASCADE, verbose_name="客户会话",null=True, blank=True)
 
     name = models.CharField(u'收件人姓名', default='', max_length=100, blank=False, null=False)
     COUNTRIES = (
@@ -222,7 +222,7 @@ class Conversation(models.Model):
 
     name = models.CharField(u'Facebook名字', default='', max_length=100, blank=False, null=False)
 
-    conversation = models.CharField(u'聊天链接', default='', max_length=500, blank=False, null=False)
+    conversation = models.CharField(u'聊天链接', default='', max_length=500, blank=True, null=True)
     comments = models.TextField(u'备注', blank=True, null=True)
 
     class Meta:
