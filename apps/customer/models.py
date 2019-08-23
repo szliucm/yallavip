@@ -206,7 +206,7 @@ class Receiver(models.Model):
     comments = models.TextField(u'备注', blank=True, null=True)
     default = models.BooleanField("缺省收件人", default=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="用户")
-    add_time = models.DateTimeField("添加时间",auto_now=True)
+    add_time = models.DateTimeField("添加时间",auto_now=True, blank=True, null=True )
 
     class Meta:
         verbose_name = "收件人"
