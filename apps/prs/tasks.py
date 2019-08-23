@@ -2432,8 +2432,8 @@ def sync_Shipped_order_lightin(days=1):
                         order.send_time= send_time
                         order.eight= data.get("order_weight")
                         order.save()
-                    except Oder.DoesNotExist:
-                        print("订单不存在")
+                    except Order.DoesNotExist:
+                        print("订单不存在",order_no )
                         '''
                         Order.objects.create(
                             order_no=order_no,
