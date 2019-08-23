@@ -138,7 +138,11 @@ DATABASES = {
         'USER': 'niger',
         'PASSWORD': 'Niger@2018',
         'HOST': 'localhost',
-        'OPTIONS': {'charset': 'utf8mb4'},
+
+        'OPTIONS':{
+            'charset': 'utf8mb4',
+            "init_command": "SET foreign_key_checks = 0;",
+        },
     },
 
 
