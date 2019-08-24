@@ -8,11 +8,12 @@ from rest_framework.authentication import SessionAuthentication
 from xadmin.views import BaseAdminView
 from django.http import JsonResponse
 from fb.models import  MyAlbum
-from .serializers import SpusSerializer
-from .models import Lightin_SPU
+from .serializers import SpusSerializer, CategorySerializer
+from .models import Lightin_SPU, MyCategory
+from .filters import SpusFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
-
+from rest_framework.pagination import PageNumberPagination
 # Create your views here.
 
 
@@ -31,9 +32,22 @@ class SelectView(BaseAdminView):
 
             return JsonResponse({'album': albums})
 
+class SpusPagination(PageNumberPagination):
+    '''
+    商品列表自定义分页
+    '''
+    #默认每页显示的个数
+    page_size = 12
+    #可以动态改变每页显示的个数
+    page_size_query_param = 'page_size'
+    #页码参数
+    page_query_param = 'page'
+    #最多能显示多少页
+    max_page_size = 100
+
 class SpusListViewSet(mixins.ListModelMixin,mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     '商品列表页'
-
+    pagination_class = SpusPagination  # 分页
     permission_classes = (IsAuthenticated, IsOwnerOrReadOnly)
     authentication_classes = (JWTAuthentication, SessionAuthentication)  # 配置登录认证：支持JWT认证和DRF基本认证
 
@@ -46,10 +60,32 @@ class SpusListViewSet(mixins.ListModelMixin,mixins.RetrieveModelMixin, viewsets.
     filter_backends = (DjangoFilterBackend,filters.SearchFilter,filters.OrderingFilter)
     filterset_fields = ('handle',)
     # 设置filter的类为我们自定义的类
-    #filter_class = SpusFilter
+    filter_class = SpusFilter
     # 搜索,=name表示精确搜索，也可以使用各种正则表达式
 
     search_fields = ('handle')
     # 排序
     ordering_fields = ('handle')
+
+class CategoryViewSet(mixins.ListModelMixin,mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+    '商品列表页'
+
+    permission_classes = (IsAuthenticated, IsOwnerOrReadOnly)
+    authentication_classes = (JWTAuthentication, SessionAuthentication)  # 配置登录认证：支持JWT认证和DRF基本认证
+
+    # 这里必须要定义一个默认的排序,否则会报错
+    queryset = MyCategory.objects.filter(level=1).order_by('name')
+    # 分页
+    #pagination_class = GoodsPagination
+
+    serializer_class = CategorySerializer
+    #filter_backends = (DjangoFilterBackend,filters.SearchFilter,filters.OrderingFilter)
+    filterset_fields = ()
+    # 设置filter的类为我们自定义的类
+    #filter_class = SpusFilter
+    # 搜索,=name表示精确搜索，也可以使用各种正则表达式
+
+    #search_fields = ('handle')
+    # 排序
+    #ordering_fields = ('handle')
 

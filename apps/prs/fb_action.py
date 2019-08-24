@@ -39,7 +39,9 @@ APP_SCOPED_SYSTEM_USER_ID=100029952330435
 
 #another user
 #my_access_token = "EAAcGAyHVbOEBAKgfka7uxoKnH3DnKcfuWZCnczE0bXCLaeiN2kY19woN24svib5TIlp3whXoV9ZCJF27UvZCmyoUZBwkVP6HlpWnfKX1eGyOd8FEzmJVjVZBhYRbgpEv1kNVbCRMJllYzVhOKs60N0yZBX9NXsEtpBvZCdXwTfObCzZAZAkCbqi6e8S0OvZASqrjhAlG627U2EggZDZD"
-ad_tokens = "EAAHZCz2P7ZAuQBAE3WHcLQ2rNBtIHerCiFZAkBxOamM0904QLQQXNsizkBKjuxSM9tt342ZB4POrCGxZBMVgsz8jZA0xaksycAeHQl5cOVQJJT9bjMShZAWi6xkHnFKgd4EoZALBxSVNjxrlvua6jW1A9QntWAJZB0f4O1o439wRs2WjaF8XaW13V"
+#ad_tokens = "EAAHZCz2P7ZAuQBAE3WHcLQ2rNBtIHerCiFZAkBxOamM0904QLQQXNsizkBKjuxSM9tt342ZB4POrCGxZBMVgsz8jZA0xaksycAeHQl5cOVQJJT9bjMShZAWi6xkHnFKgd4EoZALBxSVNjxrlvua6jW1A9QntWAJZB0f4O1o439wRs2WjaF8XaW13V"
+from prs.tasks import ad_tokens
+
 def get_token(target_page,token=None):
     systemuser_token = "EAAcGAyHVbOEBAP8G7Q3YZBfY5N0PHGzVlmSqgQgMm7jU3h95r5JnJlqSwCi9bqAORlcdHW3qwd16xE3YtTuPZAs1eitjs5G8ss8sQTFlYlRT98vpYY51HWXA3nK2ZCkDqXPuF9yTHaTZA17fFZAOLZAtX9J2fZCq9AL5V245MMWBZBwNy8eW4ZBlU39m9RpbggmZA2b07i1tUOzQZDZD"
     '''
@@ -1823,7 +1825,7 @@ def combo_ad_image_v4(spu_ims, spus_name,spus, page_no):
 
     return  destination_url
 
-def get_ad_sets(adaccount_no):
+def get_ad_sets(adaccount_no="act_1903121643086425"):
     adobjects = FacebookAdsApi.init(access_token=ad_tokens, debug=True)
 
     fields =[ "attribution_spec","bid_amount","bid_info","billing_event","budget_remaining",

@@ -23,7 +23,7 @@ from prs.views import  SelectView
 from funmart.views import  *
 from customer.views import  *
 from conversations.views import  *
-from prs.views import SpusListViewSet
+from prs.views import SpusListViewSet, CategoryViewSet
 from orders.views import OrderViewSet
 
 from . import view
@@ -49,7 +49,8 @@ router.register(r'spus', SpusListViewSet)
 router.register(r'order', OrderViewSet, base_name='order')
 # 收件人管理
 router.register(r'receiver', ReceiverViewSet, base_name='receiver')
-
+# 类目管理
+router.register(r'category', CategoryViewSet, base_name='category')
 
 urlpatterns = [
     path('admin/', admin.site.urls),

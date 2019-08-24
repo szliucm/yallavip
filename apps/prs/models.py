@@ -16,7 +16,7 @@ class MyCategory(models.Model):
     商品类别
     """
     super_cate = models.ForeignKey('self', blank=True, null=True, on_delete=models.CASCADE,
-                                   verbose_name="父品类")
+                                   related_name="sub_cat", verbose_name="父品类")
     super_name = models.CharField(u'父品类名', default='', max_length=20, null=True, blank=True)
     super_fullname = models.CharField(u'父品类名', default='', max_length=100, null=True, blank=True)
     name = models.CharField(u'品类名', default='', max_length=20, null=True, blank=True)
