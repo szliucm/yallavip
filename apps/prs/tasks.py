@@ -62,7 +62,7 @@ else:
     tms_appKey = "883b3289a5e3b55ceaddb2093834c13a574fda321ae620e2aa43c2117abb7553"
 
 
-from prs.fb_action import  get_token
+from prs.fb_action import  get_token, ad_tokens
 
 
 
