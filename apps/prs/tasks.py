@@ -4052,7 +4052,7 @@ def auto_smscode():
             v.sales = row.customer.sales
             conversation = list(row.customer.customer_conversation.values_list("conversation",flat=True))
             if conversation:
-
+                print(row.customer, v.facebook_user_name, conversation)
                 v.conversation_link = ",".join(list(conversation))
 
 
