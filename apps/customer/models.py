@@ -143,7 +143,7 @@ class CustomerFav(models.Model):
     """
     用户收藏操作
     """
-    conversation = models.ForeignKey(FbConversation, on_delete=models.CASCADE, verbose_name="客户会话", blank=True, null=True)
+    conversation = models.ForeignKey(FbConversation, related_name='fav',on_delete=models.CASCADE, verbose_name="客户会话", blank=True, null=True)
 
     spu = models.ForeignKey(Lightin_SPU,related_name='fav_spu', on_delete=models.CASCADE, verbose_name="商品", help_text="商品id")
 
@@ -162,7 +162,7 @@ class CustomerFav(models.Model):
 
 class CustomerCart(models.Model):
 
-    conversation = models.ForeignKey(FbConversation, on_delete=models.CASCADE, verbose_name="客户会话",null=True, blank=True)
+    conversation = models.ForeignKey(FbConversation, related_name='cart',on_delete=models.CASCADE, verbose_name="客户会话",null=True, blank=True)
     sku = models.ForeignKey(Lightin_SKU, related_name='cart_sku', null=False, on_delete=models.CASCADE,
                                     verbose_name="sku")
 

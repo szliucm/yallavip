@@ -2424,7 +2424,7 @@ def sync_Shipped_order_lightin(days=1):
                         order.ogistic_type= data.get("shipping_method")
 
                         if not order.logistic_no:
-                            order.ogistic_no= data.get("tracking_no")
+                            order.logistic_no= data.get("tracking_no")
 
                         order.send_time= send_time
                         order.eight= data.get("order_weight")

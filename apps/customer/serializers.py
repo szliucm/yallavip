@@ -33,7 +33,7 @@ class CustomerFavListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomerFav
-        fields = ('conversation','user','spu', 'add_time')
+        fields = ('id','conversation','user','spu', 'add_time')
         #fields = "__all__"
 
 
@@ -45,7 +45,7 @@ class CustomerFavSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomerFav
-        fields = ('conversation','user','spu', 'add_time')
+        fields = ('id','conversation','user','spu','add_time')
         #fields = "__all__"
         read_only_fields = ()
 
