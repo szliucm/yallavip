@@ -13,7 +13,7 @@ class OrderDetailSerializer(serializers.ModelSerializer):
         model = OrderDetail
         fields = "__all__"
 
-class OrderSerializer(serializers.ModelSerializer):
+class OrderListSerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(
         default=serializers.CurrentUserDefault()  # 表示user为隐藏字段，默认为获取当前登录用户
     )
@@ -45,7 +45,7 @@ class OrderSerializer(serializers.ModelSerializer):
         model = Order
         fields = "__all__"
 
-class OrderListSerializer(serializers.ModelSerializer):
+class OrderSerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(
         default=serializers.CurrentUserDefault()  # 表示user为隐藏字段，默认为获取当前登录用户
     )

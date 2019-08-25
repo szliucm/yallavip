@@ -9,7 +9,7 @@ from .serializers import CustomerSerializer, CustomerDetailSerializer, \
                         CustomerFavSerializer, CustomerFavListSerializer,\
                         CustomerCartSerializer, CustomerCartListSerializer,\
                         ReceiverSerializer
-from .models import Customer, CustomerFav, CustomerCart, Receiver
+from .models import Customer, CustomerFav, CustomerCart, Receiver, CITY
 
 from rest_framework.response import Response
 from rest_framework import mixins, viewsets
@@ -358,3 +358,8 @@ class ReceiverViewSet(mixins.CreateModelMixin, mixins.DestroyModelMixin, mixins.
     def get_queryset(self):
         # 过滤当前用户的购物车记录
         return self.queryset.filter(user=self.request.user)
+
+
+def get_cities(request):
+    print(CITY)
+    return JsonResponse(CITY, safe=False)

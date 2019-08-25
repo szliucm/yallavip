@@ -12,8 +12,8 @@ User = get_user_model()
 
 
 CITY = (
-    ("None", "暂不支持"),
-    ("Other", "人工处理"),
+    ("None", "None"),
+    #("Other", "人工处理"),
     ("Abu Arish", "Abu Arish"),
     ("Abha", "Abha"),
     ("Abqaiq", "Abqaiq"),
@@ -34,8 +34,7 @@ CITY = (
     ("Dere'iyeh", "Dere'iyeh"),
     ("Dhahran", "Dhahran"),
     ("Dhurma", "Dhurma"),
-    ("Dhurma", "Dhurma"),
-    ("Dhurma", "Dhurma"),
+
     ("Gizan", "Gizan"),
     ("Hadeethah", "Hadeethah"),
     ("Hafer Al Batin", "Hafer Al Batin"),

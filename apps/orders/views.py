@@ -43,11 +43,11 @@ class OrderViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, mixins.Retrie
         不同的action使用不同的序列化
         :return:
         """
-
-        if self.action == 'list':
-            return OrderListSerializer
-        else:
+        print("########", self.action)
+        if self.action == 'retrieve':
             return OrderSerializer
+        else:
+            return OrderListSerializer
 
     def get_queryset(self):
         return self.queryset.filter(user=self.request.user)

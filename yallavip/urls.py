@@ -21,7 +21,7 @@ from django.conf import settings
 import  xadmin
 from prs.views import  SelectView
 from funmart.views import  *
-from customer.views import  *
+from customer.views import *
 from conversations.views import  *
 from prs.views import SpusListViewSet, CategoryViewSet
 from orders.views import OrderViewSet
@@ -83,6 +83,7 @@ urlpatterns = [
 
     path('demo/', demo),
     path('data/', response_data),
+    path('cities/', get_cities),
 
     path('', include(router.urls)),  # API url现在由路由器自动确定。
 
