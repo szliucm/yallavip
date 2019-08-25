@@ -4051,7 +4051,7 @@ def auto_smscode():
             v.facebook_user_name=",".join(list(row.customer.customer_conversation.values_list("name",flat=True)))
             v.sales = row.customer.sales
             conversation = list(row.customer.customer_conversation.values_list("conversation",flat=True))
-            if conversation:
+            if len(conversation):
                 print(row.customer, v.facebook_user_name, conversation)
                 v.conversation_link = ",".join(list(conversation))
 
