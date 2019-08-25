@@ -10,6 +10,7 @@ from customer.serializers import CustomerCartListSerializer,CustomerFavListSeria
 class FbConversationSerializer(serializers.ModelSerializer):
     cart = CustomerCartListSerializer(many=True)
     fav = CustomerFavListSerializer(many=True)
+    receiver = ReceiverSerializer(many=True)
 
 
     class Meta:
