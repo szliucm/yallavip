@@ -4052,6 +4052,7 @@ def auto_smscode():
             v.sales = row.customer.sales
             conversation = row.customer.customer_conversation.values_list("conversation",flat=True)
             if conversation:
+                print(conversation)
                 v.conversation_link = ",".join(list(conversation))
 
 
