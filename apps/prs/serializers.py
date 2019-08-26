@@ -33,6 +33,7 @@ class SpusSerializer(serializers.ModelSerializer):
     spuimage = serializers.SerializerMethodField()
     spu_skus = SkusSerializer(many=True)
 
+
     def get_spuimage(self, obj):
         if obj.images:
             images = json.loads(obj.images)

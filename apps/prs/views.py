@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from django.shortcuts import render
 from rest_framework import mixins, viewsets, status
 from rest_framework.permissions import IsAuthenticated
@@ -9,15 +10,18 @@ from xadmin.views import BaseAdminView
 from django.http import JsonResponse
 from fb.models import  MyAlbum
 from .serializers import SpusSerializer, CategorySerializer
-from .models import Lightin_SPU, MyCategory
+from .models import Lightin_SPU, Lightin_SKU, MyCategory
 from .filters import SpusFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.decorators import action
+from django.http import HttpResponse, JsonResponse
+from rest_framework.response import Response
 # Create your views here.
 
 
-#导入serializers
+# 导入serializers
 from django.core import serializers
 # 二级联动View函数
 class SelectView(BaseAdminView):
@@ -66,6 +70,22 @@ class SpusListViewSet(mixins.ListModelMixin,mixins.RetrieveModelMixin, viewsets.
     search_fields = ('handle')
     # 排序
     ordering_fields = ('handle')
+
+    #
+    # detail为False 表示不需要处理具体的对象
+    @action(methods=['get'], detail=False)
+    def attrs(self, request):
+        """
+        返回按sizes和colors,给选择用
+        """
+        queryset = self.filter_queryset(self.get_queryset())
+        print("当前数据集", queryset.count())
+        spus_list = list(queryset.values_list("id", flat=True).distinct())
+
+        sizes_list = Lightin_SKU.objects.filter(lightin_spu__id__in=spus_list).values_list("size", flat=True)
+        #sizes_list = self.queryset.values_list("size", flat=True).distinct()
+        return JsonResponse(list(sizes_list), safe=False)
+
 
 class CategoryViewSet(mixins.ListModelMixin,mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     '商品列表页'

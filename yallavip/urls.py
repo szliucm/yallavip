@@ -45,6 +45,7 @@ router.register(r'customerfav', CustomerFavViewSet)
 router.register(r'customercart', CustomerCartViewSet)
 #配置spus的url
 router.register(r'spus', SpusListViewSet)
+
 # 订单管理
 router.register(r'order', OrderViewSet, base_name='order')
 # 收件人管理
