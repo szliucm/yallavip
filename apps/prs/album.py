@@ -1090,7 +1090,8 @@ def prepare_promote_single_v2(page_no):
                                               images_count__gte=3, free_shipping_count__in=["1", "2", "3"],sellable__gt=3)
 
         cate_spus = spus_all.filter(con).distinct().order_by("?")
-
+        if cate_spus.count() == 0:
+            print("############没有可投放的广告了###########", cate, con)
         for spu in cate_spus:
             print("当前处理 ", page_no, cate.tags, spu.handle)
             if spu.one_size:
