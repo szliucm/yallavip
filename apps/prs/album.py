@@ -1091,6 +1091,8 @@ def prepare_promote_single_v2(page_no):
 
         cate_spus = spus_all.filter(con).distinct().order_by("?")
 
+
+
         for spu in cate_spus:
             print("当前处理 ", page_no, cate.tags, spu.handle)
             if spu.one_size:

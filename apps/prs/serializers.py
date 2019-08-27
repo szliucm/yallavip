@@ -31,7 +31,7 @@ class SkusSerializer(serializers.ModelSerializer):
 class SpusSerializer(serializers.ModelSerializer):
     '''SPU'''
     spuimage = serializers.SerializerMethodField()
-    spu_skus = SkusSerializer(many=True)
+    spu_sku = SkusSerializer(many=True)
 
 
     def get_spuimage(self, obj):

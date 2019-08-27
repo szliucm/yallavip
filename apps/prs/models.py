@@ -155,7 +155,7 @@ class Lightin_SPU(models.Model):
 
 class Lightin_SKU(models.Model):
     lightin_spu = models.ForeignKey(Lightin_SPU, null=True, blank=True, verbose_name="SPU外键",
-                                    related_name="spu_skus", on_delete=models.CASCADE)
+                                    related_name="spu_sku", on_delete=models.CASCADE)
 
     SPU = models.CharField(default='', max_length=50, null=True, blank=True, verbose_name="SPU")
     SKU = models.CharField(unique=True,default='', max_length=50, null=True, blank=True, verbose_name="SKU")
