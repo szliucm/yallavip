@@ -5981,12 +5981,12 @@ def post_ads(page_no, ad_type, to_create_count=1,keyword=None, long_ad=False):
 
     #每天的广告放进同一个组，保持广告的持续性，先设成三组，看看效果
     #库存深的单独放一个组
-    adset_no = choose_ad_set(page_no, ad_type,serial)
+    adaccount_no, adset_no = choose_ad_set(page_no, ad_type,serial)
     if not adset_no:
         print("没有adset")
         return False
 
-    adaccount_no = "act_1903121643086425"
+    #adaccount_no = "act_1903121643086425"
 
 
     if ad_type == "engagement":
@@ -6057,12 +6057,12 @@ def post_ads_v2(page_no, ad_type, to_create_count=1, keyword=None):
 
     # 每天的广告放进同一个组，保持广告的持续性，先设成三组，看看效果
     # 库存深的单独放一个组
-    adset_no = choose_ad_set(page_no, ad_type, serial)
+    adaccount_no, adset_no = choose_ad_set(page_no, ad_type, serial)
     if not adset_no:
         print("没有adset")
         return False
 
-    adaccount_no = "act_1903121643086425"
+    #adaccount_no = "act_1903121643086425"
 
     if keyword:
         ads_all = ads_all.filter(yallavip_album__rule__name__icontains=keyword)
@@ -6181,10 +6181,10 @@ def post_engagement_ads(page_no, to_create_count=1,keyword=None):
     from django.db.models import Q
 
     serial = get_serial()
-    adset_no = choose_ad_set(page_no, 'engagement')
+    adaccount_no, adset_no = choose_ad_set(page_no, 'engagement')
 
 
-    adaccount_no = "act_1903121643086425"
+    #adaccount_no = "act_1903121643086425"
 
 
     #adset_no = "23843303803340510"
@@ -6277,8 +6277,8 @@ def post_message_ads(page_no, to_create_count=1,keyword=None):
     serial = get_serial()
 
 
-    adaccount_no = "act_1903121643086425"
-    adset_no = choose_ad_set(page_no, 'message' )
+    #adaccount_no = "act_1903121643086425"
+    adaccount_no, adset_no = choose_ad_set(page_no, 'message' )
 
     ads = YallavipAd.objects.filter(active=True, engagement_aded= True, message_aded=False, yallavip_album__page__page_no=page_no,fb_feed__isnull=False).order_by("-fb_feed__like_count")
         #values("spus_name","fb_feed__like_count")

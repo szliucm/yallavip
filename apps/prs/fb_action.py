@@ -1902,7 +1902,7 @@ def choose_ad_set(page_no, ad_type, serial=None):
 
     print(tag,adset)
 
-    return adset
+    return adset.adaccount_no, adset.adset_no
 
 def all_ad_sets(page_no, ad_type):
     import random
@@ -1936,12 +1936,12 @@ def all_ad_sets(page_no, ad_type):
 def post_yallavip_ad(page_no= None):
 
     adobjects = FacebookAdsApi.init(access_token=ad_tokens, debug=True)
-    adaccount_no = "act_1903121643086425"
+    #adaccount_no = "act_1903121643086425"
     #yallavip 加速
     #adset_no = "23843303803340510"
     # yallavip mall  匀速
     #adset_no = "23843310378170510"
-    adset_no = choose_ad_set(page_no)
+    adaccount_no, adset_no = choose_ad_set(page_no)
     #adset_no = "23843265435590510"
 
     ads = YallavipAd.objects.filter(active=True, published=False )

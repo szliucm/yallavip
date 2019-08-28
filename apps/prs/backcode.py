@@ -10,8 +10,8 @@ def yallavip_post_and_ads(page_no, to_create_count):
     if not long_token:
         return
 
-    adaccount_no = "act_1903121643086425"
-    adset_no = choose_ad_set(page_no)
+    #adaccount_no = "act_1903121643086425"
+    adaccount_no, adset_no = choose_ad_set(page_no)
 
 
     ads = YallavipAd.objects.filter(active=True, published=False,yallavip_album__page__page_no=page_no )

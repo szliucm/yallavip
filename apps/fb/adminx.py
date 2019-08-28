@@ -641,7 +641,7 @@ class MyCampaignAdmin(object):
 @xadmin.sites.register(MyAdset)
 class MyAdsetAdmin(object):
 
-    list_display = [ "adaccount_no", "adset_no","campaign_no",'name', ]
+    list_display = [ 'name', "adaccount_no", "adset_no","campaign_no","active", ]
     search_fields = ['adset_no',"campaign_no", 'name',]
     actions = ["batch_update_ad", ]
     list_filter = ( "adaccount_no", "active",)
