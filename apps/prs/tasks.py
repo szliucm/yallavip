@@ -6061,6 +6061,8 @@ def post_ads_v2(page_no, ad_type, to_create_count=1, keyword=None):
     if not adset_no:
         print("没有adset")
         return False
+    else:
+        print("############", adaccount_no, adset_no)
 
     #adaccount_no = "act_1903121643086425"
 
