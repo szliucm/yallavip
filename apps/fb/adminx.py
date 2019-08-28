@@ -644,6 +644,8 @@ class MyAdsetAdmin(object):
     list_display = [ "adset_no","campaign_no",'name', ]
     search_fields = ['adset_no',"campaign_no", ]
     actions = ["batch_update_ad", ]
+    list_filter = ( "adaccount_no", "active",)
+    list_editable = ["active"]
 
     def create_adset(self, request, queryset):
         app_secret = '<APP_SECRET>'
