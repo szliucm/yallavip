@@ -2425,14 +2425,14 @@ def sync_Shipped_order_lightin(days=1):
                     # 更新本地的订单状态
                     try:
                         order = Order.objects.get(order_no=order_no)
-                        order.ms_status= data.get("order_status")
-                        order.ogistic_type= data.get("shipping_method")
+                        order.wms_status= data.get("order_status")
+                        order.logistic_type= data.get("shipping_method")
 
                         if not order.logistic_no:
                             order.logistic_no= data.get("tracking_no")
 
                         order.send_time= send_time
-                        order.eight= data.get("order_weight")
+                        order.weight= data.get("order_weight")
                         order.save()
                     except Order.DoesNotExist:
                         print("订单不存在",order_no )
