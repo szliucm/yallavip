@@ -56,7 +56,7 @@ class SpusListViewSet(mixins.ListModelMixin,mixins.RetrieveModelMixin, viewsets.
     authentication_classes = (JWTAuthentication, SessionAuthentication)  # 配置登录认证：支持JWT认证和DRF基本认证
 
     # 这里必须要定义一个默认的排序,否则会报错
-    queryset = Lightin_SPU.objects.all().order_by('handle')
+    queryset = Lightin_SPU.objects.filter(sellable__gt=0).order_by('handle')
     # 分页
     #pagination_class = GoodsPagination
 
@@ -82,7 +82,7 @@ class SpusListViewSet(mixins.ListModelMixin,mixins.RetrieveModelMixin, viewsets.
         print("当前数据集", queryset.count())
         spus_list = list(queryset.values_list("id", flat=True).distinct())
 
-        sizes_list = Lightin_SKU.objects.filter(lightin_spu__id__in=spus_list).values_list("size", flat=True)
+        sizes_list = Lightin_SKU.objects.filter(lightin_spu__id__in=spus_list).values_list("size", flat=True).distinct()
         #sizes_list = self.queryset.values_list("size", flat=True).distinct()
         return JsonResponse(list(sizes_list), safe=False)
 

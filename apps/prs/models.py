@@ -149,6 +149,7 @@ class Lightin_SPU(models.Model):
         verbose_name = "兰亭SPU"
         verbose_name_plural = verbose_name
 
+
     def __str__(self):
         return self.SPU
 
@@ -211,9 +212,14 @@ class Lightin_SKU(models.Model):
     # y_sellable = models.IntegerField(u'wms_可售数量', default=0, blank=True, null=True)
     # y_reserved = models.IntegerField(u'wms_待出库数量', default=0, blank=True, null=True)
 
+    #新订单系统，单独用一套库存数据，以免冲突，走顺了再合起来
+    sales = models.IntegerField(u'已售数量', default=0, blank=True, null=True)
+    stock = models.IntegerField(u'stock', default=0, blank=True, null=True)
+
     class Meta:
         verbose_name = "兰亭SKU"
         verbose_name_plural = verbose_name
+        ordering = ['size']
 
     def __str__(self):
         return self.SKU

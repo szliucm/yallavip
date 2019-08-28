@@ -184,6 +184,7 @@ class Order(models.Model):
 
     # product_quantity = models.CharField(u'产品数量', default='', max_length=50, blank=True)
     order_amount = models.CharField(u'订单金额', default='', max_length=50, blank=True)
+    order_quantity = models.CharField(u'产品数量', default='', max_length=50, blank=True)
 
     def cal_real_amount(self):
         if self.verify.real_amount == "":
@@ -316,6 +317,7 @@ class Order(models.Model):
         verbose_name = "订单"
         verbose_name_plural = verbose_name
 
+        ordering = ['-id']
 
     def __str__(self):
         return self.order_no
