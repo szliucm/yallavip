@@ -2402,6 +2402,7 @@ def sync_Shipped_order_lightin(days=1):
 
                     if  data.get("order_status") == "D":
                         send_time = data.get("date_shipping")
+                        '''
                         if order.wms_status == "W" :
                             # wms状态从待发货变成已发货，就修改本地 barcode 库存
 
@@ -2417,7 +2418,7 @@ def sync_Shipped_order_lightin(days=1):
                                     print ("更新本地barcode库存")
                                 else:
                                     print ("保留库存小于应释放库存##############")
-
+                        '''
 
 
 
