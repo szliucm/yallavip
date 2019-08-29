@@ -21,7 +21,8 @@ from rest_framework import filters
 from rest_framework.authentication import TokenAuthentication
 
 from django.db import transaction   # 导入事务
-from django.forms import ValidationError
+
+from django.core.exceptions import ValidationError
 
 # Create your views here.
 
@@ -57,13 +58,25 @@ class OrderViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, mixins.Retrie
     def get_queryset(self):
         return self.queryset.filter(user=self.request.user)
 
-    @transaction.atomic
+    #@transaction.atomic
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        # 验证合法
+        serializer.is_valid(raise_exception=True)
+
+        sms_status =0
+        if sms_status != 0:
+            return Response("我不滚", status=status.HTTP_400_BAD_REQUEST)
+        else:
+
+            return Response("滚吧", status=status.HTTP_201_CREATED)
+    '''
     def perform_create(self, serializer):
         # 完成创建后保存到数据库，可以拿到保存的OrderInfo对象
         print("perform_create")
         #
         # 创建保存点
-        sid = transaction.savepoint()
+        #sid = transaction.savepoint()
 
         # 商品数量
         total_count = 0
@@ -79,8 +92,8 @@ class OrderViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, mixins.Retrie
             # 此处考虑订单并发问题,
 
             try:
-                #goods = Lightin_SKU.objects.get(id=customer_cart.sku.id)  # 不加锁查询
-                goods = Lightin_SKU.objects.select_for_update().get(id=customer_cart.sku.id)  # 加互斥锁查询
+                goods = Lightin_SKU.objects.get(id=customer_cart.sku.id)  # 不加锁查询
+                #goods = Lightin_SKU.objects.select_for_update().get(id=customer_cart.sku.id)  # 加互斥锁查询
 
             except Lightin_SKU.DoesNotExist:
                 # 回滚到保存点
@@ -95,10 +108,13 @@ class OrderViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, mixins.Retrie
 
             if goods.stock < count:
                 # 回滚到保存点
-                print("我要滚啦----------1",sid)
-                transaction.savepoint_rollback(sid)
+                print("我要滚啦----------1")
+                #transaction.savepoint_rollback(sid)
                 print("我要滚啦----------2")
-                raise ValidationError('You have already signed up')
+                handler500 = 'rest_framework.exceptions.server_error'
+                raise ValidationError(
+                            "快滚吧",code="come_on"
+                    )# 要传递到错误信息的参数)
 
 
             print("我要滚啦！")
@@ -133,6 +149,6 @@ class OrderViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, mixins.Retrie
 
         # 然后清空该用户购物车
         customer_carts.delete()
-
+        '''
 
 
