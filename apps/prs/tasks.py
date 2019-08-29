@@ -52,7 +52,7 @@ else:
     WAREHOUSE_CODE = "W07"
     #warehouse_code = "W08"
     warehouse_code_arr = ["W07", "W08"]
-    shipping_methods = ["ARAMEX_KSA","FETCHR_SAUDI_DOM"]
+    shipping_methods = ["ARAMEX_KSA","365_KSA_DOM", "FETCHR_SAUDI_DOM"]
     #shipping_method = "FETCHR_SAUDI_DOM"
     #shipping_method = "ARAMEX_KSA"
     appToken = "909fa3df3b98c26a9221774fe5545afd"
@@ -2266,8 +2266,8 @@ def fulfill_order_lightin(order):
         items.append(item)
     #选择物流公司
     city = order.verify.city
-    if city in ["Riyadh", "Jeddah", "Dammam"]:
-        shipping_method=  shipping_methods[0]
+    if city in ["Riyadh"]:                      #, "Jeddah", "Dammam"
+        shipping_method=  shipping_methods[1]
     else:
         shipping_method = shipping_methods[0]
 
