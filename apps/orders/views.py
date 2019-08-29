@@ -64,13 +64,23 @@ class OrderViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, mixins.Retrie
         # 验证合法
         serializer.is_valid(raise_exception=True)
 
+        order = self.perform_create(serializer)
+
+        re_dict = serializer.data
+        headers = self.get_success_headers(serializer.data)
+        return Response(re_dict, status=status.HTTP_201_CREATED, headers=headers)
+
+    def perform_create(self, serializer):
+        return serializer.save()
+
+        '''
         sms_status =0
         if sms_status != 0:
             return Response("我不滚", status=status.HTTP_400_BAD_REQUEST)
         else:
 
             return Response("滚吧", status=status.HTTP_201_CREATED)
-    '''
+        
     def perform_create(self, serializer):
         # 完成创建后保存到数据库，可以拿到保存的OrderInfo对象
         print("perform_create")
