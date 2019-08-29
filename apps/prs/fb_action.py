@@ -1896,7 +1896,8 @@ def choose_ad_set(page_no, ad_type, serial=None):
     else:
         tag = page_no + '_' + ad_type + '_' + str(random.randint(1, 3))
     try:
-        adset = MyAdset.objects.get(name__icontains=tag, active=True)
+        adsets = MyAdset.objects.filter(name__icontains=tag, active=True)
+        adset = random.choice(adsets)
     except:
         adset = None
 
