@@ -6046,11 +6046,7 @@ def post_ads_v2(page_no, ad_type, to_create_count=1, keyword=None):
 
     from django.db.models import Q
 
-    # 取page对应的待推ads
-    ads_all , cates = get_promote_ads(page_no)
-    if not ads_all:
-        return
-    ads_all = ads_all.filter(published=True)
+
 
 
     serial = get_serial()
@@ -6063,6 +6059,12 @@ def post_ads_v2(page_no, ad_type, to_create_count=1, keyword=None):
         return False
     else:
         print("############", adaccount_no, adset_no)
+
+    # 取page对应的待推ads
+    ads_all , cates = get_promote_ads(page_no)
+    if not ads_all:
+        return
+    ads_all = ads_all.filter(published=True)
 
     #adaccount_no = "act_1903121643086425"
 
@@ -6123,7 +6125,7 @@ def post_ad(page_no,adaccount_no, adset_no, serial, ad):
 
         # 在post的基础上创建广告
 
-        if ad.creative_id:
+        if ad.creative_id and ad.adset_no == adset_no:
             print("已经有creative，不用创建了")
             creative_id = ad.creative_id
         else:
