@@ -2267,7 +2267,7 @@ def fulfill_order_lightin(order):
     #选择物流公司
     city = order.verify.city
     if city in ["Riyadh"]:                      #, "Jeddah", "Dammam"
-        shipping_method=  shipping_methods[1]
+        shipping_method=  shipping_methods[0]
     else:
         shipping_method = shipping_methods[0]
 
