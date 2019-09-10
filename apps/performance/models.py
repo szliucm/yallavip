@@ -120,7 +120,7 @@ class StaffPerformance(models.Model):
         verbose_name_plural = verbose_name
 
     def __str__(self):
-        return self.staff + "--"+ self.order_month
+        return self.staff
 
 class PageTrack(models.Model):
     order_date = models.DateField(u'订单日期', auto_now=False, null=True, blank=True)
