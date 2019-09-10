@@ -86,7 +86,7 @@ def update_performance(days=60):
         .values("month", "status","verify__sales").annotate(orders=Count("order_no"),amount=Sum("order_amount")).order_by("-month")
 
     # 把相应的记录先删掉
-    #StaffPerformance.objects.filter(order_month__gt=(today - timedelta(days=days))).delete()
+    StaffPerformance.objects.filter(order_month__gt=(today - timedelta(days=days))).delete()
 
     for staff_count in staff_counts:
         staff=staff_count.get("verify__sales")
