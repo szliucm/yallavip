@@ -229,8 +229,12 @@ def updatelogistic_trail_lightin(type=None):
             if not waybillnumber:
                 continue
 
-            order = Order.objects.get(logistic_no=waybillnumber)
-            print(waybillnumber)
+            try:
+                order = Order.objects.get(logistic_no=waybillnumber)
+            except Exception as e:
+                print(waybillnumber, e)
+                continue
+
             obj, created = Package.objects.update_or_create(
                 logistic_no=waybillnumber,
 
